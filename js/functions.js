@@ -38,7 +38,7 @@ function countDown() {
 function totalTimeCount() {
   totalTimeSpent++;
   document.getElementById("totalTimeSpent").textContent =
-    totalTimeSpent + " sekuntia";
+    totalTimeSpent + " seconds";
 }
 
 function updateTimer() {

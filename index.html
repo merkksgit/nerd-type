@@ -1,8 +1,9 @@
 <!doctype html>
-<html lang="fi">
+<html lang="en" class="">
   <head>
-    <meta charset="UTF-8" />
-    <title>Typing Game</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NerdType</title>
     <link href="./css/style.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -11,15 +12,69 @@
       crossorigin="anonymous"
     />
   </head>
-  <body>
-    <div id="game">
-      <div id="timer">Aika: <span id="timeLeft"></span></div>
-      <div id="wordToType"></div>
-      <input type="text" id="userInput" autocomplete="off" />
-      <div id="totalTime">Kokonaisaika: <span id="totalTimeSpent"></span></div>
-      <button id="startButton">Start</button>
-      <button id="resetBtn">Reset</button>
+  <body class="d-flex flex-column h-100">
+    <div class="container-fluid flex-shrink-0">
+      <header class="d-flex justify-content-center align-items-center">
+        <h1>WELCOME TO NerdType</h1>
+      </header>
+      <nav class="navbar navbar-expand-md">
+        <div class="container-fluid">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainmenu"
+            aria-controls="mainmenu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="mainmenu">
+            <ul class="navbar-nav">
+              <li class="nav-item"><a class="nav-link" href="#">Link 1</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Link 2</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Link 3</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div class="row">
+        <div class="col-md-12 p-3">
+          <div class="container-fluid">
+            <div class="row">
+              <div id="game">
+                <div id="timer">Time left: <span id="timeLeft"></span></div>
+                <div id="wordToType">Click START to play</div>
+                <input
+                  type="text"
+                  id="userInput"
+                  autocomplete="off"
+                  spellcheck="false"
+                  style="text-align: center"
+                />
+                <div id="totalTime">
+                  Total time: <span id="totalTimeSpent"></span>
+                </div>
+                <div id="buttons">
+                  <button id="startButton">Start</button>
+                  <button id="resetBtn">Reset</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <!-- <footer class="footer mt-auto py-3"> -->
+    <!--   <div class="container-fluid"> -->
+    <!--     <div id="foot" class="row"> -->
+    <!--       <p class="col-md-4">Footer area 1</p> -->
+    <!--       <p class="col-md-4">Footer area 2</p> -->
+    <!--       <p class="col-md-4">Footer area 3</p> -->
+    <!--     </div> -->
+    <!--   </div> -->
+    <!-- </footer> -->
     <script src="./js/functions.js" type="module"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

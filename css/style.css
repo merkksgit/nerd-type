@@ -3,22 +3,41 @@
   font-family: "custom";
 }
 
-html {
+* {
   font-family: custom;
-}
-
-body {
-  text-align: center;
-  padding-top: 50px;
+  color: #7aa2f7;
+  background-color: #24283b;
 }
 
 #game {
   margin: auto;
-  width: 50%;
+  width: 40%;
+  text-align: center;
 }
 
 input[type="text"] {
   margin-top: 20px;
   margin-bottom: 20px;
   font-size: 20px;
+  color: #c3e88d;
+  width: 50%;
+  border: none;
+  outline: none;
+}
+
+div#totalTime {
+  margin-bottom: 20px;
+}
+
+div#wordToType {
+  color: #ff9e64;
+  font-size: 1.5em;
+}
+
+body {
+  background-color: yellow;
+}
+
+.nav-link {
+  color: lightgreen;
 }
