@@ -1,3 +1,5 @@
+![nerdtype](./images/nerdtype.jpeg)
+
 # NerdType
 
 This project is a **minimalistic typing game** developed using JavaScript, HTML, and CSS (with Bootstrap for styling). The game challenges the user to type the correct words within a time limit, with the possibility of gaining extra time for each correct word.
