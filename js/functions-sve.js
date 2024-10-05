@@ -42,7 +42,7 @@ function totalTimeCount() {
 }
 
 function updateTimer() {
-  document.getElementById("timeLeft").textContent = timeLeft + " sekuntia";
+  document.getElementById("timeLeft").textContent = timeLeft + " seconds";
 }
 
 document.getElementById("userInput").addEventListener("input", checkInput);
