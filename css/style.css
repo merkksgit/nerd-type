@@ -44,10 +44,6 @@ div#wordToType {
   font-size: 1.5em;
 }
 
-body {
-  background-color: yellow;
-}
-
 .navbar .navbar-nav .nav-link {
   color: #545c7e;
 }
@@ -59,5 +55,9 @@ body {
 div#content {
   display: flex;
   justify-content: center;
-  color: white;
+  color: #a9b1d6;
+}
+
+article {
+  color: #a9b1d6;
 }
