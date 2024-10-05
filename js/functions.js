@@ -3,7 +3,7 @@ let totalTimeSpent = 0;
 let currentWordIndex = 0;
 let countDownInterval; // Määrittele ajastimen välin muuttuja
 let totalTimeInterval; // Määrittele kokonaisajan laskennan välin muuttuja
-import { words } from "./words.js"; // Varmista, että polku on oikein
+import { words } from "./ruotsi-sanoja.js"; // Varmista, että polku on oikein
 console.log(words);
 
 const resetBtn = document.getElementById("resetBtn"); // Hae reset-painike
