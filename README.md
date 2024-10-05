@@ -20,7 +20,7 @@ This project is a **minimalistic typing game** developed using JavaScript, HTML,
 ## How to play
 
 1. Click the Start button to begin the game.
-2. Type the word displayed in the input field before the time runs out.
+2. Type the word displayed into the input field before the time runs out.
 3. For every correct word, additional time is added to the countdown.
 4. The game ends when time runs out, and the page automatically reloads to restart.
 
