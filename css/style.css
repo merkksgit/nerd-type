@@ -42,6 +42,10 @@ body {
   background-color: yellow;
 }
 
-.nav-link {
-  color: lightgreen;
+.navbar .navbar-nav .nav-link {
+  color: #545c7e;
+}
+
+.nav-link:hover {
+  color: #ffffff !important;
 }
