@@ -9,6 +9,10 @@
   background-color: #24283b;
 }
 
+header {
+  margin-top: 2em;
+}
+
 #game {
   margin: auto;
   width: 40%;

@@ -3,7 +3,7 @@ let totalTimeSpent = 0;
 let currentWordIndex = 0;
 let countDownInterval;
 let totalTimeInterval;
-import { words } from "./words-prog.js";
+import { words } from "./words-eng.js";
 console.log(words);
 
 const resetBtn = document.getElementById("resetBtn"); // Hae reset-painike
