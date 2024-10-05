@@ -199,4 +199,7 @@ export const words = [
   "XML",
   "yield",
   "zip",
+  "Auri",
+  "Verna",
+  "Atro",
 ];
