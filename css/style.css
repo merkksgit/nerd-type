@@ -5,18 +5,24 @@
 
 * {
   font-family: custom;
-  color: #7aa2f7;
   background-color: #24283b;
 }
 
 header {
   margin-top: 2em;
+  color: #7aa2f7;
 }
 
 #game {
   margin: auto;
   width: 40%;
   text-align: center;
+  color: #7aa2f7;
+}
+
+#startButton,
+#resetBtn {
+  color: #7aa2f7;
 }
 
 input[type="text"] {
@@ -48,4 +54,10 @@ body {
 
 .nav-link:hover {
   color: #ffffff !important;
+}
+
+div#content {
+  display: flex;
+  justify-content: center;
+  color: white;
 }
