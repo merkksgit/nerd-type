@@ -23,12 +23,17 @@ header {
 #startButton,
 #resetBtn {
   color: #7aa2f7;
+  background-color: #1f2335;
+  border: none;
+  padding: 10px 30px;
+  margin-top: 3em;
+  border-radius: 4px;
 }
 
 input[type="text"] {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  font-size: 20px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  font-size: 24px;
   color: #c3e88d;
   width: 50%;
   border: none;
@@ -42,6 +47,7 @@ div#totalTime {
 div#wordToType {
   color: #ff9e64;
   font-size: 1.5em;
+  margin-top: 20px;
 }
 
 .navbar .navbar-nav .nav-link {
@@ -49,7 +55,11 @@ div#wordToType {
 }
 
 .nav-link:hover {
-  color: #ffffff !important;
+  color: #9d7cd8 !important;
+}
+
+#current {
+  color: #bb9af7 !important;
 }
 
 div#content {
@@ -60,4 +70,8 @@ div#content {
 
 article {
   color: #a9b1d6;
+}
+
+article h4 {
+  color: #ff9e64;
 }
