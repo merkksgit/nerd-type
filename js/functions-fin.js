@@ -19,6 +19,13 @@ function startGame() {
   document.getElementById("userInput").focus();
 }
 
+// aloittaa pelin painamalla "Enter"
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    startGame();
+  }
+});
+
 resetBtn.addEventListener("click", () => {
   location.reload(); // Lataa sivu uudelleen
 });
