@@ -76,17 +76,10 @@ article h4 {
   color: #ff9e64;
 }
 
-/* .modal-dialog { */
-/*   border-style: double; */
-/*   border-width: medium; */
-/*   border-color: #ffffff; */
-/* } */
-
 .modal-title {
   background-color: #24283b;
 }
 
-/* Customize the header background and text colors */
 .modal-header {
   background-color: #24283b;
   color: #f5f5f5;
