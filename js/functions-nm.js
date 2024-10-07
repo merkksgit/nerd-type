@@ -37,8 +37,27 @@ function countDown() {
   } else {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
-    alert("Game Over");
-    location.reload(); // Pelin uudelleenkäynnistys
+
+    // Display the total time spent in the modal
+    document.getElementById("totalTimeSpentDisplay").textContent =
+      totalTimeSpent;
+
+    // Show the Bootstrap modal
+    let gameOverModal = new bootstrap.Modal(
+      document.getElementById("gameOverModal"),
+    );
+    gameOverModal.show();
+
+    document.getElementById("restartGameBtn").addEventListener("click", () => {
+      location.reload(); // Pelin uudelleenkäynnistys
+    });
+
+    // Add event listener for pressing "Enter" to restart the game
+    document.addEventListener("keydown", function handleEnterKey(event) {
+      if (event.key === "Enter") {
+        location.reload(); // Restart the game by reloading the page
+      }
+    });
   }
 }
 
