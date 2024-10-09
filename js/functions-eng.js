@@ -14,12 +14,12 @@ function startGame() {
   currentWordIndex = Math.floor(Math.random() * words.length); // Valitse satunnainen indeksi
   document.getElementById("wordToType").textContent = words[currentWordIndex];
   updateTimer();
-  countDownInterval = setInterval(countDown, 1000);
+  countDownInterval = setInterval(countDown, 800);
   totalTimeInterval = setInterval(totalTimeCount, 1000);
   document.getElementById("userInput").focus();
 }
 
-// aloittaa pelin painamalla "Enter"
+// Aloita peli painamalla "Enter"
 document.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     startGame();
@@ -35,29 +35,10 @@ function countDown() {
     timeLeft--;
     updateTimer();
   } else {
+    // Peli päättyy, kun timeLeft menee nollaan
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
-
-    // Display the total time spent in the modal
-    document.getElementById("totalTimeSpentDisplay").textContent =
-      totalTimeSpent;
-
-    // Show the Bootstrap modal
-    let gameOverModal = new bootstrap.Modal(
-      document.getElementById("gameOverModal"),
-    );
-    gameOverModal.show();
-
-    document.getElementById("restartGameBtn").addEventListener("click", () => {
-      location.reload(); // Pelin uudelleenkäynnistys
-    });
-
-    // Add event listener for pressing "Enter" to restart the game
-    document.addEventListener("keydown", function handleEnterKey(event) {
-      if (event.key === "Enter") {
-        location.reload(); // Restart the game by reloading the page
-      }
-    });
+    showGameOverModal("You need a snack,"); // Näytä eri viesti
   }
 }
 
@@ -65,10 +46,17 @@ function totalTimeCount() {
   totalTimeSpent++;
   document.getElementById("totalTimeSpent").textContent =
     totalTimeSpent + " seconds";
+
+  if (totalTimeSpent >= 90) {
+    // Peli päättyy, kun kokonaisaika on x sekuntia
+    clearInterval(countDownInterval);
+    clearInterval(totalTimeInterval);
+    showGameOverModal("Wau! You just hacked the Pentagon!"); // Näytä eri viesti
+  }
 }
 
 function updateTimer() {
-  document.getElementById("timeLeft").textContent = timeLeft + " seconds";
+  document.getElementById("timeLeft").textContent = timeLeft;
 }
 
 document.getElementById("userInput").addEventListener("input", checkInput);
@@ -81,4 +69,32 @@ function checkInput() {
     document.getElementById("wordToType").textContent = words[currentWordIndex];
     document.getElementById("userInput").value = ""; // Tyhjennä syötekenttä
   }
+}
+
+// Funktio, joka näyttää oikean viestin pelin päättyessä
+document.getElementById("totalTimeSpentDisplay").textContent = totalTimeSpent;
+function showGameOverModal(message) {
+  document.getElementById("gameOverModalLabel").textContent = "Game Over";
+  document.querySelector(".modal-body").innerHTML =
+    message +
+    "<br />You have " +
+    timeLeft +
+    " energy left.<br />Well played nerd!";
+
+  // Näytä Bootstrap-modaali
+  let gameOverModal = new bootstrap.Modal(
+    document.getElementById("gameOverModal"),
+  );
+  gameOverModal.show();
+
+  document.getElementById("restartGameBtn").addEventListener("click", () => {
+    location.reload(); // Pelin uudelleenkäynnistys
+  });
+
+  // Lisää event listener Enterin painamiselle
+  document.addEventListener("keydown", function handleEnterKey(event) {
+    if (event.key === "Enter") {
+      location.reload(); // Käynnistä peli uudelleen lataamalla sivu
+    }
+  });
 }

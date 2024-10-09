@@ -68,13 +68,12 @@
           <div class="container-fluid">
             <div class="row">
               <div id="game">
-                <div id="timer">Time left: <span id="timeLeft"></span></div>
+                <div id="timer">Energy: <span id="timeLeft"></span></div>
                 <div id="wordToType">Click START or press Enter to play</div>
                 <input
                   type="text"
                   id="userInput"
                   autocomplete="off"
-                  autocapitalize="none"
                   spellcheck="false"
                   style="text-align: center"
                 />
@@ -111,8 +110,7 @@
             ></button>
           </div>
           <div class="modal-body border-top-0 border-bottom-0">
-            Time's up! Your time was
-            <span id="totalTimeSpentDisplay">0</span> seconds.<br />GGWP nerd!
+            <span id="totalTimeSpentDisplay">0</span>
           </div>
           <div
             class="modal-footer border-top-0"

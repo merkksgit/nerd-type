@@ -112,11 +112,11 @@ article h4 {
   color: #ff9e64;
 }
 
-#totalTimeSpentDisplay {
-  background-color: #24283b;
-  font-size: 1.5rem;
-  color: #ff9e64;
-}
+/* #totalTimeSpentDisplay { */
+/*   background-color: #24283b; */
+/*   font-size: 1.5rem; */
+/*   color: #ff9e64; */
+/* } */
 
 #gameOverModalLabel {
   color: #ff007c;
