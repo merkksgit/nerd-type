@@ -15,7 +15,6 @@ header {
 
 #game {
   margin: auto;
-  width: 40%;
   text-align: center;
   color: #7aa2f7;
 }
@@ -35,7 +34,7 @@ input[type="text"] {
   margin-bottom: 40px;
   font-size: 24px;
   color: #c3e88d;
-  width: 50%;
+  width: 80%;
   border: none;
   outline: none;
 }
