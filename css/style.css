@@ -121,3 +121,18 @@ article h4 {
 #gameOverModalLabel {
   color: #ff007c;
 }
+
+#progressPercentage {
+  margin-bottom: 20px;
+}
+
+.progress {
+  width: 20%;
+  margin: 0 auto;
+}
+
+@media (max-width: 540px) {
+  .progress {
+    width: 50%;
+  }
+}
