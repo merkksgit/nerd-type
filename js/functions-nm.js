@@ -54,7 +54,7 @@ function totalTimeCount() {
     // Peli päättyy, kun kokonaisaika on 90 sekuntia
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
-    showGameOverModal("Pentagon HACKED! All that work and still"); // Näytä eri viesti
+    showGameOverModal("Pentagon HACKED! After all that hacking,"); // Näytä eri viesti
   }
 }
 
