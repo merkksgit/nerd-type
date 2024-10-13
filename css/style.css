@@ -13,6 +13,12 @@ header {
   color: #7aa2f7;
 }
 
+img {
+  width: 3.5em;
+  margin-bottom: 1.5em;
+  margin-right: 1em;
+}
+
 #game {
   margin: auto;
   text-align: center;
