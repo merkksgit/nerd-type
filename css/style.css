@@ -82,6 +82,11 @@ article h4 {
   color: #ff9e64;
 }
 
+.modal-content {
+  position: absolute;
+  top: 200px;
+}
+
 .modal-title {
   background-color: #24283b;
 }

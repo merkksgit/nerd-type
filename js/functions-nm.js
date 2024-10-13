@@ -38,7 +38,9 @@ function countDown() {
     // Peli päättyy, kun timeLeft menee nollaan
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
-    showGameOverModal("Hack FAILED! You need a snack,"); // Näytä eri viesti
+    showGameOverModal(
+      "Hack <span style='color:#ff007c'>FAILED!</span> You need a snack,",
+    ); // Näytä eri viesti
   }
 }
 
@@ -54,7 +56,9 @@ function totalTimeCount() {
     // Peli päättyy, kun kokonaisaika on 90 sekuntia
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
-    showGameOverModal("Pentagon HACKED! After all that hacking,"); // Näytä eri viesti
+    showGameOverModal(
+      "Pentagon <span style='color:#c3e88d'>HACKED!</span> After all that hacking,",
+    ); // Näytä eri viesti
   }
 }
 
@@ -104,7 +108,8 @@ function showGameOverModal(message) {
     message +
     "<br />you have " +
     timeLeft +
-    " energy left.<br />Try another hack by pressing 'Return'.";
+    " energy left.<br />Try another hack by pressing <span style='color:#ff9e64'>Return</span>" +
+    ".";
 
   // Näytä Bootstrap-modaali
   let gameOverModal = new bootstrap.Modal(
