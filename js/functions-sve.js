@@ -1,6 +1,7 @@
 let timeLeft = 10; // Aloitusaika sekunteina
 let totalTimeSpent = 0;
 let currentWordIndex = 0;
+let nextWordIndex = 0;
 let countDownInterval;
 let totalTimeInterval;
 import { words } from "./words-sve.js";
@@ -12,11 +13,18 @@ document.getElementById("startButton").addEventListener("click", startGame);
 
 function startGame() {
   currentWordIndex = Math.floor(Math.random() * words.length); // Valitse satunnainen indeksi
+  nextWordIndex = Math.floor(Math.random() * words.length);
   document.getElementById("wordToType").textContent = words[currentWordIndex];
+  updateWordDisplay();
   updateTimer();
   countDownInterval = setInterval(countDown, 800);
   totalTimeInterval = setInterval(totalTimeCount, 1000);
   document.getElementById("userInput").focus();
+}
+
+function updateWordDisplay() {
+  document.getElementById("wordToType").textContent = words[currentWordIndex];
+  document.getElementById("nextWord").textContent = words[nextWordIndex];
 }
 
 // Aloita peli painamalla "Enter"
@@ -94,9 +102,10 @@ function checkInput() {
   if (userInput === words[currentWordIndex]) {
     totalTimeSpent += 1;
     timeLeft += 3; // Lisää 3 sekuntia aikaa
-    currentWordIndex = Math.floor(Math.random() * words.length); // Valitse uusi satunnainen sana
-    document.getElementById("wordToType").textContent = words[currentWordIndex];
-    document.getElementById("userInput").value = ""; // Tyhjennä syötekenttä
+    currentWordIndex = nextWordIndex;
+    nextWordIndex = Math.floor(Math.random() * words.length);
+    updateWordDisplay();
+    document.getElementById("userInput").value = "";
   }
 }
 
