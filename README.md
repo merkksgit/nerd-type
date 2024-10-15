@@ -2,14 +2,31 @@
 
 # NerdType
 
-This project is a **minimalistic typing game** developed using JavaScript, HTML, and CSS (with Bootstrap for styling). The game challenges the user to type the correct words within a time limit, with the possibility of gaining extra time for each correct word.
+NerdType is a fast-paced, minimalistic typing game designed to help you improve your typing skills while having fun with language learning. The game challenges you to type programming-related vocabulary as well as basic English, Swedish, and Finnish words before your energy runs out. With each correct word, you restore energy and get closer to hacking the Pentagon!
 
 ## Features
 
-- **Timer-based gameplay**: Players must type a randomly chosen word before time runs out. Each correct word adds extra time.
-- **Dynamic word generation**: The game picks a random word from a predefined word list in each round.
-- **Score tracking**: The total time spent in the game is displayed.
-- **Responsive UI**: Built with Bootstrap to ensure a smooth experience across different screen sizes.
+- **Multilingual Vocabulary:** Type programming terms and words from English, Finnish, and Swedish.
+- **Energy-Based Countdown:** Each correct word restores energy, allowing you to stay in the game longer.
+- **Random Word Selection:** Words are selected randomly from a predefined list, offering a unique challenge every time.
+- **Responsive Design:** Built with Bootstrap for smooth performance on various screen sizes, including mobile devices.
+- **Progress Bar:** Visually track your progress in real-time as you hack the Pentagon.
+
+## How to Play
+
+1. Click the **Start** button or press **Enter** to begin.
+2. Type the displayed word into the input field before your energy runs out.
+3. Every correctly typed word will restore a bit of energy.
+4. The game ends when your energy runs out or when you successfully hack the Pentagon.
+5. Press **Enter** or the **Reset** button to start a new game.
+
+## Game Modes
+
+- **Programming Mode:** Type programming-related vocabulary.
+- **Suomi (Finnish) Mode:** Practice basic Finnish words.
+- **Svenska (Swedish) Mode:** Practice basic Swedish words.
+- **English Mode:** Type English words.
+- **Nightmare Mode:** A tougher challenge with longer, difficult words and stricter time limits.
 
 ## Technologies Used
 
@@ -17,13 +34,10 @@ This project is a **minimalistic typing game** developed using JavaScript, HTML,
 - **CSS (Bootstrap)**: For responsive design.
 - **JavaScript**: Handles game logic, such as timers, word checking, and user input.
 
-## How to play
-
-1. Click the Start button to begin the game.
-2. Type the word displayed into the input field before the time runs out.
-3. For every correct word, additional time is added to the countdown.
-4. The game ends when time runs out, and the page automatically reloads to restart.
-
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT](https://mit-license.org/) License.
+
+## Contact
+
+For feedback or suggestions, reach out via email: merkks@protonmail.com
