@@ -15,7 +15,7 @@ header {
 
 img {
   width: 3.5em;
-  margin-bottom: 1.9em;
+  margin-bottom: 0.9em;
   margin-right: 1em;
 }
 
@@ -149,7 +149,7 @@ article h4 {
   margin: 0 auto;
 }
 
-@media (max-width: 540px) {
+@media (max-width: 1200px) {
   .progress {
     width: 50%;
   }
