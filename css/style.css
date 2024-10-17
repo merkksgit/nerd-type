@@ -3,6 +3,29 @@
   font-family: "custom";
 }
 
+::-webkit-scrollbar {
+  width: 1.2em;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #3b4261;
+  border-radius: 100vw;
+  margin-block: 0.2em;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #24283b;
+  border: 0.2em solid;
+  border-color: #3b4261;
+  border-radius: 100vw;
+}
+
+@supports (scrollbar-color: red blue) {
+  * {
+    scrollbar-color: #24283b #3b4261;
+  }
+}
+
 * {
   font-family: custom;
   background-color: #24283b;
