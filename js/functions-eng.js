@@ -117,8 +117,13 @@ function showGameOverModal(message) {
     message +
     "<br />you have " +
     timeLeft +
-    " energy left.<br />Try another hack by pressing <span style='color:#ff9e64'>Return</span>" +
+    " energy left.<br />Try again by pressing <span style='color:#ff9e64'>Return</span>" +
     ".";
+
+  // tallenna tulos localStorageen
+  saveResult(timeLeft);
+  // näytä edelliset tulokset
+  displayPreviousResults();
 
   // Näytä Bootstrap-modaali
   let gameOverModal = new bootstrap.Modal(
@@ -137,3 +142,55 @@ function showGameOverModal(message) {
     }
   });
 }
+
+function saveResult(timeLeft) {
+  if (timeLeft === 0) {
+    return;
+  }
+  // Hae nykyiset tulokset localStoragesta
+  let results = JSON.parse(localStorage.getItem("gameResults")) || [];
+
+  // Lisää uusi tulos
+  results.push({ timeLeft, date: new Date().toLocaleString("en-GB") });
+
+  // Tallenna takaisin localStorageen
+  localStorage.setItem("gameResults", JSON.stringify(results));
+}
+
+function displayPreviousResults() {
+  const resultsContainer = document.getElementById("previousResults");
+
+  // Hae tulokset localStoragesta
+  let results = JSON.parse(localStorage.getItem("gameResults")) || [];
+
+  results.reverse();
+
+  // Tyhjennä aiemmat tulokset
+  resultsContainer.innerHTML = "";
+
+  // Lisää jokainen tulos näkyviin
+  results.forEach((result) => {
+    const resultItem = document.createElement("li");
+    resultItem.textContent = `${result.date} Score: ${result.timeLeft}`;
+    resultsContainer.appendChild(resultItem);
+  });
+}
+
+// Kutsutaan sivun latautuessa, jotta näytetään edelliset tulokset
+document.addEventListener("DOMContentLoaded", displayPreviousResults);
+
+document
+  .getElementById("clearResultsBtn")
+  .addEventListener("click", function () {
+    // Clear results from localStorage
+    localStorage.removeItem("gameResults");
+
+    // Clear the displayed results from the page
+    document.getElementById("previousResults").innerHTML = "";
+
+    // Näytä mukautettu modaali
+    const customAlertModal = new bootstrap.Modal(
+      document.getElementById("customAlertModal"),
+    );
+    customAlertModal.show();
+  });

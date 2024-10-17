@@ -103,6 +103,11 @@
                   <button id="startButton">Start</button>
                   <button id="resetBtn">Reset</button>
                 </div>
+                <div id="score">
+                  <h3 id="resultsTittle">Results</h3>
+                  <ul id="previousResults"></ul>
+                  <button id="clearResultsBtn">Clear Results</button>
+                </div>
               </div>
             </div>
           </div>
@@ -137,6 +142,44 @@
           >
             <button id="restartGameBtn" type="button" class="btn btn-primary">
               Return
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Clear results Alert Modal -->
+    <div
+      class="modal fade"
+      id="customAlertModal"
+      tabindex="-1"
+      aria-labelledby="customAlertModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 text-center">
+            <h5 class="modal-title w-100" id="customAlertModalLabel"></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            Results history cleared!
+          </div>
+          <div
+            class="modal-footer border-top-0 d-flex justify-content-center"
+            style="background-color: #24283b"
+          >
+            <button
+              id="clrResults"
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
             </button>
           </div>
         </div>
