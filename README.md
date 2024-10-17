@@ -11,6 +11,7 @@ NerdType is a fast-paced, minimalistic typing game designed to help you improve 
 - **Random Word Selection:** Words are selected randomly from a predefined list, offering a unique challenge every time.
 - **Responsive Design:** Built with Bootstrap for smooth performance on various screen sizes, including mobile devices.
 - **Progress Bar:** Visually track your progress in real-time as you hack the Pentagon.
+- **Automatic Saving:** When you finish a game, your results are saved directly in your browser's local storage. This means that your scores will remain available even if you refresh the page or close the browser.
 
 ## How to Play
 
