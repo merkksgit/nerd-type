@@ -171,7 +171,7 @@ function displayPreviousResults() {
   // Lisää jokainen tulos näkyviin
   results.forEach((result) => {
     const resultItem = document.createElement("li");
-    resultItem.textContent = `${result.date} Score: ${result.timeLeft}`;
+    resultItem.textContent = `${result.date} Score: ${result.timeLeft * 256}`;
     resultsContainer.appendChild(resultItem);
   });
 }
