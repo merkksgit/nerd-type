@@ -15,16 +15,16 @@
 
 ::-webkit-scrollbar-thumb {
   background-color: #24283b;
-  border: 0.2em solid;
+  border: 0.16em solid;
   border-color: #3b4261;
   border-radius: 100vw;
 }
 
-@supports (scrollbar-color: red blue) {
-  * {
-    scrollbar-color: #24283b #3b4261;
-  }
-}
+/* @supports (scrollbar-color: red blue) { */
+/*   * { */
+/*     scrollbar-color: #24283b #3b4261; */
+/*   } */
+/* } */
 
 * {
   font-family: custom;
