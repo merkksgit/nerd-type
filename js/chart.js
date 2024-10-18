@@ -50,8 +50,6 @@ function displayScoreGraph() {
     },
   });
 }
-// Hae nykyiset tulokset localStoragesta
-let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
 // Ensure the graph is loaded when the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", displayScoreGraph);
