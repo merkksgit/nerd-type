@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NerdType | INFO</title>
+    <title>NerdType | ScoreChart</title>
     <link href="../css/style.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -22,7 +22,7 @@
             <img src="../images/nerdtype-logo2.png" />
           </a>
         </p>
-        <h1>INFO</h1>
+        <h1>ScoreChart</h1>
       </header>
       <!-- Navbar -->
       <nav class="navbar navbar-dark navbar-expand-md">
@@ -62,12 +62,12 @@
                 <a class="nav-link" href="./index-nm.html">Nightmare</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="./chart.html">ScoreChart</a>
+                <a class="nav-link" id="current" href="./chart.html"
+                  >ScoreChart</a
+                >
               </li>
               <li class="nav-item">
-                <a class="nav-link active" id="current" href="./index-info.html"
-                  >INFO</a
-                >
+                <a class="nav-link" href="./index-info.html">INFO</a>
               </li>
             </ul>
           </div>
@@ -78,21 +78,15 @@
           <article
             class="col-12 col-md-12 p-3 pt-5 flex-column justify-content-center align-items-center"
           >
-            <div class="text-center">
-              <h5><span style="color: #ff9e64">CONTACT</span></h5>
-              <p>merkks@protonmail.com</p>
-              <h5><span style="color: #ff9e64">GitHub</span></h5>
-              <a
-                href="https://github.com/merkksgit/nerd-type"
-                target="_blank"
-                style="color: #bb9af7 !important"
-                >Project GitHub page</a
-              ><br />
+            <div class="chart-container">
+              <canvas id="scoreChart"></canvas>
             </div>
           </article>
         </div>
       </div>
     </div>
+    <script src="../js/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

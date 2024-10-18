@@ -203,6 +203,18 @@ score h3 {
   color: #ff9e64;
 }
 
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#scoreChart {
+  width: 100%;
+  height: 500px;
+  max-width: 1400px;
+}
+
 @media (max-width: 1200px) {
   .progress {
     width: 50%;
