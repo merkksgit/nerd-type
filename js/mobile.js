@@ -1,4 +1,4 @@
-let timeLeft = 12; // Aloitusaika sekunteina
+let timeLeft = 10; // Aloitusaika sekunteina
 let totalTimeSpent = 0;
 let currentWordIndex = 0;
 let nextWordIndex = 0;
@@ -60,7 +60,7 @@ function totalTimeCount() {
 
   updateProgressBar(); // Päivitä progress bar
 
-  if (totalTimeSpent >= 30) {
+  if (totalTimeSpent >= 20) {
     // Peli päättyy, kun kokonaisaika on 90 sekuntia
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
@@ -76,7 +76,7 @@ function updateTimer() {
 
 function updateProgressBar() {
   // Laske edistyminen prosentteina
-  const progressPercentage = (totalTimeSpent / 30) * 100;
+  const progressPercentage = (totalTimeSpent / 20) * 100;
 
   // Päivitä progress barin leveys
   const progressBar = document.getElementById("progressBar");
@@ -101,7 +101,7 @@ function checkInput() {
   const userInput = document.getElementById("userInput").value;
   if (userInput === words[currentWordIndex]) {
     totalTimeSpent += 1;
-    timeLeft += 4; // Lisää 3 sekuntia aikaa
+    timeLeft += 3; // Lisää 3 sekuntia aikaa
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
     updateWordDisplay();
