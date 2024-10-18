@@ -27,6 +27,11 @@ function displayScoreGraph() {
     options: {
       responsive: true, // Make the chart responsive
       maintainAspectRatio: false, // Disable aspect ratio to allow CSS control
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
       scales: {
         x: {
           title: {
