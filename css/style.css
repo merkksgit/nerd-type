@@ -182,6 +182,7 @@ article h4 {
   width: 50%;
   color: #a9b1d6;
   line-height: 3em;
+  padding-top: 1em;
 }
 
 #previousResults li:nth-child(odd) {
