@@ -4,6 +4,8 @@ let currentWordIndex = 0;
 let nextWordIndex = 0;
 let countDownInterval;
 let totalTimeInterval;
+let gameStartTime; // To track when the game starts
+let wordsTyped = 0; // To count words typed correctly
 import { words } from "./words-prog.js";
 console.log(words);
 
@@ -20,6 +22,8 @@ function startGame() {
   countDownInterval = setInterval(countDown, 800);
   totalTimeInterval = setInterval(totalTimeCount, 1000);
   document.getElementById("userInput").focus();
+  gameStartTime = Date.now(); // Record the start time
+  wordsTyped = 0; // Reset words typed
 }
 
 function updateWordDisplay() {
@@ -106,22 +110,26 @@ function checkInput() {
     nextWordIndex = Math.floor(Math.random() * words.length);
     updateWordDisplay();
     document.getElementById("userInput").value = "";
+    wordsTyped++; // Increment words typed
   }
 }
 
 // Funktio, joka näyttää oikean viestin pelin päättyessä
 document.getElementById("totalTimeSpentDisplay").textContent = totalTimeSpent;
 function showGameOverModal(message) {
+  const wpm = calculateWPM();
   document.getElementById("gameOverModalLabel").textContent = "Game Over";
   document.querySelector(".modal-body").innerHTML =
     message +
     "<br />you have " +
     timeLeft +
-    " energy left.<br />Try again by pressing <span style='color:#ff9e64'>Return</span>" +
+    " energy left.<br />Your WPM: " +
+    wpm +
+    "<br />Try again by pressing <span style='color:#ff9e64'>Return</span>" +
     ".";
 
   // tallenna tulos localStorageen
-  saveResult(timeLeft);
+  saveResult(timeLeft, wpm);
   // näytä edelliset tulokset
   displayPreviousResults();
 
@@ -143,7 +151,13 @@ function showGameOverModal(message) {
   });
 }
 
-function saveResult(timeLeft) {
+function calculateWPM() {
+  const endTime = Date.now();
+  const timeElapsed = (endTime - gameStartTime) / 60000; // Convert to minutes
+  return Math.round(wordsTyped / timeElapsed || 0); // Calculate WPM, default to 0 if NaN
+}
+
+function saveResult(timeLeft, wpm) {
   if (timeLeft === 0) {
     return;
   }
@@ -151,7 +165,7 @@ function saveResult(timeLeft) {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
   // Lisää uusi tulos
-  results.push({ timeLeft, date: new Date().toLocaleString("en-GB") });
+  results.push({ timeLeft, wpm, date: new Date().toLocaleString("en-GB") });
 
   // Tallenna takaisin localStorageen
   localStorage.setItem("gameResults", JSON.stringify(results));
@@ -171,7 +185,7 @@ function displayPreviousResults() {
   // Lisää jokainen tulos näkyviin
   results.forEach((result) => {
     const resultItem = document.createElement("li");
-    resultItem.textContent = `${result.date} Score: ${result.timeLeft * 256}`;
+    resultItem.textContent = `${result.date} Score: ${result.timeLeft * 256}, WPM: ${result.wpm}`;
     resultsContainer.appendChild(resultItem);
   });
 }
