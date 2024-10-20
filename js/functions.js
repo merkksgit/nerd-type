@@ -5,7 +5,7 @@ let nextWordIndex = 0;
 let countDownInterval;
 let totalTimeInterval;
 let gameStartTime; // To track when the game starts
-let wordsTyped = 0; // To count words typed correctly
+let wordsTyped = []; // To store words typed correctly
 import { words } from "./words-prog.js";
 console.log(words);
 
@@ -23,7 +23,7 @@ function startGame() {
   totalTimeInterval = setInterval(totalTimeCount, 1000);
   document.getElementById("userInput").focus();
   gameStartTime = Date.now(); // Record the start time
-  wordsTyped = 0; // Reset words typed
+  wordsTyped = []; // Reset words typed
 }
 
 function updateWordDisplay() {
@@ -57,11 +57,6 @@ function countDown() {
 }
 
 function totalTimeCount() {
-  // totalTimeSpent++;
-  // poistetaan näytöltä kokonaisaika kommentoimalla tämä
-  // document.getElementById("totalTimeSpent").textContent =
-  //   totalTimeSpent + " seconds";
-
   updateProgressBar(); // Päivitä progress bar
 
   if (totalTimeSpent >= 30) {
@@ -106,11 +101,11 @@ function checkInput() {
   if (userInput === words[currentWordIndex]) {
     totalTimeSpent += 1;
     timeLeft += 3; // Lisää 3 sekuntia aikaa
+    wordsTyped.push(userInput); // Store the correctly typed word
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
     updateWordDisplay();
     document.getElementById("userInput").value = "";
-    wordsTyped++; // Increment words typed
   }
 }
 
@@ -125,6 +120,8 @@ function showGameOverModal(message) {
     timeLeft +
     " energy left.<br />Your WPM: " +
     wpm +
+    "<br>Score: " +
+    `${timeLeft * 256}` +
     "<br />Try again by pressing <span style='color:#ff9e64'>Return</span>" +
     ".";
 
@@ -154,7 +151,17 @@ function showGameOverModal(message) {
 function calculateWPM() {
   const endTime = Date.now();
   const timeElapsed = (endTime - gameStartTime) / 60000; // Convert to minutes
-  return Math.round(wordsTyped / timeElapsed || 0); // Calculate WPM, default to 0 if NaN
+
+  const correctCharactersTyped = wordsTyped.reduce(
+    (sum, word) => sum + (words.includes(word) ? word.length : 0),
+    0,
+  );
+
+  const averageWordLength =
+    words.reduce((sum, word) => sum + word.length, 0) / words.length;
+  const correctWordsTyped = correctCharactersTyped / averageWordLength;
+
+  return Math.round(correctWordsTyped / timeElapsed || 0);
 }
 
 function saveResult(timeLeft, wpm) {
