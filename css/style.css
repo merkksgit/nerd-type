@@ -30,10 +30,28 @@ header {
   color: #7aa2f7;
 }
 
-img {
+footer {
+  color: #7aa2f7;
+  width: 100%;
+}
+
+#footer-link {
+  text-decoration: none;
+  color: #7aa2f7;
+}
+
+#footer-link:hover {
+  color: #ff9e64;
+}
+
+#header-logo {
   width: 3.5em;
   margin-bottom: 0.9em;
   margin-right: 1em;
+}
+
+#footer-logo {
+  width: 3.5em;
 }
 
 .wpm-info {
