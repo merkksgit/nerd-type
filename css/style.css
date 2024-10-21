@@ -36,6 +36,10 @@ img {
   margin-right: 1em;
 }
 
+.wpm-info {
+  padding-top: 5em;
+}
+
 #game {
   margin: auto;
   text-align: center;

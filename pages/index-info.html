@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="">
+<html lang="en" class="h-100">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,7 +14,7 @@
   </head>
   <!-- Content -->
   <body class="d-flex flex-column h-100">
-    <div class="container-fluid flex-shrink-0">
+    <div class="container-fluid flex-grow-1">
       <!-- Header -->
       <header class="d-flex justify-content-center align-items-center">
         <p>
@@ -79,7 +79,7 @@
       <div class="container-fluid">
         <div class="row">
           <article
-            class="col-12 col-md-12 p-3 pt-5 flex-column justify-content-center align-items-center"
+            class="col-12 col-md-12 p-3 pt-5 d-flex flex-column justify-content-center align-items-center"
           >
             <div class="text-center">
               <h5><span style="color: #ff9e64">CONTACT</span></h5>
@@ -91,6 +91,50 @@
                 style="color: #bb9af7 !important"
                 >Project GitHub page</a
               ><br />
+            </div>
+            <div class="wpm-info text-left">
+              <h2>How Words Per Minute (WPM) is Calculated</h2>
+              <p>
+                In this typing game, your typing speed is measured in Words Per
+                Minute (WPM). Here's how the WPM is calculated:
+              </p>
+              <ol>
+                <li>
+                  The game tracks the time elapsed from the moment you start
+                  typing until the game ends. This time is converted from
+                  milliseconds to minutes.
+                </li>
+                <li>
+                  The game counts the total number of characters you typed
+                  correctly, excluding any incorrect words.
+                </li>
+                <li>
+                  The average word length is calculated by summing the lengths
+                  of all the words in the game's word list and dividing by the
+                  total number of words.
+                </li>
+                <li>
+                  The number of correctly typed words is calculated by dividing
+                  the total number of correctly typed characters by the average
+                  word length.
+                </li>
+                <li>
+                  Finally, the WPM is calculated by dividing the number of
+                  correctly typed words by the time elapsed in minutes.
+                </li>
+              </ol>
+              <p>
+                For example, if you typed 200 characters correctly in 1 minute,
+                and the average word length is 5 characters, your WPM would be:
+              </p>
+              <p>
+                (200 characters / 5 characters per word) / 1 minute = 40 WPM
+              </p>
+              <p>
+                Keep in mind that the WPM calculation only considers correctly
+                typed words and does not account for any errors or incorrect
+                words you may have typed.
+              </p>
             </div>
           </article>
         </div>
