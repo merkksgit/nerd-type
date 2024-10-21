@@ -35,7 +35,8 @@ footer {
   width: 100%;
 }
 
-#footer-link {
+#footer-link,
+#info-link {
   text-decoration: none;
   color: #7aa2f7;
 }
