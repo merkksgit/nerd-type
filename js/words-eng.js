@@ -76,11 +76,9 @@ export const words = [
   "sugar",
   "salt",
   "pepper",
-  "apple juice",
   "juice",
   "bottle",
   "basket",
-  "wall clock",
   "mattress",
   "blanket",
   "pillow",
@@ -139,5 +137,4 @@ export const words = [
   "phantom",
   "frankenstein",
   "werewolf",
-  "cactus",
 ];
