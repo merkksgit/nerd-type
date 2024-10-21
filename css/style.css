@@ -35,14 +35,9 @@ footer {
   width: 100%;
 }
 
-#footer-link,
 #info-link {
   text-decoration: none;
   color: #7aa2f7;
-}
-
-#footer-link:hover {
-  color: #ff9e64;
 }
 
 #header-logo {
@@ -52,7 +47,7 @@ footer {
 }
 
 #footer-logo {
-  width: 3.5em;
+  width: 3em;
 }
 
 .wpm-info {
@@ -136,6 +131,10 @@ article {
 }
 
 article h4 {
+  color: #ff9e64;
+}
+
+div h2 {
   color: #ff9e64;
 }
 
