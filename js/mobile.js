@@ -100,7 +100,7 @@ function checkInput() {
   const userInput = document.getElementById("userInput").value;
   if (userInput === words[currentWordIndex]) {
     totalTimeSpent += 1;
-    timeLeft += 3; // Lisää 3 sekuntia aikaa
+    timeLeft += 4; // Lisää 3 sekuntia aikaa
     wordsTyped.push(userInput); // Store the correctly typed word
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
