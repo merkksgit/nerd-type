@@ -90,7 +90,6 @@ export const words = [
   "skor",
   "kläder",
   "rock",
-  "Auri-aurinkoinen",
   "svenskprov",
   "möjlighet",
   "universitet",
