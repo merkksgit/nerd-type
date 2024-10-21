@@ -160,7 +160,10 @@ function calculateWPM() {
   const averageWordLength =
     words.reduce((sum, word) => sum + word.length, 0) / words.length;
   const correctWordsTyped = correctCharactersTyped / averageWordLength;
+  console.log(timeElapsed);
+  console.log(correctCharactersTyped);
   console.log(averageWordLength);
+  console.log(correctWordsTyped);
 
   return Math.round(correctWordsTyped / timeElapsed || 0);
 }
