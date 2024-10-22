@@ -1,20 +1,22 @@
-let timeLeft = 10; // Aloitusaika sekunteina
+let timeLeft = 10;
 let totalTimeSpent = 0;
 let currentWordIndex = 0;
 let nextWordIndex = 0;
 let countDownInterval;
 let totalTimeInterval;
-let gameStartTime; // To track when the game starts
-let wordsTyped = []; // To store words typed correctly
+let gameStartTime = null;
+let wordsTyped = [];
+let totalCharactersTyped = 0;
+let hasStartedTyping = false;
 import { words } from "./words-fin.js";
 console.log(words);
 
-const resetBtn = document.getElementById("resetBtn"); // Hae reset-painike
+const resetBtn = document.getElementById("resetBtn");
 
 document.getElementById("startButton").addEventListener("click", startGame);
 
 function startGame() {
-  currentWordIndex = Math.floor(Math.random() * words.length); // Valitse satunnainen indeksi
+  currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
   document.getElementById("wordToType").textContent = words[currentWordIndex];
   updateWordDisplay();
@@ -22,8 +24,10 @@ function startGame() {
   countDownInterval = setInterval(countDown, 800);
   totalTimeInterval = setInterval(totalTimeCount, 1000);
   document.getElementById("userInput").focus();
-  gameStartTime = Date.now(); // Record the start time
-  wordsTyped = []; // Reset words typed
+  gameStartTime = null;
+  hasStartedTyping = false;
+  wordsTyped = [];
+  totalCharactersTyped = 0;
 }
 
 function updateWordDisplay() {
@@ -31,7 +35,6 @@ function updateWordDisplay() {
   document.getElementById("nextWord").textContent = words[nextWordIndex];
 }
 
-// Aloita peli painamalla "Enter"
 document.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     startGame();
@@ -39,7 +42,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 resetBtn.addEventListener("click", () => {
-  location.reload(); // Lataa sivu uudelleen
+  location.reload();
 });
 
 function countDown() {
@@ -47,25 +50,23 @@ function countDown() {
     timeLeft--;
     updateTimer();
   } else {
-    // Peli päättyy, kun timeLeft menee nollaan
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(
       "Hack <span style='color:#ff007c'>FAILED!</span> You need a snack,",
-    ); // Näytä eri viesti
+    );
   }
 }
 
 function totalTimeCount() {
-  updateProgressBar(); // Päivitä progress bar
+  updateProgressBar();
 
   if (totalTimeSpent >= 30) {
-    // Peli päättyy, kun kokonaisaika on 90 sekuntia
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(
       "Pentagon <span style='color:#c3e88d'>HACKED!</span> After all that hacking,",
-    ); // Näytä eri viesti
+    );
   }
 }
 
@@ -74,34 +75,38 @@ function updateTimer() {
 }
 
 function updateProgressBar() {
-  // Laske edistyminen prosentteina
   const progressPercentage = (totalTimeSpent / 30) * 100;
 
-  // Päivitä progress barin leveys
   const progressBar = document.getElementById("progressBar");
   progressBar.style.width = progressPercentage + "%";
   progressBar.setAttribute("aria-valuenow", progressPercentage);
 
-  // Change color dynamically based on the progress
   if (progressPercentage < 80) {
     progressBar.style.backgroundColor = "#7aa2f7"; // Blue
   } else {
     progressBar.style.backgroundColor = "#ff007c"; // Red
   }
 
-  // Päivitä prosenttiluku
   document.getElementById("progressPercentage").textContent =
     "Hacked " + Math.floor(progressPercentage) + "%";
 }
 
-document.getElementById("userInput").addEventListener("input", checkInput);
+document.getElementById("userInput").addEventListener("input", function (e) {
+  // Start timer on first keystroke
+  if (!hasStartedTyping && e.target.value.length > 0) {
+    hasStartedTyping = true;
+    gameStartTime = Date.now();
+  }
+  checkInput(e);
+});
 
-function checkInput() {
-  const userInput = document.getElementById("userInput").value;
+function checkInput(e) {
+  const userInput = e.target.value;
   if (userInput === words[currentWordIndex]) {
+    totalCharactersTyped += words[currentWordIndex].length;
     totalTimeSpent += 1;
-    timeLeft += 3; // Lisää 3 sekuntia aikaa
-    wordsTyped.push(userInput); // Store the correctly typed word
+    timeLeft += 3;
+    wordsTyped.push(words[currentWordIndex]);
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
     updateWordDisplay();
@@ -109,8 +114,17 @@ function checkInput() {
   }
 }
 
-// Funktio, joka näyttää oikean viestin pelin päättyessä
 document.getElementById("totalTimeSpentDisplay").textContent = totalTimeSpent;
+
+function calculateWPM() {
+  if (!gameStartTime) return 0;
+  const endTime = Date.now();
+  const timeElapsed = Math.max(0.08, (endTime - gameStartTime) / 60000);
+  const CHARS_PER_WORD = 5;
+  const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
+  return wpm;
+}
+
 function showGameOverModal(message) {
   const wpm = calculateWPM();
   document.getElementById("gameOverModalLabel").textContent = "Game Over";
@@ -125,75 +139,40 @@ function showGameOverModal(message) {
     "<br />Try again by pressing <span style='color:#ff9e64'>Return</span>" +
     ".";
 
-  // tallenna tulos localStorageen
   saveResult(timeLeft, wpm);
-  // näytä edelliset tulokset
   displayPreviousResults();
 
-  // Näytä Bootstrap-modaali
   let gameOverModal = new bootstrap.Modal(
     document.getElementById("gameOverModal"),
   );
   gameOverModal.show();
 
   document.getElementById("restartGameBtn").addEventListener("click", () => {
-    location.reload(); // Pelin uudelleenkäynnistys
+    location.reload();
   });
 
-  // Lisää event listener Enterin painamiselle
   document.addEventListener("keydown", function handleEnterKey(event) {
     if (event.key === "Enter") {
-      location.reload(); // Käynnistä peli uudelleen lataamalla sivu
+      location.reload();
     }
   });
-}
-
-function calculateWPM() {
-  const endTime = Date.now();
-  const timeElapsed = (endTime - gameStartTime) / 60000; // Convert to minutes
-
-  const correctCharactersTyped = wordsTyped.reduce(
-    (sum, word) => sum + (words.includes(word) ? word.length : 0),
-    0,
-  );
-
-  const averageWordLength =
-    words.reduce((sum, word) => sum + word.length, 0) / words.length;
-  const correctWordsTyped = correctCharactersTyped / averageWordLength;
-  console.log(timeElapsed);
-  console.log(correctCharactersTyped);
-  console.log(averageWordLength);
-  console.log(correctWordsTyped);
-
-  return Math.round(correctWordsTyped / timeElapsed || 0);
 }
 
 function saveResult(timeLeft, wpm) {
   if (timeLeft === 0) {
     return;
   }
-  // Hae nykyiset tulokset localStoragesta
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-
-  // Lisää uusi tulos
   results.push({ timeLeft, wpm, date: new Date().toLocaleString("en-GB") });
-
-  // Tallenna takaisin localStorageen
   localStorage.setItem("gameResults", JSON.stringify(results));
 }
 
 function displayPreviousResults() {
   const resultsContainer = document.getElementById("previousResults");
-
-  // Hae tulokset localStoragesta
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-
   results.reverse();
-
-  // Tyhjennä aiemmat tulokset
   resultsContainer.innerHTML = "";
 
-  // Lisää jokainen tulos näkyviin
   results.forEach((result) => {
     const resultItem = document.createElement("li");
     resultItem.textContent = `${result.date} Score: ${result.timeLeft * 256}, WPM: ${result.wpm}`;
@@ -201,19 +180,14 @@ function displayPreviousResults() {
   });
 }
 
-// Kutsutaan sivun latautuessa, jotta näytetään edelliset tulokset
 document.addEventListener("DOMContentLoaded", displayPreviousResults);
 
 document
   .getElementById("clearResultsBtn")
   .addEventListener("click", function () {
-    // Clear results from localStorage
     localStorage.removeItem("gameResults");
-
-    // Clear the displayed results from the page
     document.getElementById("previousResults").innerHTML = "";
 
-    // Näytä mukautettu modaali
     const customAlertModal = new bootstrap.Modal(
       document.getElementById("customAlertModal"),
     );

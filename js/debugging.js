@@ -1,4 +1,4 @@
-let timeLeft = 10;
+let timeLeft = 100;
 let totalTimeSpent = 0;
 let currentWordIndex = 0;
 let nextWordIndex = 0;
@@ -7,9 +7,117 @@ let totalTimeInterval;
 let gameStartTime = null;
 let wordsTyped = [];
 let totalCharactersTyped = 0;
-let hasStartedTyping = false;
-import { words } from "./words-prog.js";
+let hasStartedTyping = false; // New flag to track if typing has started
+import { words } from "./words-fin.js";
 console.log(words);
+
+// Create debug display with draggable functionality
+const debugDiv = document.createElement("div");
+debugDiv.style.position = "fixed";
+debugDiv.style.bottom = "10px";
+debugDiv.style.left = "10px";
+debugDiv.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+debugDiv.style.color = "#00ff00";
+debugDiv.style.fontFamily = "monospace";
+debugDiv.style.fontSize = "18px";
+debugDiv.style.zIndex = "1000";
+debugDiv.style.cursor = "move"; // Change cursor to indicate draggable
+debugDiv.style.userSelect = "none"; // Prevent text selection while dragging
+
+// Add a handle bar to make it clear it's draggable
+const handleBar = document.createElement("div");
+handleBar.style.backgroundColor = "#292e42";
+handleBar.style.padding = "2px";
+handleBar.style.textAlign = "center";
+handleBar.textContent = "="; // Add visual handle
+debugDiv.appendChild(handleBar);
+
+// Create content container
+const debugContent = document.createElement("div");
+debugDiv.appendChild(debugContent);
+
+document.body.appendChild(debugDiv);
+
+// Add dragging functionality
+let isDragging = false;
+let currentX;
+let currentY;
+let initialX;
+let initialY;
+let xOffset = 0;
+let yOffset = 0;
+
+function dragStart(e) {
+  if (e.type === "touchstart") {
+    initialX = e.touches[0].clientX - xOffset;
+    initialY = e.touches[0].clientY - yOffset;
+  } else {
+    initialX = e.clientX - xOffset;
+    initialY = e.clientY - yOffset;
+  }
+
+  if (e.target === debugDiv || debugDiv.contains(e.target)) {
+    isDragging = true;
+  }
+}
+
+function dragEnd() {
+  initialX = currentX;
+  initialY = currentY;
+  isDragging = false;
+}
+
+function drag(e) {
+  if (isDragging) {
+    e.preventDefault();
+
+    if (e.type === "touchmove") {
+      currentX = e.touches[0].clientX - initialX;
+      currentY = e.touches[0].clientY - initialY;
+    } else {
+      currentX = e.clientX - initialX;
+      currentY = e.clientY - initialY;
+    }
+
+    xOffset = currentX;
+    yOffset = currentY;
+
+    setTranslate(currentX, currentY, debugDiv);
+  }
+}
+
+function setTranslate(xPos, yPos, el) {
+  el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+}
+
+// Add event listeners for both mouse and touch events
+debugDiv.addEventListener("mousedown", dragStart, false);
+document.addEventListener("mousemove", drag, false);
+document.addEventListener("mouseup", dragEnd, false);
+
+debugDiv.addEventListener("touchstart", dragStart, false);
+document.addEventListener("touchmove", drag, false);
+document.addEventListener("touchend", dragEnd, false);
+
+// Modify the updateDebugInfo function to use the content container
+function updateDebugInfo() {
+  const currentTime = gameStartTime ? (Date.now() - gameStartTime) / 1000 : 0;
+  const timeInMinutes = currentTime / 60;
+  const currentWPM = gameStartTime
+    ? Math.round(totalCharactersTyped / 5 / timeInMinutes)
+    : 0;
+
+  debugContent.innerHTML = `
+        Current Word: ${words[currentWordIndex]} (${words[currentWordIndex]?.length || 0} chars)<br>
+        Total Characters: ${totalCharactersTyped}<br>
+        Standard Words (chars/5): ${(totalCharactersTyped / 5).toFixed(2)}<br>
+        Time Elapsed: ${currentTime.toFixed(2)}s<br>
+        Current WPM: ${currentWPM}<br>
+        Words Typed: ${wordsTyped.length}<br>
+        Timer Started: ${gameStartTime ? "Yes" : "No"}<br>
+        Typing Started: ${hasStartedTyping ? "Yes" : "No"}
+    `;
+}
 
 const resetBtn = document.getElementById("resetBtn");
 
@@ -28,7 +136,19 @@ function startGame() {
   hasStartedTyping = false;
   wordsTyped = [];
   totalCharactersTyped = 0;
+  updateDebugInfo();
 }
+
+// Listen for any input in the text field
+document.getElementById("userInput").addEventListener("input", function (e) {
+  // Start timer on first keystroke
+  if (!hasStartedTyping && e.target.value.length > 0) {
+    hasStartedTyping = true;
+    gameStartTime = Date.now();
+    console.log("Timer started on first keystroke");
+  }
+  checkInput(e);
+});
 
 function updateWordDisplay() {
   document.getElementById("wordToType").textContent = words[currentWordIndex];
@@ -91,19 +211,15 @@ function updateProgressBar() {
     "Hacked " + Math.floor(progressPercentage) + "%";
 }
 
-document.getElementById("userInput").addEventListener("input", function (e) {
-  // Start timer on first keystroke
-  if (!hasStartedTyping && e.target.value.length > 0) {
-    hasStartedTyping = true;
-    gameStartTime = Date.now();
-  }
-  checkInput(e);
-});
-
 function checkInput(e) {
   const userInput = e.target.value;
   if (userInput === words[currentWordIndex]) {
-    totalCharactersTyped += words[currentWordIndex].length;
+    const charsAdded = words[currentWordIndex].length;
+    console.log(
+      `Word typed: "${words[currentWordIndex]}" - ${charsAdded} characters`,
+    );
+
+    totalCharactersTyped += charsAdded;
     totalTimeSpent += 1;
     timeLeft += 3;
     wordsTyped.push(words[currentWordIndex]);
@@ -111,10 +227,12 @@ function checkInput(e) {
     nextWordIndex = Math.floor(Math.random() * words.length);
     updateWordDisplay();
     document.getElementById("userInput").value = "";
+    updateDebugInfo();
   }
 }
 
-document.getElementById("totalTimeSpentDisplay").textContent = totalTimeSpent;
+// Update debug info every 100ms
+setInterval(updateDebugInfo, 100);
 
 function calculateWPM() {
   if (!gameStartTime) return 0;

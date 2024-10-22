@@ -88,6 +88,7 @@
             <div class="text-center">
               <h5><span style="color: #ff9e64">CONTACT</span></h5>
               <p>merkks@protonmail.com</p>
+            </div>
           </article>
           <article
             class="col-md-6 p-3 pt-5 d-flex flex-column justify-content-center align-items-center"
@@ -102,7 +103,9 @@
                 target="_blank"
                 style="color: #bb9af7 !important"
                 >Project GitHub page</a
-              ></article>
+              >
+            </div>
+          </article>
           <article
             class="col-md-12 p-3 pt-5 d-flex flex-column justify-content-center align-items-center"
           >
@@ -114,40 +117,48 @@
               </p>
               <ol>
                 <li>
-                  The game tracks the time elapsed from the moment you start
-                  typing until the game ends. This time is converted from
-                  milliseconds to minutes.
+                  The game tracks the time elapsed from your first keystroke
+                  until the game ends. This time is converted from milliseconds
+                  to minutes.
                 </li>
                 <li>
                   The game counts the total number of characters you typed
-                  correctly, excluding any incorrect words.
+                  correctly in all words, including longer words which
+                  contribute more characters to your total.
                 </li>
                 <li>
-                  The average word length is calculated by summing the lengths
-                  of all the words in the game's word list and dividing by the
-                  total number of words.
+                  The standard word length is defined as 5 characters, which is
+                  the international standard for typing speed measurements.
                 </li>
                 <li>
-                  The number of correctly typed words is calculated by dividing
-                  the total number of correctly typed characters by the average
-                  word length.
-                </li>
-                <li>
-                  Finally, the WPM is calculated by dividing the number of
-                  correctly typed words by the time elapsed in minutes.
+                  Your WPM is calculated by dividing your total characters typed
+                  by 5 (to convert to standard words), then dividing by the
+                  elapsed time in minutes.
                 </li>
               </ol>
               <p>
                 For example, if you typed 200 characters correctly in 1 minute,
-                and the average word length is 5 characters, your WPM would be:
+                your WPM would be:
               </p>
               <p>
                 (200 characters / 5 characters per word) / 1 minute = 40 WPM
               </p>
               <p>
-                Keep in mind that the WPM calculation only considers correctly
-                typed words and does not account for any errors or incorrect
-                words you may have typed.
+                This means typing longer words will contribute more to your WPM
+                than shorter words. For example:
+              </p>
+              <ul>
+                <li>
+                  Typing "programming" (11 characters) counts as 2.2 standard
+                  words
+                </li>
+                <li>
+                  Typing "cat" (3 characters) counts as 0.6 standard words
+                </li>
+              </ul>
+              <p>
+                The WPM calculation only considers correctly typed words and
+                does not account for any errors or incorrect words.
               </p>
             </div>
           </article>
