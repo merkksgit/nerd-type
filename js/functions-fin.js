@@ -122,6 +122,10 @@ function calculateWPM() {
   const timeElapsed = Math.max(0.08, (endTime - gameStartTime) / 60000);
   const CHARS_PER_WORD = 5;
   const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
+  console.log("Total characters typed:", totalCharactersTyped);
+  console.log("Characters per word:", CHARS_PER_WORD);
+  console.log("Time elapsed:", timeElapsed);
+  console.log("WPM:", wpm);
   return wpm;
 }
 
