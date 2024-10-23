@@ -124,7 +124,7 @@ function calculateWPM() {
   const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
   console.log("Total characters typed:", totalCharactersTyped);
   console.log("Characters per word:", CHARS_PER_WORD);
-  console.log("Time elapsed:", timeElapsed);
+  console.log("Time elapsed(min):", timeElapsed);
   console.log("WPM:", wpm);
   return wpm;
 }
