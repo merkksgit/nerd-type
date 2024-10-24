@@ -41,6 +41,12 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && event.ctrlKey) {
+    location.reload();
+  }
+});
+
 resetBtn.addEventListener("click", () => {
   location.reload();
 });
