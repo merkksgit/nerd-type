@@ -1,14 +1,13 @@
-let timeLeft = 10;
 let totalTimeSpent = 0;
 let currentWordIndex = 0;
 let nextWordIndex = 0;
-let countDownInterval;
 let totalTimeInterval;
 let gameStartTime = null;
 let wordsTyped = [];
 let totalCharactersTyped = 0;
 let hasStartedTyping = false;
-import { words } from "./words-eng.js";
+let sessionStartTime = null;
+import { words } from "./words-fin.js";
 console.log(words);
 
 const resetBtn = document.getElementById("resetBtn");
@@ -18,13 +17,11 @@ document.getElementById("startButton").addEventListener("click", startGame);
 function startGame() {
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
-  document.getElementById("wordToType").textContent = words[currentWordIndex];
   updateWordDisplay();
-  updateTimer();
-  countDownInterval = setInterval(countDown, 800);
   totalTimeInterval = setInterval(totalTimeCount, 1000);
   document.getElementById("userInput").focus();
   gameStartTime = null;
+  sessionStartTime = new Date();
   hasStartedTyping = false;
   wordsTyped = [];
   totalCharactersTyped = 0;
@@ -33,6 +30,17 @@ function startGame() {
 function updateWordDisplay() {
   document.getElementById("wordToType").textContent = words[currentWordIndex];
   document.getElementById("nextWord").textContent = words[nextWordIndex];
+}
+
+function calculateTotalTime() {
+  if (!sessionStartTime) return "0:00";
+
+  const now = new Date();
+  const totalSeconds = Math.floor((now - sessionStartTime) / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
 document.addEventListener("keydown", (event) => {
@@ -51,37 +59,20 @@ resetBtn.addEventListener("click", () => {
   location.reload();
 });
 
-function countDown() {
-  if (timeLeft > 0) {
-    timeLeft--;
-    updateTimer();
-  } else {
-    clearInterval(countDownInterval);
-    clearInterval(totalTimeInterval);
-    showGameOverModal(
-      "Hack <span style='color:#ff007c'>FAILED!</span> You need a snack,",
-    );
-  }
-}
-
 function totalTimeCount() {
   updateProgressBar();
-
-  if (totalTimeSpent >= 20) {
-    clearInterval(countDownInterval);
-    clearInterval(totalTimeInterval);
-    showGameOverModal(
-      "Pentagon <span style='color:#c3e88d'>HACKED!</span> After all that hacking,",
-    );
+  if (document.getElementById("totalTime")) {
+    document.getElementById("totalTime").textContent = calculateTotalTime();
   }
-}
 
-function updateTimer() {
-  document.getElementById("timeLeft").textContent = timeLeft;
+  if (totalTimeSpent >= 30) {
+    clearInterval(totalTimeInterval);
+    showGameOverModal("<span style='color:#c3e88d'>Results:</span>");
+  }
 }
 
 function updateProgressBar() {
-  const progressPercentage = (totalTimeSpent / 20) * 100;
+  const progressPercentage = (totalTimeSpent / 30) * 100;
 
   const progressBar = document.getElementById("progressBar");
   progressBar.style.width = progressPercentage + "%";
@@ -94,11 +85,10 @@ function updateProgressBar() {
   }
 
   document.getElementById("progressPercentage").textContent =
-    "Hacked " + Math.floor(progressPercentage) + "%";
+    "Progress " + Math.floor(progressPercentage) + "%";
 }
 
 document.getElementById("userInput").addEventListener("input", function (e) {
-  // Start timer on first keystroke
   if (!hasStartedTyping && e.target.value.length > 0) {
     hasStartedTyping = true;
     gameStartTime = Date.now();
@@ -111,7 +101,6 @@ function checkInput(e) {
   if (userInput === words[currentWordIndex]) {
     totalCharactersTyped += words[currentWordIndex].length;
     totalTimeSpent += 1;
-    timeLeft += 4;
     wordsTyped.push(words[currentWordIndex]);
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
@@ -119,8 +108,6 @@ function checkInput(e) {
     document.getElementById("userInput").value = "";
   }
 }
-
-document.getElementById("totalTimeSpentDisplay").textContent = totalTimeSpent;
 
 function calculateWPM() {
   if (!gameStartTime) return 0;
@@ -133,19 +120,12 @@ function calculateWPM() {
 
 function showGameOverModal(message) {
   const wpm = calculateWPM();
-  document.getElementById("gameOverModalLabel").textContent = "Game Over";
+  const totalTime = calculateTotalTime();
+  document.getElementById("gameOverModalLabel").textContent = "  ZenMode";
   document.querySelector(".modal-body").innerHTML =
-    message +
-    "<br />you have " +
-    timeLeft +
-    " energy left.<br />Your WPM: " +
-    wpm +
-    "<br>Score: " +
-    `${timeLeft * 256}` +
-    "<br />Try again by pressing <span style='color:#ff9e64'>Return</span>" +
-    ".";
+    message + "<br />Time: " + totalTime + "<br />WPM: " + wpm;
 
-  saveResult(timeLeft, wpm);
+  saveResult(wpm, totalTime);
   displayPreviousResults();
 
   let gameOverModal = new bootstrap.Modal(
@@ -164,12 +144,14 @@ function showGameOverModal(message) {
   });
 }
 
-function saveResult(timeLeft, wpm) {
-  if (timeLeft === 0) {
-    return;
-  }
+function saveResult(wpm, totalTime) {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-  results.push({ timeLeft, wpm, date: new Date().toLocaleString("en-GB") });
+  results.push({
+    wpm,
+    totalTime,
+    date: new Date().toLocaleString("en-GB"),
+    mode: "Zen Mode",
+  });
   localStorage.setItem("gameResults", JSON.stringify(results));
 }
 
@@ -181,7 +163,11 @@ function displayPreviousResults() {
 
   results.forEach((result) => {
     const resultItem = document.createElement("li");
-    resultItem.textContent = `${result.date} Score: ${result.timeLeft * 256}, WPM: ${result.wpm}`;
+    if (result.mode === "Zen Mode") {
+      resultItem.textContent = `${result.date} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}`;
+    } else {
+      resultItem.textContent = `${result.date} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}`;
+    }
     resultsContainer.appendChild(resultItem);
   });
 }

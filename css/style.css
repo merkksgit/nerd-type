@@ -232,10 +232,15 @@ score h3 {
   align-items: center;
 }
 
-#scoreChart {
+#scoreChart,
+#zenChart {
   width: 100%;
   height: 500px;
   max-width: 1400px;
+}
+
+.chart-container {
+  height: 400px;
 }
 
 @media (max-width: 1200px) {

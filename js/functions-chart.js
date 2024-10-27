@@ -1,37 +1,37 @@
+// Scoreboard (ScoreChart page)
 function displayPreviousResults() {
   const resultsContainer = document.getElementById("previousResults");
-
-  // Hae tulokset localStoragesta
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-
   results.reverse();
-
-  // Tyhjennä aiemmat tulokset
   resultsContainer.innerHTML = "";
 
-  // Lisää jokainen tulos näkyviin
   results.forEach((result) => {
     const resultItem = document.createElement("li");
-    resultItem.textContent = `${result.date} Score: ${result.timeLeft * 256}, WPM: ${result.wpm}`;
+    if (result.mode === "Zen Mode") {
+      resultItem.textContent = `${result.date} | Zen Mode | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}`;
+    } else {
+      const score = result.timeLeft ? result.timeLeft * 256 : "N/A";
+      resultItem.textContent = `${result.date} | Classic Mode | Score: ${score}, WPM: ${result.wpm}`;
+    }
     resultsContainer.appendChild(resultItem);
   });
 }
 
-// Kutsutaan sivun latautuessa, jotta näytetään edelliset tulokset
 document.addEventListener("DOMContentLoaded", displayPreviousResults);
 
 document
   .getElementById("clearResultsBtn")
   .addEventListener("click", function () {
-    // Clear results from localStorage
     localStorage.removeItem("gameResults");
-
-    // Clear the displayed results from the page
     document.getElementById("previousResults").innerHTML = "";
 
-    // Näytä mukautettu modaali
     const customAlertModal = new bootstrap.Modal(
       document.getElementById("customAlertModal"),
     );
     customAlertModal.show();
+    document
+      .getElementById("clrResults")
+      .addEventListener("click", function () {
+        location.reload();
+      });
   });

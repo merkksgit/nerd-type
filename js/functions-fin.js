@@ -98,7 +98,6 @@ function updateProgressBar() {
 }
 
 document.getElementById("userInput").addEventListener("input", function (e) {
-  // Start timer on first keystroke
   if (!hasStartedTyping && e.target.value.length > 0) {
     hasStartedTyping = true;
     gameStartTime = Date.now();
@@ -173,7 +172,27 @@ function saveResult(timeLeft, wpm) {
     return;
   }
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-  results.push({ timeLeft, wpm, date: new Date().toLocaleString("en-GB") });
+
+  // For Classic mode
+  if (timeLeft) {
+    results.push({
+      timeLeft,
+      wpm,
+      date: new Date().toLocaleString("en-GB"),
+      mode: "Classic Mode",
+      score: timeLeft * 256,
+    });
+  }
+  // For Zen mode
+  else {
+    results.push({
+      wpm,
+      date: new Date().toLocaleString("en-GB"),
+      mode: "Zen Mode",
+      score: totalCharactersTyped * 10,
+    });
+  }
+
   localStorage.setItem("gameResults", JSON.stringify(results));
 }
 
@@ -185,7 +204,11 @@ function displayPreviousResults() {
 
   results.forEach((result) => {
     const resultItem = document.createElement("li");
-    resultItem.textContent = `${result.date} Score: ${result.timeLeft * 256}, WPM: ${result.wpm}`;
+    if (result.mode === "Classic Mode") {
+      resultItem.textContent = `${result.date} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}`;
+    } else {
+      resultItem.textContent = `${result.date} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}`;
+    }
     resultsContainer.appendChild(resultItem);
   });
 }

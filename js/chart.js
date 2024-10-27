@@ -1,67 +1,140 @@
+// Chart
 function displayScoreGraph() {
-  // Fetch results from localStorage
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-  // Extract dates, scores, and WPM from the results
-  const dates = results.map((result) => result.date); // Dates that we will hide
-  const scores = results.map((result) => result.timeLeft * 256); // Scores
-  const wpmScores = results.map((result) => result.wpm); // WPM scores
-  // Calculate the average score and average WPM
-  const averageScore =
-    scores.reduce((sum, score) => sum + score, 0) / scores.length;
-  const averageWPM =
-    wpmScores.reduce((sum, wpm) => sum + wpm, 0) / wpmScores.length;
-  // Get the canvas context
+
+  // Filter only Classic Mode results
+  const classicResults = results.filter(
+    (result) => result.mode === "Classic Mode" || !result.mode,
+  );
+
+  // If no classic results, don't display anything
+  if (classicResults.length === 0) {
+    const ctx = document.getElementById("scoreChart").getContext("2d");
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "Score",
+            data: [],
+            borderColor: "#7aa2f7",
+            backgroundColor: "rgba(122, 162, 247, 0.2)",
+            fill: false,
+            yAxisID: "y",
+          },
+          {
+            label: "WPM",
+            data: [],
+            borderColor: "#ff9e64",
+            backgroundColor: "rgba(255, 158, 100, 0.2)",
+            fill: false,
+            yAxisID: "y1",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+          },
+        },
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: false,
+              text: "Classic Mode History",
+            },
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: "Score",
+            },
+            grid: {
+              display: true,
+              color: "#3b4261",
+            },
+          },
+          y1: {
+            display: true,
+            title: {
+              display: true,
+              text: "WPM",
+            },
+            position: "right",
+          },
+        },
+      },
+    });
+    return;
+  }
+
+  const dates = classicResults.map((result) => result.date);
+  const scores = classicResults.map((result) => result.timeLeft * 256);
+  const wpmScores = classicResults.map((result) => result.wpm);
+
+  const averageScore = scores.length
+    ? scores.reduce((sum, score) => sum + score, 0) / scores.length
+    : 0;
+  const averageWPM = wpmScores.length
+    ? wpmScores.reduce((sum, wpm) => sum + wpm, 0) / wpmScores.length
+    : 0;
+
   const ctx = document.getElementById("scoreChart").getContext("2d");
-  // Create the chart on the canvas
   new Chart(ctx, {
-    type: "line", // Line chart
+    type: "line",
     data: {
-      labels: dates, // X-axis
+      labels: dates,
       datasets: [
         {
-          label: "Score", // Label for the score dataset
-          data: scores, // Y-axis: Scores
-          borderColor: "#7aa2f7", // Line color
-          backgroundColor: "rgba(122, 162, 247, 0.2)", // Line background fill color
-          fill: false, // Fill area below the line
+          label: "Score",
+          data: scores,
+          borderColor: "#7aa2f7",
+          backgroundColor: "rgba(122, 162, 247, 0.2)",
+          fill: false,
           yAxisID: "y",
         },
         {
-          label: "WPM", // Label for the WPM dataset
-          data: wpmScores, // Y-axis: WPM scores
-          borderColor: "#ff9e64", // Line color for WPM
-          backgroundColor: "rgba(255, 158, 100, 0.2)", // Line background fill color for WPM
-          fill: false, // Fill area below the line
+          label: "WPM",
+          data: wpmScores,
+          borderColor: "#ff9e64",
+          backgroundColor: "rgba(255, 158, 100, 0.2)",
+          fill: false,
           yAxisID: "y1",
         },
       ],
     },
     options: {
-      responsive: true, // Make the chart responsive
-      maintainAspectRatio: false, // Disable aspect ratio to allow CSS control
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
-          display: true, // Display legend to differentiate between Score and WPM
+          display: true,
         },
       },
       scales: {
         x: {
           title: {
-            display: true, // Display the X-axis title
-            text: "Game History", // Title text
+            display: true,
+            text: "Classic Mode History",
           },
           ticks: {
-            display: false, // Hide the date labels
+            display: false,
           },
           grid: {
-            display: true, // Keep the grid lines visible if needed
+            display: true,
             color: "#3b4261",
           },
         },
         y: {
           title: {
             display: true,
-            text: "Score", // Y-axis title for Score
+            text: "Score",
           },
           position: "left",
           grid: {
@@ -71,11 +144,11 @@ function displayScoreGraph() {
         y1: {
           title: {
             display: true,
-            text: "WPM", // Y-axis title for WPM
+            text: "WPM",
           },
           position: "right",
           grid: {
-            drawOnChartArea: false, // Only want the grid lines for one axis to show up
+            drawOnChartArea: false,
             color: "#414868",
           },
         },
@@ -87,52 +160,266 @@ function displayScoreGraph() {
           const ctx = chart.ctx;
           const chartArea = chart.chartArea;
 
-          // Draw average score line
-          const yValue = chart.scales.y.getPixelForValue(averageScore);
-          ctx.save();
-          ctx.strokeStyle = "#7aa2f7";
-          ctx.lineWidth = 2;
-          ctx.setLineDash([9, 5]); // Set line style to dashed
-          ctx.beginPath();
-          ctx.moveTo(chartArea.left, yValue);
-          ctx.lineTo(chartArea.right, yValue);
-          ctx.stroke();
-          ctx.restore();
+          if (scores.length > 0) {
+            const yValue = chart.scales.y.getPixelForValue(averageScore);
+            ctx.save();
+            ctx.strokeStyle = "#7aa2f7";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([9, 5]);
+            ctx.beginPath();
+            ctx.moveTo(chartArea.left, yValue);
+            ctx.lineTo(chartArea.right, yValue);
+            ctx.stroke();
+            ctx.restore();
 
-          // Draw average score text
-          ctx.fillStyle = "#414868";
-          ctx.font = "12px Arial";
-          ctx.fillText(
-            `Avg Score: ${averageScore.toFixed(0)}`,
-            chartArea.right - 120,
-            yValue - 5,
-          );
+            ctx.fillStyle = "#414868";
+            ctx.font = "12px Arial";
+            ctx.fillText(
+              `Avg Score: ${averageScore.toFixed(0)}`,
+              chartArea.right - 120,
+              yValue - 5,
+            );
+          }
 
-          // Draw average WPM line
-          const y1Value = chart.scales.y1.getPixelForValue(averageWPM);
-          ctx.save();
-          ctx.strokeStyle = "#ff9e64";
-          ctx.lineWidth = 2;
-          ctx.setLineDash([9, 5]); // Set line style to dashed
-          ctx.beginPath();
-          ctx.moveTo(chartArea.left, y1Value);
-          ctx.lineTo(chartArea.right, y1Value);
-          ctx.stroke();
-          ctx.restore();
+          if (wpmScores.length > 0) {
+            const y1Value = chart.scales.y1.getPixelForValue(averageWPM);
+            ctx.save();
+            ctx.strokeStyle = "#ff9e64";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([9, 5]);
+            ctx.beginPath();
+            ctx.moveTo(chartArea.left, y1Value);
+            ctx.lineTo(chartArea.right, y1Value);
+            ctx.stroke();
+            ctx.restore();
 
-          // Draw average WPM text
-          ctx.fillStyle = "#414868";
-          ctx.font = "12px Arial";
-          ctx.fillText(
-            `Avg WPM: ${averageWPM.toFixed(0)}`,
-            chartArea.left + 10,
-            y1Value - 5,
-          );
+            ctx.fillStyle = "#414868";
+            ctx.font = "12px Arial";
+            ctx.fillText(
+              `Avg WPM: ${averageWPM.toFixed(0)}`,
+              chartArea.left + 10,
+              y1Value - 5,
+            );
+          }
         },
       },
     ],
   });
 }
 
-// Ensure the graph is loaded when the DOM is fully loaded
-document.addEventListener("DOMContentLoaded", displayScoreGraph);
+function displayZenModeGraph() {
+  let results = JSON.parse(localStorage.getItem("gameResults")) || [];
+
+  // Filter only Zen Mode results
+  const zenResults = results.filter((result) => result.mode === "Zen Mode");
+
+  // If no zen results, don't display anything
+  if (zenResults.length === 0) {
+    const ctx = document.getElementById("zenChart").getContext("2d");
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: "Time (seconds)",
+            data: [],
+            borderColor: "#c3e88d",
+            backgroundColor: "rgba(195, 232, 141, 0.2)",
+            fill: false,
+            yAxisID: "y",
+          },
+          {
+            label: "WPM",
+            data: [],
+            borderColor: "#ff9e64",
+            backgroundColor: "rgba(255, 158, 100, 0.2)",
+            fill: false,
+            yAxisID: "y1",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+          },
+        },
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+            },
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: "Time (seconds)",
+            },
+            grid: {
+              display: true,
+              color: "#3b4261",
+            },
+          },
+          y1: {
+            display: true,
+            title: {
+              display: true,
+              text: "WPM",
+            },
+            position: "right",
+          },
+        },
+      },
+    });
+    return;
+  }
+
+  const dates = zenResults.map((result) => result.date);
+  const times = zenResults
+    .map((result) => {
+      if (!result.totalTime) return null;
+      const [minutes, seconds] = result.totalTime.split(":").map(Number);
+      return minutes * 60 + seconds;
+    })
+    .filter((time) => time !== null);
+
+  const wpmScores = zenResults.map((result) => result.wpm);
+
+  const averageTime = times.length
+    ? times.reduce((sum, time) => sum + time, 0) / times.length
+    : 0;
+  const averageWPM = wpmScores.length
+    ? wpmScores.reduce((sum, wpm) => sum + wpm, 0) / wpmScores.length
+    : 0;
+
+  const ctx = document.getElementById("zenChart").getContext("2d");
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: dates,
+      datasets: [
+        {
+          label: "Time (seconds)",
+          data: times,
+          borderColor: "#c3e88d",
+          backgroundColor: "rgba(195, 232, 141, 0.2)",
+          fill: false,
+          yAxisID: "y",
+        },
+        {
+          label: "WPM",
+          data: wpmScores,
+          borderColor: "#ff9e64",
+          backgroundColor: "rgba(255, 158, 100, 0.2)",
+          fill: false,
+          yAxisID: "y1",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: false,
+            text: "Zen Mode History",
+          },
+          ticks: {
+            display: false,
+          },
+          grid: {
+            display: true,
+            color: "#3b4261",
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Time (seconds)",
+          },
+          position: "left",
+          grid: {
+            color: "#3b4261",
+          },
+        },
+        y1: {
+          title: {
+            display: true,
+            text: "WPM",
+          },
+          position: "right",
+          grid: {
+            drawOnChartArea: false,
+            color: "#414868",
+          },
+        },
+      },
+    },
+    plugins: [
+      {
+        beforeDraw: (chart) => {
+          const ctx = chart.ctx;
+          const chartArea = chart.chartArea;
+
+          if (times.length > 0) {
+            const yValue = chart.scales.y.getPixelForValue(averageTime);
+            ctx.save();
+            ctx.strokeStyle = "#c3e88d";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([9, 5]);
+            ctx.beginPath();
+            ctx.moveTo(chartArea.left, yValue);
+            ctx.lineTo(chartArea.right, yValue);
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.fillStyle = "#414868";
+            ctx.font = "12px Arial";
+            ctx.fillText(
+              `Avg Time: ${averageTime.toFixed(0)}s`,
+              chartArea.left + 10,
+              yValue - 5,
+            );
+          }
+
+          if (wpmScores.length > 0) {
+            const y1Value = chart.scales.y1.getPixelForValue(averageWPM);
+            ctx.save();
+            ctx.strokeStyle = "#ff9e64";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([9, 5]);
+            ctx.beginPath();
+            ctx.moveTo(chartArea.left, y1Value);
+            ctx.lineTo(chartArea.right, y1Value);
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.fillStyle = "#414868";
+            ctx.font = "12px Arial";
+            ctx.fillText(
+              `Avg WPM: ${averageWPM.toFixed(0)}`,
+              chartArea.right - 120,
+              y1Value - 5,
+            );
+          }
+        },
+      },
+    ],
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  displayScoreGraph();
+  displayZenModeGraph();
+});
