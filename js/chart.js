@@ -120,7 +120,7 @@ function displayScoreGraph() {
       scales: {
         x: {
           title: {
-            display: true,
+            display: false,
             text: "Classic Mode History",
           },
           ticks: {
