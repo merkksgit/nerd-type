@@ -4,6 +4,17 @@
 
 NerdType is a fast-paced, minimalistic typing game designed to help you improve your typing skills while having fun with language learning. The game challenges you to type programming-related vocabulary as well as basic English, Swedish, and Finnish words before your energy runs out. With each correct word, you restore energy and get closer to hacking the Pentagon!
 
+<!-- vim-markdown-toc GFM -->
+
+* [Features](#features)
+* [How to Play](#how-to-play)
+* [Game Modes](#game-modes)
+* [Technologies Used](#technologies-used)
+* [License](#license)
+* [Contact](#contact)
+
+<!-- vim-markdown-toc -->
+
 ## Features
 
 - **Multilingual Vocabulary:** Type programming terms and words from English, Finnish, and Swedish.
