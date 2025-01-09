@@ -12,6 +12,17 @@ let correctKeystrokes = 0;
 import { words } from "./words-fin.js";
 console.log(words);
 
+// Flash progress function
+function flashProgress() {
+  const progressBar = document.querySelector(".progress.terminal");
+  progressBar.classList.add("flash");
+
+  // Remove the class after animation completes to allow it to trigger again
+  setTimeout(() => {
+    progressBar.classList.remove("flash");
+  }, 400);
+}
+
 const resetBtn = document.getElementById("resetBtn");
 
 document.getElementById("startButton").addEventListener("click", startGame);
@@ -113,6 +124,7 @@ function checkInput(e) {
   }
 
   if (userInput === currentWord) {
+    flashProgress(); // Added flash effect for correct word
     totalCharactersTyped += currentWord.length;
     totalTimeSpent += 1;
     wordsTyped.push(currentWord);

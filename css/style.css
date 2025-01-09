@@ -315,3 +315,20 @@ score h3 {
 .progress.terminal {
   box-shadow: 0 0 5px rgba(122, 162, 247, 0.3);
 }
+
+/* progress-bar flash */
+@keyframes correctFlash {
+  0% {
+    box-shadow: 0 0 5px rgba(122, 162, 247, 0.3); /* #7aa2f7 with low opacity */
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(122, 162, 247, 0.6); /* #7aa2f7 with medium opacity */
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(122, 162, 247, 0.3); /* #7aa2f7 with low opacity */
+  }
+}
+
+.progress.terminal.flash {
+  animation: correctFlash 0.4s ease-out;
+}
