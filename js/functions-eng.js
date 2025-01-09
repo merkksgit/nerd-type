@@ -8,6 +8,8 @@ let gameStartTime = null;
 let wordsTyped = [];
 let totalCharactersTyped = 0;
 let hasStartedTyping = false;
+let totalKeystrokes = 0;
+let correctKeystrokes = 0;
 import { words } from "./words-eng.js";
 console.log(words);
 
@@ -28,6 +30,8 @@ function startGame() {
   hasStartedTyping = false;
   wordsTyped = [];
   totalCharactersTyped = 0;
+  totalKeystrokes = 0;
+  correctKeystrokes = 0;
 }
 
 function updateWordDisplay() {
@@ -107,11 +111,22 @@ document.getElementById("userInput").addEventListener("input", function (e) {
 
 function checkInput(e) {
   const userInput = e.target.value;
-  if (userInput === words[currentWordIndex]) {
-    totalCharactersTyped += words[currentWordIndex].length;
+  const currentWord = words[currentWordIndex];
+
+  // Only track actual character inputs (not backspace/delete)
+  if (e.inputType === "insertText" && e.data) {
+    totalKeystrokes++;
+    // Check if the newly typed character matches the target word at the current position
+    if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
+      correctKeystrokes++;
+    }
+  }
+
+  if (userInput === currentWord) {
+    totalCharactersTyped += currentWord.length;
     totalTimeSpent += 1;
     timeLeft += 3;
-    wordsTyped.push(words[currentWordIndex]);
+    wordsTyped.push(currentWord);
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
     updateWordDisplay();
@@ -122,33 +137,48 @@ function checkInput(e) {
 document.getElementById("totalTimeSpentDisplay").textContent = totalTimeSpent;
 
 function calculateWPM() {
-  if (!gameStartTime) return 0;
+  if (!gameStartTime) return { wpm: 0, accuracy: "0%" };
   const endTime = Date.now();
   const timeElapsed = Math.max(0.08, (endTime - gameStartTime) / 60000);
   const CHARS_PER_WORD = 5;
+
+  // Calculate accuracy based on all keystrokes
+  const accuracy =
+    totalKeystrokes > 0
+      ? ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1)
+      : "0";
+
   const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
+
   console.log("Total characters typed:", totalCharactersTyped);
   console.log("Characters per word:", CHARS_PER_WORD);
   console.log("Time elapsed(min):", timeElapsed);
   console.log("WPM:", wpm);
-  return wpm;
+  console.log("Accuracy:", accuracy + "%");
+
+  return {
+    wpm,
+    accuracy: accuracy + "%",
+  };
 }
 
 function showGameOverModal(message) {
-  const wpm = calculateWPM();
+  const stats = calculateWPM();
   document.getElementById("gameOverModalLabel").textContent = "Game Over";
   document.querySelector(".modal-body").innerHTML =
     message +
     "<br />you have " +
     timeLeft +
     " energy left.<br />Your WPM: " +
-    wpm +
+    stats.wpm +
+    "<br />Accuracy: " +
+    stats.accuracy +
     "<br>Score: " +
     `${timeLeft * 256}` +
     "<br />Try again by pressing <span style='color:#ff9e64'>Return</span>" +
     ".";
 
-  saveResult(timeLeft, wpm);
+  saveResult(timeLeft, stats.wpm, stats.accuracy);
   displayPreviousResults();
 
   let gameOverModal = new bootstrap.Modal(
@@ -167,7 +197,7 @@ function showGameOverModal(message) {
   });
 }
 
-function saveResult(timeLeft, wpm) {
+function saveResult(timeLeft, wpm, accuracy) {
   if (timeLeft === 0) {
     return;
   }
@@ -178,6 +208,7 @@ function saveResult(timeLeft, wpm) {
     results.push({
       timeLeft,
       wpm,
+      accuracy,
       date: new Date().toLocaleString("en-GB"),
       mode: "Classic Mode",
       score: timeLeft * 256,
@@ -187,6 +218,7 @@ function saveResult(timeLeft, wpm) {
   else {
     results.push({
       wpm,
+      accuracy,
       date: new Date().toLocaleString("en-GB"),
       mode: "Zen Mode",
       score: totalCharactersTyped * 10,
@@ -205,9 +237,9 @@ function displayPreviousResults() {
   results.forEach((result) => {
     const resultItem = document.createElement("li");
     if (result.mode === "Classic Mode") {
-      resultItem.textContent = `${result.date} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}`;
+      resultItem.textContent = `${result.date} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     } else {
-      resultItem.textContent = `${result.date} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}`;
+      resultItem.textContent = `${result.date} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}`;
     }
     resultsContainer.appendChild(resultItem);
   });

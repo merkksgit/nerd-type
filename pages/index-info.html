@@ -129,6 +129,67 @@
             The WPM calculation only considers correctly typed words and does
             not account for any errors or incorrect words.
           </p>
+          <h2>How Accuracy is calculated</h2>
+          <p>
+            In NerdType, your typing accuracy is measured as a percentage of
+            correct keystrokes. Here's how the accuracy is calculated:
+          </p>
+          <ol>
+            <li>
+              The game tracks every character you type (excluding backspace and
+              special keys) from your first keystroke until the game ends.
+            </li>
+            <li>
+              When you type a character, it's counted as correct only if it
+              matches the corresponding character in the target word at that
+              exact position.
+            </li>
+            <li>
+              The game maintains two counts:
+              <ul>
+                <li>Total keystrokes: Every character you type</li>
+                <li>
+                  Correct keystrokes: Characters that match the target word
+                </li>
+              </ul>
+            </li>
+            <li>
+              Your accuracy is calculated by dividing correct keystrokes by
+              total keystrokes and converting to a percentage.
+            </li>
+          </ol>
+          <p>
+            For example, if you typed 20 characters and 16 of them were correct,
+            your accuracy would be:
+          </p>
+          <p>
+            (16 correct keystrokes / 20 total keystrokes) × 100 = 80% accuracy
+          </p>
+          <p>Here's how accuracy works in practice:</p>
+          <ul>
+            <li>
+              If the target word is "code" and you type "cade", you have:
+              <ul>
+                <li>4 total keystrokes</li>
+                <li>3 correct keystrokes (c, d, e)</li>
+                <li>75% accuracy</li>
+              </ul>
+            </li>
+            <li>
+              If you type "coxde" and then backspace to fix it to "code", you
+              have:
+              <ul>
+                <li>5 total keystrokes (c, o, x, d, e)</li>
+                <li>4 correct keystrokes (c, o, d, e)</li>
+                <li>80% accuracy</li>
+              </ul>
+            </li>
+          </ul>
+          <p>
+            The accuracy calculation includes all characters typed, even if you
+            later correct them with backspace. This encourages precise typing
+            rather than rapid typing-and-correcting.
+          </p>
           <h2>Contact</h2>
           <p>
             For feedback or suggestions, reach out via email:
@@ -151,8 +212,8 @@
               ></i>
             </a>
             <a href="../index.html">
-              <img id="footer-logo" src="../images/nerdtype-logo2.png"
-            /></a>
+              <img id="footer-logo" src="../images/nerdtype-logo2.png" />
+            </a>
             <a href="https://github.com/merkksgit/nerd-type" target="_blank">
               <i class="fa-brands fa-github fa-2xl" style="color: #7aa2f7"></i>
             </a>

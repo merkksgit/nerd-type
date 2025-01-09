@@ -7,6 +7,8 @@ let wordsTyped = [];
 let totalCharactersTyped = 0;
 let hasStartedTyping = false;
 let sessionStartTime = null;
+let totalKeystrokes = 0;
+let correctKeystrokes = 0;
 import { words } from "./words-fin.js";
 console.log(words);
 
@@ -25,6 +27,8 @@ function startGame() {
   hasStartedTyping = false;
   wordsTyped = [];
   totalCharactersTyped = 0;
+  totalKeystrokes = 0;
+  correctKeystrokes = 0;
 }
 
 function updateWordDisplay() {
@@ -98,10 +102,20 @@ document.getElementById("userInput").addEventListener("input", function (e) {
 
 function checkInput(e) {
   const userInput = e.target.value;
-  if (userInput === words[currentWordIndex]) {
-    totalCharactersTyped += words[currentWordIndex].length;
+  const currentWord = words[currentWordIndex];
+
+  // Track accuracy for each keystroke
+  if (e.inputType === "insertText" && e.data) {
+    totalKeystrokes++;
+    if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
+      correctKeystrokes++;
+    }
+  }
+
+  if (userInput === currentWord) {
+    totalCharactersTyped += currentWord.length;
     totalTimeSpent += 1;
-    wordsTyped.push(words[currentWordIndex]);
+    wordsTyped.push(currentWord);
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
     updateWordDisplay();
@@ -118,14 +132,27 @@ function calculateWPM() {
   return wpm;
 }
 
+function calculateAccuracy() {
+  if (totalKeystrokes === 0) return "0.0";
+  return ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1);
+}
+
 function showGameOverModal(message) {
   const wpm = calculateWPM();
+  const accuracy = calculateAccuracy();
   const totalTime = calculateTotalTime();
   document.getElementById("gameOverModalLabel").textContent = "  ZenMode";
   document.querySelector(".modal-body").innerHTML =
-    message + "<br />Time: " + totalTime + "<br />WPM: " + wpm;
+    message +
+    "<br />Time: " +
+    totalTime +
+    "<br />WPM: " +
+    wpm +
+    "<br />Accuracy: " +
+    accuracy +
+    "%";
 
-  saveResult(wpm, totalTime);
+  saveResult(wpm, totalTime, accuracy);
   displayPreviousResults();
 
   let gameOverModal = new bootstrap.Modal(
@@ -144,11 +171,12 @@ function showGameOverModal(message) {
   });
 }
 
-function saveResult(wpm, totalTime) {
+function saveResult(wpm, totalTime, accuracy) {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
   results.push({
     wpm,
     totalTime,
+    accuracy,
     date: new Date().toLocaleString("en-GB"),
     mode: "Zen Mode",
   });
@@ -164,9 +192,9 @@ function displayPreviousResults() {
   results.forEach((result) => {
     const resultItem = document.createElement("li");
     if (result.mode === "Zen Mode") {
-      resultItem.textContent = `${result.date} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}`;
+      resultItem.textContent = `${result.date} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
     } else {
-      resultItem.textContent = `${result.date} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}`;
+      resultItem.textContent = `${result.date} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}%`;
     }
     resultsContainer.appendChild(resultItem);
   });
