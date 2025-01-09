@@ -51,6 +51,11 @@ footer {
   padding-bottom: 15px;
 }
 
+#archive-link {
+  text-decoration: none;
+  color: #bb9af7;
+}
+
 .wpm-info {
   padding-top: 5em;
 }
