@@ -176,7 +176,7 @@ function calculateWPM() {
 
 function showGameOverModal(message) {
   const stats = calculateWPM();
-  document.getElementById("gameOverModalLabel").textContent = "Game Over";
+  document.getElementById("gameOverModalLabel").textContent = "TERMINAL OUTPUT";
   document.querySelector(".modal-body").innerHTML =
     message +
     "<br />You have " +

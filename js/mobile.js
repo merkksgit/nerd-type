@@ -155,7 +155,7 @@ function showGameOverModal(message) {
   const wpm = calculateWPM();
   const accuracy = calculateAccuracy();
   const totalTime = calculateTotalTime();
-  document.getElementById("gameOverModalLabel").textContent = "  ZenMode";
+  document.getElementById("gameOverModalLabel").textContent = "TERMINAL OUTPUT";
   document.querySelector(".modal-body").innerHTML =
     message +
     "<br />Time: " +
