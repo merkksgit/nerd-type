@@ -288,7 +288,7 @@ function displayZenModeGraph() {
         labels: [],
         datasets: [
           {
-            label: "Time (seconds)",
+            label: "Time (sec)",
             data: [],
             borderColor: "#c3e88d",
             backgroundColor: "rgba(195, 232, 141, 0.2)",
@@ -332,7 +332,7 @@ function displayZenModeGraph() {
             display: true,
             title: {
               display: true,
-              text: "Time (seconds)",
+              text: "Time (sec)",
             },
             grid: {
               display: true,
@@ -396,7 +396,7 @@ function displayZenModeGraph() {
       labels: dates,
       datasets: [
         {
-          label: "Time (seconds)",
+          label: "Time (sec)",
           data: times,
           borderColor: "#c3e88d",
           backgroundColor: "rgba(195, 232, 141, 0.2)",
@@ -446,7 +446,7 @@ function displayZenModeGraph() {
         y: {
           title: {
             display: true,
-            text: "Time (seconds)",
+            text: "Time (sec)",
           },
           position: "left",
           grid: {
