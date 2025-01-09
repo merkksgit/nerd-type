@@ -40,6 +40,11 @@ footer {
   color: #7aa2f7;
 }
 
+#email-link {
+  text-decoration: none;
+  color: #7aa2f7;
+}
+
 #header-logo {
   width: 3.5em;
   margin-bottom: 0.9em;
