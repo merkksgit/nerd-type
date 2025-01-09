@@ -31,6 +31,14 @@ function displayScoreGraph() {
             fill: false,
             yAxisID: "y1",
           },
+          {
+            label: "Accuracy",
+            data: [],
+            borderColor: "#bb9af7",
+            backgroundColor: "rgba(187, 154, 247, 0.2)",
+            fill: false,
+            yAxisID: "y2",
+          },
         ],
       },
       options: {
@@ -68,6 +76,18 @@ function displayScoreGraph() {
             },
             position: "right",
           },
+          y2: {
+            display: true,
+            title: {
+              display: true,
+              text: "Accuracy %",
+            },
+            position: "right",
+            grid: {
+              drawOnChartArea: false,
+              color: "#414868",
+            },
+          },
         },
       },
     });
@@ -77,12 +97,18 @@ function displayScoreGraph() {
   const dates = classicResults.map((result) => result.date);
   const scores = classicResults.map((result) => result.timeLeft * 256);
   const wpmScores = classicResults.map((result) => result.wpm);
+  const accuracyScores = classicResults.map(
+    (result) => parseFloat(result.accuracy) || 0,
+  );
 
   const averageScore = scores.length
     ? scores.reduce((sum, score) => sum + score, 0) / scores.length
     : 0;
   const averageWPM = wpmScores.length
     ? wpmScores.reduce((sum, wpm) => sum + wpm, 0) / wpmScores.length
+    : 0;
+  const averageAccuracy = accuracyScores.length
+    ? accuracyScores.reduce((sum, acc) => sum + acc, 0) / accuracyScores.length
     : 0;
 
   const ctx = document.getElementById("scoreChart").getContext("2d");
@@ -106,6 +132,14 @@ function displayScoreGraph() {
           backgroundColor: "rgba(255, 158, 100, 0.2)",
           fill: false,
           yAxisID: "y1",
+        },
+        {
+          label: "Accuracy",
+          data: accuracyScores,
+          borderColor: "#bb9af7",
+          backgroundColor: "rgba(187, 154, 247, 0.2)",
+          fill: false,
+          yAxisID: "y2",
         },
       ],
     },
@@ -145,6 +179,17 @@ function displayScoreGraph() {
           title: {
             display: true,
             text: "WPM",
+          },
+          position: "right",
+          grid: {
+            drawOnChartArea: false,
+            color: "#414868",
+          },
+        },
+        y2: {
+          title: {
+            display: true,
+            text: "Accuracy %",
           },
           position: "right",
           grid: {
@@ -201,6 +246,27 @@ function displayScoreGraph() {
               y1Value - 5,
             );
           }
+
+          if (accuracyScores.length > 0) {
+            const y2Value = chart.scales.y2.getPixelForValue(averageAccuracy);
+            ctx.save();
+            ctx.strokeStyle = "#bb9af7";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([9, 5]);
+            ctx.beginPath();
+            ctx.moveTo(chartArea.left, y2Value);
+            ctx.lineTo(chartArea.right, y2Value);
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.fillStyle = "#414868";
+            ctx.font = "12px Arial";
+            ctx.fillText(
+              `Avg Accuracy: ${averageAccuracy.toFixed(1)}%`,
+              chartArea.right - 150,
+              y2Value - 5,
+            );
+          }
         },
       },
     ],
@@ -236,6 +302,14 @@ function displayZenModeGraph() {
             backgroundColor: "rgba(255, 158, 100, 0.2)",
             fill: false,
             yAxisID: "y1",
+          },
+          {
+            label: "Accuracy",
+            data: [],
+            borderColor: "#bb9af7",
+            backgroundColor: "rgba(187, 154, 247, 0.2)",
+            fill: false,
+            yAxisID: "y2",
           },
         ],
       },
@@ -273,6 +347,18 @@ function displayZenModeGraph() {
             },
             position: "right",
           },
+          y2: {
+            display: true,
+            title: {
+              display: true,
+              text: "Accuracy %",
+            },
+            position: "right",
+            grid: {
+              drawOnChartArea: false,
+              color: "#414868",
+            },
+          },
         },
       },
     });
@@ -289,12 +375,18 @@ function displayZenModeGraph() {
     .filter((time) => time !== null);
 
   const wpmScores = zenResults.map((result) => result.wpm);
+  const accuracyScores = zenResults.map(
+    (result) => parseFloat(result.accuracy) || 0,
+  );
 
   const averageTime = times.length
     ? times.reduce((sum, time) => sum + time, 0) / times.length
     : 0;
   const averageWPM = wpmScores.length
     ? wpmScores.reduce((sum, wpm) => sum + wpm, 0) / wpmScores.length
+    : 0;
+  const averageAccuracy = accuracyScores.length
+    ? accuracyScores.reduce((sum, acc) => sum + acc, 0) / accuracyScores.length
     : 0;
 
   const ctx = document.getElementById("zenChart").getContext("2d");
@@ -318,6 +410,14 @@ function displayZenModeGraph() {
           backgroundColor: "rgba(255, 158, 100, 0.2)",
           fill: false,
           yAxisID: "y1",
+        },
+        {
+          label: "Accuracy",
+          data: accuracyScores,
+          borderColor: "#bb9af7",
+          backgroundColor: "rgba(187, 154, 247, 0.2)",
+          fill: false,
+          yAxisID: "y2",
         },
       ],
     },
@@ -357,6 +457,17 @@ function displayZenModeGraph() {
           title: {
             display: true,
             text: "WPM",
+          },
+          position: "right",
+          grid: {
+            drawOnChartArea: false,
+            color: "#414868",
+          },
+        },
+        y2: {
+          title: {
+            display: true,
+            text: "Accuracy %",
           },
           position: "right",
           grid: {
@@ -411,6 +522,27 @@ function displayZenModeGraph() {
               `Avg WPM: ${averageWPM.toFixed(0)}`,
               chartArea.right - 120,
               y1Value - 5,
+            );
+          }
+
+          if (accuracyScores.length > 0) {
+            const y2Value = chart.scales.y2.getPixelForValue(averageAccuracy);
+            ctx.save();
+            ctx.strokeStyle = "#bb9af7";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([9, 5]);
+            ctx.beginPath();
+            ctx.moveTo(chartArea.left, y2Value);
+            ctx.lineTo(chartArea.right, y2Value);
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.fillStyle = "#414868";
+            ctx.font = "12px Arial";
+            ctx.fillText(
+              `Avg Accuracy: ${averageAccuracy.toFixed(1)}%`,
+              chartArea.right - 150,
+              y2Value - 5,
             );
           }
         },
