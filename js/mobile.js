@@ -82,7 +82,9 @@ function totalTimeCount() {
 
   if (totalTimeSpent >= 30) {
     clearInterval(totalTimeInterval);
-    showGameOverModal("<span style='color:#c3e88d'>Results:</span>");
+    showGameOverModal(
+      "System Core <span style='color:#c3e88d'>BREACHED!</span> Access granted.",
+    );
   }
 }
 

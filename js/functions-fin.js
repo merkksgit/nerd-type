@@ -74,7 +74,7 @@ function countDown() {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(
-      "Hack <span style='color:#ff007c'>FAILED!</span> You need a snack,",
+      "System breach <span style='color:#ff007c'>FAILED!</span>",
     );
   }
 }
@@ -86,7 +86,7 @@ function totalTimeCount() {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(
-      "Pentagon <span style='color:#c3e88d'>HACKED!</span> After all that hacking,",
+      "Database <span style='color:#c3e88d'>CRACKED!</span> Mission accomplished.",
     );
   }
 }
@@ -179,7 +179,7 @@ function showGameOverModal(message) {
   document.getElementById("gameOverModalLabel").textContent = "Game Over";
   document.querySelector(".modal-body").innerHTML =
     message +
-    "<br />you have " +
+    "<br />You have " +
     timeLeft +
     " energy left.<br />Your WPM: " +
     stats.wpm +
