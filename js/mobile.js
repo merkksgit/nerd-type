@@ -155,7 +155,8 @@ function showGameOverModal(message) {
   const wpm = calculateWPM();
   const accuracy = calculateAccuracy();
   const totalTime = calculateTotalTime();
-  document.getElementById("gameOverModalLabel").textContent = "TERMINAL OUTPUT";
+  document.getElementById("gameOverModalLabel").textContent =
+    ">> TERMINAL_OUTPUT <<";
   document.querySelector(".modal-body").innerHTML =
     message +
     "<br />Time: " +
