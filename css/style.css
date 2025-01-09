@@ -269,3 +269,49 @@ score h3 {
     padding: 0px;
   }
 }
+/* Terminal-style progress */
+.progress.terminal {
+  background: #1f2335; /* Using your darker background color */
+  border: 1px solid #3b4261; /* Using your border color */
+  padding: 3px;
+  position: relative;
+  height: 25px;
+}
+
+.progress.terminal .progress-bar {
+  background: none;
+  position: relative;
+  height: 100%;
+}
+
+.progress.terminal .progress-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #7aa2f7 0%,
+    #7aa2f7 50%,
+    transparent 50%,
+    transparent 100%
+  );
+  background-size: 20px 100%;
+  animation: moveSegments 1s linear infinite;
+}
+
+@keyframes moveSegments {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 0;
+  }
+}
+
+/* Glow effect */
+.progress.terminal {
+  box-shadow: 0 0 5px rgba(122, 162, 247, 0.3); /* Matching blue glow */
+}

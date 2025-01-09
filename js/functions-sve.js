@@ -92,9 +92,9 @@ function updateProgressBar() {
   progressBar.setAttribute("aria-valuenow", progressPercentage);
 
   if (progressPercentage < 80) {
-    progressBar.style.backgroundColor = "#7aa2f7"; // Blue
+    progressBar.style.backgroundColor = "#1f2335"; // Blue
   } else {
-    progressBar.style.backgroundColor = "#ff007c"; // Red
+    progressBar.style.backgroundColor = "#1f2335"; // Red
   }
 
   document.getElementById("progressPercentage").textContent =
