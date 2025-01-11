@@ -12,12 +12,10 @@ let correctKeystrokes = 0;
 import { words } from "./words-fin.js";
 console.log(words);
 
-// Flash progress function
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");
   progressBar.classList.add("flash");
 
-  // Remove the class after animation completes to allow it to trigger again
   setTimeout(() => {
     progressBar.classList.remove("flash");
   }, 400);
@@ -43,7 +41,20 @@ function startGame() {
 }
 
 function updateWordDisplay() {
-  document.getElementById("wordToType").textContent = words[currentWordIndex];
+  const wordToTypeElement = document.getElementById("wordToType");
+  const currentWord = words[currentWordIndex];
+
+  // Clear previous content
+  wordToTypeElement.innerHTML = "";
+
+  // Create a span for each character
+  for (let i = 0; i < currentWord.length; i++) {
+    const charSpan = document.createElement("span");
+    charSpan.textContent = currentWord[i];
+    charSpan.classList.add("remaining");
+    wordToTypeElement.appendChild(charSpan);
+  }
+
   document.getElementById("nextWord").textContent = words[nextWordIndex];
 }
 
@@ -96,9 +107,9 @@ function updateProgressBar() {
   progressBar.setAttribute("aria-valuenow", progressPercentage);
 
   if (progressPercentage < 80) {
-    progressBar.style.backgroundColor = "#1f2335"; // Blue
+    progressBar.style.backgroundColor = "#1f2335";
   } else {
-    progressBar.style.backgroundColor = "#1f2335"; // Red
+    progressBar.style.backgroundColor = "#1f2335";
   }
 
   document.getElementById("progressPercentage").textContent =
@@ -116,8 +127,10 @@ document.getElementById("userInput").addEventListener("input", function (e) {
 function checkInput(e) {
   const userInput = e.target.value;
   const currentWord = words[currentWordIndex];
+  const wordDisplay = document.getElementById("wordToType");
+  const chars = wordDisplay.children;
 
-  // Track accuracy for each keystroke
+  // Track keystrokes
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
     if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
@@ -125,8 +138,24 @@ function checkInput(e) {
     }
   }
 
+  // Update character styling
+  for (let i = 0; i < currentWord.length; i++) {
+    if (i < userInput.length) {
+      // Character has been typed
+      if (userInput[i] === currentWord[i]) {
+        chars[i].className = "correct";
+      } else {
+        chars[i].className = "incorrect";
+      }
+    } else {
+      // Character hasn't been typed yet
+      chars[i].className = "remaining";
+    }
+  }
+
+  // Check if word is complete
   if (userInput === currentWord) {
-    flashProgress(); // Added flash effect for correct word
+    flashProgress();
     totalCharactersTyped += currentWord.length;
     totalTimeSpent += 1;
     wordsTyped.push(currentWord);

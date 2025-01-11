@@ -332,3 +332,21 @@ score h3 {
 .progress.terminal.flash {
   animation: correctFlash 0.4s ease-out;
 }
+
+.word-display {
+  font-family: monospace;
+  font-size: 2em;
+}
+
+.correct {
+  color: inherit;
+}
+
+.incorrect {
+  color: #c53b53;
+  text-decoration: underline;
+}
+
+.remaining {
+  color: #737aa2;
+}

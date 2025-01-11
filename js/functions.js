@@ -13,12 +13,10 @@ let correctKeystrokes = 0;
 import { words } from "./words-prog.js";
 console.log(words);
 
-// Add flash progress function
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");
   progressBar.classList.add("flash");
 
-  // Remove the class after animation completes to allow it to trigger again
   setTimeout(() => {
     progressBar.classList.remove("flash");
   }, 400);
@@ -31,7 +29,6 @@ document.getElementById("startButton").addEventListener("click", startGame);
 function startGame() {
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
-  document.getElementById("wordToType").textContent = words[currentWordIndex];
   updateWordDisplay();
   updateTimer();
   countDownInterval = setInterval(countDown, 800);
@@ -46,7 +43,20 @@ function startGame() {
 }
 
 function updateWordDisplay() {
-  document.getElementById("wordToType").textContent = words[currentWordIndex];
+  const wordToTypeElement = document.getElementById("wordToType");
+  const currentWord = words[currentWordIndex];
+
+  // Clear previous content
+  wordToTypeElement.innerHTML = "";
+
+  // Create a span for each character
+  for (let i = 0; i < currentWord.length; i++) {
+    const charSpan = document.createElement("span");
+    charSpan.textContent = currentWord[i];
+    charSpan.classList.add("remaining");
+    wordToTypeElement.appendChild(charSpan);
+  }
+
   document.getElementById("nextWord").textContent = words[nextWordIndex];
 }
 
@@ -103,9 +113,9 @@ function updateProgressBar() {
   progressBar.setAttribute("aria-valuenow", progressPercentage);
 
   if (progressPercentage < 80) {
-    progressBar.style.backgroundColor = "#1f2335"; // Blue
+    progressBar.style.backgroundColor = "#1f2335";
   } else {
-    progressBar.style.backgroundColor = "#1f2335"; // Red
+    progressBar.style.backgroundColor = "#1f2335";
   }
 
   document.getElementById("progressPercentage").textContent =
@@ -123,18 +133,35 @@ document.getElementById("userInput").addEventListener("input", function (e) {
 function checkInput(e) {
   const userInput = e.target.value;
   const currentWord = words[currentWordIndex];
+  const wordDisplay = document.getElementById("wordToType");
+  const chars = wordDisplay.children;
 
-  // Only track actual character inputs (not backspace/delete)
+  // Track keystrokes
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
-    // Check if the newly typed character matches the target word at the current position
     if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
       correctKeystrokes++;
     }
   }
 
+  // Update character styling
+  for (let i = 0; i < currentWord.length; i++) {
+    if (i < userInput.length) {
+      // Character has been typed
+      if (userInput[i] === currentWord[i]) {
+        chars[i].className = "correct";
+      } else {
+        chars[i].className = "incorrect";
+      }
+    } else {
+      // Character hasn't been typed yet
+      chars[i].className = "remaining";
+    }
+  }
+
+  // Check if word is complete
   if (userInput === currentWord) {
-    flashProgress(); // Add flash effect for correct word
+    flashProgress();
     totalCharactersTyped += currentWord.length;
     totalTimeSpent += 1;
     timeLeft += 3;
@@ -154,7 +181,6 @@ function calculateWPM() {
   const timeElapsed = Math.max(0.08, (endTime - gameStartTime) / 60000);
   const CHARS_PER_WORD = 5;
 
-  // Calculate accuracy based on all keystrokes
   const accuracy =
     totalKeystrokes > 0
       ? ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1)
@@ -216,7 +242,6 @@ function saveResult(timeLeft, wpm, accuracy) {
   }
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
-  // For Classic mode
   if (timeLeft) {
     results.push({
       timeLeft,
@@ -226,9 +251,7 @@ function saveResult(timeLeft, wpm, accuracy) {
       mode: "Classic Mode",
       score: timeLeft * 256,
     });
-  }
-  // For Zen mode
-  else {
+  } else {
     results.push({
       wpm,
       accuracy,
