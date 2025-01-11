@@ -12,7 +12,6 @@ let totalKeystrokes = 0;
 let correctKeystrokes = 0;
 import { words } from "./words-eng.js";
 
-// Add flash progress function
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");
   progressBar.classList.add("flash");
@@ -111,8 +110,7 @@ function updateProgressBar() {
   progressBar.style.width = progressPercentage + "%";
   progressBar.setAttribute("aria-valuenow", progressPercentage);
 
-  progressBar.style.backgroundColor =
-    progressPercentage < 80 ? "#1f2335" : "#1f2335";
+  progressBar.style.backgroundColor = "#1f2335";
 
   document.getElementById("progressPercentage").textContent =
     "Hacked " + Math.floor(progressPercentage) + "%";
@@ -143,14 +141,12 @@ function checkInput(e) {
   // Update character styling
   for (let i = 0; i < currentWord.length; i++) {
     if (i < userInput.length) {
-      // Character has been typed
       if (userInput[i] === currentWord[i]) {
         chars[i].className = "correct";
       } else {
         chars[i].className = "incorrect";
       }
     } else {
-      // Character hasn't been typed yet
       chars[i].className = "remaining";
     }
   }
@@ -194,18 +190,38 @@ function showGameOverModal(message) {
   const stats = calculateWPM();
   document.getElementById("gameOverModalLabel").textContent =
     ">> TERMINAL_OUTPUT <<";
+
+  // Create terminal-style content with typing animation
+  const terminalLines = [
+    "> INITIALIZING TERMINAL OUTPUT...",
+    "> ANALYZING PERFORMANCE DATA...",
+    `> STATUS: ${message}`,
+    "> PERFORMANCE METRICS:",
+    `  └─ ENERGY REMAINING: ${timeLeft} units`,
+    `  └─ TYPING SPEED: ${stats.wpm} WPM`,
+    `  └─ ACCURACY: ${stats.accuracy}`,
+    `  └─ FINAL SCORE: ${timeLeft * 256}`,
+    "> PRESS [ENTER] TO RETRY",
+    "> END OF TRANSMISSION_",
+  ];
+
+  let currentLine = 0;
+  let modalContent = "";
+
+  function typeNextLine() {
+    if (currentLine < terminalLines.length) {
+      modalContent += terminalLines[currentLine] + "\n";
+      document.querySelector(".modal-body").innerHTML = `
+        <pre class="terminal-output">${modalContent}</pre>
+      `;
+      currentLine++;
+      setTimeout(typeNextLine, 150);
+    }
+  }
+
   document.querySelector(".modal-body").innerHTML =
-    message +
-    "<br />You have " +
-    timeLeft +
-    " energy left.<br />Your WPM: " +
-    stats.wpm +
-    "<br />Accuracy: " +
-    stats.accuracy +
-    "<br>Score: " +
-    `${timeLeft * 256}` +
-    "<br />Try again by pressing <span style='color:#ff9e64'>Return</span>" +
-    ".";
+    `<pre class="terminal-output"></pre>`;
+  typeNextLine();
 
   saveResult(timeLeft, stats.wpm, stats.accuracy);
   displayPreviousResults();
@@ -215,15 +231,32 @@ function showGameOverModal(message) {
   );
   gameOverModal.show();
 
-  document.getElementById("restartGameBtn").addEventListener("click", () => {
-    location.reload();
-  });
+  // Handle restart button click
+  const restartBtn = document.getElementById("restartGameBtn");
+  if (restartBtn) {
+    restartBtn.onclick = () => location.reload();
+  }
 
-  document.addEventListener("keydown", function handleEnterKey(event) {
-    if (event.key === "Enter") {
+  // Handle Enter key
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
       location.reload();
     }
-  });
+  };
+
+  // Add keypress listener when modal is shown
+  document
+    .getElementById("gameOverModal")
+    .addEventListener("shown.bs.modal", () => {
+      document.addEventListener("keydown", handleKeyPress);
+    });
+
+  // Remove keypress listener when modal is hidden
+  document
+    .getElementById("gameOverModal")
+    .addEventListener("hidden.bs.modal", () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    });
 }
 
 function saveResult(timeLeft, wpm, accuracy) {
@@ -232,7 +265,6 @@ function saveResult(timeLeft, wpm, accuracy) {
   }
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
-  // For Classic mode
   if (timeLeft) {
     results.push({
       timeLeft,
@@ -242,9 +274,7 @@ function saveResult(timeLeft, wpm, accuracy) {
       mode: "Classic Mode",
       score: timeLeft * 256,
     });
-  }
-  // For Zen mode
-  else {
+  } else {
     results.push({
       wpm,
       accuracy,

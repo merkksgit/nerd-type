@@ -149,33 +149,62 @@ div h2 {
   color: #ff9e64;
 }
 
+/* Modal Styles */
 .modal-content {
   position: absolute;
   top: 200px;
-}
-
-.modal-title {
-  background-color: #24283b;
+  background-color: #24283b !important;
+  border: 4px solid #1f2335 !important;
+  border-radius: 8px;
 }
 
 .modal-header {
   background-color: #24283b;
   color: #f5f5f5;
-  border-style: solid;
-  border-color: #7aa2f7;
+  border-bottom: 4px solid #1f2335 !important;
+  padding: 1rem;
+}
+
+.modal-header .btn-close {
+  display: none;
 }
 
 .modal-body {
   background-color: #24283b;
   color: #bb9af7;
-  border-style: solid;
-  border-color: #7aa2f7;
-  text-align: center;
+  padding: 0;
 }
 
 .modal-footer {
-  border-style: solid;
-  border-color: #7aa2f7;
+  background-color: #24283b;
+  border-top: 4px solid #1f2335 !important;
+}
+
+/* Terminal Output Styles */
+.terminal-output {
+  font-family: custom;
+  color: #7aa2f7;
+  white-space: pre-wrap;
+  margin: 0;
+  padding: 1.5rem;
+  background-color: #24283b;
+  line-height: 1.6;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.terminal-output::after {
+  content: "█";
+  animation: blink 1s infinite;
+  color: #bb9af7;
 }
 
 #restartGameBtn,
@@ -193,15 +222,10 @@ div h2 {
   color: #ff9e64;
 }
 
-/* #totalTimeSpentDisplay { */
-/*   background-color: #24283b; */
-/*   font-size: 1.5rem; */
-/*   color: #ff9e64; */
-/* } */
-
 #gameOverModalLabel,
 #customAlertModalLabel {
   color: #ff007c;
+  background-color: #24283b;
 }
 
 #progressPercentage {
@@ -240,6 +264,7 @@ score h3 {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 400px;
 }
 
 #scoreChart,
@@ -249,26 +274,6 @@ score h3 {
   max-width: 1400px;
 }
 
-.chart-container {
-  height: 400px;
-}
-
-@media (max-width: 1200px) {
-  .progress {
-    width: 50%;
-  }
-  #previousResults {
-    width: 80%;
-  }
-}
-
-@media (max-width: 600px) {
-  #previousResults {
-    width: 100%;
-    line-height: 2em;
-    padding: 0px;
-  }
-}
 /* Terminal-style progress */
 .progress.terminal {
   background: #1f2335;
@@ -319,13 +324,13 @@ score h3 {
 /* progress-bar flash */
 @keyframes correctFlash {
   0% {
-    box-shadow: 0 0 5px rgba(122, 162, 247, 0.3); /* #7aa2f7 with low opacity */
+    box-shadow: 0 0 5px rgba(122, 162, 247, 0.3);
   }
   50% {
-    box-shadow: 0 0 15px rgba(122, 162, 247, 0.6); /* #7aa2f7 with medium opacity */
+    box-shadow: 0 0 15px rgba(122, 162, 247, 0.6);
   }
   100% {
-    box-shadow: 0 0 5px rgba(122, 162, 247, 0.3); /* #7aa2f7 with low opacity */
+    box-shadow: 0 0 5px rgba(122, 162, 247, 0.3);
   }
 }
 
@@ -349,4 +354,21 @@ score h3 {
 
 .remaining {
   color: #737aa2;
+}
+
+@media (max-width: 1200px) {
+  .progress {
+    width: 50%;
+  }
+  #previousResults {
+    width: 80%;
+  }
+}
+
+@media (max-width: 600px) {
+  #previousResults {
+    width: 100%;
+    line-height: 2em;
+    padding: 0px;
+  }
 }

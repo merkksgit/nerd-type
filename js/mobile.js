@@ -141,14 +141,12 @@ function checkInput(e) {
   // Update character styling
   for (let i = 0; i < currentWord.length; i++) {
     if (i < userInput.length) {
-      // Character has been typed
       if (userInput[i] === currentWord[i]) {
         chars[i].className = "correct";
       } else {
         chars[i].className = "incorrect";
       }
     } else {
-      // Character hasn't been typed yet
       chars[i].className = "remaining";
     }
   }
@@ -186,15 +184,37 @@ function showGameOverModal(message) {
   const totalTime = calculateTotalTime();
   document.getElementById("gameOverModalLabel").textContent =
     ">> TERMINAL_OUTPUT <<";
+
+  // Create terminal-style content with typing animation
+  const terminalLines = [
+    "> INITIALIZING TERMINAL OUTPUT...",
+    "> ANALYZING PERFORMANCE DATA...",
+    `> STATUS: ${message}`,
+    "> PERFORMANCE METRICS:",
+    `  └─ SESSION TIME: ${totalTime}`,
+    `  └─ TYPING SPEED: ${wpm} WPM`,
+    `  └─ ACCURACY: ${accuracy}%`,
+    "> PRESS [ENTER] TO RETRY",
+    "> END OF TRANSMISSION_",
+  ];
+
+  let currentLine = 0;
+  let modalContent = "";
+
+  function typeNextLine() {
+    if (currentLine < terminalLines.length) {
+      modalContent += terminalLines[currentLine] + "\n";
+      document.querySelector(".modal-body").innerHTML = `
+        <pre class="terminal-output">${modalContent}</pre>
+      `;
+      currentLine++;
+      setTimeout(typeNextLine, 150);
+    }
+  }
+
   document.querySelector(".modal-body").innerHTML =
-    message +
-    "<br />Time: " +
-    totalTime +
-    "<br />WPM: " +
-    wpm +
-    "<br />Accuracy: " +
-    accuracy +
-    "%";
+    `<pre class="terminal-output"></pre>`;
+  typeNextLine();
 
   saveResult(wpm, totalTime, accuracy);
   displayPreviousResults();
@@ -204,15 +224,32 @@ function showGameOverModal(message) {
   );
   gameOverModal.show();
 
-  document.getElementById("restartGameBtn").addEventListener("click", () => {
-    location.reload();
-  });
+  // Handle restart button click
+  const restartBtn = document.getElementById("restartGameBtn");
+  if (restartBtn) {
+    restartBtn.onclick = () => location.reload();
+  }
 
-  document.addEventListener("keydown", function handleEnterKey(event) {
-    if (event.key === "Enter") {
+  // Handle Enter key
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
       location.reload();
     }
-  });
+  };
+
+  // Add keypress listener when modal is shown
+  document
+    .getElementById("gameOverModal")
+    .addEventListener("shown.bs.modal", () => {
+      document.addEventListener("keydown", handleKeyPress);
+    });
+
+  // Remove keypress listener when modal is hidden
+  document
+    .getElementById("gameOverModal")
+    .addEventListener("hidden.bs.modal", () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    });
 }
 
 function saveResult(wpm, totalTime, accuracy) {

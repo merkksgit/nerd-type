@@ -188,12 +188,6 @@ function calculateWPM() {
 
   const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
 
-  console.log("Total characters typed:", totalCharactersTyped);
-  console.log("Characters per word:", CHARS_PER_WORD);
-  console.log("Time elapsed(min):", timeElapsed);
-  console.log("WPM:", wpm);
-  console.log("Accuracy:", accuracy + "%");
-
   return {
     wpm,
     accuracy: accuracy + "%",
@@ -204,36 +198,71 @@ function showGameOverModal(message) {
   const stats = calculateWPM();
   document.getElementById("gameOverModalLabel").textContent =
     ">> TERMINAL_OUTPUT <<";
+
+  // Create terminal-style content with typing animation
+  const terminalLines = [
+    "> INITIALIZING TERMINAL OUTPUT...",
+    "> ANALYZING PERFORMANCE DATA...",
+    `> STATUS: ${message}`,
+    "> PERFORMANCE METRICS:",
+    `  └─ ENERGY REMAINING: ${timeLeft} units`,
+    `  └─ TYPING SPEED: ${stats.wpm} WPM`,
+    `  └─ ACCURACY: ${stats.accuracy}`,
+    `  └─ FINAL SCORE: ${timeLeft * 256}`,
+    "> PRESS [ENTER] TO RETRY",
+    "> END OF TRANSMISSION_",
+  ];
+
+  let currentLine = 0;
+  let modalContent = "";
+
+  function typeNextLine() {
+    if (currentLine < terminalLines.length) {
+      modalContent += terminalLines[currentLine] + "\n";
+      document.querySelector(".modal-body").innerHTML = `
+        <pre class="terminal-output">${modalContent}</pre>
+      `;
+      currentLine++;
+      setTimeout(typeNextLine, 150);
+    }
+  }
+
   document.querySelector(".modal-body").innerHTML =
-    message +
-    "<br />You have " +
-    timeLeft +
-    " energy left.<br />Your WPM: " +
-    stats.wpm +
-    "<br />Accuracy: " +
-    stats.accuracy +
-    "<br>Score: " +
-    `${timeLeft * 256}` +
-    "<br />Try again by pressing <span style='color:#ff9e64'>Return</span>" +
-    ".";
+    `<pre class="terminal-output"></pre>`;
+  typeNextLine();
 
   saveResult(timeLeft, stats.wpm, stats.accuracy);
   displayPreviousResults();
 
-  let gameOverModal = new bootstrap.Modal(
-    document.getElementById("gameOverModal"),
-  );
-  gameOverModal.show();
+  const modal = new bootstrap.Modal(document.getElementById("gameOverModal"));
+  modal.show();
 
-  document.getElementById("restartGameBtn").addEventListener("click", () => {
-    location.reload();
-  });
+  // Handle restart button click
+  const restartBtn = document.getElementById("restartGameBtn");
+  if (restartBtn) {
+    restartBtn.onclick = () => location.reload();
+  }
 
-  document.addEventListener("keydown", function handleEnterKey(event) {
-    if (event.key === "Enter") {
+  // Handle Enter key
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
       location.reload();
     }
-  });
+  };
+
+  // Add keypress listener when modal is shown
+  document
+    .getElementById("gameOverModal")
+    .addEventListener("shown.bs.modal", () => {
+      document.addEventListener("keydown", handleKeyPress);
+    });
+
+  // Remove keypress listener when modal is hidden
+  document
+    .getElementById("gameOverModal")
+    .addEventListener("hidden.bs.modal", () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    });
 }
 
 function saveResult(timeLeft, wpm, accuracy) {
