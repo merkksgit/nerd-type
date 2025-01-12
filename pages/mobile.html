@@ -111,9 +111,21 @@
                   <button id="resetBtn">Reset</button>
                 </div>
                 <div id="score">
-                  <h3 id="resultsTittle">Scoreboard</h3>
-                  <ul id="previousResults"></ul>
-                  <button id="clearResultsBtn">Clear Scoreboard</button>
+                  <div class="container-fluid">
+                    <div class="d-flex flex-column align-items-center">
+                      <button
+                        id="toggleScoreboard"
+                        class="btn w-auto mb-3"
+                        style="min-width: 200px"
+                      >
+                        <i class="fa-solid fa-trophy"></i> Hide Scoreboard
+                      </button>
+                    </div>
+                  </div>
+                  <div id="scoreboardContainer">
+                    <ul id="previousResults"></ul>
+                    <button id="clearResultsBtn">Clear Scoreboard</button>
+                  </div>
                 </div>
               </div>
             </div>

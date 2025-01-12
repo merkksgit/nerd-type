@@ -373,3 +373,33 @@ score h3 {
     padding: 0px;
   }
 }
+
+#scoreboardContainer {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+#scoreboardContainer.hidden {
+  height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#toggleScoreboard {
+  background-color: #24283b;
+  color: #7aa2f7;
+}
+
+#toggleScoreboard:hover {
+  color: #ff9e64;
+}
+
+#resultsTittle {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+#score {
+  margin-top: 2rem;
+}

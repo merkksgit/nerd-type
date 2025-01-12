@@ -13,6 +13,41 @@ let correctKeystrokes = 0;
 import { words } from "./words-fin.js";
 console.log(words);
 
+// Scoreboard toggle functionality
+document
+  .getElementById("toggleScoreboard")
+  .addEventListener("click", function () {
+    const container = document.getElementById("scoreboardContainer");
+    const button = this;
+
+    container.classList.toggle("hidden");
+
+    if (container.classList.contains("hidden")) {
+      button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
+    } else {
+      button.innerHTML = '<i class="fa-solid fa-trophy"></i> Hide Scoreboard';
+    }
+
+    // Save the state to localStorage
+    localStorage.setItem(
+      "scoreboardHidden",
+      container.classList.contains("hidden"),
+    );
+  });
+
+// Maintain scoreboard state after page refresh
+document.addEventListener("DOMContentLoaded", function () {
+  const container = document.getElementById("scoreboardContainer");
+  const button = document.getElementById("toggleScoreboard");
+  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
+
+  if (isHidden) {
+    container.classList.add("hidden");
+    button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
+  }
+  displayPreviousResults();
+});
+
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");
   progressBar.classList.add("flash");
@@ -309,8 +344,6 @@ function displayPreviousResults() {
     resultsContainer.appendChild(resultItem);
   });
 }
-
-document.addEventListener("DOMContentLoaded", displayPreviousResults);
 
 document
   .getElementById("clearResultsBtn")
