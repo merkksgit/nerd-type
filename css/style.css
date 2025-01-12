@@ -372,6 +372,9 @@ score h3 {
     line-height: 2em;
     padding: 0px;
   }
+  .progress {
+    width: 100%;
+  }
 }
 
 #scoreboardContainer {
