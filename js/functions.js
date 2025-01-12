@@ -353,8 +353,6 @@ function displayPreviousResults() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", displayPreviousResults);
-
 document
   .getElementById("clearResultsBtn")
   .addEventListener("click", function () {
