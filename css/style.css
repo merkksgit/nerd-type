@@ -210,17 +210,17 @@ div h2 {
 
 #restartGameBtn,
 #clrResults {
-  background-color: #ff9e64;
+  background-color: #24283b;
   border-width: medium;
   border-color: #24283b;
-  color: #24283b;
+  color: #ff9e64;
 }
 
 #restartGameBtn:hover,
 #clrResults:hover {
   background-color: #24283b;
   border-color: #24283b;
-  color: #ff9e64;
+  color: #737aa2;
 }
 
 #gameOverModalLabel,
