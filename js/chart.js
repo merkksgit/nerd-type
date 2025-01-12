@@ -47,6 +47,24 @@ function displayScoreGraph() {
         plugins: {
           legend: {
             display: true,
+            onClick: function (e, legendItem, legend) {
+              const index = legendItem.datasetIndex;
+              const ci = legend.chart;
+
+              if (ci.isDatasetVisible(index)) {
+                ci.hide(index);
+                legendItem.hidden = true;
+              } else {
+                ci.show(index);
+                legendItem.hidden = false;
+              }
+            },
+            labels: {
+              usePointStyle: true,
+              pointStyle: "circle",
+              cursor: "pointer",
+              color: "#f2f2f2",
+            },
           },
         },
         scales: {
@@ -149,6 +167,24 @@ function displayScoreGraph() {
       plugins: {
         legend: {
           display: true,
+          onClick: function (e, legendItem, legend) {
+            const index = legendItem.datasetIndex;
+            const ci = legend.chart;
+
+            if (ci.isDatasetVisible(index)) {
+              ci.hide(index);
+              legendItem.hidden = true;
+            } else {
+              ci.show(index);
+              legendItem.hidden = false;
+            }
+          },
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            cursor: "pointer",
+            color: "#f2f2f2",
+          },
         },
       },
       scales: {
@@ -288,7 +324,7 @@ function displayZenModeGraph() {
         labels: [],
         datasets: [
           {
-            label: "Time (sec)",
+            label: "Time",
             data: [],
             borderColor: "#c3e88d",
             backgroundColor: "rgba(195, 232, 141, 0.2)",
@@ -319,6 +355,24 @@ function displayZenModeGraph() {
         plugins: {
           legend: {
             display: true,
+            onClick: function (e, legendItem, legend) {
+              const index = legendItem.datasetIndex;
+              const ci = legend.chart;
+
+              if (ci.isDatasetVisible(index)) {
+                ci.hide(index);
+                legendItem.hidden = true;
+              } else {
+                ci.show(index);
+                legendItem.hidden = false;
+              }
+            },
+            labels: {
+              usePointStyle: true,
+              pointStyle: "circle",
+              cursor: "pointer",
+              color: "#f2f2f2",
+            },
           },
         },
         scales: {
@@ -332,7 +386,7 @@ function displayZenModeGraph() {
             display: true,
             title: {
               display: true,
-              text: "Time (sec)",
+              text: "Time",
             },
             grid: {
               display: true,
@@ -396,7 +450,7 @@ function displayZenModeGraph() {
       labels: dates,
       datasets: [
         {
-          label: "Time (sec)",
+          label: "Time",
           data: times,
           borderColor: "#c3e88d",
           backgroundColor: "rgba(195, 232, 141, 0.2)",
@@ -427,6 +481,24 @@ function displayZenModeGraph() {
       plugins: {
         legend: {
           display: true,
+          onClick: function (e, legendItem, legend) {
+            const index = legendItem.datasetIndex;
+            const ci = legend.chart;
+
+            if (ci.isDatasetVisible(index)) {
+              ci.hide(index);
+              legendItem.hidden = true;
+            } else {
+              ci.show(index);
+              legendItem.hidden = false;
+            }
+          },
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            cursor: "pointer",
+            color: "#f2f2f2",
+          },
         },
       },
       scales: {
@@ -446,7 +518,7 @@ function displayZenModeGraph() {
         y: {
           title: {
             display: true,
-            text: "Time (sec)",
+            text: "Time (sec.)",
           },
           position: "left",
           grid: {
