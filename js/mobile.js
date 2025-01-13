@@ -172,7 +172,6 @@ function checkInput(e) {
     showGameOverModal(`
 <span style='color:#c3e88d'>
 >>>> INIT BREACH SEQUENCE
-[███████████████] 100%
 >>>> SUDO PRIVILEGES ESCALATED
 >>>> ROOT ACCESS OBTAINED
 >>>> SECURITY PROTOCOLS BYPASSED

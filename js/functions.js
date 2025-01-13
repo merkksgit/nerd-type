@@ -254,12 +254,6 @@ function showGameOverModal(message) {
     "> DETECTED ACHIEVEMENTS:",
     `  └─ SPEED TIER: ${getSpeedTier(stats.wpm)}`,
     `  └─ PRECISION RANK: ${getAccuracyRank(stats.accuracy)}`,
-    `  └─ ENERGY EFFICIENCY: ${getEfficiencyRating(timeLeft)}`,
-    "> ================================",
-    "> SYSTEM DIAGNOSTICS:",
-    "  └─ NEURAL BUFFER: STABLE",
-    "  └─ QUANTUM CORE: OPERATIONAL",
-    `  └─ SYSTEM LOAD: ${Math.min(99, stats.wpm)}%`,
     "> ================================",
     "> PRESS [ENTER] TO RETRY",
     "> END OF TRANSMISSION_",
@@ -294,14 +288,6 @@ function showGameOverModal(message) {
     if (roundedAccuracy >= 75) return "SYSTEM UNSTABLE";
     if (roundedAccuracy >= 60) return "NEURAL INTERFERENCE";
     return "SYSTEM FAILURE";
-  }
-
-  function getEfficiencyRating(timeLeft) {
-    if (timeLeft >= 50) return "QUANTUM EFFICIENT";
-    if (timeLeft >= 30) return "NEURAL OPTIMIZED";
-    if (timeLeft >= 20) return "CYBER BALANCED";
-    if (timeLeft >= 10) return "DIGITAL STABLE";
-    return "POWER SAVING";
   }
 
   let currentLine = 0;
