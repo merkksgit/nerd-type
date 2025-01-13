@@ -232,7 +232,7 @@ function calculateWPM() {
 function showGameOverModal(message) {
   const stats = calculateWPM();
   document.getElementById("gameOverModalLabel").textContent =
-    "runner@PENTAGON-CORE:/classified";
+    "runner@PENTAGON-CORE:/classified$";
   // Create terminal-style content with typing animation
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",

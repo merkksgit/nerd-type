@@ -414,7 +414,7 @@ score h3 {
   color: #ff9e64 !important;
   border-radius: 4px;
   padding: 8px 12px;
-  margin-bottom: 10px;
+  margin: 0 auto 10px auto;
   width: 80%;
 }
 
@@ -446,6 +446,11 @@ score h3 {
 .modal-body label {
   color: #8f9aff;
   margin-bottom: 5px;
+  display: block; /* Added */
+  text-align: left; /* Added */
+  width: 80%; /* Added */
+  margin-left: auto; /* Added */
+  margin-right: auto;
 }
 
 .modal-body .btn-success {
