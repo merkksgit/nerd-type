@@ -229,14 +229,12 @@ function validateTimeFormat(timeStr) {
 
 function showCheatModal(message) {
   document.getElementById("gameOverModalLabel").textContent =
-    ">> TERMINAL_OUTPUT <<";
+    "root@PENTAGON-CORE:/classified";
 
-  const modalContent = `
-        <pre class="terminal-output">
-${message}
+  const modalContent = `<pre class="terminal-output">${message}
 > ENTER CUSTOM SCORE DATA:
 </pre>
-      <div class="mt-3">
+      <div class="mt-2">
           <div class="mb-2">
               <label>WPM (0-300):</label>
               <input type="number" id="customWpm" class="form-control bg-dark text-light" 
@@ -346,7 +344,7 @@ function showGameOverModal(message) {
   const accuracy = calculateAccuracy();
   const totalTime = calculateTotalTime();
   document.getElementById("gameOverModalLabel").textContent =
-    ">> TERMINAL_OUTPUT <<";
+    "runner@PENTAGON-CORE:/classified";
 
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
@@ -354,9 +352,9 @@ function showGameOverModal(message) {
     `> STATUS: ${message}`,
     "> ================================",
     "> PERFORMANCE METRICS:",
-    `  └─ SESSION TIME: ${totalTime}`,
-    `  └─ TYPING SPEED: ${wpm} WPM`,
-    `  └─ ACCURACY: ${accuracy}%`,
+    `  └─ SESSION TIME: <span style='color:#c3e88d'>${totalTime}</span>`,
+    `  └─ TYPING SPEED: <span style='color:#ff9e64'>${wpm}</span> WPM`,
+    `  └─ ACCURACY: <span style='color:#bb9af7'>${accuracy}%</span>`,
     "> ================================",
     "> PRESS [ENTER] TO RETRY",
     "> END OF TRANSMISSION_",

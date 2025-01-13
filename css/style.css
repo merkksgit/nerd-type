@@ -227,6 +227,7 @@ div h2 {
 #customAlertModalLabel {
   color: #ff007c;
   background-color: #24283b;
+  font-size: 1em;
 }
 
 #progressPercentage {

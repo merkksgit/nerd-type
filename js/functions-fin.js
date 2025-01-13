@@ -232,7 +232,7 @@ function calculateWPM() {
 function showGameOverModal(message) {
   const stats = calculateWPM();
   document.getElementById("gameOverModalLabel").textContent =
-    ">> TERMINAL_OUTPUT <<";
+    "runner@PENTAGON-CORE:/classified";
   // Create terminal-style content with typing animation
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
@@ -240,14 +240,14 @@ function showGameOverModal(message) {
     `> STATUS: ${message}`,
     "> ================================",
     "> PERFORMANCE METRICS:",
-    `  └─ ENERGY REMAINING: ${timeLeft} units`,
-    `  └─ TYPING SPEED: ${stats.wpm} WPM`,
-    `  └─ ACCURACY: ${stats.accuracy}`,
-    `  └─ FINAL SCORE: ${timeLeft * 256}`,
+    `  └─ ENERGY REMAINING: <span style='color:#c3e88d'>${timeLeft}</span> units`,
+    `  └─ TYPING SPEED: <span style='color:#ff9e64'>${stats.wpm}</span> WPM`,
+    `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
+    `  └─ FINAL SCORE: <span style='color:#c3e88d'>${timeLeft * 256}</span>`,
     "> ================================",
     "> DETECTED ACHIEVEMENTS:",
-    `  └─ SPEED TIER: ${getSpeedTier(stats.wpm)}`,
-    `  └─ PRECISION RANK: ${getAccuracyRank(stats.accuracy)}`,
+    `  └─ SPEED TIER: <span style='color:#4fd6be'>${getSpeedTier(stats.wpm)}</span>`,
+    `  └─ PRECISION RANK: <span style='color:#4fd6be'>${getAccuracyRank(stats.accuracy)}</span>`,
     "> ================================",
     "> PRESS [ENTER] TO RETRY",
     "> END OF TRANSMISSION_",
