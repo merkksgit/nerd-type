@@ -229,7 +229,7 @@ function validateTimeFormat(timeStr) {
 
 function showCheatModal(message) {
   document.getElementById("gameOverModalLabel").textContent =
-    "root@PENTAGON-CORE:/classified$";
+    "[root@PENTAGON-CORE:/classified]$";
 
   const modalContent = `<pre class="terminal-output">${message}
 > ENTER CUSTOM SCORE DATA:
@@ -344,7 +344,7 @@ function showGameOverModal(message) {
   const accuracy = calculateAccuracy();
   const totalTime = calculateTotalTime();
   document.getElementById("gameOverModalLabel").textContent =
-    "runner@PENTAGON-CORE:/classified$";
+    "[runner@PENTAGON-CORE:/classified]$";
 
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
