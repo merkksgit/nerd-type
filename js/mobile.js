@@ -9,6 +9,7 @@ let hasStartedTyping = false;
 let sessionStartTime = null;
 let totalKeystrokes = 0;
 let correctKeystrokes = 0;
+let gameEnded = false;
 import { words } from "./words-fin.js";
 console.log(words);
 
@@ -27,7 +28,6 @@ document
       button.innerHTML = '<i class="fa-solid fa-trophy"></i> Hide Scoreboard';
     }
 
-    // Save the state to localStorage
     localStorage.setItem(
       "scoreboardHidden",
       container.classList.contains("hidden"),
@@ -61,6 +61,7 @@ const resetBtn = document.getElementById("resetBtn");
 document.getElementById("startButton").addEventListener("click", startGame);
 
 function startGame() {
+  gameEnded = false;
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
   updateWordDisplay();
@@ -73,16 +74,15 @@ function startGame() {
   totalCharactersTyped = 0;
   totalKeystrokes = 0;
   correctKeystrokes = 0;
+  totalTimeSpent = 0;
 }
 
 function updateWordDisplay() {
   const wordToTypeElement = document.getElementById("wordToType");
   const currentWord = words[currentWordIndex];
 
-  // Clear previous content
   wordToTypeElement.innerHTML = "";
 
-  // Create a span for each character
   for (let i = 0; i < currentWord.length; i++) {
     const charSpan = document.createElement("span");
     charSpan.textContent = currentWord[i];
@@ -121,12 +121,15 @@ resetBtn.addEventListener("click", () => {
 });
 
 function totalTimeCount() {
+  if (gameEnded) return;
+
   updateProgressBar();
   if (document.getElementById("totalTime")) {
     document.getElementById("totalTime").textContent = calculateTotalTime();
   }
 
-  if (totalTimeSpent >= 30) {
+  if (totalTimeSpent >= 30 && !gameEnded) {
+    gameEnded = true;
     clearInterval(totalTimeInterval);
     showGameOverModal(
       "System core <span style='color:#c3e88d'>BREACHED!</span> Access granted.",
@@ -166,16 +169,18 @@ function checkInput(e) {
   const chars = wordDisplay.children;
 
   // Check for secret code word
-  if (userInput.toLowerCase() === "iddqd") {
-    totalTimeSpent = 30;
+  if (userInput.toLowerCase() === "iddqd" && !gameEnded) {
+    gameEnded = true;
     clearInterval(totalTimeInterval);
-    showGameOverModal(`
+    document.getElementById("userInput").disabled = true;
+    showCheatModal(`
 <span style='color:#c3e88d'>
->>>> INIT BREACH SEQUENCE
->>>> SUDO PRIVILEGES ESCALATED
->>>> ROOT ACCESS OBTAINED
->>>> SECURITY PROTOCOLS BYPASSED
->>>> SYSTEM COMPROMISED
+> INIT BREACH SEQUENCE
+> SUDO PRIVILEGES ESCALATED
+> ROOT ACCESS OBTAINED
+> SECURITY PROTOCOLS BYPASSED
+> SYSTEM COMPROMISED
+> GOD MODE ACTIVATED
 </span>`);
     return;
   }
@@ -214,18 +219,121 @@ function checkInput(e) {
   }
 }
 
-function calculateWPM() {
-  if (!gameStartTime) return 0;
-  const endTime = Date.now();
-  const timeElapsed = Math.max(0.08, (endTime - gameStartTime) / 60000);
-  const CHARS_PER_WORD = 5;
-  const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
-  return wpm;
+function validateTimeFormat(timeStr) {
+  const timeRegex = /^([0-9]{1,2}):([0-5][0-9])$/;
+  if (!timeRegex.test(timeStr)) return false;
+
+  const [minutes, seconds] = timeStr.split(":").map(Number);
+  return minutes >= 0 && seconds >= 0 && seconds < 60;
 }
 
-function calculateAccuracy() {
-  if (totalKeystrokes === 0) return "0.0";
-  return ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1);
+function showCheatModal(message) {
+  document.getElementById("gameOverModalLabel").textContent =
+    ">> TERMINAL_OUTPUT <<";
+
+  const modalContent = `
+        <pre class="terminal-output">
+${message}
+> ENTER CUSTOM SCORE DATA:
+</pre>
+      <div class="mt-3">
+          <div class="mb-2">
+              <label>WPM (0-300):</label>
+              <input type="number" id="customWpm" class="form-control bg-dark text-light" 
+                     min="0" max="300" placeholder="Enter WPM">
+              <div id="wpmError" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-2">
+              <label>Accuracy (0-100%):</label>
+              <input type="number" id="customAccuracy" class="form-control bg-dark text-light" 
+                     min="0" max="100" step="0.1" placeholder="Enter accuracy">
+              <div id="accuracyError" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-2">
+              <label>Time (mm:ss):</label>
+              <input type="text" id="customTime" class="form-control bg-dark text-light" 
+                     placeholder="e.g., 1:30">
+              <div id="timeError" class="invalid-feedback"></div>
+          </div>
+          <button id="submitCustomScore" class="btn btn-success mt-2">
+              Submit Score
+          </button>
+      </div>
+  `;
+
+  document.querySelector(".modal-body").innerHTML = modalContent;
+
+  const gameOverModal = new bootstrap.Modal(
+    document.getElementById("gameOverModal"),
+  );
+  gameOverModal.show();
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      document.getElementById("submitCustomScore").click();
+    }
+  };
+
+  document
+    .getElementById("gameOverModal")
+    .addEventListener("shown.bs.modal", () => {
+      document.addEventListener("keydown", handleKeyPress);
+    });
+
+  document
+    .getElementById("gameOverModal")
+    .addEventListener("hidden.bs.modal", () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    });
+
+  document
+    .getElementById("submitCustomScore")
+    .addEventListener("click", function () {
+      let isValid = true;
+
+      const wpmInput = document.getElementById("customWpm");
+      const wpm = parseInt(wpmInput.value);
+      if (isNaN(wpm) || wpm < 0 || wpm > 300) {
+        document.getElementById("wpmError").textContent =
+          "WPM must be between 0 and 300";
+        wpmInput.classList.add("is-invalid");
+        isValid = false;
+      } else {
+        wpmInput.classList.remove("is-invalid");
+      }
+
+      const accuracyInput = document.getElementById("customAccuracy");
+      const accuracy = parseFloat(accuracyInput.value);
+      if (isNaN(accuracy) || accuracy < 0 || accuracy > 100) {
+        document.getElementById("accuracyError").textContent =
+          "Accuracy must be between 0 and 100";
+        accuracyInput.classList.add("is-invalid");
+        isValid = false;
+      } else {
+        accuracyInput.classList.remove("is-invalid");
+      }
+
+      const timeInput = document.getElementById("customTime");
+      const time = timeInput.value;
+      if (!validateTimeFormat(time)) {
+        document.getElementById("timeError").textContent =
+          "Invalid time format. Use mm:ss (e.g., 1:30)";
+        timeInput.classList.add("is-invalid");
+        isValid = false;
+      } else {
+        timeInput.classList.remove("is-invalid");
+      }
+
+      if (isValid) {
+        // Save custom result
+        saveResult(wpm, time, accuracy);
+        displayPreviousResults();
+
+        // Close modal and reload
+        gameOverModal.hide();
+        location.reload();
+      }
+    });
 }
 
 function showGameOverModal(message) {
@@ -235,15 +343,16 @@ function showGameOverModal(message) {
   document.getElementById("gameOverModalLabel").textContent =
     ">> TERMINAL_OUTPUT <<";
 
-  // Create terminal-style content with typing animation
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
     `> STATUS: ${message}`,
+    "> ================================",
     "> PERFORMANCE METRICS:",
     `  └─ SESSION TIME: ${totalTime}`,
     `  └─ TYPING SPEED: ${wpm} WPM`,
     `  └─ ACCURACY: ${accuracy}%`,
+    "> ================================",
     "> PRESS [ENTER] TO RETRY",
     "> END OF TRANSMISSION_",
   ];
@@ -300,6 +409,20 @@ function showGameOverModal(message) {
     .addEventListener("hidden.bs.modal", () => {
       document.removeEventListener("keydown", handleKeyPress);
     });
+}
+
+function calculateWPM() {
+  if (!gameStartTime) return 0;
+  const endTime = Date.now();
+  const timeElapsed = Math.max(0.08, (endTime - gameStartTime) / 60000);
+  const CHARS_PER_WORD = 5;
+  const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
+  return wpm;
+}
+
+function calculateAccuracy() {
+  if (totalKeystrokes === 0) return "0.0";
+  return ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1);
 }
 
 function saveResult(wpm, totalTime, accuracy) {

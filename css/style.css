@@ -405,3 +405,72 @@ score h3 {
 #score {
   margin-top: 2rem;
 }
+
+/* GodMode */
+.modal-body .form-control {
+  background-color: #1f2335 !important;
+  border: none;
+  color: #ff9e64 !important;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  width: 80%;
+}
+
+#customTime {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+/* Hide number input spinners */
+.modal-body input[type="number"]::-webkit-inner-spin-button,
+.modal-body input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.modal-body input[type="number"] {
+  appearance: textfield;
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.modal-body .form-control:focus {
+  border-color: #3f4575;
+  outline: none;
+  box-shadow: none;
+}
+
+.modal-body label {
+  color: #8f9aff;
+  margin-bottom: 5px;
+}
+
+.modal-body .btn-success {
+  background-color: #24283b;
+  border: none;
+  color: #c3e88d;
+  display: block;
+  margin: 0 auto;
+}
+
+.modal-body .btn-success:hover {
+  color: #737aa2;
+  background-color: #24283b;
+}
+
+#customTime {
+  width: 80%;
+  margin-top: 0;
+}
+
+.modal-body .mb-2 {
+  margin-top: 0;
+  margin-bottom: 10px !important;
+}
+
+.modal-body .form-control {
+  height: 38px;
+  font-size: 16px;
+}
