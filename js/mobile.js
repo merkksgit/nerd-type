@@ -240,23 +240,22 @@ ${message}
           <div class="mb-2">
               <label>WPM (0-300):</label>
               <input type="number" id="customWpm" class="form-control bg-dark text-light" 
-                     min="0" max="300" placeholder="Enter WPM">
+                     min="0" max="300">
               <div id="wpmError" class="invalid-feedback"></div>
           </div>
           <div class="mb-2">
               <label>Accuracy (0-100%):</label>
               <input type="number" id="customAccuracy" class="form-control bg-dark text-light" 
-                     min="0" max="100" step="0.1" placeholder="Enter accuracy">
+                     min="0" max="100" step="0.1">
               <div id="accuracyError" class="invalid-feedback"></div>
           </div>
           <div class="mb-2">
               <label>Time (mm:ss):</label>
-              <input type="text" id="customTime" class="form-control bg-dark text-light" 
-                     placeholder="e.g., 1:30">
+              <input type="text" id="customTime" class="form-control bg-dark text-light">
               <div id="timeError" class="invalid-feedback"></div>
           </div>
           <button id="submitCustomScore" class="btn btn-success mt-2">
-              Submit Score
+              Submit
           </button>
       </div>
   `;
@@ -323,7 +322,7 @@ ${message}
       const time = timeInput.value;
       if (!validateTimeFormat(time)) {
         document.getElementById("timeError").textContent =
-          "Invalid time format. Use mm:ss (e.g., 1:30)";
+          "Invalid time format. Use mm:ss (e.g. 1:30)";
         timeInput.classList.add("is-invalid");
         isValid = false;
       } else {

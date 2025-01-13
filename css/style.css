@@ -450,7 +450,7 @@ score h3 {
 .modal-body .btn-success {
   background-color: #24283b;
   border: none;
-  color: #c3e88d;
+  color: #ff9e64;
   display: block;
   margin: 0 auto;
 }
@@ -473,4 +473,8 @@ score h3 {
 .modal-body .form-control {
   height: 38px;
   font-size: 16px;
+}
+
+#submitCustomScore {
+  padding-top: 2em;
 }
