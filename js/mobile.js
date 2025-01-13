@@ -165,6 +165,22 @@ function checkInput(e) {
   const wordDisplay = document.getElementById("wordToType");
   const chars = wordDisplay.children;
 
+  // Check for secret code word
+  if (userInput.toLowerCase() === "iddqd") {
+    totalTimeSpent = 30;
+    clearInterval(totalTimeInterval);
+    showGameOverModal(`
+<span style='color:#c3e88d'>
+>>>> INIT BREACH SEQUENCE
+[███████████████] 100%
+>>>> SUDO PRIVILEGES ESCALATED
+>>>> ROOT ACCESS OBTAINED
+>>>> SECURITY PROTOCOLS BYPASSED
+>>>> SYSTEM COMPROMISED
+</span>`);
+    return;
+  }
+
   // Track keystrokes
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;

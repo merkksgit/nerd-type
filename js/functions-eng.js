@@ -225,20 +225,63 @@ function showGameOverModal(message) {
   const stats = calculateWPM();
   document.getElementById("gameOverModalLabel").textContent =
     ">> TERMINAL_OUTPUT <<";
-
   // Create terminal-style content with typing animation
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
     `> STATUS: ${message}`,
+    "> ================================",
     "> PERFORMANCE METRICS:",
     `  └─ ENERGY REMAINING: ${timeLeft} units`,
     `  └─ TYPING SPEED: ${stats.wpm} WPM`,
     `  └─ ACCURACY: ${stats.accuracy}`,
     `  └─ FINAL SCORE: ${timeLeft * 256}`,
+    "> ================================",
+    "> DETECTED ACHIEVEMENTS:",
+    `  └─ SPEED TIER: ${getSpeedTier(stats.wpm)}`,
+    `  └─ PRECISION RANK: ${getAccuracyRank(stats.accuracy)}`,
+    `  └─ ENERGY EFFICIENCY: ${getEfficiencyRating(timeLeft)}`,
+    "> ================================",
+    "> SYSTEM DIAGNOSTICS:",
+    "  └─ NEURAL BUFFER: STABLE",
+    "  └─ QUANTUM CORE: OPERATIONAL",
+    `  └─ SYSTEM LOAD: ${Math.min(99, stats.wpm)}%`,
+    "> ================================",
     "> PRESS [ENTER] TO RETRY",
     "> END OF TRANSMISSION_",
   ];
+
+  // Helper functions for achievement tiers
+  function getSpeedTier(wpm) {
+    if (wpm >= 100) return "QUANTUM SPEED";
+    if (wpm >= 80) return "NEURAL MASTER";
+    if (wpm >= 60) return "CYBER ADEPT";
+    if (wpm >= 40) return "DIGITAL RUNNER";
+    return "INITIATING";
+  }
+
+  function getAccuracyRank(accuracy) {
+    const numericAccuracy = parseFloat(accuracy);
+
+    // Round to one decimal
+    const roundedAccuracy = Math.round(numericAccuracy * 10) / 10;
+
+    if (roundedAccuracy >= 98) return "PERFECT SYNC";
+    if (roundedAccuracy >= 95) return "NEURAL MASTER";
+    if (roundedAccuracy >= 90) return "CYBER EFFICIENT";
+    if (roundedAccuracy >= 85) return "DIGITAL PRECISE";
+    if (roundedAccuracy >= 75) return "SYSTEM UNSTABLE";
+    if (roundedAccuracy >= 60) return "NEURAL INTERFERENCE";
+    return "SYSTEM FAILURE";
+  }
+
+  function getEfficiencyRating(timeLeft) {
+    if (timeLeft >= 50) return "QUANTUM EFFICIENT";
+    if (timeLeft >= 30) return "NEURAL OPTIMIZED";
+    if (timeLeft >= 20) return "CYBER BALANCED";
+    if (timeLeft >= 10) return "DIGITAL STABLE";
+    return "POWER SAVING";
+  }
 
   let currentLine = 0;
   let modalContent = "";
