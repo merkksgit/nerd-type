@@ -268,6 +268,12 @@ ${message}
   );
   gameOverModal.show();
 
+  // Add restart game functionality
+  document.getElementById("restartGameBtn").addEventListener("click", () => {
+    gameOverModal.hide();
+    location.reload();
+  });
+
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       document.getElementById("submitCustomScore").click();
