@@ -19,15 +19,12 @@ document
   .addEventListener("click", function () {
     const container = document.getElementById("scoreboardContainer");
     const button = this;
-
     container.classList.toggle("hidden");
-
     if (container.classList.contains("hidden")) {
       button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
     } else {
       button.innerHTML = '<i class="fa-solid fa-trophy"></i> Hide Scoreboard';
     }
-
     localStorage.setItem(
       "scoreboardHidden",
       container.classList.contains("hidden"),
@@ -39,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const container = document.getElementById("scoreboardContainer");
   const button = document.getElementById("toggleScoreboard");
   const isHidden = localStorage.getItem("scoreboardHidden") === "true";
-
   if (isHidden) {
     container.classList.add("hidden");
     button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
@@ -50,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");
   progressBar.classList.add("flash");
-
   setTimeout(() => {
     progressBar.classList.remove("flash");
   }, 400);
@@ -80,27 +75,22 @@ function startGame() {
 function updateWordDisplay() {
   const wordToTypeElement = document.getElementById("wordToType");
   const currentWord = words[currentWordIndex];
-
   wordToTypeElement.innerHTML = "";
-
   for (let i = 0; i < currentWord.length; i++) {
     const charSpan = document.createElement("span");
     charSpan.textContent = currentWord[i];
     charSpan.classList.add("remaining");
     wordToTypeElement.appendChild(charSpan);
   }
-
   document.getElementById("nextWord").textContent = words[nextWordIndex];
 }
 
 function calculateTotalTime() {
   if (!sessionStartTime) return "0:00";
-
   const now = new Date();
   const totalSeconds = Math.floor((now - sessionStartTime) / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
@@ -122,12 +112,10 @@ resetBtn.addEventListener("click", () => {
 
 function totalTimeCount() {
   if (gameEnded) return;
-
   updateProgressBar();
   if (document.getElementById("totalTime")) {
     document.getElementById("totalTime").textContent = calculateTotalTime();
   }
-
   if (totalTimeSpent >= 30 && !gameEnded) {
     gameEnded = true;
     clearInterval(totalTimeInterval);
@@ -139,17 +127,14 @@ function totalTimeCount() {
 
 function updateProgressBar() {
   const progressPercentage = (totalTimeSpent / 30) * 100;
-
   const progressBar = document.getElementById("progressBar");
   progressBar.style.width = progressPercentage + "%";
   progressBar.setAttribute("aria-valuenow", progressPercentage);
-
   if (progressPercentage < 80) {
     progressBar.style.backgroundColor = "#1f2335";
   } else {
     progressBar.style.backgroundColor = "#1f2335";
   }
-
   document.getElementById("progressPercentage").textContent =
     "Progress " + Math.floor(progressPercentage) + "%";
 }
@@ -173,15 +158,7 @@ function checkInput(e) {
     gameEnded = true;
     clearInterval(totalTimeInterval);
     document.getElementById("userInput").disabled = true;
-    showCheatModal(`
-<span style='color:#c3e88d'>
-> INIT BREACH SEQUENCE
-> SUDO PRIVILEGES ESCALATED
-> ROOT ACCESS OBTAINED
-> SECURITY PROTOCOLS BYPASSED
-> SYSTEM COMPROMISED
-> GOD MODE ACTIVATED
-</span>`);
+    showCheatModal();
     return;
   }
 
@@ -222,129 +199,167 @@ function checkInput(e) {
 function validateTimeFormat(timeStr) {
   const timeRegex = /^([0-9]{1,2}):([0-5][0-9])$/;
   if (!timeRegex.test(timeStr)) return false;
-
   const [minutes, seconds] = timeStr.split(":").map(Number);
   return minutes >= 0 && seconds >= 0 && seconds < 60;
 }
 
-function showCheatModal(message) {
+function showCheatModal() {
   document.getElementById("gameOverModalLabel").textContent =
     "[root@PENTAGON-CORE:/classified]$";
 
-  const modalContent = `<pre class="terminal-output">${message}
-> ENTER CUSTOM SCORE DATA:
-</pre>
-      <div class="mt-2">
-          <div class="mb-2">
-              <label>WPM (0-300):</label>
-              <input type="number" id="customWpm" class="form-control bg-dark text-light" 
-                     min="0" max="300">
-              <div id="wpmError" class="invalid-feedback"></div>
-          </div>
-          <div class="mb-2">
-              <label>Accuracy (0-100%):</label>
-              <input type="number" id="customAccuracy" class="form-control bg-dark text-light" 
-                     min="0" max="100" step="0.1">
-              <div id="accuracyError" class="invalid-feedback"></div>
-          </div>
-          <div class="mb-2">
-              <label>Time (mm:ss):</label>
-              <input type="text" id="customTime" class="form-control bg-dark text-light">
-              <div id="timeError" class="invalid-feedback"></div>
-          </div>
-          <button id="submitCustomScore" class="btn btn-success mt-2">
-              Submit
-          </button>
-      </div>
-  `;
+  const terminalLines = [
+    "> INIT BREACH SEQUENCE",
+    "> ESTABLISHING CONNECTION ... 100%",
+    "> BYPASSING FIREWALL ... 100%",
+    "> CRACKING ENCRYPTION ... 100%",
+    "> SUDO PRIVILEGES ESCALATED",
+    "> ROOT ACCESS OBTAINED",
+    "> SECURITY PROTOCOLS BYPASSED",
+    "> SYSTEM COMPROMISED",
+    "> GOD MODE ACTIVATED",
+    "> ENTER CUSTOM SCORE DATA:",
+  ];
 
-  document.querySelector(".modal-body").innerHTML = modalContent;
+  let currentLine = 0;
+  let modalContent = "";
+
+  function typeNextLine() {
+    if (currentLine < terminalLines.length) {
+      modalContent += `<span style='color:#c3e88d'>${terminalLines[currentLine]}</span>\n`;
+      document.querySelector(".modal-body").innerHTML = `
+        <pre class="terminal-output">${modalContent}</pre>
+        ${
+          currentLine === terminalLines.length - 1
+            ? `
+        <div class="mt-2">
+          <div class="mb-2">
+            <label>WPM (0-300):</label>
+            <input type="number" id="customWpm" class="form-control bg-dark text-light" min="0" max="300">
+            <div id="wpmError" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-2">
+            <label>Accuracy (0-100%):</label>
+            <input type="number" id="customAccuracy" class="form-control bg-dark text-light" min="0" max="100" step="0.1">
+            <div id="accuracyError" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-2">
+            <label>Time (mm:ss):</label>
+            <input type="text" id="customTime" class="form-control bg-dark text-light">
+            <div id="timeError" class="invalid-feedback"></div>
+          </div>
+          <button id="submitCustomScore" class="btn btn-success mt-2">Submit</button>
+        </div>`
+            : ""
+        }
+      `;
+      currentLine++;
+
+      // Add longer delay for loading lines
+      const isLoadingLine = terminalLines[currentLine - 1].includes("100%");
+      setTimeout(typeNextLine, isLoadingLine ? 900 : 200);
+    }
+  }
+
+  document.querySelector(".modal-body").innerHTML =
+    `<pre class="terminal-output"></pre>`;
+  typeNextLine();
 
   const gameOverModal = new bootstrap.Modal(
     document.getElementById("gameOverModal"),
   );
   gameOverModal.show();
 
-  // Add restart game functionality
-  document.getElementById("restartGameBtn").addEventListener("click", () => {
-    gameOverModal.hide();
-    location.reload();
-  });
+  // Add event listeners after the form is added to the DOM
+  setTimeout(
+    () => {
+      // Add restart game functionality
+      document
+        .getElementById("restartGameBtn")
+        .addEventListener("click", () => {
+          gameOverModal.hide();
+          location.reload();
+        });
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      document.getElementById("submitCustomScore").click();
-    }
-  };
+      const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+          document.getElementById("submitCustomScore")?.click();
+        }
+      };
 
-  document
-    .getElementById("gameOverModal")
-    .addEventListener("shown.bs.modal", () => {
-      document.addEventListener("keydown", handleKeyPress);
-    });
+      document
+        .getElementById("gameOverModal")
+        .addEventListener("shown.bs.modal", () => {
+          document.addEventListener("keydown", handleKeyPress);
+        });
 
-  document
-    .getElementById("gameOverModal")
-    .addEventListener("hidden.bs.modal", () => {
-      document.removeEventListener("keydown", handleKeyPress);
-    });
+      document
+        .getElementById("gameOverModal")
+        .addEventListener("hidden.bs.modal", () => {
+          document.removeEventListener("keydown", handleKeyPress);
+        });
 
-  document
-    .getElementById("submitCustomScore")
-    .addEventListener("click", function () {
-      let isValid = true;
+      document
+        .getElementById("submitCustomScore")
+        ?.addEventListener("click", function () {
+          let isValid = true;
 
-      const wpmInput = document.getElementById("customWpm");
-      const wpm = parseInt(wpmInput.value);
-      if (isNaN(wpm) || wpm < 0 || wpm > 300) {
-        document.getElementById("wpmError").textContent =
-          "WPM must be between 0 and 300";
-        wpmInput.classList.add("is-invalid");
-        isValid = false;
-      } else {
-        wpmInput.classList.remove("is-invalid");
-      }
+          const wpmInput = document.getElementById("customWpm");
+          const wpm = parseInt(wpmInput.value);
+          if (isNaN(wpm) || wpm < 0 || wpm > 300) {
+            document.getElementById("wpmError").textContent =
+              "WPM must be between 0 and 300";
+            wpmInput.classList.add("is-invalid");
+            isValid = false;
+          } else {
+            wpmInput.classList.remove("is-invalid");
+          }
 
-      const accuracyInput = document.getElementById("customAccuracy");
-      const accuracy = parseFloat(accuracyInput.value);
-      if (isNaN(accuracy) || accuracy < 0 || accuracy > 100) {
-        document.getElementById("accuracyError").textContent =
-          "Accuracy must be between 0 and 100";
-        accuracyInput.classList.add("is-invalid");
-        isValid = false;
-      } else {
-        accuracyInput.classList.remove("is-invalid");
-      }
+          const accuracyInput = document.getElementById("customAccuracy");
+          const accuracy = parseFloat(accuracyInput.value);
+          if (isNaN(accuracy) || accuracy < 0 || accuracy > 100) {
+            document.getElementById("accuracyError").textContent =
+              "Accuracy must be between 0 and 100";
+            accuracyInput.classList.add("is-invalid");
+            isValid = false;
+          } else {
+            accuracyInput.classList.remove("is-invalid");
+          }
 
-      const timeInput = document.getElementById("customTime");
-      const time = timeInput.value;
-      if (!validateTimeFormat(time)) {
-        document.getElementById("timeError").textContent =
-          "Invalid time format. Use mm:ss (e.g. 1:30)";
-        timeInput.classList.add("is-invalid");
-        isValid = false;
-      } else {
-        timeInput.classList.remove("is-invalid");
-      }
+          const timeInput = document.getElementById("customTime");
+          const time = timeInput.value;
+          if (!validateTimeFormat(time)) {
+            document.getElementById("timeError").textContent =
+              "Invalid time format. Use mm:ss (e.g. 1:30)";
+            timeInput.classList.add("is-invalid");
+            isValid = false;
+          } else {
+            timeInput.classList.remove("is-invalid");
+          }
 
-      if (isValid) {
-        // Save custom result
-        saveResult(wpm, time, accuracy);
-        displayPreviousResults();
-
-        // Close modal and reload
-        gameOverModal.hide();
-        location.reload();
-      }
-    });
+          if (isValid) {
+            // Save custom result
+            saveResult(wpm, time, accuracy);
+            displayPreviousResults();
+            // Close modal and reload
+            gameOverModal.hide();
+            location.reload();
+          }
+        });
+    },
+    terminalLines.length * 200 + 100,
+  );
 }
 
 function showGameOverModal(message) {
   const wpm = calculateWPM();
   const accuracy = calculateAccuracy();
   const totalTime = calculateTotalTime();
-  document.getElementById("gameOverModalLabel").textContent =
-    "[runner@PENTAGON-CORE:/classified]$";
+
+  // Set header based on game outcome
+  const isWin = message.includes("BREACHED");
+  document.getElementById("gameOverModalLabel").textContent = isWin
+    ? "[runner@PENTAGON-CORE:/classified]$"
+    : "[root@PENTAGON-CORE:/classified]$";
 
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
@@ -422,7 +437,6 @@ function calculateWPM() {
   const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
   return wpm;
 }
-
 function calculateAccuracy() {
   if (totalKeystrokes === 0) return "0.0";
   return ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1);
@@ -445,7 +459,6 @@ function displayPreviousResults() {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
   results.reverse();
   resultsContainer.innerHTML = "";
-
   results.forEach((result) => {
     const resultItem = document.createElement("li");
     if (result.mode === "Zen Mode") {
@@ -462,7 +475,6 @@ document
   .addEventListener("click", function () {
     localStorage.removeItem("gameResults");
     document.getElementById("previousResults").innerHTML = "";
-
     const customAlertModal = new bootstrap.Modal(
       document.getElementById("customAlertModal"),
     );
