@@ -223,6 +223,12 @@ function showCheatModal() {
   let currentLine = 0;
   let modalContent = "";
 
+  // Create and show modal first
+  const gameOverModal = new bootstrap.Modal(
+    document.getElementById("gameOverModal"),
+  );
+  gameOverModal.show();
+
   function typeNextLine() {
     if (currentLine < terminalLines.length) {
       modalContent += `<span style='color:#c3e88d'>${terminalLines[currentLine]}</span>\n`;
@@ -247,14 +253,18 @@ function showCheatModal() {
             <input type="text" id="customTime" class="form-control bg-dark text-light">
             <div id="timeError" class="invalid-feedback"></div>
           </div>
-          <button id="submitCustomScore" class="btn btn-success mt-2">Submit</button>
+          <button id="submitCustomScore" class="btn btn-success pt-2">Submit</button>
         </div>`
             : ""
         }
       `;
-      currentLine++;
 
-      // Add longer delay for loading lines
+      // If we just added the form, set up the event listeners
+      if (currentLine === terminalLines.length - 1) {
+        setupFormEventListeners(gameOverModal);
+      }
+
+      currentLine++;
       const isLoadingLine = terminalLines[currentLine - 1].includes("100%");
       setTimeout(typeNextLine, isLoadingLine ? 900 : 200);
     }
@@ -263,91 +273,87 @@ function showCheatModal() {
   document.querySelector(".modal-body").innerHTML =
     `<pre class="terminal-output"></pre>`;
   typeNextLine();
+}
 
-  const gameOverModal = new bootstrap.Modal(
-    document.getElementById("gameOverModal"),
-  );
-  gameOverModal.show();
+function setupFormEventListeners(gameOverModal) {
+  // Add restart game functionality
+  const restartGameBtn = document.getElementById("restartGameBtn");
+  if (restartGameBtn) {
+    restartGameBtn.addEventListener("click", () => {
+      gameOverModal.hide();
+      location.reload();
+    });
+  }
 
-  // Add event listeners after the form is added to the DOM
-  setTimeout(
-    () => {
-      // Add restart game functionality
-      document
-        .getElementById("restartGameBtn")
-        .addEventListener("click", () => {
-          gameOverModal.hide();
-          location.reload();
-        });
+  // Setup Enter key handler
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      const submitBtn = document.getElementById("submitCustomScore");
+      if (submitBtn) {
+        submitBtn.click();
+      }
+    }
+  };
 
-      const handleKeyPress = (e) => {
-        if (e.key === "Enter") {
-          document.getElementById("submitCustomScore")?.click();
-        }
-      };
+  // Add modal event listeners
+  const modal = document.getElementById("gameOverModal");
+  modal.addEventListener("shown.bs.modal", () => {
+    document.addEventListener("keydown", handleKeyPress);
+  });
 
-      document
-        .getElementById("gameOverModal")
-        .addEventListener("shown.bs.modal", () => {
-          document.addEventListener("keydown", handleKeyPress);
-        });
+  modal.addEventListener("hidden.bs.modal", () => {
+    document.removeEventListener("keydown", handleKeyPress);
+  });
 
-      document
-        .getElementById("gameOverModal")
-        .addEventListener("hidden.bs.modal", () => {
-          document.removeEventListener("keydown", handleKeyPress);
-        });
+  // Add submit button event listener
+  const submitBtn = document.getElementById("submitCustomScore");
+  if (submitBtn) {
+    submitBtn.addEventListener("click", function () {
+      let isValid = true;
 
-      document
-        .getElementById("submitCustomScore")
-        ?.addEventListener("click", function () {
-          let isValid = true;
+      const wpmInput = document.getElementById("customWpm");
+      const wpm = parseInt(wpmInput.value);
+      if (isNaN(wpm) || wpm < 0 || wpm > 300) {
+        document.getElementById("wpmError").textContent =
+          "WPM must be between 0 and 300";
+        wpmInput.classList.add("is-invalid");
+        isValid = false;
+      } else {
+        wpmInput.classList.remove("is-invalid");
+      }
 
-          const wpmInput = document.getElementById("customWpm");
-          const wpm = parseInt(wpmInput.value);
-          if (isNaN(wpm) || wpm < 0 || wpm > 300) {
-            document.getElementById("wpmError").textContent =
-              "WPM must be between 0 and 300";
-            wpmInput.classList.add("is-invalid");
-            isValid = false;
-          } else {
-            wpmInput.classList.remove("is-invalid");
-          }
+      const accuracyInput = document.getElementById("customAccuracy");
+      const accuracy = parseFloat(accuracyInput.value);
+      if (isNaN(accuracy) || accuracy < 0 || accuracy > 100) {
+        document.getElementById("accuracyError").textContent =
+          "Accuracy must be between 0 and 100";
+        accuracyInput.classList.add("is-invalid");
+        isValid = false;
+      } else {
+        accuracyInput.classList.remove("is-invalid");
+      }
 
-          const accuracyInput = document.getElementById("customAccuracy");
-          const accuracy = parseFloat(accuracyInput.value);
-          if (isNaN(accuracy) || accuracy < 0 || accuracy > 100) {
-            document.getElementById("accuracyError").textContent =
-              "Accuracy must be between 0 and 100";
-            accuracyInput.classList.add("is-invalid");
-            isValid = false;
-          } else {
-            accuracyInput.classList.remove("is-invalid");
-          }
+      const timeInput = document.getElementById("customTime");
+      const time = timeInput.value;
+      if (!validateTimeFormat(time)) {
+        document.getElementById("timeError").textContent =
+          "Invalid time format. Use mm:ss (e.g. 1:30)";
+        timeInput.classList.add("is-invalid");
+        isValid = false;
+      } else {
+        timeInput.classList.remove("is-invalid");
+      }
 
-          const timeInput = document.getElementById("customTime");
-          const time = timeInput.value;
-          if (!validateTimeFormat(time)) {
-            document.getElementById("timeError").textContent =
-              "Invalid time format. Use mm:ss (e.g. 1:30)";
-            timeInput.classList.add("is-invalid");
-            isValid = false;
-          } else {
-            timeInput.classList.remove("is-invalid");
-          }
-
-          if (isValid) {
-            // Save custom result
-            saveResult(wpm, time, accuracy);
-            displayPreviousResults();
-            // Close modal and reload
-            gameOverModal.hide();
-            location.reload();
-          }
-        });
-    },
-    terminalLines.length * 200 + 100,
-  );
+      if (isValid) {
+        // Save custom result
+        saveResult(wpm, time, accuracy);
+        displayPreviousResults();
+        // Close modal and reload
+        gameOverModal.hide();
+        location.reload();
+      }
+    });
+  }
 }
 
 function showGameOverModal(message) {
@@ -437,6 +443,7 @@ function calculateWPM() {
   const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
   return wpm;
 }
+
 function calculateAccuracy() {
   if (totalKeystrokes === 0) return "0.0";
   return ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1);
