@@ -259,7 +259,6 @@ function showCheatModal() {
         }
       `;
 
-      // If we just added the form, set up the event listeners
       if (currentLine === terminalLines.length - 1) {
         setupFormEventListeners(gameOverModal);
       }
@@ -287,23 +286,24 @@ function setupFormEventListeners(gameOverModal) {
 
   // Setup Enter key handler
   const handleKeyPress = (e) => {
+    console.log("Key pressed:", e.key); // Add this for debugging
     if (e.key === "Enter") {
+      e.preventDefault(); // Prevent default Enter behavior
       const submitBtn = document.getElementById("submitCustomScore");
       if (submitBtn) {
+        console.log("Submit button found, clicking..."); // Debug log
         submitBtn.click();
+      } else {
+        console.log("Submit button not found"); // Debug log
       }
     }
   };
 
-  // Add modal event listeners
-  const modal = document.getElementById("gameOverModal");
-  modal.addEventListener("shown.bs.modal", () => {
-    document.addEventListener("keydown", handleKeyPress);
-  });
+  // Remove any existing listeners first
+  document.removeEventListener("keydown", handleKeyPress);
 
-  modal.addEventListener("hidden.bs.modal", () => {
-    document.removeEventListener("keydown", handleKeyPress);
-  });
+  // Add the new listener directly to the document
+  document.addEventListener("keydown", handleKeyPress);
 
   // Add submit button event listener
   const submitBtn = document.getElementById("submitCustomScore");
