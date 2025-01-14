@@ -261,6 +261,12 @@ function showCheatModal() {
 
       if (currentLine === terminalLines.length - 1) {
         setupFormEventListeners(gameOverModal);
+        setTimeout(() => {
+          const wpmInput = document.getElementById("customWpm");
+          if (wpmInput) {
+            wpmInput.focus();
+          }
+        }, 100);
       }
 
       currentLine++;
