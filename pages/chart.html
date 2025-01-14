@@ -17,7 +17,7 @@
     ></script>
   </head>
   <body class="d-flex flex-column h-100">
-    <div class="container-fluid flex-grow-1">
+    <div class="container-fluid flex-grow-1 d-flex flex-column">
       <!-- Header -->
       <header class="d-flex justify-content-center align-items-center">
         <p>
@@ -31,6 +31,7 @@
         </p>
         <h1>NerdType</h1>
       </header>
+
       <!-- Navbar -->
       <nav class="navbar navbar-dark navbar-expand-lg">
         <div class="container-fluid">
@@ -83,42 +84,45 @@
           </div>
         </div>
       </nav>
-      <div class="container-fluid">
-        <div class="row">
-          <article
-            class="col-12 p-3 pt-5 flex-column justify-content-center align-items-center"
-          >
+
+      <!-- Charts Section -->
+      <div class="row">
+        <article class="col-12 p-3 pt-5">
+          <div class="row">
             <!-- Classic Mode Chart -->
-            <div class="mb-5">
+            <div class="col-12 col-lg-6 mb-4">
               <h2 class="text-center mb-4">Classic Mode</h2>
               <div class="chart-container">
                 <canvas id="scoreChart"></canvas>
               </div>
             </div>
             <!-- Zen Mode Chart -->
-            <div class="mt-5">
+            <div class="col-12 col-lg-6 mb-4">
               <h2 class="text-center mb-4">Zen Mode</h2>
               <div class="chart-container">
                 <canvas id="zenChart"></canvas>
               </div>
             </div>
-          </article>
-        </div>
+          </div>
+        </article>
       </div>
-      <div class="container-fluid">
-        <div class="row justify-content-center">
-          <article class="col-md-12 p-3 flex-column d-flex align-items-center">
-            <div id="score" class="text-center w-100">
-              <h3 id="resultsTittle">Scoreboard</h3>
-              <ul id="previousResults"></ul>
-              <button id="clearResultsBtn" class="btn btn-primary">
-                Clear Scoreboard
-              </button>
-            </div>
-          </article>
-        </div>
+
+      <!-- Scoreboard Section -->
+      <div class="row justify-content-center">
+        <article class="col-md-12 p-3 flex-column d-flex align-items-center">
+          <button id="toggleScoreboard" class="btn btn-primary mb-3 border-0">
+            <i class="fa-solid fa-trophy"></i> Hide Scoreboard
+          </button>
+          <div id="scoreboardContainer" class="text-center w-100">
+            <ul id="previousResults"></ul>
+            <button id="clearResultsBtn" class="btn btn-primary">
+              Clear Scoreboard
+            </button>
+          </div>
+        </article>
       </div>
     </div>
+
     <!-- Clear results Alert Modal -->
     <div
       class="modal fade"
@@ -162,6 +166,7 @@ $ rm -rf scoreboard.data
         </div>
       </div>
     </div>
+
     <!-- Footer -->
     <footer class="footer mt-auto pl-3 pt-3">
       <div class="container-fluid">
@@ -179,16 +184,18 @@ $ rm -rf scoreboard.data
             <a href="https://github.com/merkksgit/nerd-type" target="_blank">
               <i class="fa-brands fa-github fa-lg" style="color: #394b70"></i>
             </a>
-            <a href="https://www.instagram.com/nerd_type/" target="_blank"
-              ><i
+            <a href="https://www.instagram.com/nerd_type/" target="_blank">
+              <i
                 class="fa-brands fa-instagram fa-lg"
                 style="color: #394b70"
-              ></i
-            ></a>
+              ></i>
+            </a>
           </p>
         </div>
       </div>
     </footer>
+
+    <!-- Scripts -->
     <script src="../js/chart.js"></script>
     <script src="../js/functions-chart.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
