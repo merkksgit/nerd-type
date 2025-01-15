@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NerdType | ZenMode</title>
+    <title>NerdType | Nightmare</title>
     <link href="../css/style.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -48,31 +48,31 @@
                 <a class="nav-link" href="../index.html">Frontpage</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="./index-prog.html">Programming</a>
+                <a class="nav-link" href="./programming.html">Programming</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="./index-fin.html">Suomi</a>
+                <a class="nav-link" href="./finnish.html">Suomi</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="./index-sve.html">Svenska</a>
+                <a class="nav-link" href="./swedish.html">Svenska</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="./index-eng.html">English</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./index-nm.html">Nightmare</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" id="current" href="./mobile.html"
-                  >ZenMode</a
-                >
+                <a class="nav-link" href="./english.html">English</a>
               </li>
 
+              <li class="nav-item">
+                <a class="nav-link" id="current" href="./nightmare.html"
+                  >Nightmare</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./zenmode.html">ZenMode</a>
+              </li>
               <li class="nav-item">
                 <a class="nav-link" href="./chart.html">ScoreChart</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="./index-info.html">INFO</a>
+                <a class="nav-link" href="./info.html">INFO</a>
               </li>
             </ul>
           </div>
@@ -139,13 +139,12 @@ $ </pre
           </div>
         </div>
       </div>
-
       <div class="row">
         <div class="col-md-12 p-3 pt-1">
           <div class="container-fluid">
             <div class="row">
               <div id="game">
-                <div id="totalTime">Time: <span id="totalTime"></span></div>
+                <div id="timer">Energy: <span id="timeLeft"></span></div>
                 <div id="nextWord">Enter (Start), Ctrl + Enter (Reset)</div>
                 <div id="wordToType">Click START to play</div>
                 <input
@@ -156,7 +155,10 @@ $ </pre
                   spellcheck="false"
                   style="text-align: center"
                 />
-                <div id="progressPercentage">Progress 0%</div>
+                <!-- <div id="totalTime"> -->
+                <!--   Total time: <span id="totalTimeSpent"></span> -->
+                <!-- </div> -->
+                <div id="progressPercentage">Hacked 0%</div>
                 <div class="progress terminal">
                   <div
                     id="progressBar"
@@ -203,7 +205,7 @@ $ </pre
             class="col-md-12 d-flex justify-content-center align-items-center gap-5"
           >
             <i class="fa-regular fa-copyright"> 2025 Erkka Leppanen</i>
-            <a href="./index-info.html">
+            <a href="./info.html">
               <i
                 class="fa-solid fa-circle-info fa-lg"
                 style="color: #394b70"
@@ -294,7 +296,7 @@ $ </pre>
       </div>
     </div>
     <script src="../js/username.js"></script>
-    <script src="../js/mobile.js" type="module"></script>
+    <script src="../js/functions-nm.js" type="module"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
