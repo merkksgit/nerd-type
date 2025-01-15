@@ -494,6 +494,16 @@ if (clearResultsBtn) {
     if (customAlertModal) {
       const modal = new bootstrap.Modal(customAlertModal);
       modal.show();
+
+      // Prevent Enter key from starting game in this modal
+      customAlertModal.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      });
+
+      modal.show();
     }
   });
 }
