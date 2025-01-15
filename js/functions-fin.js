@@ -237,6 +237,7 @@ function showGameOverModal(message) {
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
+    "> MODE: FINNISH",
     `> STATUS: ${message}`,
     "> ================================",
     "> PERFORMANCE METRICS:",
