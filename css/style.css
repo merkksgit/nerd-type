@@ -74,6 +74,7 @@ footer {
 
 #clearResultsBtn,
 #startButton,
+#confirmUsername,
 #resetBtn {
   color: #7aa2f7;
   background-color: #1f2335;
@@ -89,8 +90,33 @@ footer {
 
 #clearResultsBtn:hover,
 #startButton:hover,
+#confirmUsername:hover,
 #resetBtn:hover {
   color: #ff9e64;
+}
+
+#changeUsername {
+  background-color: #24283b;
+  color: #7aa2f7;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+
+#changeUsername:hover {
+  color: #ff9e64;
+}
+
+#changeUsername:active {
+  transform: translateY(1px);
+}
+
+.modal-title {
+  color: #ff007c;
 }
 
 input[type="text"] {

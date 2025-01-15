@@ -77,6 +77,62 @@
           </div>
         </div>
       </nav>
+      <!-- Username Button -->
+      <div class="container-fluid">
+        <div class="d-flex justify-content-end p-2">
+          <button id="changeUsername" class="btn btn-outline-primary">
+            <i class="fa-solid fa-user"></i> Change Username
+          </button>
+        </div>
+      </div>
+      <!-- Username Modal -->
+      <div
+        class="modal fade"
+        id="usernameModal"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="usernameModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header border-bottom-0 text-center">
+              <h5 class="modal-title w-100" id="usernameModalLabel">
+                [MAINFRAME LOGIN SEQUENCE]
+              </h5>
+            </div>
+            <div class="modal-body border-top-0 border-bottom-0">
+              <pre class="terminal-output" style="margin-bottom: 20px">
+> INITIALIZING LOGIN SEQUENCE...
+> ENTER CODENAME TO CONTINUE:
+$ </pre
+              >
+              <input
+                type="text"
+                id="usernameInput"
+                class="form-control text-center"
+                style="background-color: #1a1b26; color: #c0caf5"
+                maxlength="20"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <div
+              class="modal-footer border-top-0 d-flex justify-content-center"
+              style="background-color: #24283b"
+            >
+              <button
+                id="confirmUsername"
+                type="button"
+                class="btn btn-primary"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-12 p-3 pt-5">
           <div class="container-fluid">

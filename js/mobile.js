@@ -10,8 +10,110 @@ let sessionStartTime = null;
 let totalKeystrokes = 0;
 let correctKeystrokes = 0;
 let gameEnded = false;
+let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
+let isUsernameModalOpen = false;
+
 import { words } from "./words-fin.js";
-console.log(words);
+
+// Track modal state
+document.addEventListener("DOMContentLoaded", function () {
+  const usernameModal = document.getElementById("usernameModal");
+
+  if (usernameModal) {
+    usernameModal.addEventListener("show.bs.modal", () => {
+      isUsernameModalOpen = true;
+    });
+
+    usernameModal.addEventListener("hide.bs.modal", () => {
+      isUsernameModalOpen = false;
+    });
+  }
+});
+
+// Handle all keydown events
+document.addEventListener("keydown", (event) => {
+  // Handle username input Enter key
+  if (event.key === "Enter" && isUsernameModalOpen) {
+    event.preventDefault();
+    event.stopPropagation();
+    handleUsernameConfirmation();
+    return;
+  }
+
+  // Handle game controls
+  if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
+    startGame();
+  }
+  if (event.key === "Enter" && event.ctrlKey) {
+    location.reload();
+  }
+});
+
+function showUsernameModal() {
+  const modal = new bootstrap.Modal(document.getElementById("usernameModal"));
+  document.getElementById("usernameInput").value =
+    playerUsername !== "runner" ? playerUsername : "";
+  isUsernameModalOpen = true;
+
+  document.getElementById("usernameModal").addEventListener(
+    "shown.bs.modal",
+    function () {
+      document.getElementById("usernameInput").focus();
+    },
+    { once: true },
+  );
+
+  modal.show();
+}
+
+function handleUsernameConfirmation() {
+  const usernameInput = document.getElementById("usernameInput");
+  const username = usernameInput.value.trim();
+
+  if (username) {
+    playerUsername = username;
+    localStorage.setItem("nerdtype_username", username);
+    const modalInstance = bootstrap.Modal.getInstance(
+      document.getElementById("usernameModal"),
+    );
+    if (modalInstance) {
+      modalInstance.hide();
+      isUsernameModalOpen = false;
+    }
+  } else {
+    usernameInput.classList.add("is-invalid");
+  }
+}
+
+// Initialize event listeners
+document.addEventListener("DOMContentLoaded", function () {
+  const changeUsernameBtn = document.getElementById("changeUsername");
+  const confirmUsernameBtn = document.getElementById("confirmUsername");
+
+  if (changeUsernameBtn) {
+    changeUsernameBtn.addEventListener("click", showUsernameModal);
+  }
+
+  if (confirmUsernameBtn) {
+    confirmUsernameBtn.addEventListener("click", handleUsernameConfirmation);
+  }
+
+  if (!localStorage.getItem("nerdtype_username")) {
+    showUsernameModal();
+  }
+
+  // Scoreboard initialization
+  const container = document.getElementById("scoreboardContainer");
+  const button = document.getElementById("toggleScoreboard");
+  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
+
+  if (isHidden && container && button) {
+    container.classList.add("hidden");
+    button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
+  }
+
+  displayPreviousResults();
+});
 
 // Scoreboard toggle functionality
 document
@@ -31,18 +133,6 @@ document
     );
   });
 
-// Maintain scoreboard state after page refresh
-document.addEventListener("DOMContentLoaded", function () {
-  const container = document.getElementById("scoreboardContainer");
-  const button = document.getElementById("toggleScoreboard");
-  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
-  if (isHidden) {
-    container.classList.add("hidden");
-    button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
-  }
-  displayPreviousResults();
-});
-
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");
   progressBar.classList.add("flash");
@@ -51,7 +141,9 @@ function flashProgress() {
   }, 400);
 }
 
-const resetBtn = document.getElementById("resetBtn");
+document.getElementById("resetBtn")?.addEventListener("click", () => {
+  location.reload();
+});
 
 document.getElementById("startButton").addEventListener("click", startGame);
 
@@ -94,22 +186,6 @@ function calculateTotalTime() {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    startGame();
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && event.ctrlKey) {
-    location.reload();
-  }
-});
-
-resetBtn.addEventListener("click", () => {
-  location.reload();
-});
-
 function totalTimeCount() {
   if (gameEnded) return;
   updateProgressBar();
@@ -130,11 +206,7 @@ function updateProgressBar() {
   const progressBar = document.getElementById("progressBar");
   progressBar.style.width = progressPercentage + "%";
   progressBar.setAttribute("aria-valuenow", progressPercentage);
-  if (progressPercentage < 80) {
-    progressBar.style.backgroundColor = "#1f2335";
-  } else {
-    progressBar.style.backgroundColor = "#1f2335";
-  }
+  progressBar.style.backgroundColor = "#1f2335";
   document.getElementById("progressPercentage").textContent =
     "Progress " + Math.floor(progressPercentage) + "%";
 }
@@ -146,6 +218,13 @@ document.getElementById("userInput").addEventListener("input", function (e) {
   }
   checkInput(e);
 });
+
+function validateTimeFormat(timeStr) {
+  const timeRegex = /^([0-9]{1,2}):([0-5][0-9])$/;
+  if (!timeRegex.test(timeStr)) return false;
+  const [minutes, seconds] = timeStr.split(":").map(Number);
+  return minutes >= 0 && seconds >= 0 && seconds < 60;
+}
 
 function checkInput(e) {
   const userInput = e.target.value;
@@ -162,7 +241,6 @@ function checkInput(e) {
     return;
   }
 
-  // Track keystrokes
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
     if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
@@ -170,7 +248,6 @@ function checkInput(e) {
     }
   }
 
-  // Update character styling
   for (let i = 0; i < currentWord.length; i++) {
     if (i < userInput.length) {
       if (userInput[i] === currentWord[i]) {
@@ -183,7 +260,6 @@ function checkInput(e) {
     }
   }
 
-  // Check if word is complete
   if (userInput === currentWord) {
     flashProgress();
     totalCharactersTyped += currentWord.length;
@@ -194,13 +270,6 @@ function checkInput(e) {
     updateWordDisplay();
     document.getElementById("userInput").value = "";
   }
-}
-
-function validateTimeFormat(timeStr) {
-  const timeRegex = /^([0-9]{1,2}):([0-5][0-9])$/;
-  if (!timeRegex.test(timeStr)) return false;
-  const [minutes, seconds] = timeStr.split(":").map(Number);
-  return minutes >= 0 && seconds >= 0 && seconds < 60;
 }
 
 function showCheatModal() {
@@ -223,65 +292,60 @@ function showCheatModal() {
   let currentLine = 0;
   let modalContent = "";
 
-  // Create and show modal first
   const gameOverModal = new bootstrap.Modal(
     document.getElementById("gameOverModal"),
   );
-  gameOverModal.show();
+  const modalBody = document
+    .getElementById("gameOverModal")
+    .querySelector(".modal-body");
+
+  modalBody.innerHTML = '<pre class="terminal-output"></pre>';
 
   function typeNextLine() {
     if (currentLine < terminalLines.length) {
       modalContent += `<span style='color:#c3e88d'>${terminalLines[currentLine]}</span>\n`;
-      document.querySelector(".modal-body").innerHTML = `
-        <pre class="terminal-output">${modalContent}</pre>
-        ${
-          currentLine === terminalLines.length - 1
-            ? `
-        <div class="mt-2">
-          <div class="mb-2">
-            <label>WPM (0-300):</label>
-            <input type="number" id="customWpm" class="form-control bg-dark text-light" min="0" max="300">
-            <div id="wpmError" class="invalid-feedback"></div>
-          </div>
-          <div class="mb-2">
-            <label>Accuracy (0-100%):</label>
-            <input type="number" id="customAccuracy" class="form-control bg-dark text-light" min="0" max="100" step="0.1">
-            <div id="accuracyError" class="invalid-feedback"></div>
-          </div>
-          <div class="mb-2">
-            <label>Time (mm:ss):</label>
-            <input type="text" id="customTime" class="form-control bg-dark text-light">
-            <div id="timeError" class="invalid-feedback"></div>
-          </div>
-          <button id="submitCustomScore" class="btn btn-success pt-2">Submit</button>
-        </div>`
-            : ""
-        }
-      `;
+      modalBody.querySelector(".terminal-output").innerHTML = `${modalContent}`;
 
       if (currentLine === terminalLines.length - 1) {
+        modalBody.innerHTML = `
+          <pre class="terminal-output">${modalContent}</pre>
+          <div class="mt-2">
+            <div class="mb-2">
+              <label>WPM (0-300):</label>
+              <input type="number" id="customWpm" class="form-control bg-dark text-light" min="0" max="300">
+              <div id="wpmError" class="invalid-feedback"></div>
+            </div>
+            <div class="mb-2">
+              <label>Accuracy (0-100%):</label>
+              <input type="number" id="customAccuracy" class="form-control bg-dark text-light" min="0" max="100" step="0.1">
+              <div id="accuracyError" class="invalid-feedback"></div>
+            </div>
+            <div class="mb-2">
+              <label>Time (mm:ss):</label>
+              <input type="text" id="customTime" class="form-control bg-dark text-light">
+              <div id="timeError" class="invalid-feedback"></div>
+            </div>
+            <button id="submitCustomScore" class="btn btn-success pt-2">Submit</button>
+          </div>
+        `;
         setupFormEventListeners(gameOverModal);
-        setTimeout(() => {
-          const wpmInput = document.getElementById("customWpm");
-          if (wpmInput) {
-            wpmInput.focus();
-          }
-        }, 100);
+        const wpmInput = document.getElementById("customWpm");
+        if (wpmInput) {
+          wpmInput.focus();
+        }
       }
 
       currentLine++;
-      const isLoadingLine = terminalLines[currentLine - 1].includes("100%");
+      const isLoadingLine = terminalLines[currentLine - 1]?.includes("100%");
       setTimeout(typeNextLine, isLoadingLine ? 900 : 200);
     }
   }
 
-  document.querySelector(".modal-body").innerHTML =
-    `<pre class="terminal-output"></pre>`;
+  gameOverModal.show();
   typeNextLine();
 }
 
 function setupFormEventListeners(gameOverModal) {
-  // Add restart game functionality
   const restartGameBtn = document.getElementById("restartGameBtn");
   if (restartGameBtn) {
     restartGameBtn.addEventListener("click", () => {
@@ -290,28 +354,19 @@ function setupFormEventListeners(gameOverModal) {
     });
   }
 
-  // Setup Enter key handler
   const handleKeyPress = (e) => {
-    console.log("Key pressed:", e.key); // Add this for debugging
     if (e.key === "Enter") {
-      e.preventDefault(); // Prevent default Enter behavior
+      e.preventDefault();
       const submitBtn = document.getElementById("submitCustomScore");
       if (submitBtn) {
-        console.log("Submit button found, clicking..."); // Debug log
         submitBtn.click();
-      } else {
-        console.log("Submit button not found"); // Debug log
       }
     }
   };
 
-  // Remove any existing listeners first
   document.removeEventListener("keydown", handleKeyPress);
-
-  // Add the new listener directly to the document
   document.addEventListener("keydown", handleKeyPress);
 
-  // Add submit button event listener
   const submitBtn = document.getElementById("submitCustomScore");
   if (submitBtn) {
     submitBtn.addEventListener("click", function () {
@@ -351,10 +406,8 @@ function setupFormEventListeners(gameOverModal) {
       }
 
       if (isValid) {
-        // Save custom result
         saveResult(wpm, time, accuracy);
         displayPreviousResults();
-        // Close modal and reload
         gameOverModal.hide();
         location.reload();
       }
@@ -367,11 +420,8 @@ function showGameOverModal(message) {
   const accuracy = calculateAccuracy();
   const totalTime = calculateTotalTime();
 
-  // Set header based on game outcome
-  const isWin = message.includes("BREACHED");
-  document.getElementById("gameOverModalLabel").textContent = isWin
-    ? "[runner@PENTAGON-CORE:/classified]$"
-    : "[root@PENTAGON-CORE:/classified]$";
+  document.getElementById("gameOverModalLabel").textContent =
+    `[${playerUsername}@PENTAGON-CORE:/classified]$`;
 
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
@@ -391,50 +441,47 @@ function showGameOverModal(message) {
   let currentLine = 0;
   let modalContent = "";
 
+  const gameOverModal = new bootstrap.Modal(
+    document.getElementById("gameOverModal"),
+  );
+  const modalBody = document
+    .getElementById("gameOverModal")
+    .querySelector(".modal-body");
+
+  modalBody.innerHTML = '<pre class="terminal-output"></pre>';
+
   function typeNextLine() {
     if (currentLine < terminalLines.length) {
       modalContent += terminalLines[currentLine] + "\n";
-      document.querySelector(".modal-body").innerHTML = `
-        <pre class="terminal-output">${modalContent}</pre>
-      `;
+      modalBody.querySelector(".terminal-output").innerHTML = modalContent;
       currentLine++;
       setTimeout(typeNextLine, 150);
     }
   }
 
-  document.querySelector(".modal-body").innerHTML =
-    `<pre class="terminal-output"></pre>`;
+  gameOverModal.show();
   typeNextLine();
 
   saveResult(wpm, totalTime, accuracy);
   displayPreviousResults();
 
-  let gameOverModal = new bootstrap.Modal(
-    document.getElementById("gameOverModal"),
-  );
-  gameOverModal.show();
-
-  // Handle restart button click
   const restartBtn = document.getElementById("restartGameBtn");
   if (restartBtn) {
     restartBtn.onclick = () => location.reload();
   }
 
-  // Handle Enter key
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       location.reload();
     }
   };
 
-  // Add keypress listener when modal is shown
   document
     .getElementById("gameOverModal")
     .addEventListener("shown.bs.modal", () => {
       document.addEventListener("keydown", handleKeyPress);
     });
 
-  // Remove keypress listener when modal is hidden
   document
     .getElementById("gameOverModal")
     .addEventListener("hidden.bs.modal", () => {
@@ -459,6 +506,7 @@ function calculateAccuracy() {
 function saveResult(wpm, totalTime, accuracy) {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
   results.push({
+    username: playerUsername,
     wpm,
     totalTime,
     accuracy,
@@ -470,27 +518,36 @@ function saveResult(wpm, totalTime, accuracy) {
 
 function displayPreviousResults() {
   const resultsContainer = document.getElementById("previousResults");
+  if (!resultsContainer) return;
+
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
   results.reverse();
   resultsContainer.innerHTML = "";
+
   results.forEach((result) => {
     const resultItem = document.createElement("li");
     if (result.mode === "Zen Mode") {
-      resultItem.textContent = `${result.date} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
     } else {
-      resultItem.textContent = `${result.date} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     }
     resultsContainer.appendChild(resultItem);
   });
 }
 
-document
-  .getElementById("clearResultsBtn")
-  .addEventListener("click", function () {
+const clearResultsBtn = document.getElementById("clearResultsBtn");
+if (clearResultsBtn) {
+  clearResultsBtn.addEventListener("click", function () {
     localStorage.removeItem("gameResults");
-    document.getElementById("previousResults").innerHTML = "";
-    const customAlertModal = new bootstrap.Modal(
-      document.getElementById("customAlertModal"),
-    );
-    customAlertModal.show();
+    const resultsContainer = document.getElementById("previousResults");
+    if (resultsContainer) {
+      resultsContainer.innerHTML = "";
+    }
+
+    const customAlertModal = document.getElementById("customAlertModal");
+    if (customAlertModal) {
+      const modal = new bootstrap.Modal(customAlertModal);
+      modal.show();
+    }
   });
+}

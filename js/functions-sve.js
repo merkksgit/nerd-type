@@ -11,12 +11,115 @@ let hasStartedTyping = false;
 let totalKeystrokes = 0;
 let correctKeystrokes = 0;
 import { words } from "./words-sve.js";
-console.log(words);
+
+let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
+
+let isUsernameModalOpen = false;
+
+// Track modal state
+document.addEventListener("DOMContentLoaded", function () {
+  const usernameModal = document.getElementById("usernameModal");
+
+  if (usernameModal) {
+    usernameModal.addEventListener("show.bs.modal", () => {
+      isUsernameModalOpen = true;
+    });
+
+    usernameModal.addEventListener("hide.bs.modal", () => {
+      isUsernameModalOpen = false;
+    });
+  }
+});
+
+// Handle all keydown events
+document.addEventListener("keydown", (event) => {
+  // Handle username input Enter key
+  if (event.key === "Enter" && isUsernameModalOpen) {
+    event.preventDefault();
+    event.stopPropagation();
+    handleUsernameConfirmation();
+    return;
+  }
+
+  // Handle game controls
+  if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
+    startGame();
+  }
+  if (event.key === "Enter" && event.ctrlKey) {
+    location.reload();
+  }
+});
+
+function showUsernameModal() {
+  const modal = new bootstrap.Modal(document.getElementById("usernameModal"));
+  document.getElementById("usernameInput").value =
+    playerUsername !== "runner" ? playerUsername : "";
+  isUsernameModalOpen = true;
+
+  // Add event listener for when modal is fully shown
+  document.getElementById("usernameModal").addEventListener(
+    "shown.bs.modal",
+    function () {
+      document.getElementById("usernameInput").focus();
+    },
+    { once: true },
+  ); // Use once:true so the event listener is automatically removed after execution
+
+  modal.show();
+}
+
+function handleUsernameConfirmation() {
+  const usernameInput = document.getElementById("usernameInput");
+  const username = usernameInput.value.trim();
+
+  if (username) {
+    playerUsername = username;
+    localStorage.setItem("nerdtype_username", username);
+    const modalInstance = bootstrap.Modal.getInstance(
+      document.getElementById("usernameModal"),
+    );
+    if (modalInstance) {
+      modalInstance.hide();
+      isUsernameModalOpen = false;
+    }
+  } else {
+    usernameInput.classList.add("is-invalid");
+  }
+}
+
+// Initialize event listeners
+document.addEventListener("DOMContentLoaded", function () {
+  const changeUsernameBtn = document.getElementById("changeUsername");
+  const confirmUsernameBtn = document.getElementById("confirmUsername");
+
+  if (changeUsernameBtn) {
+    changeUsernameBtn.addEventListener("click", showUsernameModal);
+  }
+
+  if (confirmUsernameBtn) {
+    confirmUsernameBtn.addEventListener("click", handleUsernameConfirmation);
+  }
+
+  if (!localStorage.getItem("nerdtype_username")) {
+    showUsernameModal();
+  }
+
+  const container = document.getElementById("scoreboardContainer");
+  const button = document.getElementById("toggleScoreboard");
+  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
+
+  if (isHidden && container && button) {
+    container.classList.add("hidden");
+    button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
+  }
+
+  displayPreviousResults();
+});
 
 // Scoreboard toggle functionality
-document
-  .getElementById("toggleScoreboard")
-  .addEventListener("click", function () {
+const toggleScoreboardBtn = document.getElementById("toggleScoreboard");
+if (toggleScoreboardBtn) {
+  toggleScoreboardBtn.addEventListener("click", function () {
     const container = document.getElementById("scoreboardContainer");
     const button = this;
 
@@ -28,88 +131,86 @@ document
       button.innerHTML = '<i class="fa-solid fa-trophy"></i> Hide Scoreboard';
     }
 
-    // Save the state to localStorage
     localStorage.setItem(
       "scoreboardHidden",
       container.classList.contains("hidden"),
     );
   });
-
-// Maintain scoreboard state after page refresh
-document.addEventListener("DOMContentLoaded", function () {
-  const container = document.getElementById("scoreboardContainer");
-  const button = document.getElementById("toggleScoreboard");
-  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
-
-  if (isHidden) {
-    container.classList.add("hidden");
-    button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
-  }
-  displayPreviousResults();
-});
+}
 
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");
-  progressBar.classList.add("flash");
-
-  setTimeout(() => {
-    progressBar.classList.remove("flash");
-  }, 400);
+  if (progressBar) {
+    progressBar.classList.add("flash");
+    setTimeout(() => {
+      progressBar.classList.remove("flash");
+    }, 400);
+  }
 }
 
 const resetBtn = document.getElementById("resetBtn");
+const startBtn = document.getElementById("startButton");
 
-document.getElementById("startButton").addEventListener("click", startGame);
+if (startBtn) {
+  startBtn.addEventListener("click", startGame);
+}
 
 function startGame() {
+  timeLeft = 10;
+  totalTimeSpent = 0;
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
   updateWordDisplay();
   updateTimer();
+
+  if (countDownInterval) clearInterval(countDownInterval);
+  if (totalTimeInterval) clearInterval(totalTimeInterval);
+
   countDownInterval = setInterval(countDown, 800);
   totalTimeInterval = setInterval(totalTimeCount, 1000);
-  document.getElementById("userInput").focus();
+
+  const userInput = document.getElementById("userInput");
+  if (userInput) {
+    userInput.focus();
+    userInput.value = "";
+  }
+
   gameStartTime = null;
   hasStartedTyping = false;
   wordsTyped = [];
   totalCharactersTyped = 0;
   totalKeystrokes = 0;
   correctKeystrokes = 0;
+
+  updateProgressBar();
 }
 
 function updateWordDisplay() {
   const wordToTypeElement = document.getElementById("wordToType");
+  const nextWordElement = document.getElementById("nextWord");
   const currentWord = words[currentWordIndex];
 
-  // Clear previous content
-  wordToTypeElement.innerHTML = "";
+  if (wordToTypeElement) {
+    wordToTypeElement.innerHTML = "";
 
-  // Create a span for each character
-  for (let i = 0; i < currentWord.length; i++) {
-    const charSpan = document.createElement("span");
-    charSpan.textContent = currentWord[i];
-    charSpan.classList.add("remaining");
-    wordToTypeElement.appendChild(charSpan);
+    for (let i = 0; i < currentWord.length; i++) {
+      const charSpan = document.createElement("span");
+      charSpan.textContent = currentWord[i];
+      charSpan.classList.add("remaining");
+      wordToTypeElement.appendChild(charSpan);
+    }
   }
 
-  document.getElementById("nextWord").textContent = words[nextWordIndex];
+  if (nextWordElement) {
+    nextWordElement.textContent = words[nextWordIndex];
+  }
 }
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    startGame();
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && event.ctrlKey) {
+if (resetBtn) {
+  resetBtn.addEventListener("click", () => {
     location.reload();
-  }
-});
-
-resetBtn.addEventListener("click", () => {
-  location.reload();
-});
+  });
+}
 
 function countDown() {
   if (timeLeft > 0) {
@@ -125,8 +226,6 @@ function countDown() {
 }
 
 function totalTimeCount() {
-  updateProgressBar();
-
   if (totalTimeSpent >= 30) {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
@@ -137,41 +236,48 @@ function totalTimeCount() {
 }
 
 function updateTimer() {
-  document.getElementById("timeLeft").textContent = timeLeft;
+  const timerElement = document.getElementById("timeLeft");
+  if (timerElement) {
+    timerElement.textContent = timeLeft;
+  }
 }
 
 function updateProgressBar() {
   const progressPercentage = (totalTimeSpent / 30) * 100;
-
   const progressBar = document.getElementById("progressBar");
-  progressBar.style.width = progressPercentage + "%";
-  progressBar.setAttribute("aria-valuenow", progressPercentage);
+  const progressText = document.getElementById("progressPercentage");
 
-  if (progressPercentage < 80) {
-    progressBar.style.backgroundColor = "#1f2335";
-  } else {
+  if (progressBar) {
+    progressBar.style.width = `${progressPercentage}%`;
+    progressBar.setAttribute("aria-valuenow", progressPercentage);
     progressBar.style.backgroundColor = "#1f2335";
   }
 
-  document.getElementById("progressPercentage").textContent =
-    "Hacked " + Math.floor(progressPercentage) + "%";
+  if (progressText) {
+    progressText.textContent = `Hacked ${Math.floor(progressPercentage)}%`;
+  }
 }
 
-document.getElementById("userInput").addEventListener("input", function (e) {
-  if (!hasStartedTyping && e.target.value.length > 0) {
-    hasStartedTyping = true;
-    gameStartTime = Date.now();
-  }
-  checkInput(e);
-});
+const userInput = document.getElementById("userInput");
+if (userInput) {
+  userInput.addEventListener("input", function (e) {
+    if (!hasStartedTyping && e.target.value.length > 0) {
+      hasStartedTyping = true;
+      gameStartTime = Date.now();
+    }
+    checkInput(e);
+  });
+}
 
 function checkInput(e) {
   const userInput = e.target.value;
   const currentWord = words[currentWordIndex];
   const wordDisplay = document.getElementById("wordToType");
+
+  if (!wordDisplay) return;
+
   const chars = wordDisplay.children;
 
-  // Track keystrokes
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
     if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
@@ -179,22 +285,18 @@ function checkInput(e) {
     }
   }
 
-  // Update character styling
   for (let i = 0; i < currentWord.length; i++) {
     if (i < userInput.length) {
-      // Character has been typed
       if (userInput[i] === currentWord[i]) {
         chars[i].className = "correct";
       } else {
         chars[i].className = "incorrect";
       }
     } else {
-      // Character hasn't been typed yet
       chars[i].className = "remaining";
     }
   }
 
-  // Check if word is complete
   if (userInput === currentWord) {
     flashProgress();
     totalCharactersTyped += currentWord.length;
@@ -204,11 +306,10 @@ function checkInput(e) {
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
     updateWordDisplay();
-    document.getElementById("userInput").value = "";
+    e.target.value = "";
+    updateProgressBar();
   }
 }
-
-document.getElementById("totalTimeSpentDisplay").textContent = totalTimeSpent;
 
 function calculateWPM() {
   if (!gameStartTime) return { wpm: 0, accuracy: "0%" };
@@ -223,23 +324,41 @@ function calculateWPM() {
 
   const wpm = Math.round(totalCharactersTyped / CHARS_PER_WORD / timeElapsed);
 
-  console.log("Total characters typed:", totalCharactersTyped);
-  console.log("Characters per word:", CHARS_PER_WORD);
-  console.log("Time elapsed(min):", timeElapsed);
-  console.log("WPM:", wpm);
-  console.log("Accuracy:", accuracy + "%");
-
   return {
     wpm,
-    accuracy: accuracy + "%",
+    accuracy: `${accuracy}%`,
   };
+}
+
+function getSpeedTier(wpm) {
+  if (wpm >= 100) return "QUANTUM SPEED";
+  if (wpm >= 80) return "NEURAL MASTER";
+  if (wpm >= 60) return "CYBER ADEPT";
+  if (wpm >= 40) return "DIGITAL RUNNER";
+  return "INITIATING";
+}
+
+function getAccuracyRank(accuracy) {
+  const numericAccuracy = parseFloat(accuracy);
+  const roundedAccuracy = Math.round(numericAccuracy * 10) / 10;
+
+  if (roundedAccuracy >= 98) return "PERFECT SYNC";
+  if (roundedAccuracy >= 95) return "NEURAL MASTER";
+  if (roundedAccuracy >= 90) return "CYBER EFFICIENT";
+  if (roundedAccuracy >= 85) return "DIGITAL PRECISE";
+  if (roundedAccuracy >= 75) return "SYSTEM UNSTABLE";
+  if (roundedAccuracy >= 60) return "NEURAL INTERFERENCE";
+  return "SYSTEM FAILURE";
 }
 
 function showGameOverModal(message) {
   const stats = calculateWPM();
-  document.getElementById("gameOverModalLabel").textContent =
-    "[runner@PENTAGON-CORE:/classified]$";
-  // Create terminal-style content with typing animation
+  const modalLabel = document.getElementById("gameOverModalLabel");
+
+  if (modalLabel) {
+    modalLabel.textContent = `[${playerUsername}@PENTAGON-CORE:/classified]$`;
+  }
+
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
@@ -260,84 +379,50 @@ function showGameOverModal(message) {
     "> END OF TRANSMISSION_",
   ];
 
-  // Helper functions for achievement tiers
-  function getSpeedTier(wpm) {
-    if (wpm >= 100) return "QUANTUM SPEED";
-    if (wpm >= 80) return "NEURAL MASTER";
-    if (wpm >= 60) return "CYBER ADEPT";
-    if (wpm >= 40) return "DIGITAL RUNNER";
-    return "INITIATING";
-  }
-
-  function getAccuracyRank(accuracy) {
-    // First ensure we have a valid number
-    const numericAccuracy = parseFloat(accuracy);
-
-    // Check if we have a valid number
-    if (isNaN(numericAccuracy)) {
-      console.log("Warning: Invalid accuracy value received:", accuracy);
-      return "SYSTEM ERROR"; // or whatever default you prefer
-    }
-
-    // Round to one decimal
-    const roundedAccuracy = Math.round(numericAccuracy * 10) / 10;
-
-    if (roundedAccuracy >= 98) return "PERFECT SYNC";
-    if (roundedAccuracy >= 95) return "NEURAL MASTER";
-    if (roundedAccuracy >= 90) return "CYBER EFFICIENT";
-    if (roundedAccuracy >= 85) return "DIGITAL PRECISE";
-    if (roundedAccuracy >= 75) return "SYSTEM UNSTABLE";
-    if (roundedAccuracy >= 60) return "NEURAL INTERFERENCE";
-    return "SYSTEM FAILURE";
-  }
-
   let currentLine = 0;
   let modalContent = "";
+
+  const gameOverModal = new bootstrap.Modal(
+    document.getElementById("gameOverModal"),
+  );
+  const modalBody = document
+    .getElementById("gameOverModal")
+    .querySelector(".modal-body");
+
+  modalBody.innerHTML = '<pre class="terminal-output"></pre>';
 
   function typeNextLine() {
     if (currentLine < terminalLines.length) {
       modalContent += terminalLines[currentLine] + "\n";
-      document.querySelector(".modal-body").innerHTML = `
-        <pre class="terminal-output">${modalContent}</pre>
-      `;
+      modalBody.querySelector(".terminal-output").innerHTML = modalContent;
       currentLine++;
       setTimeout(typeNextLine, 150);
     }
   }
 
-  document.querySelector(".modal-body").innerHTML =
-    `<pre class="terminal-output"></pre>`;
+  gameOverModal.show();
   typeNextLine();
 
   saveResult(timeLeft, stats.wpm, stats.accuracy);
   displayPreviousResults();
 
-  let gameOverModal = new bootstrap.Modal(
-    document.getElementById("gameOverModal"),
-  );
-  gameOverModal.show();
-
-  // Handle restart button click
   const restartBtn = document.getElementById("restartGameBtn");
   if (restartBtn) {
     restartBtn.onclick = () => location.reload();
   }
 
-  // Handle Enter key
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       location.reload();
     }
   };
 
-  // Add keypress listener when modal is shown
   document
     .getElementById("gameOverModal")
     .addEventListener("shown.bs.modal", () => {
       document.addEventListener("keydown", handleKeyPress);
     });
 
-  // Remove keypress listener when modal is hidden
   document
     .getElementById("gameOverModal")
     .addEventListener("hidden.bs.modal", () => {
@@ -353,6 +438,7 @@ function saveResult(timeLeft, wpm, accuracy) {
 
   if (timeLeft) {
     results.push({
+      username: playerUsername,
       timeLeft,
       wpm,
       accuracy,
@@ -362,6 +448,7 @@ function saveResult(timeLeft, wpm, accuracy) {
     });
   } else {
     results.push({
+      username: playerUsername,
       wpm,
       accuracy,
       date: new Date().toLocaleString("en-GB"),
@@ -375,6 +462,8 @@ function saveResult(timeLeft, wpm, accuracy) {
 
 function displayPreviousResults() {
   const resultsContainer = document.getElementById("previousResults");
+  if (!resultsContainer) return;
+
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
   results.reverse();
   resultsContainer.innerHTML = "";
@@ -382,22 +471,27 @@ function displayPreviousResults() {
   results.forEach((result) => {
     const resultItem = document.createElement("li");
     if (result.mode === "Classic Mode") {
-      resultItem.textContent = `${result.date} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     } else {
-      resultItem.textContent = `${result.date} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
     }
     resultsContainer.appendChild(resultItem);
   });
 }
 
-document
-  .getElementById("clearResultsBtn")
-  .addEventListener("click", function () {
+const clearResultsBtn = document.getElementById("clearResultsBtn");
+if (clearResultsBtn) {
+  clearResultsBtn.addEventListener("click", function () {
     localStorage.removeItem("gameResults");
-    document.getElementById("previousResults").innerHTML = "";
+    const resultsContainer = document.getElementById("previousResults");
+    if (resultsContainer) {
+      resultsContainer.innerHTML = "";
+    }
 
-    const customAlertModal = new bootstrap.Modal(
-      document.getElementById("customAlertModal"),
-    );
-    customAlertModal.show();
+    const customAlertModal = document.getElementById("customAlertModal");
+    if (customAlertModal) {
+      const modal = new bootstrap.Modal(customAlertModal);
+      modal.show();
+    }
   });
+}
