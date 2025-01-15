@@ -99,7 +99,7 @@ footer {
   background-color: #24283b;
   color: #7aa2f7;
   border: none;
-  padding: 8px 16px;
+  padding: 8px 15px;
   border-radius: 4px;
   cursor: pointer;
   text-transform: uppercase;
@@ -113,6 +113,10 @@ footer {
 
 #changeUsername:active {
   transform: translateY(1px);
+}
+
+#usernameDisplay {
+  color: #4fd6be;
 }
 
 .modal-title {

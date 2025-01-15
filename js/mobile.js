@@ -73,6 +73,7 @@ function handleUsernameConfirmation() {
   if (username) {
     playerUsername = username;
     localStorage.setItem("nerdtype_username", username);
+    document.getElementById("usernameDisplay").textContent = playerUsername;
     const modalInstance = bootstrap.Modal.getInstance(
       document.getElementById("usernameModal"),
     );
@@ -427,6 +428,7 @@ function showGameOverModal(message) {
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
     "> MODE: ZEN",
+    `> WHOAMI: ${playerUsername}`,
     `> STATUS: ${message}`,
     "> ================================",
     "> PERFORMANCE METRICS:",

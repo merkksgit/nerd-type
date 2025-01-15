@@ -77,12 +77,17 @@
           </div>
         </div>
       </nav>
-      <!-- Username Button -->
+      <!-- Username Button and Display -->
       <div class="container-fluid">
-        <div class="d-flex justify-content-end p-2">
-          <button id="changeUsername" class="btn btn-outline-primary mb-1">
-            <i class="fa-solid fa-user"></i> Change Username
+        <div class="d-flex flex-column align-items-end p-2" style="gap: 4px">
+          <button id="changeUsername" class="btn btn-outline-primary">
+            <i class="fa-solid fa-user"></i> Change Codename
           </button>
+          <div class="text-end" style="margin-right: 16px">
+            <small class="text-light" id="currentUsername"
+              ><span id="usernameDisplay">runner</span>
+            </small>
+          </div>
         </div>
       </div>
       <!-- Username Modal -->
@@ -288,6 +293,7 @@ $ </pre>
         </div>
       </div>
     </div>
+    <script src="../js/username.js"></script>
     <script src="../js/functions-fin.js" type="module"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
