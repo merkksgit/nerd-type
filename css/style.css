@@ -57,6 +57,7 @@ footer {
   padding-bottom: 6px;
 }
 
+.achievement-link,
 #archive-link {
   text-decoration: none;
   color: #bb9af7;
