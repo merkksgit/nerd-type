@@ -91,7 +91,7 @@ function handleClearResults() {
       localStorage.getItem("nerdtype_username") || "runner";
 
     // Set up terminal-style header
-    modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/scoreboard]$`;
+    modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/user.data/]$`;
 
     const terminalLines = [
       "> INITIALIZING DELETION SEQUENCE...",

@@ -548,7 +548,7 @@ if (clearResultsBtn) {
       const modalHeader = customAlertModal.querySelector(".modal-title");
 
       // Set up terminal-style header
-      modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/scoreboard]$`;
+      modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/user.data/]$`;
 
       const terminalLines = [
         "> INITIALIZING DELETION SEQUENCE...",
