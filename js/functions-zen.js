@@ -233,7 +233,7 @@ function checkInput(e) {
   const wordDisplay = document.getElementById("wordToType");
   const chars = wordDisplay.children;
 
-  // Check for secret code word
+  // Check for secret code word (wp you found it, nerd)
   if (userInput.toLowerCase() === "iddqd" && !gameEnded) {
     gameEnded = true;
     clearInterval(totalTimeInterval);
