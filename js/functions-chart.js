@@ -1,5 +1,13 @@
 // Toggle functionality for all sections
-function setupToggle(buttonId, containerId, storageKey, showText, hideText) {
+function setupToggle(
+  buttonId,
+  containerId,
+  storageKey,
+  showText,
+  hideText,
+  showIcon,
+  hideIcon,
+) {
   const button = document.getElementById(buttonId);
   const container = document.getElementById(containerId);
 
@@ -7,8 +15,8 @@ function setupToggle(buttonId, containerId, storageKey, showText, hideText) {
     container.classList.toggle("hidden");
     const isHidden = container.classList.contains("hidden");
     button.innerHTML = isHidden
-      ? `<i class="fa-solid fa-trophy"></i> ${showText}`
-      : `<i class="fa-solid fa-trophy"></i> ${hideText}`;
+      ? `<i class="${showIcon}"></i> ${showText}`
+      : `<i class="${hideIcon}"></i> ${hideText}`;
     localStorage.setItem(storageKey, isHidden);
   });
 
@@ -16,19 +24,21 @@ function setupToggle(buttonId, containerId, storageKey, showText, hideText) {
   const isHidden = localStorage.getItem(storageKey) === "true";
   if (isHidden) {
     container.classList.add("hidden");
-    button.innerHTML = `<i class="fa-solid fa-trophy"></i> ${showText}`;
+    button.innerHTML = `<i class="${showIcon}"></i> ${showText}`;
   }
 }
 
 // Initialize all functionality when DOM is loaded
 document.addEventListener("DOMContentLoaded", function () {
-  // Setup toggles for each section
+  // Setup toggles for each section with different icons
   setupToggle(
     "toggleScoreboard",
     "scoreboardContainer",
     "scoreboardHidden",
     "Show Scoreboard",
     "Hide Scoreboard",
+    "fa-solid fa-trophy", // Show icon for scoreboard
+    "fa-solid fa-trophy", // Hide icon for scoreboard
   );
 
   setupToggle(
@@ -37,6 +47,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "achievementsHidden",
     "Show Achievements",
     "Hide Achievements",
+    "fa-solid fa-medal", // Show icon for achievements
+    "fa-solid fa-medal", // Hide icon for achievements
   );
 
   setupToggle(
@@ -45,6 +57,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "graphHidden",
     "Show Graph",
     "Hide Graph",
+    "fa-solid fa-chart-simple", // Show icon for graph
+    "fa-solid fa-chart-simple", // Hide icon for graph
   );
 
   // Display initial data
