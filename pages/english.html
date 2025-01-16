@@ -79,13 +79,16 @@
       </nav>
       <!-- Username Button and Display -->
       <div class="container-fluid">
-        <div class="d-flex flex-column align-items-end p-2" style="gap: 4px">
+        <div
+          class="d-flex flex-row-reverse align-items-center p-2"
+          style="gap: 8px"
+        >
           <button id="changeUsername" class="btn btn-outline-primary">
             <i class="fa-solid fa-user"></i> Change Codename
           </button>
-          <div class="text-end" style="margin-right: 16px">
-            <small class="text-light" id="currentUsername"
-              ><span id="usernameDisplay">runner</span>
+          <div class="text-end">
+            <small class="text-light" id="currentUsername">
+              <span id="usernameDisplay">runner</span>
             </small>
           </div>
         </div>
@@ -139,7 +142,7 @@ $ </pre
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12 p-3 pt-1">
+        <div class="col-md-12 p-3 pt-3">
           <div class="container-fluid">
             <div class="row">
               <div id="game">
