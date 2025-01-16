@@ -518,3 +518,18 @@ score h3 {
 #submitCustomScore {
   padding-top: 2em;
 }
+
+/* table */
+.achievements-container .table-dark,
+.achievements-container .table-dark thead,
+.achievements-container .table-dark tbody,
+.achievements-container .table-dark td {
+  background-color: #1f2335 !important;
+  color: #a9b1d6 !important;
+  border-color: #414868;
+}
+
+.achievements-container .table-dark th {
+  color: #bb9af7;
+  background-color: #1f2335;
+}
