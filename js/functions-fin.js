@@ -544,7 +544,43 @@ if (clearResultsBtn) {
     const customAlertModal = document.getElementById("customAlertModal");
     if (customAlertModal) {
       const modal = new bootstrap.Modal(customAlertModal);
+      const modalBody = customAlertModal.querySelector(".modal-body");
+      const modalHeader = customAlertModal.querySelector(".modal-title");
+
+      // Set up terminal-style header
+      modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/scoreboard]$`;
+
+      const terminalLines = [
+        "> INITIALIZING DELETION SEQUENCE...",
+        "> ACCESSING SCOREBOARD DATABASE...",
+        "> PREPARING DATA PURGE...",
+        "> ================================",
+        "> EXECUTING COMMANDS:",
+        "  └─ rm -rf scoreboard.data",
+        "  └─ rm -rf achievements.data",
+        `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
+        "> ================================",
+        "> LOCAL STORAGE CLEARED_",
+        "> PRESS [CLOSE] TO CONFIRM",
+        "> END OF TRANSMISSION_",
+      ];
+
+      let currentLine = 0;
+      let modalContent = "";
+
+      modalBody.innerHTML = '<pre class="terminal-output"></pre>';
+
+      function typeNextLine() {
+        if (currentLine < terminalLines.length) {
+          modalContent += terminalLines[currentLine] + "\n";
+          modalBody.querySelector(".terminal-output").innerHTML = modalContent;
+          currentLine++;
+          setTimeout(typeNextLine, 150);
+        }
+      }
+
       modal.show();
+      typeNextLine();
 
       // Prevent Enter key from starting game in this modal
       customAlertModal.addEventListener("keydown", (event) => {
@@ -554,7 +590,11 @@ if (clearResultsBtn) {
         }
       });
 
-      modal.show();
+      document
+        .getElementById("clrResults")
+        .addEventListener("click", function () {
+          location.reload();
+        });
     }
   });
 }

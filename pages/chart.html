@@ -185,7 +185,6 @@
         </article>
       </div>
     </div>
-
     <!-- Clear results Alert Modal -->
     <div
       class="modal fade"
@@ -196,31 +195,39 @@
     >
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header border-bottom-0 text-center">
-            <h5 class="modal-title w-100" id="customAlertModalLabel"></h5>
+          <!-- Update the modal header div -->
+          <div
+            class="modal-header border-bottom-0"
+            style="display: flex; justify-content: center; padding: 1rem"
+          >
+            <h5
+              class="modal-title"
+              id="customAlertModalLabel"
+              style="text-align: center; margin: 0"
+            ></h5>
           </div>
           <div
             class="modal-body border-top-0 border-bottom-0"
             style="display: flex; justify-content: center"
           >
-            <pre
-              class="terminal-output"
-              style="width: 80%; text-align: left; margin: 0"
-            >
-$ rm -rf scoreboard.data
-> SCOREBOARD PURGED <span style="color: #c3e88d">SUCCESSFULLY</span>
-> LOCAL STORAGE CLEARED_
-$ </pre>
+            <!-- The terminal output will be dynamically inserted here -->
           </div>
+          <!-- Update the modal footer div -->
           <div
-            class="modal-footer border-top-0 d-flex justify-content-center"
-            style="background-color: #24283b"
+            class="modal-footer border-top-0"
+            style="
+              background-color: #24283b;
+              display: flex;
+              justify-content: center;
+              padding: 1rem;
+            "
           >
             <button
               id="clrResults"
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
+              style="margin: 0"
             >
               Close
             </button>
@@ -228,7 +235,6 @@ $ </pre>
         </div>
       </div>
     </div>
-
     <!-- Footer -->
     <footer class="footer mt-auto pl-3 pt-3">
       <div class="container-fluid">

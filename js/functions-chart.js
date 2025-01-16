@@ -11,6 +11,8 @@ function setupToggle(
   const button = document.getElementById(buttonId);
   const container = document.getElementById(containerId);
 
+  if (!button || !container) return;
+
   button.addEventListener("click", function () {
     container.classList.toggle("hidden");
     const isHidden = container.classList.contains("hidden");
@@ -37,8 +39,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "scoreboardHidden",
     "Show Scoreboard",
     "Hide Scoreboard",
-    "fa-solid fa-trophy", // Show icon for scoreboard
-    "fa-solid fa-trophy", // Hide icon for scoreboard
+    "fa-solid fa-trophy",
+    "fa-solid fa-trophy",
   );
 
   setupToggle(
@@ -47,8 +49,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "achievementsHidden",
     "Show Achievements",
     "Hide Achievements",
-    "fa-solid fa-medal", // Show icon for achievements
-    "fa-solid fa-medal", // Hide icon for achievements
+    "fa-solid fa-medal",
+    "fa-solid fa-medal",
   );
 
   setupToggle(
@@ -57,36 +59,92 @@ document.addEventListener("DOMContentLoaded", function () {
     "graphHidden",
     "Show Graph",
     "Hide Graph",
-    "fa-solid fa-chart-simple", // Show icon for graph
-    "fa-solid fa-chart-simple", // Hide icon for graph
+    "fa-solid fa-chart-simple",
+    "fa-solid fa-chart-simple",
   );
 
   // Display initial data
   displayPreviousResults();
   displayHighestAchievements();
 
-  // Setup clear results button
-  document
-    .getElementById("clearResultsBtn")
-    .addEventListener("click", function () {
-      localStorage.removeItem("gameResults");
-      localStorage.removeItem("highestAchievements");
-      document.getElementById("previousResults").innerHTML = "";
-      displayHighestAchievements();
-      const customAlertModal = new bootstrap.Modal(
-        document.getElementById("customAlertModal"),
-      );
-      customAlertModal.show();
-      document
-        .getElementById("clrResults")
-        .addEventListener("click", function () {
-          location.reload();
-        });
-    });
+  // Setup clear results button with new animation
+  const clearResultsBtn = document.getElementById("clearResultsBtn");
+  if (clearResultsBtn) {
+    clearResultsBtn.addEventListener("click", handleClearResults);
+  }
 });
+
+function handleClearResults() {
+  localStorage.removeItem("gameResults");
+  localStorage.removeItem("highestAchievements");
+  document.getElementById("previousResults").innerHTML = "";
+  displayHighestAchievements();
+
+  const customAlertModal = document.getElementById("customAlertModal");
+  if (customAlertModal) {
+    const modal = new bootstrap.Modal(customAlertModal);
+    const modalBody = customAlertModal.querySelector(".modal-body");
+    const modalHeader = customAlertModal.querySelector(".modal-title");
+
+    // Get username from localStorage or use default
+    const playerUsername =
+      localStorage.getItem("nerdtype_username") || "runner";
+
+    // Set up terminal-style header
+    modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/scoreboard]$`;
+
+    const terminalLines = [
+      "> INITIALIZING DELETION SEQUENCE...",
+      "> ACCESSING SCOREBOARD DATABASE...",
+      "> PREPARING DATA PURGE...",
+      "> ================================",
+      "> EXECUTING COMMANDS:",
+      "  └─ rm -rf scoreboard.data",
+      "  └─ rm -rf achievements.data",
+      `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
+      "> ================================",
+      "> LOCAL STORAGE CLEARED_",
+      "> PRESS [CLOSE] TO CONFIRM",
+      "> END OF TRANSMISSION_",
+    ];
+
+    let currentLine = 0;
+    let modalContent = "";
+
+    modalBody.innerHTML = '<pre class="terminal-output"></pre>';
+
+    function typeNextLine() {
+      if (currentLine < terminalLines.length) {
+        modalContent += terminalLines[currentLine] + "\n";
+        modalBody.querySelector(".terminal-output").innerHTML = modalContent;
+        currentLine++;
+        setTimeout(typeNextLine, 150);
+      }
+    }
+
+    modal.show();
+    typeNextLine();
+
+    // Prevent Enter key from starting game in this modal
+    customAlertModal.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    });
+
+    document
+      .getElementById("clrResults")
+      .addEventListener("click", function () {
+        location.reload();
+      });
+  }
+}
 
 function displayPreviousResults() {
   const resultsContainer = document.getElementById("previousResults");
+  if (!resultsContainer) return;
+
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
   results.reverse();
   resultsContainer.innerHTML = "";
