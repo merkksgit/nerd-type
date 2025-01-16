@@ -1,39 +1,82 @@
-// Scoreboard toggle functionality
-document
-  .getElementById("toggleScoreboard")
-  .addEventListener("click", function () {
-    const container = document.getElementById("scoreboardContainer");
-    const button = this;
+// Toggle functionality for all sections
+function setupToggle(buttonId, containerId, storageKey, showText, hideText) {
+  const button = document.getElementById(buttonId);
+  const container = document.getElementById(containerId);
+
+  button.addEventListener("click", function () {
     container.classList.toggle("hidden");
-    if (container.classList.contains("hidden")) {
-      button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
-    } else {
-      button.innerHTML = '<i class="fa-solid fa-trophy"></i> Hide Scoreboard';
-    }
-    localStorage.setItem(
-      "scoreboardHidden",
-      container.classList.contains("hidden"),
-    );
+    const isHidden = container.classList.contains("hidden");
+    button.innerHTML = isHidden
+      ? `<i class="fa-solid fa-trophy"></i> ${showText}`
+      : `<i class="fa-solid fa-trophy"></i> ${hideText}`;
+    localStorage.setItem(storageKey, isHidden);
   });
 
-// Maintain scoreboard state after page refresh
-document.addEventListener("DOMContentLoaded", function () {
-  const container = document.getElementById("scoreboardContainer");
-  const button = document.getElementById("toggleScoreboard");
-  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
+  // Restore state on page load
+  const isHidden = localStorage.getItem(storageKey) === "true";
   if (isHidden) {
     container.classList.add("hidden");
-    button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
+    button.innerHTML = `<i class="fa-solid fa-trophy"></i> ${showText}`;
   }
+}
+
+// Initialize all functionality when DOM is loaded
+document.addEventListener("DOMContentLoaded", function () {
+  // Setup toggles for each section
+  setupToggle(
+    "toggleScoreboard",
+    "scoreboardContainer",
+    "scoreboardHidden",
+    "Show Scoreboard",
+    "Hide Scoreboard",
+  );
+
+  setupToggle(
+    "toggleAchievements",
+    "achievementsContainer",
+    "achievementsHidden",
+    "Show Achievements",
+    "Hide Achievements",
+  );
+
+  setupToggle(
+    "toggleGraph",
+    "graphContainer",
+    "graphHidden",
+    "Show Graph",
+    "Hide Graph",
+  );
+
+  // Display initial data
   displayPreviousResults();
+  displayHighestAchievements();
+
+  // Setup clear results button
+  document
+    .getElementById("clearResultsBtn")
+    .addEventListener("click", function () {
+      localStorage.removeItem("gameResults");
+      localStorage.removeItem("highestAchievements");
+      document.getElementById("previousResults").innerHTML = "";
+      displayHighestAchievements();
+      const customAlertModal = new bootstrap.Modal(
+        document.getElementById("customAlertModal"),
+      );
+      customAlertModal.show();
+      document
+        .getElementById("clrResults")
+        .addEventListener("click", function () {
+          location.reload();
+        });
+    });
 });
 
-// Scoreboard (ScoreChart page)
 function displayPreviousResults() {
   const resultsContainer = document.getElementById("previousResults");
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
   results.reverse();
   resultsContainer.innerHTML = "";
+
   results.forEach((result) => {
     const resultItem = document.createElement("li");
     if (result.mode === "Zen Mode") {
@@ -45,26 +88,6 @@ function displayPreviousResults() {
     resultsContainer.appendChild(resultItem);
   });
 }
-
-document.addEventListener("DOMContentLoaded", displayPreviousResults);
-
-document
-  .getElementById("clearResultsBtn")
-  .addEventListener("click", function () {
-    localStorage.removeItem("gameResults");
-    localStorage.removeItem("highestAchievements");
-    document.getElementById("previousResults").innerHTML = "";
-    displayHighestAchievements(); // Reset achievements display
-    const customAlertModal = new bootstrap.Modal(
-      document.getElementById("customAlertModal"),
-    );
-    customAlertModal.show();
-    document
-      .getElementById("clrResults")
-      .addEventListener("click", function () {
-        location.reload();
-      });
-  });
 
 function displayHighestAchievements() {
   const highestAchievements = JSON.parse(
@@ -79,7 +102,7 @@ function displayHighestAchievements() {
 
   if (speedTierElement) {
     speedTierElement.textContent = highestAchievements.speedTier || "-";
-    speedTierElement.className = ""; // Remove any previous color classes
+    speedTierElement.className = "";
     if (highestAchievements.speedTier) {
       speedTierElement.classList.add(
         getAchievementColor(highestAchievements.speedTier),
@@ -89,7 +112,7 @@ function displayHighestAchievements() {
 
   if (accuracyRankElement) {
     accuracyRankElement.textContent = highestAchievements.accuracyRank || "-";
-    accuracyRankElement.className = ""; // Remove any previous color classes
+    accuracyRankElement.className = "";
     if (highestAchievements.accuracyRank) {
       accuracyRankElement.classList.add(
         getAchievementColor(highestAchievements.accuracyRank),
@@ -114,6 +137,3 @@ function getAchievementColor(achievement) {
   };
   return colorMap[achievement] || "text-secondary";
 }
-
-// Call this function when the page loads
-document.addEventListener("DOMContentLoaded", displayHighestAchievements);

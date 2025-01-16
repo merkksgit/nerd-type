@@ -424,11 +424,19 @@ score h3 {
   padding: 0;
 }
 
+.hidden {
+  display: none !important;
+}
+
+#toggleGraph,
+#toggleAchievements,
 #toggleScoreboard {
   background-color: #24283b;
   color: #7aa2f7;
 }
 
+#toggleGraph:hover,
+#toggleAchievements:hover,
 #toggleScoreboard:hover {
   color: #ff9e64;
 }
