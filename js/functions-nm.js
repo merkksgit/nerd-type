@@ -364,7 +364,7 @@ function showGameOverModal(message) {
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
     "> MODE: NIGHTMARE",
-    `> WHOAMI: ${playerUsername}`,
+    `> USER: ${playerUsername}`,
     `> STATUS: ${message}`,
     "> ================================",
     "> PERFORMANCE METRICS:",
