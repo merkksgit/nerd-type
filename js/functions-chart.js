@@ -45,13 +45,16 @@ function displayPreviousResults() {
     resultsContainer.appendChild(resultItem);
   });
 }
+
 document.addEventListener("DOMContentLoaded", displayPreviousResults);
 
 document
   .getElementById("clearResultsBtn")
   .addEventListener("click", function () {
     localStorage.removeItem("gameResults");
+    localStorage.removeItem("highestAchievements");
     document.getElementById("previousResults").innerHTML = "";
+    displayHighestAchievements(); // Reset achievements display
     const customAlertModal = new bootstrap.Modal(
       document.getElementById("customAlertModal"),
     );
@@ -62,3 +65,55 @@ document
         location.reload();
       });
   });
+
+function displayHighestAchievements() {
+  const highestAchievements = JSON.parse(
+    localStorage.getItem("highestAchievements"),
+  ) || {
+    speedTier: "",
+    accuracyRank: "",
+  };
+
+  const speedTierElement = document.getElementById("highestSpeedTier");
+  const accuracyRankElement = document.getElementById("highestAccuracyRank");
+
+  if (speedTierElement) {
+    speedTierElement.textContent = highestAchievements.speedTier || "-";
+    speedTierElement.className = ""; // Remove any previous color classes
+    if (highestAchievements.speedTier) {
+      speedTierElement.classList.add(
+        getAchievementColor(highestAchievements.speedTier),
+      );
+    }
+  }
+
+  if (accuracyRankElement) {
+    accuracyRankElement.textContent = highestAchievements.accuracyRank || "-";
+    accuracyRankElement.className = ""; // Remove any previous color classes
+    if (highestAchievements.accuracyRank) {
+      accuracyRankElement.classList.add(
+        getAchievementColor(highestAchievements.accuracyRank),
+      );
+    }
+  }
+}
+
+function getAchievementColor(achievement) {
+  const colorMap = {
+    "QUANTUM SPEED": "achievement-quantum-speed",
+    "NEURAL MASTER": "achievement-neural-master",
+    "CYBER ADEPT": "achievement-cyber-adept",
+    "DIGITAL RUNNER": "achievement-digital-runner",
+    INITIATING: "achievement-initiating",
+    "PERFECT SYNC": "achievement-perfect-sync",
+    "CYBER EFFICIENT": "achievement-cyber-efficient",
+    "DIGITAL PRECISE": "achievement-digital-precise",
+    "SYSTEM UNSTABLE": "achievement-system-unstable",
+    "NEURAL INTERFERENCE": "achievement-neural-interference",
+    "SYSTEM FAILURE": "achievement-system-failure",
+  };
+  return colorMap[achievement] || "text-secondary";
+}
+
+// Call this function when the page loads
+document.addEventListener("DOMContentLoaded", displayHighestAchievements);

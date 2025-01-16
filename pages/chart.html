@@ -84,6 +84,43 @@
           </div>
         </div>
       </nav>
+      <!-- Highest Achievements Section -->
+      <div class="row justify-content-center mt-4">
+        <div class="col-12 col-md-8">
+          <h2 class="text-center mb-3 pt-5 achievements-title">
+            <a
+              href="./achievements.html"
+              style="
+                color: inherit;
+                text-decoration: none;
+                transition: color 0.3s ease;
+              "
+              onmouseover="this.style.color='#545c7e'"
+              onmouseout="this.style.color='inherit'"
+            >
+               Highest Achievements
+            </a>
+          </h2>
+          <div class="row">
+            <div class="col-6 pt-3">
+              <div class="card achievement-card">
+                <div class="card-header achievement-header">Speed Tier</div>
+                <div class="card-body text-center">
+                  <h3 id="highestSpeedTier" class="achievement-tier">-</h3>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 pt-3">
+              <div class="card achievement-card">
+                <div class="card-header achievement-header">Accuracy Rank</div>
+                <div class="card-body text-center">
+                  <h3 id="highestAccuracyRank" class="achievement-tier">-</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Charts Section -->
       <div class="row">
@@ -110,7 +147,10 @@
       <!-- Scoreboard Section -->
       <div class="row justify-content-center">
         <article class="col-md-12 p-3 flex-column d-flex align-items-center">
-          <button id="toggleScoreboard" class="btn btn-primary mb-3 border-0">
+          <button
+            id="toggleScoreboard"
+            class="btn btn-primary mb-3 pt-5 border-0"
+          >
             <i class="fa-solid fa-trophy"></i> Hide Scoreboard
           </button>
           <div id="scoreboardContainer" class="text-center w-100">

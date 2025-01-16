@@ -541,6 +541,7 @@ const clearResultsBtn = document.getElementById("clearResultsBtn");
 if (clearResultsBtn) {
   clearResultsBtn.addEventListener("click", function () {
     localStorage.removeItem("gameResults");
+    localStorage.removeItem("highestAchievements");
     const resultsContainer = document.getElementById("previousResults");
     if (resultsContainer) {
       resultsContainer.innerHTML = "";

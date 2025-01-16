@@ -438,6 +438,52 @@ function saveResult(timeLeft, wpm, accuracy) {
   }
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
+  // Get current highest achievements
+  let highestAchievements = JSON.parse(
+    localStorage.getItem("highestAchievements"),
+  ) || {
+    speedTier: "INITIATING",
+    accuracyRank: "SYSTEM FAILURE",
+  };
+
+  // Current achievements
+  const currentSpeedTier = getSpeedTier(wpm);
+  const currentAccuracyRank = getAccuracyRank(accuracy);
+
+  // Update highest achievements if needed
+  const speedTierOrder = [
+    "INITIATING",
+    "DIGITAL RUNNER",
+    "CYBER ADEPT",
+    "NEURAL MASTER",
+    "QUANTUM SPEED",
+  ];
+
+  const accuracyRankOrder = [
+    "SYSTEM FAILURE",
+    "NEURAL INTERFERENCE",
+    "SYSTEM UNSTABLE",
+    "DIGITAL PRECISE",
+    "CYBER EFFICIENT",
+    "NEURAL MASTER",
+    "PERFECT SYNC",
+  ];
+
+  if (
+    speedTierOrder.indexOf(currentSpeedTier) >
+    speedTierOrder.indexOf(highestAchievements.speedTier)
+  ) {
+    highestAchievements.speedTier = currentSpeedTier;
+  }
+
+  if (
+    accuracyRankOrder.indexOf(currentAccuracyRank) >
+    accuracyRankOrder.indexOf(highestAchievements.accuracyRank)
+  ) {
+    highestAchievements.accuracyRank = currentAccuracyRank;
+  }
+
+  // Save results and highest achievements
   if (timeLeft) {
     results.push({
       username: playerUsername,
@@ -460,6 +506,10 @@ function saveResult(timeLeft, wpm, accuracy) {
   }
 
   localStorage.setItem("gameResults", JSON.stringify(results));
+  localStorage.setItem(
+    "highestAchievements",
+    JSON.stringify(highestAchievements),
+  );
 }
 
 function displayPreviousResults() {
@@ -485,6 +535,7 @@ const clearResultsBtn = document.getElementById("clearResultsBtn");
 if (clearResultsBtn) {
   clearResultsBtn.addEventListener("click", function () {
     localStorage.removeItem("gameResults");
+    localStorage.removeItem("highestAchievements");
     const resultsContainer = document.getElementById("previousResults");
     if (resultsContainer) {
       resultsContainer.innerHTML = "";

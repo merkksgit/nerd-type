@@ -534,3 +534,59 @@ score h3 {
   color: #ff9e64;
   background-color: #1f2335;
 }
+
+/* achievements */
+
+/* In your style.css */
+.achievement-quantum-speed {
+  color: #c3e88d;
+} /* Bright Green */
+.achievement-neural-master {
+  color: #7aa2f7;
+} /* Bright Blue */
+.achievement-cyber-adept {
+  color: #7dcfff;
+} /* Cyan */
+.achievement-digital-runner {
+  color: #ff9e64;
+} /* Orange */
+.achievement-initiating {
+  color: #545c7e;
+} /* Gray */
+.achievement-perfect-sync {
+  color: #c3e88d;
+} /* Bright Green */
+.achievement-cyber-efficient {
+  color: #7dcfff;
+} /* Cyan */
+.achievement-digital-precise {
+  color: #ff9e64;
+} /* Orange */
+.achievement-system-unstable {
+  color: #ffc777;
+} /* Yellow */
+.achievement-neural-interference {
+  color: #545c7e;
+} /* Gray */
+.achievement-system-failure {
+  color: #ff007c;
+} /* Bright Red */
+
+/* achievements card */
+
+.achievement-title {
+  color: #ffffff !important;
+}
+.achievement-card.card {
+  background-color: #1f2335 !important;
+  border: 2px solid #3b4261 !important;
+  border-radius: 1px;
+  box-shadow: 0 0 15px rgba(59, 66, 97, 0.5);
+}
+.achievement-header.card-header {
+  background-color: #1f2335 !important;
+  color: #c3e88d !important;
+}
+.achievement-tier {
+  color: #4fd6be !important;
+}
