@@ -27,6 +27,7 @@ class Terminal {
       // Secret commands
       ls: this.listFiles.bind(this),
       cat: this.catFile.bind(this),
+      refresh: this.refresh.bind(this),
     };
 
     this.commandHistory = [];
@@ -207,6 +208,21 @@ class Terminal {
     document.head.appendChild(styleSheet);
   }
 
+  getWelcomeArt() {
+    return `
+<span style="color:#7aa2f7">
+    ███╗   ██╗███████╗██████╗ ██████╗ ████████╗██╗   ██╗██████╗ ███████╗
+    ████╗  ██║██╔════╝██╔══██╗██╔══██╗╚══██╔══╝╚██╗ ██╔╝██╔══██╗██╔════╝
+    ██╔██╗ ██║█████╗  ██████╔╝██║  ██║   ██║    ╚████╔╝ ██████╔╝█████╗  
+    ██║╚██╗██║██╔══╝  ██╔══██╗██║  ██║   ██║     ╚██╔╝  ██╔═══╝ ██╔══╝  
+    ██║ ╚████║███████╗██║  ██║██████╔╝   ██║      ██║   ██║     ███████╗
+    ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═════╝    ╚═╝      ╚═╝   ╚═╝     ╚══════╝</span>
+                                                
+<span style="color:#bb9af7">    Welcome to NerdType Terminal v1.0.0</span>
+<span style="color:#7dcfff">    Type 'help' for available commands</span>
+`;
+  }
+
   setupEventListeners() {
     const terminalInput = document.getElementById("terminalInput");
     const username = localStorage.getItem("nerdtype_username") || "runner";
@@ -289,11 +305,9 @@ class Terminal {
     output.scrollTop = output.scrollHeight;
   }
 
-  // New methods
   clearTerminal() {
     const output = document.getElementById("terminalOutput");
     output.innerHTML = "";
-    this.printToTerminal("Terminal cleared", "command-success");
   }
 
   showTime() {
@@ -321,6 +335,7 @@ Available commands:
   status               - Show current game settings
   time                 - Show current time and date
   clear                - Clear terminal screen
+  refresh              - Clear screen and show welcome art
   reset                - Reset all settings to default
   exit                 - Close terminal
   help                 - Show this help message`;
@@ -356,6 +371,12 @@ Available commands:
     }
   }
 
+  refresh() {
+    const output = document.getElementById("terminalOutput");
+    output.innerHTML = "";
+    this.printToTerminal(this.getWelcomeArt());
+  }
+
   listFiles() {
     this.printToTerminal(`<span style="color:#7dcfff">godmode.txt</span>`);
   }
@@ -369,11 +390,17 @@ Available commands:
     const filename = args[0];
     if (filename === "godmode.txt") {
       const secretText = `
-> SECRET DOCUMENT
-> ================================
-  └─ GAME MODE: <span style='color:#ff9e64'>zen</span>
-  └─ CODE: <span style='color:#bb9af7'>iddqd</span>
-> ================================`;
+# BEGIN ENCRYPTED FILE #
+a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
+9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4
+x4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
+9f8e7d6c5b4a3b2###############4a3b2c1d0e9f8e7d6c5b4
+åa1b2c3d4e5GAME# MODE: zen   #hk2jh34j24hjk2lh342jc
+u9f8e7d6c5b4a3b# CODE: iddqd #4lkih23434hl23hk4l2h3 
+2c1d0e9f8e7d6c5###############7d6c5b4a3b2c1d0e9f8e7
+7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6
+2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7
+# END ENCRYPTED FILE #</span>`;
       this.printToTerminal(secretText, "command-success");
     } else {
       this.printToTerminal(
@@ -524,6 +551,8 @@ Available commands:
   open() {
     const modal = new bootstrap.Modal(document.getElementById("terminalModal"));
     modal.show();
+    document.getElementById("terminalOutput").innerHTML = "";
+    this.printToTerminal(this.getWelcomeArt());
     setTimeout(() => {
       document.getElementById("terminalInput").focus();
     }, 500);
