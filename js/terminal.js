@@ -392,6 +392,7 @@ Available commands:
       const secretText = `
 # BEGIN ENCRYPTED FILE #
 a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
+7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6
 9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4
 x4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
 9f8e7d6c5b4a3b2###############4a3b2c1d0e9f8e7d6c5b4
@@ -400,6 +401,8 @@ u9f8e7d6c5b4a3b# CODE: iddqd #4lkih23434hl23hk4l2h3
 2c1d0e9f8e7d6c5###############7d6c5b4a3b2c1d0e9f8e7
 7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6
 2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7
+x4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
+a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
 # END ENCRYPTED FILE #</span>`;
       this.printToTerminal(secretText, "command-success");
     } else {
