@@ -14,6 +14,7 @@ class Terminal {
 
     this.commands = {
       help: this.showHelp.bind(this),
+      status: this.showStatus.bind(this),
       setwords: this.setWords.bind(this),
       setbonus: this.setBonus.bind(this),
       setinitial: this.setInitial.bind(this),
@@ -135,11 +136,25 @@ class Terminal {
             border: none !important;
             color: #a9b1d6 !important;
             flex-grow: 1 !important;
-            font-family: monospace !important;
+            font-family: "custom", monospace !important;
             outline: none !important;
             font-size: 18px !important;
             padding: 0 !important;
             caret-color: #a9b1d6 !important;
+            width: 70% !important;  // Controls input field width
+        }
+        #terminalModal .terminal-input-line {
+            display: flex !important;
+            align-items: center !important;
+            color: #c0caf5 !important;
+            background-color: #24283b !important;
+            position: absolute !important;
+            bottom: 0px !important;
+            left: 20px !important;
+            right: 20px !important;
+            width: 80% !important;  // Makes input area narrower
+            margin: 0 auto !important;  // Centers the input line
+        }
         }
         #terminalModal .command-success {
             color: #c3e88d !important;
@@ -153,7 +168,7 @@ class Terminal {
             border: 1px solid #1f2335 !important;
             background-color: #24283b !important;
             border-radius: 8px !important;
-            box-shadow: 0 0 15px rgba(59, 66, 97, 0.5) !important;
+            box-shadow: 0 0 15px rgba(59, 66, 97, 0.8) !important;
         }
         #terminalModal .modal-header {
             border-bottom: none !important;
@@ -175,16 +190,20 @@ class Terminal {
             position: relative !important;
         }
         #terminalModal .modal-dialog {
-            position: relative !important;
-            transform: translate(0, 200px) !important;
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -70%) !important;
             background-color: #24283b !important;
-            max-width: 900px !important;  // Wider modal
+            max-width: 900px !important;
+            width: 95% !important;  // This ensures some margin on mobile
+            margin: 0 !important;
         }
         #terminalModal .terminal-input,
         #terminalModal .terminal-output,
         #terminalModal .terminal-prompt,
         #terminalModal .modal-title {
-        font-family: "custom", monospace !important;
+            font-family: "custom", monospace !important;
         }
     `;
 
@@ -283,10 +302,40 @@ Available commands:
   setinitial <seconds>    - Set starting energy (default: 10)
   setgoal <percentage>       - Set goal percentage (default: 100)
   mode <type>          - Set game mode (classic/hard/practice)
+  status         - Show current game settings
   reset          - Reset all settings to default
   exit           - Close terminal
   help           - Show this help message`;
     this.printToTerminal(helpText, "command-success");
+  }
+
+  showStatus() {
+    try {
+      const settings = this.gameSettings;
+      if (!settings) {
+        this.printToTerminal(
+          "Error: Could not load game settings",
+          "command-error",
+        );
+        return;
+      }
+
+      const statusText = `> CURRENT GAME SETTINGS:
+> ================================
+  └─ MODE: <span style='color:#ff9e64'>${settings.currentMode?.toUpperCase() || "CLASSIC"}</span>
+  └─ WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
+  └─ BONUS TIME: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> seconds
+  └─ INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> seconds
+  └─ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}</span>%
+> ================================`;
+
+      this.printToTerminal(statusText, "command-success");
+    } catch (error) {
+      this.printToTerminal(
+        "Error displaying status: " + error.message,
+        "command-error",
+      );
+    }
   }
 
   setWords(args) {
