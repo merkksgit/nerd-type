@@ -1,4 +1,12 @@
-let timeLeft = 10;
+// Load saved settings or use defaults
+let gameSettings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+  timeLimit: 30,
+  bonusTime: 3,
+  initialTime: 10,
+  goalPercentage: 100,
+};
+
+let timeLeft = gameSettings.initialTime;
 let totalTimeSpent = 0;
 let currentWordIndex = 0;
 let nextWordIndex = 0;
@@ -10,10 +18,16 @@ let totalCharactersTyped = 0;
 let hasStartedTyping = false;
 let totalKeystrokes = 0;
 let correctKeystrokes = 0;
+let bonusTime = gameSettings.bonusTime;
+let goalPercentage = gameSettings.goalPercentage;
+
 import { words } from "./words-nm.js";
+import Terminal from "./terminal.js";
+
+// Initialize terminal
+const terminal = new Terminal();
 
 let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
-
 let isUsernameModalOpen = false;
 
 // Track modal state
@@ -31,9 +45,31 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+// Listen for terminal settings changes
+window.addEventListener("gameSettingsChanged", function (e) {
+  const { setting, value } = e.detail;
+  switch (setting) {
+    case "timeLimit":
+      gameSettings.timeLimit = value;
+      break;
+    case "bonusTime":
+      gameSettings.bonusTime = value;
+      bonusTime = value; // Update current game
+      break;
+    case "initialTime":
+      gameSettings.initialTime = value;
+      break;
+    case "goalPercentage":
+      gameSettings.goalPercentage = value;
+      goalPercentage = value; // Update current game
+      updateProgressBar();
+      break;
+  }
+  localStorage.setItem("terminalSettings", JSON.stringify(gameSettings));
+});
+
 // Handle all keydown events
 document.addEventListener("keydown", (event) => {
-  // Handle username input Enter key
   if (event.key === "Enter" && isUsernameModalOpen) {
     event.preventDefault();
     event.stopPropagation();
@@ -41,7 +77,6 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
-  // Handle game controls
   if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
     startGame();
   }
@@ -56,14 +91,13 @@ function showUsernameModal() {
     playerUsername !== "runner" ? playerUsername : "";
   isUsernameModalOpen = true;
 
-  // Add event listener for when modal is fully shown
   document.getElementById("usernameModal").addEventListener(
     "shown.bs.modal",
     function () {
       document.getElementById("usernameInput").focus();
     },
     { once: true },
-  ); // Use once:true so the event listener is automatically removed after execution
+  );
 
   modal.show();
 }
@@ -105,6 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showUsernameModal();
   }
 
+  // Add these lines for scoreboard functionality
   const container = document.getElementById("scoreboardContainer");
   const button = document.getElementById("toggleScoreboard");
   const isHidden = localStorage.getItem("scoreboardHidden") === "true";
@@ -157,8 +192,14 @@ if (startBtn) {
 }
 
 function startGame() {
-  timeLeft = 10;
+  // Load latest settings
+  const settings =
+    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+  timeLeft = settings.initialTime;
+  bonusTime = settings.bonusTime;
+  goalPercentage = settings.goalPercentage;
   totalTimeSpent = 0;
+
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
   updateWordDisplay();
@@ -227,7 +268,11 @@ function countDown() {
 }
 
 function totalTimeCount() {
-  if (totalTimeSpent >= 30) {
+  const settings =
+    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+  const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
+
+  if (totalTimeSpent >= goalTime) {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(
@@ -244,7 +289,10 @@ function updateTimer() {
 }
 
 function updateProgressBar() {
-  const progressPercentage = (totalTimeSpent / 30) * 100;
+  const settings =
+    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+  const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
+  const progressPercentage = (totalTimeSpent / goalTime) * 100;
   const progressBar = document.getElementById("progressBar");
   const progressText = document.getElementById("progressPercentage");
 
@@ -277,6 +325,13 @@ function checkInput(e) {
 
   if (!wordDisplay) return;
 
+  // Check for terminal command
+  if (userInput.toLowerCase() === "terminal") {
+    e.target.value = "";
+    terminal.open();
+    return;
+  }
+
   const chars = wordDisplay.children;
 
   if (e.inputType === "insertText" && e.data) {
@@ -302,7 +357,7 @@ function checkInput(e) {
     flashProgress();
     totalCharactersTyped += currentWord.length;
     totalTimeSpent += 1;
-    timeLeft += 3;
+    timeLeft += bonusTime;
     wordsTyped.push(currentWord);
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
@@ -431,6 +486,12 @@ function showGameOverModal(message) {
       document.removeEventListener("keydown", handleKeyPress);
     });
 }
+
+window.addEventListener("terminalClosed", function () {
+  // Restart intervals
+  countDownInterval = setInterval(countDown, 800);
+  totalTimeInterval = setInterval(totalTimeCount, 1000);
+});
 
 function saveResult(timeLeft, wpm, accuracy) {
   if (timeLeft === 0) {

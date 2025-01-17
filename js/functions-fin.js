@@ -139,8 +139,40 @@ document.addEventListener("DOMContentLoaded", function () {
     showUsernameModal();
   }
 
+  // Add these lines for scoreboard functionality
+  const container = document.getElementById("scoreboardContainer");
+  const button = document.getElementById("toggleScoreboard");
+  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
+
+  if (isHidden && container && button) {
+    container.classList.add("hidden");
+    button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
+  }
+
   displayPreviousResults();
 });
+
+// Scoreboard toggle functionality
+const toggleScoreboardBtn = document.getElementById("toggleScoreboard");
+if (toggleScoreboardBtn) {
+  toggleScoreboardBtn.addEventListener("click", function () {
+    const container = document.getElementById("scoreboardContainer");
+    const button = this;
+
+    container.classList.toggle("hidden");
+
+    if (container.classList.contains("hidden")) {
+      button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
+    } else {
+      button.innerHTML = '<i class="fa-solid fa-trophy"></i> Hide Scoreboard';
+    }
+
+    localStorage.setItem(
+      "scoreboardHidden",
+      container.classList.contains("hidden"),
+    );
+  });
+}
 
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");

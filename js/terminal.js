@@ -98,8 +98,8 @@ class Terminal {
             flex-direction: column !important;
             position: relative !important;
         }
-                #terminalModal .terminal-output {
-            color: #c0caf5 !important;
+        #terminalModal .terminal-output {
+            color: #a9b1d6 !important;
             white-space: pre-wrap !important;
             font-size: 14px !important;
             line-height: 1.4 !important;
@@ -143,7 +143,6 @@ class Terminal {
             font-size: 18px !important;
             padding: 0 !important;
             caret-color: #a9b1d6 !important;
-            width: 70% !important;  // Controls input field width
         }
         #terminalModal .terminal-input-line {
             display: flex !important;
@@ -154,7 +153,6 @@ class Terminal {
             bottom: 0px !important;
             left: 20px !important;
             right: 20px !important;
-            width: 80% !important;  // Makes input area narrower
             margin: 0 auto !important;  // Centers the input line
         }
         }
@@ -170,7 +168,7 @@ class Terminal {
             border: 1px solid #1f2335 !important;
             background-color: #24283b !important;
             border-radius: 8px !important;
-            box-shadow: 0 0 15px rgba(59, 66, 97, 0.8) !important;
+            box-shadow: 0 0 15px rgba(30, 33, 48, 1) !important;
         }
         #terminalModal .modal-header {
             border-bottom: none !important;
@@ -179,9 +177,9 @@ class Terminal {
             min-height: 60px !important;
         }
         #terminalModal .modal-title {
-            color: #c0caf5 !important;
+            color: #a9b1d6 !important;
             font-family: monospace !important;
-            font-size: 18px !important;
+            font-size: 16px !important;
             background-color: #24283b !important;
             width: 100% !important;
             text-align: center !important;
@@ -218,7 +216,7 @@ class Terminal {
     const terminalInput = document.getElementById("terminalInput");
     const username = localStorage.getItem("nerdtype_username") || "runner";
 
-    document.querySelector(".terminal-prompt").textContent = `$`;
+    document.querySelector(".terminal-prompt").textContent = `>>`;
     document.getElementById("terminalModalLabel").textContent =
       `${username}@terminal`;
 
@@ -257,7 +255,7 @@ class Terminal {
     const command = args[0];
 
     this.printToTerminal(
-      `[${localStorage.getItem("nerdtype_username") || "runner"}@PENTAGON-CORE:~]$ ${input}`,
+      `<br><span style="color:#bb9af7">[${localStorage.getItem("nerdtype_username") || "runner"}@PENTAGON-CORE:~]$ </span>${input}`,
     );
 
     if (this.commands[command]) {
@@ -327,7 +325,7 @@ Available commands:
   └─ MODE: <span style='color:#ff9e64'>${settings.currentMode?.toUpperCase() || "CLASSIC"}</span>
   └─ WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
   └─ BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
-  └─ INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> seconds
+  └─ INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
   └─ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}</span>%
 > ================================`;
 
