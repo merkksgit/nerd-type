@@ -112,24 +112,13 @@ class Terminal {
             overflow-y: auto !important;
             flex-grow: 1 !important;
             padding-top: 10px !important;
-            padding-bottom: 60px !important;  // Add padding at bottom for input line
+            padding-bottom: 60px !important;  // Adjusted to match new input height
             margin-bottom: 20px !important;
-            max-height: calc(500px - 60px) !important;
+            max-height: calc(500px - 40px) !important;
         }
         #terminalModal .terminal-output div {
             background-color: #24283b !important;
             margin-bottom: 5px !important;  // Space between output lines
-        }
-        #terminalModal .terminal-input-line {
-            display: flex !important;
-            align-items: center !important;
-            color: #c0caf5 !important;
-            background-color: #24283b !important;
-            position: absolute !important;
-            bottom: 0px !important;
-            left: 20px !important;
-            right: 20px !important;
-            padding: 20px 0 !important;  // Add padding above and below input
         }
         #terminalModal .terminal-prompt {
             color: #a9b1d6 !important;
@@ -155,10 +144,11 @@ class Terminal {
             color: #c0caf5 !important;
             background-color: #24283b !important;
             position: absolute !important;
-            bottom: 0px !important;
+            bottom: 0 !important;
             left: 20px !important;
             right: 20px !important;
-            margin: 0 auto !important;  // Centers the input line
+            height: 60px !important;  // Explicitly set height
+            margin: 0 auto !important;
         }
         }
         #terminalModal .command-success {
