@@ -22,6 +22,11 @@ class Terminal {
       mode: this.setMode.bind(this),
       reset: this.resetSettings.bind(this),
       exit: this.closeTerminal.bind(this),
+      clear: this.clearTerminal.bind(this),
+      time: this.showTime.bind(this),
+      // Secret commands
+      ls: this.listFiles.bind(this),
+      cat: this.catFile.bind(this),
     };
 
     this.commandHistory = [];
@@ -136,7 +141,7 @@ class Terminal {
         #terminalModal .terminal-input {
             background-color: #24283b !important;
             border: none !important;
-            color: #a9b1d6 !important;
+            color: #ffffff !important;
             flex-grow: 1 !important;
             font-family: "custom", monospace !important;
             outline: none !important;
@@ -177,7 +182,7 @@ class Terminal {
             min-height: 60px !important;
         }
         #terminalModal .modal-title {
-            color: #a9b1d6 !important;
+            color: #ff007c !important;
             font-family: monospace !important;
             font-size: 16px !important;
             background-color: #24283b !important;
@@ -222,8 +227,8 @@ class Terminal {
 
     terminalInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
-        e.preventDefault(); // Add this
-        e.stopPropagation(); // Add this
+        e.preventDefault();
+        e.stopPropagation();
         this.handleCommand(terminalInput.value);
         terminalInput.value = "";
       } else if (e.key === "ArrowUp") {
@@ -234,7 +239,7 @@ class Terminal {
         this.navigateHistory("down");
       }
     });
-    // Also add this to prevent any modal-related Enter key issues
+
     document
       .getElementById("terminalModal")
       .addEventListener("keydown", (e) => {
@@ -294,18 +299,41 @@ class Terminal {
     output.scrollTop = output.scrollHeight;
   }
 
+  // New methods
+  clearTerminal() {
+    const output = document.getElementById("terminalOutput");
+    output.innerHTML = "";
+    this.printToTerminal("Terminal cleared", "command-success");
+  }
+
+  showTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString();
+    const dateStr = now.toLocaleDateString();
+    const timeText = `
+> TIME AND DATE:
+> ================================
+  └─ Time: <span style='color:#7dcfff'>${timeStr}</span>
+  └─ Date: <span style='color:#7dcfff'>${dateStr}</span>
+> ================================`;
+
+    this.printToTerminal(timeText, "command-success");
+  }
+
   showHelp() {
     const helpText = `
 Available commands:
-  setwords <number>      - Set number of words for win (default: 30)
-  setbonus <seconds>      - Set bonus energy per word (default: 3)
-  setinitial <seconds>    - Set starting energy (default: 10)
-  setgoal <percentage>       - Set goal percentage (default: 100)
-  mode <type>          - Set game mode (classic/hard/practice)
-  status         - Show current game settings
-  reset          - Reset all settings to default
-  exit           - Close terminal
-  help           - Show this help message`;
+  setwords <number>            - Set number of words for win (default: 30)
+  setbonus <seconds>            - Set bonus energy per word (default: 3)
+  setinitial <seconds>          - Set starting energy (default: 10)
+  setgoal <percentage>             - Set goal percentage (default: 100)
+  mode <type>                - Set game mode (classic/hard/practice)
+  status               - Show current game settings
+  time                 - Show current time and date
+  clear                - Clear terminal screen
+  reset                - Reset all settings to default
+  exit                 - Close terminal
+  help                 - Show this help message`;
     this.printToTerminal(helpText, "command-success");
   }
 
@@ -333,6 +361,33 @@ Available commands:
     } catch (error) {
       this.printToTerminal(
         "Error displaying status: " + error.message,
+        "command-error",
+      );
+    }
+  }
+
+  listFiles() {
+    this.printToTerminal(`<span style="color:#7dcfff">godmode.txt</span>`);
+  }
+
+  catFile(args) {
+    if (!args.length) {
+      this.printToTerminal("Usage: cat <filename>", "command-error");
+      return;
+    }
+
+    const filename = args[0];
+    if (filename === "godmode.txt") {
+      const secretText = `
+> SECRET DOCUMENT
+> ================================
+  └─ GAME MODE: <span style='color:#ff9e64'>zen</span>
+  └─ CODE: <span style='color:#bb9af7'>iddqd</span>
+> ================================`;
+      this.printToTerminal(secretText, "command-success");
+    } else {
+      this.printToTerminal(
+        `Error: ${filename}: No such file or directory`,
         "command-error",
       );
     }
