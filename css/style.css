@@ -609,7 +609,6 @@ score h3 {
   transform: scale(1.2);
 }
 
-/* Optional: you can also add this subtle transition when clicking */
 .social-link:active .social-icon {
   transform: scale(0.95);
 }
