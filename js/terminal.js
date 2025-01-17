@@ -98,7 +98,7 @@ class Terminal {
             flex-direction: column !important;
             position: relative !important;
         }
-        #terminalModal .terminal-output {
+                #terminalModal .terminal-output {
             color: #c0caf5 !important;
             white-space: pre-wrap !important;
             font-size: 14px !important;
@@ -106,9 +106,10 @@ class Terminal {
             background-color: #24283b !important;
             overflow-y: auto !important;
             flex-grow: 1 !important;
-            padding-top: 10px !important;  // Added padding at top
-            margin-bottom: 20px !important;  // Space before input
-            max-height: calc(500px - 60px) !important;  // Account for input height
+            padding-top: 10px !important;
+            padding-bottom: 60px !important;  // Add padding at bottom for input line
+            margin-bottom: 20px !important;
+            max-height: calc(500px - 60px) !important;
         }
         #terminalModal .terminal-output div {
             background-color: #24283b !important;
@@ -123,6 +124,7 @@ class Terminal {
             bottom: 0px !important;
             left: 20px !important;
             right: 20px !important;
+            padding: 20px 0 !important;  // Add padding above and below input
         }
         #terminalModal .terminal-prompt {
             color: #a9b1d6 !important;
@@ -298,7 +300,7 @@ class Terminal {
     const helpText = `
 Available commands:
   setwords <number>      - Set number of words for win (default: 30)
-  setbonus <seconds>      - Set bonus time per word (default: 3)
+  setbonus <seconds>      - Set bonus energy per word (default: 3)
   setinitial <seconds>    - Set starting energy (default: 10)
   setgoal <percentage>       - Set goal percentage (default: 100)
   mode <type>          - Set game mode (classic/hard/practice)
@@ -324,7 +326,7 @@ Available commands:
 > ================================
   └─ MODE: <span style='color:#ff9e64'>${settings.currentMode?.toUpperCase() || "CLASSIC"}</span>
   └─ WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
-  └─ BONUS TIME: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> seconds
+  └─ BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
   └─ INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> seconds
   └─ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}</span>%
 > ================================`;
@@ -372,7 +374,7 @@ Available commands:
     this.gameSettings.bonusTime = bonus;
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
     this.printToTerminal(
-      `Success: Bonus time set to ${bonus} seconds`,
+      `Success: Bonus energy set to ${bonus} units`,
       "command-success",
     );
     window.dispatchEvent(
