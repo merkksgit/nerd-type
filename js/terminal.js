@@ -448,7 +448,7 @@ Available commands:
 
   listFiles() {
     const fileText = `
-  <span style="color:#7dcfff">achievement.data</span>
+  <span style="color:#7dcfff">achievements.data</span>
   <span style="color:#7dcfff">godmode.txt</span>
   <span style="color:#7dcfff">scoreboard.data</span>`;
     this.printToTerminal(fileText, "command-success");
