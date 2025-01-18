@@ -174,9 +174,9 @@ class Terminal {
             min-height: 60px !important;
         }
         #terminalModal .modal-title {
-            color: #ff007c !important;
+            color: #f2f2f2 !important;
             font-family: monospace !important;
-            font-size: 16px !important;
+            font-size: 14px !important;
             background-color: #24283b !important;
             width: 100% !important;
             text-align: center !important;
@@ -230,7 +230,7 @@ class Terminal {
 
     document.querySelector(".terminal-prompt").textContent = `>>`;
     document.getElementById("terminalModalLabel").textContent =
-      `${username}@terminal`;
+      `${username}@nerdtypeterminalv1.0.0`;
 
     terminalInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
@@ -516,7 +516,7 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
     // Update terminal prompt
     document.querySelector(".terminal-prompt").textContent = `$`;
     document.getElementById("terminalModalLabel").textContent =
-      `${newUsername}@terminal`;
+      `${newUsername}@nerdtypeterminalv1.0.0`;
   }
 
   setMode(args) {
