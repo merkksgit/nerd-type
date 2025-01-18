@@ -22,7 +22,7 @@ class Terminal {
       mode: this.setMode.bind(this),
       reset: this.resetSettings.bind(this),
       exit: this.closeTerminal.bind(this),
-      clear: this.clearTerminal.bind(this),
+      cls: this.clearTerminal.bind(this),
       time: this.showTime.bind(this),
       su: this.switchUser.bind(this),
       ls: this.listFiles.bind(this),
@@ -281,7 +281,7 @@ class Terminal {
       "mode",
       "reset",
       "exit",
-      "clear",
+      "cls",
       "time",
       "su",
       "ls",
@@ -402,7 +402,7 @@ Available commands:
   cat <filename>                 - Display file contents
   ls                   - List available files
   time                 - Show current time and date
-  clear                - Clear terminal screen
+  cls                  - Clear terminal screen
   ping                 - Test neural connection latency
   refresh              - Clear screen and show welcome art
   reset                - Reset all settings to default
@@ -503,7 +503,7 @@ Available commands:
           this.printToTerminal("No Classic Mode data found", "command-error");
           return;
         }
-        classicResults.forEach((result) => {
+        classicResults.reverse().forEach((result) => {
           this.printToTerminal(
             `${result.date} | ${result.username} | Score: ${result.score}, WPM: ${result.wpm}, Accuracy: ${result.accuracy}`,
             "command-success",
