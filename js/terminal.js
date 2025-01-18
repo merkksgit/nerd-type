@@ -257,6 +257,67 @@ class Terminal {
           e.stopPropagation();
         }
       });
+
+    // tab completion
+    terminalInput.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        this.handleTabCompletion(terminalInput);
+      } else if (e.key === "Enter") {
+      } else if (e.key === "ArrowUp") {
+      }
+    });
+  }
+
+  handleTabCompletion(input) {
+    const currentInput = input.value;
+    const availableCommands = [
+      "help",
+      "status",
+      "setwords",
+      "setbonus",
+      "setinitial",
+      "setgoal",
+      "mode",
+      "reset",
+      "exit",
+      "clear",
+      "time",
+      "su",
+      "ls",
+      "cat",
+      "refresh",
+      "ping",
+    ];
+
+    const availableFiles = [
+      "scoreboard.data",
+      "achievements.data",
+      "godmode.txt",
+    ];
+
+    // If input starts with 'cat ' or 'rm ', complete filenames
+    if (currentInput.startsWith("cat ") || currentInput.startsWith("rm ")) {
+      const filePrefix = currentInput.split(" ")[1] || "";
+      const matches = availableFiles.filter((file) =>
+        file.startsWith(filePrefix.toLowerCase()),
+      );
+
+      if (matches.length === 1) {
+        const command = currentInput.split(" ")[0];
+        input.value = `${command} ${matches[0]}`;
+      }
+      return;
+    }
+
+    // Complete commands
+    const matches = availableCommands.filter((cmd) =>
+      cmd.startsWith(currentInput.toLowerCase()),
+    );
+
+    if (matches.length === 1) {
+      input.value = matches[0];
+    }
   }
 
   handleCommand(input) {
