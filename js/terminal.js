@@ -396,7 +396,7 @@ Available commands:
   setinitial <seconds>          - Set starting energy (default: 10)
   setgoal <percentage>             - Set goal percentage (default: 100)
   mode <type>                - Set game mode (classic/hard/practice)
-  rm <filename>                  - Delete file
+  rm <filename>                  - Delete file contents
   status               - Show current game settings
   su <username>                  - Switch user
   cat <filename>                 - Display file contents
