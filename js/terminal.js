@@ -1,5 +1,3 @@
-// TODO: Add su command to switch user in the terminal
-
 // terminal.js
 class Terminal {
   constructor() {
@@ -26,6 +24,7 @@ class Terminal {
       exit: this.closeTerminal.bind(this),
       clear: this.clearTerminal.bind(this),
       time: this.showTime.bind(this),
+      su: this.switchUser.bind(this),
       // Secret commands
       ls: this.listFiles.bind(this),
       cat: this.catFile.bind(this),
@@ -99,9 +98,9 @@ class Terminal {
     const styles = `
         #terminalModal .terminal-container {
             background-color: #24283b !important;
-            padding: 0 20px 20px 20px !important;  // Removed top padding
+            padding: 0 20px 20px 20px !important;
             font-family: "custom" !important;
-            height: 500px !important;
+            height: 600px !important;
             display: flex !important;
             flex-direction: column !important;
             position: relative !important;
@@ -117,7 +116,7 @@ class Terminal {
             padding-top: 10px !important;
             padding-bottom: 60px !important;  // Adjusted to match new input height
             margin-bottom: 20px !important;
-            max-height: calc(500px - 40px) !important;
+            max-height: calc(600px - 40px) !important;
         }
         #terminalModal .terminal-output div {
             background-color: #24283b !important;
@@ -335,6 +334,7 @@ Available commands:
   setgoal <percentage>             - Set goal percentage (default: 100)
   mode <type>                - Set game mode (classic/hard/practice)
   status               - Show current game settings
+  su <username>                  - Switch user
   time                 - Show current time and date
   clear                - Clear terminal screen
   refresh              - Clear screen and show welcome art
@@ -498,6 +498,25 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
         detail: { setting: "goalPercentage", value: goal },
       }),
     );
+  }
+
+  switchUser(args) {
+    const newUsername = args[0];
+    if (!newUsername) {
+      this.printToTerminal("Error: Please provide a username", "command-error");
+      return;
+    }
+
+    localStorage.setItem("nerdtype_username", newUsername);
+    this.printToTerminal(
+      `Success: Switched user to ${newUsername}`,
+      "command-success",
+    );
+
+    // Update terminal prompt
+    document.querySelector(".terminal-prompt").textContent = `$`;
+    document.getElementById("terminalModalLabel").textContent =
+      `${newUsername}@terminal`;
   }
 
   setMode(args) {

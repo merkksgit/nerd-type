@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       if (usernameModal) {
         usernameModal.hide();
+        location.reload();
       }
       return true;
     }
