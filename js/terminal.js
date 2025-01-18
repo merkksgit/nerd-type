@@ -471,7 +471,7 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
     this.gameSettings.initialTime = initial;
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
     this.printToTerminal(
-      `Success: Initial time set to ${initial} seconds`,
+      `Success: Initial energy set to ${initial} units`,
       "command-success",
     );
     window.dispatchEvent(
