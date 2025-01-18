@@ -275,7 +275,7 @@ function checkInput(e) {
 
 function showCheatModal() {
   document.getElementById("gameOverModalLabel").textContent =
-    "[root@PENTAGON-CORE:/XKEYSCORE]$";
+    "[root@PENTAGON-CORE:~/godmode.txt]$";
 
   const terminalLines = [
     "> INIT BREACH SEQUENCE",
