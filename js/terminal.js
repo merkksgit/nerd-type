@@ -25,7 +25,9 @@ class Terminal {
       clear: this.clearTerminal.bind(this),
       time: this.showTime.bind(this),
       su: this.switchUser.bind(this),
-      // Secret commands
+      ls: this.listFiles.bind(this),
+      rm: this.removeFile.bind(this),
+      ping: this.pingSystem.bind(this),
       ls: this.listFiles.bind(this),
       cat: this.catFile.bind(this),
       refresh: this.refresh.bind(this),
@@ -333,10 +335,14 @@ Available commands:
   setinitial <seconds>          - Set starting energy (default: 10)
   setgoal <percentage>             - Set goal percentage (default: 100)
   mode <type>                - Set game mode (classic/hard/practice)
+  rm <filename>                  - Delete file
   status               - Show current game settings
   su <username>                  - Switch user
+  cat <filename>                 - Display file contents
+  ls                   - List available files
   time                 - Show current time and date
   clear                - Clear terminal screen
+  ping                 - Test neural connection latency
   refresh              - Clear screen and show welcome art
   reset                - Reset all settings to default
   exit                 - Close terminal
@@ -380,18 +386,88 @@ Available commands:
   }
 
   listFiles() {
-    this.printToTerminal(`<span style="color:#7dcfff">godmode.txt</span>`);
+    const fileText = `
+  <span style="color:#7dcfff">achievement.data</span>
+  <span style="color:#7dcfff">godmode.txt</span>
+  <span style="color:#7dcfff">scoreboard.data</span>`;
+    this.printToTerminal(fileText, "command-success");
+  }
+
+  pingSystem() {
+    const responses = [
+      "Establishing neural link...",
+      "Scanning quantum networks...",
+      "Bypassing security protocols...",
+      "Calculating neural latency...",
+    ];
+
+    let currentLine = 0;
+    const startPing = () => {
+      if (currentLine < responses.length) {
+        this.printToTerminal(responses[currentLine]);
+        currentLine++;
+        setTimeout(startPing, 500);
+      } else {
+        // Final response with random latency
+        const latency = Math.floor(Math.random() * 20) + 1;
+        this.printToTerminal(
+          `Neural connection established - Latency: <span style='color:#c3e88d'>${latency}ms</span>`,
+          "command-success",
+        );
+      }
+    };
+
+    startPing();
   }
 
   catFile(args) {
-    if (!args.length) {
-      this.printToTerminal("Usage: cat <filename>", "command-error");
+    const filename = args[0];
+    if (!filename) {
+      this.printToTerminal("Error: Please specify a file", "command-error");
       return;
     }
 
-    const filename = args[0];
-    if (filename === "godmode.txt") {
-      const secretText = `
+    switch (filename) {
+      case "scoreboard.data":
+        const results = JSON.parse(localStorage.getItem("gameResults")) || [];
+        if (results.length === 0) {
+          this.printToTerminal("No scoreboard data found", "command-error");
+          return;
+        }
+        // Filter for Classic Mode only
+        const classicResults = results.filter(
+          (result) => result.mode === "Classic Mode",
+        );
+        if (classicResults.length === 0) {
+          this.printToTerminal("No Classic Mode data found", "command-error");
+          return;
+        }
+        classicResults.forEach((result) => {
+          this.printToTerminal(
+            `${result.date} | ${result.username} | Score: ${result.score}, WPM: ${result.wpm}, Accuracy: ${result.accuracy}`,
+            "command-success",
+          );
+        });
+        break;
+
+      case "achievements.data":
+        const achievements =
+          JSON.parse(localStorage.getItem("highestAchievements")) || {};
+        if (!achievements.speedTier) {
+          this.printToTerminal("No achievement data found", "command-error");
+          return;
+        }
+        this.printToTerminal(
+          `
+Highest Achievements:
+  Speed Tier: ${achievements.speedTier}
+  Accuracy Rank: ${achievements.accuracyRank}`,
+          "command-success",
+        );
+        break;
+
+      case "godmode.txt":
+        const secretText = `
 # BEGIN ENCRYPTED FILE #
 hj24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
 jaö3pa7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6
@@ -405,13 +481,44 @@ l34j5l7h8i9j0k1l2m#####################x4y5z6a1b2c3d4e5f6
 9fsöku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7
 j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
 02l2n0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
-# END ENCRYPTED FILE #</span>`;
-      this.printToTerminal(secretText, "command-success");
-    } else {
-      this.printToTerminal(
-        `Error: ${filename}: No such file or directory`,
-        "command-error",
-      );
+# END ENCRYPTED FILE #`;
+        this.printToTerminal(secretText, "command-success");
+        break;
+
+      default:
+        this.printToTerminal(
+          `Error: File '${filename}' not found`,
+          "command-error",
+        );
+    }
+  }
+
+  removeFile(args) {
+    const filename = args[0];
+    if (!filename) {
+      this.printToTerminal("Error: Please specify a file", "command-error");
+      return;
+    }
+    switch (filename) {
+      case "scoreboard.data":
+        localStorage.removeItem("gameResults");
+        this.printToTerminal("Scoreboard data deleted", "command-success");
+        break;
+      case "achievements.data":
+        localStorage.removeItem("highestAchievements");
+        this.printToTerminal("Achievement data deleted", "command-success");
+        break;
+      case "godmode.txt":
+        this.printToTerminal(
+          "Error: Permission denied - Cannot delete system file",
+          "command-error",
+        );
+        break;
+      default:
+        this.printToTerminal(
+          `Error: File '${filename}' not found`,
+          "command-error",
+        );
     }
   }
 
