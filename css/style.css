@@ -386,6 +386,18 @@ score h3 {
   color: #737aa2;
 }
 
+@media (max-width: 1400px) {
+  .navbar .btn-outline-primary {
+    position: absolute;
+    top: 100%;
+    right: 20px;
+    margin-top: 10px;
+  }
+  .container-fluid {
+    padding-top: 60px;
+  }
+}
+
 @media (max-width: 1200px) {
   .progress {
     width: 50%;
@@ -403,6 +415,11 @@ score h3 {
   }
   .progress {
     width: 90%;
+  }
+  .navbar .btn-outline-primary {
+    right: 50%;
+    transform: translateX(50%);
+    white-space: nowrap;
   }
 }
 

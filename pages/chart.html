@@ -31,7 +31,6 @@
         </p>
         <h1>NerdType</h1>
       </header>
-
       <!-- Navbar -->
       <nav class="navbar navbar-dark navbar-expand-lg">
         <div class="container-fluid">
@@ -46,6 +45,7 @@
           >
             <span class="navbar-toggler-icon"></span>
           </button>
+          <div class="invisible" style="width: 260px"></div>
           <div
             class="collapse navbar-collapse justify-content-center"
             id="mainmenu"
@@ -82,8 +82,60 @@
               </li>
             </ul>
           </div>
+          <button id="changeUsername" class="btn btn-outline-primary">
+            <i class="fa-solid fa-user"></i> Change Codename:
+            <span id="usernameDisplay">runner</span>
+          </button>
         </div>
       </nav>
+      <!-- Username Modal -->
+      <div
+        class="modal fade"
+        id="usernameModal"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="usernameModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header border-bottom-0 text-center">
+              <h5 class="modal-title w-100" id="usernameModalLabel">
+                [MAINFRAME LOGIN SEQUENCE]
+              </h5>
+            </div>
+            <div class="modal-body border-top-0 border-bottom-0">
+              <pre class="terminal-output" style="margin-bottom: 20px">
+> INITIALIZING LOGIN SEQUENCE...
+> ENTER CODENAME TO CONTINUE:
+$ </pre
+              >
+              <input
+                type="text"
+                id="usernameInput"
+                class="form-control text-center"
+                style="background-color: #1a1b26; color: #c0caf5"
+                maxlength="20"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <div
+              class="modal-footer border-top-0 d-flex justify-content-center"
+              style="background-color: #24283b"
+            >
+              <button
+                id="confirmUsername"
+                type="button"
+                class="btn btn-primary"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Achievements Section -->
       <div class="row justify-content-center">
@@ -265,6 +317,7 @@
       </div>
     </footer>
     <!-- Scripts -->
+    <script src="../js/username2.js"></script>
     <script src="../js/chart.js"></script>
     <script src="../js/functions-chart.js" type="module"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
