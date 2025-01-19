@@ -21,11 +21,9 @@
     <div class="container-fluid flex-grow-1">
       <!-- Header -->
       <header class="d-flex justify-content-center align-items-center">
-        <p>
-          <a href="../index.html">
-            <img id="header-logo" src="../images/nerdtype-logo2.png" />
-          </a>
-        </p>
+        <a href="../index.html">
+          <img id="header-logo" src="../images/nerdtype-logo2.png" />
+        </a>
         <h1>NerdType</h1>
       </header>
       <!-- Navbar -->
@@ -80,160 +78,164 @@
           </div>
         </div>
       </nav>
-      <article
-        class="col-md-12 p-3 pt-1 d-flex flex-column justify-content-center align-items-center"
-      >
-        <div class="wpm-info text-left">
-          <h4>How words per minute (WPM) is calculated</h4>
-          <p>
-            In NerdType, your typing speed is measured in Words Per Minute
-            (WPM). Here's how the WPM is calculated:
-          </p>
-          <ol>
-            <li>
-              The game tracks the time elapsed from your first keystroke until
-              the game ends. This time is converted from milliseconds to
-              minutes.
-            </li>
-            <li>
-              The game counts the total number of characters you typed correctly
-              in all words, including longer words which contribute more
-              characters to your total.
-            </li>
-            <li>
-              The standard word length is defined as 5 characters, which is the
-              international standard for typing speed measurements.
-            </li>
-            <li>
-              Your WPM is calculated by dividing your total characters typed by
-              5 (to convert to standard words), then dividing by the elapsed
-              time in minutes.
-            </li>
-          </ol>
-          <p>
-            For example, if you typed 200 characters correctly in 1 minute, your
-            WPM would be:
-          </p>
-          <p>(200 characters / 5 characters per word) / 1 minute = 40 WPM</p>
-          <p>
-            This means typing longer words will contribute more to your WPM than
-            shorter words. For example:
-          </p>
-          <ul>
-            <li>
-              Typing "programming" (11 characters) counts as 2.2 standard words
-            </li>
-            <li>Typing "cat" (3 characters) counts as 0.6 standard words</li>
-          </ul>
-          <p>
-            The WPM calculation only considers correctly typed words and does
-            not account for any errors or incorrect words.
-          </p>
-          <h4>How Accuracy is calculated</h4>
-          <p>
-            In NerdType, your typing accuracy is measured as a percentage of
-            correct keystrokes. Here's how the accuracy is calculated:
-          </p>
-          <ol>
-            <li>
-              The game tracks every character you type (excluding backspace and
-              special keys) from your first keystroke until the game ends.
-            </li>
-            <li>
-              When you type a character, it's counted as correct only if it
-              matches the corresponding character in the target word at that
-              exact position.
-            </li>
-            <li>
-              The game maintains two counts:
-              <ul>
-                <li>Total keystrokes: Every character you type</li>
+      <div class="container">
+        <div class="row justify-content-center">
+          <article class="col-md-8 p-3 pt-1">
+            <div class="wpm-info">
+              <!-- Content remains the same -->
+              <h4>How words per minute (WPM) is calculated</h4>
+              <p>
+                In NerdType, your typing speed is measured in Words Per Minute
+                (WPM). Here's how the WPM is calculated:
+              </p>
+              <ol>
                 <li>
-                  Correct keystrokes: Characters that match the target word
+                  The game tracks the time elapsed from your first keystroke
+                  until the game ends. This time is converted from milliseconds
+                  to minutes.
+                </li>
+                <li>
+                  The game counts the total number of characters you typed
+                  correctly in all words, including longer words which
+                  contribute more characters to your total.
+                </li>
+                <li>
+                  The standard word length is defined as 5 characters, which is
+                  the international standard for typing speed measurements.
+                </li>
+                <li>
+                  Your WPM is calculated by dividing your total characters typed
+                  by 5 (to convert to standard words), then dividing by the
+                  elapsed time in minutes.
+                </li>
+              </ol>
+              <p>
+                For example, if you typed 200 characters correctly in 1 minute,
+                your WPM would be:
+              </p>
+              <p>
+                (200 characters / 5 characters per word) / 1 minute = 40 WPM
+              </p>
+              <p>
+                This means typing longer words will contribute more to your WPM
+                than shorter words. For example:
+              </p>
+              <ul>
+                <li>
+                  Typing "programming" (11 characters) counts as 2.2 standard
+                  words
+                </li>
+                <li>
+                  Typing "cat" (3 characters) counts as 0.6 standard words
                 </li>
               </ul>
-            </li>
-            <li>
-              Your accuracy is calculated by dividing correct keystrokes by
-              total keystrokes and converting to a percentage.
-            </li>
-          </ol>
-          <p>
-            For example, if you typed 20 characters and 16 of them were correct,
-            your accuracy would be:
-          </p>
-          <p>
-            (16 correct keystrokes / 20 total keystrokes) × 100 = 80% accuracy
-          </p>
-          <p>Here's how accuracy works in practice:</p>
-          <ul>
-            <li>
-              If the target word is "code" and you type "cade", you have:
+              <p>
+                The WPM calculation only considers correctly typed words and
+                does not account for any errors or incorrect words.
+              </p>
+              <h4>How Accuracy is calculated</h4>
+              <p>
+                In NerdType, your typing accuracy is measured as a percentage of
+                correct keystrokes. Here's how the accuracy is calculated:
+              </p>
+              <ol>
+                <li>
+                  The game tracks every character you type (excluding backspace
+                  and special keys) from your first keystroke until the game
+                  ends.
+                </li>
+                <li>
+                  When you type a character, it's counted as correct only if it
+                  matches the corresponding character in the target word at that
+                  exact position.
+                </li>
+                <li>
+                  The game maintains two counts:
+                  <ul>
+                    <li>Total keystrokes: Every character you type</li>
+                    <li>
+                      Correct keystrokes: Characters that match the target word
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  Your accuracy is calculated by dividing correct keystrokes by
+                  total keystrokes and converting to a percentage.
+                </li>
+              </ol>
+              <p>
+                For example, if you typed 20 characters and 16 of them were
+                correct, your accuracy would be:
+              </p>
+              <p>
+                (16 correct keystrokes / 20 total keystrokes) × 100 = 80%
+                accuracy
+              </p>
+              <p>Here's how accuracy works in practice:</p>
               <ul>
-                <li>4 total keystrokes</li>
-                <li>3 correct keystrokes (c, d, e)</li>
-                <li>75% accuracy</li>
+                <li>
+                  If the target word is "code" and you type "cade", you will
+                  have 4 total keystrokes, 3 correct keystrokes (c, d, e),
+                  resulting in 75% accuracy.
+                </li>
+                <li>
+                  If you type "coxde" and then backspace to fix it to "code",
+                  you will have 5 total keystrokes (c, o, x, d, e), 4 correct
+                  keystrokes (c, o, d, e), resulting in 80% accuracy.
+                </li>
               </ul>
-            </li>
-            <li>
-              If you type "coxde" and then backspace to fix it to "code", you
-              have:
-              <ul>
-                <li>5 total keystrokes (c, o, x, d, e)</li>
-                <li>4 correct keystrokes (c, o, d, e)</li>
-                <li>80% accuracy</li>
-              </ul>
-            </li>
-          </ul>
-          <p>
-            The accuracy calculation includes all characters typed, even if you
-            later correct them with backspace. This encourages precise typing
-            rather than rapid typing-and-correcting.
-          </p>
-          <h4>Achievements</h4>
-          <p>
-            NerdType features an achievement system that tracks your speed and
-            accuracy.
-            <a href="./achievements.html" class="achievement-link"
-              >Explore the Achievements</a
-            >
-            to discover the tiers and challenges that await you.
-          </p>
-          <h4>Known Issues</h4>
-          <p>
-            Issues are categorized by severity: High 🔴 (major impact), Medium
-            🟡 (moderate impact), Low 🟢 (minor impact)
-          </p>
-          <ol>
-            <li>
-              <strong>🟢 Low</strong> - Terminal input loses focus when
-              alt-tabbing back to the window. Workaround: Press Ctrl + R to
-              refresh the page.
-            </li>
-            <li>
-              <strong>🟢 Low</strong> - Username changes made through the
-              "Change Codename" button don't update in the terminal until page
-              refresh. Workaround: After changing username with the button,
-              either refresh the page or use the terminal 'su' command instead.
-            </li>
-            <li>
-              <strong>🟢 Low</strong> - When changing game mode in terminal and
-              reopening terminal, the 'status' command shows "CLASSIC" even
-              though custom mode settings remain active. Workaround: Ignore the
-              mode name displayed in status - your custom settings are still in
-              effect.
-            </li>
-          </ol>
-          <h4>Contact</h4>
-          <p>
-            To submit feedback, report bugs, or make suggestions, reach out via
-            email:
-            <a href="mailto:merkks@protonmail.com" id="email-link"
-              >merkks@protonmail.com</a
-            >
-          </p>
+              <p>
+                The accuracy calculation includes all characters typed, even if
+                you later correct them with backspace. This encourages precise
+                typing rather than rapid typing-and-correcting.
+              </p>
+              <h4>Achievements</h4>
+              <p>
+                NerdType features an achievement system that tracks your speed
+                and accuracy.
+                <a href="./achievements.html" class="achievement-link"
+                  >Explore the Achievements</a
+                >
+                to discover the tiers and challenges that await you.
+              </p>
+              <h4>Known Issues</h4>
+              <p>
+                Issues are categorized by severity: High 🔴 (major impact),
+                Medium 🟡 (moderate impact), Low 🟢 (minor impact)
+              </p>
+              <ol>
+                <li>
+                  <strong>🟢 Low</strong> - Terminal input loses focus when
+                  alt-tabbing back to the window. Workaround: Press Ctrl + R to
+                  refresh the page.
+                </li>
+                <li>
+                  <strong>🟢 Low</strong> - Username changes made through the
+                  "Change Codename" button don't update in the terminal until
+                  page refresh. Workaround: After changing username with the
+                  button, either refresh the page or use the terminal 'su'
+                  command instead.
+                </li>
+                <li>
+                  <strong>🟢 Low</strong> - When changing game mode in terminal
+                  and reopening terminal, the 'status' command shows "CLASSIC"
+                  even though custom mode settings remain active. Workaround:
+                  Ignore the mode name displayed in status - your custom
+                  settings are still in effect.
+                </li>
+              </ol>
+              <h4>Contact</h4>
+              <p>
+                To submit feedback, report bugs, or make suggestions, reach out
+                via email:
+                <a href="mailto:merkks@protonmail.com" id="email-link"
+                  >merkks@protonmail.com</a
+                >
+              </p>
+            </div>
+          </article>
         </div>
-      </article>
+      </div>
     </div>
     <!-- Footer -->
     <footer class="footer mt-auto ps-3 pt-3">
