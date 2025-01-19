@@ -23,6 +23,7 @@ let goalPercentage = gameSettings.goalPercentage;
 
 import { words } from "./words-nm.js";
 import Terminal from "./terminal.js";
+import { tips } from "./tips.js";
 
 // Initialize terminal
 const terminal = new Terminal();
@@ -126,6 +127,10 @@ function handleUsernameConfirmation() {
 document.addEventListener("DOMContentLoaded", function () {
   const changeUsernameBtn = document.getElementById("changeUsername");
   const confirmUsernameBtn = document.getElementById("confirmUsername");
+
+  const nextWordDiv = document.getElementById("nextWord");
+  const randomTip = tips[Math.floor(Math.random() * tips.length)];
+  nextWordDiv.textContent = randomTip;
 
   if (changeUsernameBtn) {
     changeUsernameBtn.addEventListener("click", showUsernameModal);

@@ -14,6 +14,7 @@ let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
 let isUsernameModalOpen = false;
 
 import { words } from "./words-fin.js";
+import { tips } from "./tips.js";
 
 // Track modal state
 document.addEventListener("DOMContentLoaded", function () {
@@ -90,6 +91,10 @@ function handleUsernameConfirmation() {
 document.addEventListener("DOMContentLoaded", function () {
   const changeUsernameBtn = document.getElementById("changeUsername");
   const confirmUsernameBtn = document.getElementById("confirmUsername");
+
+  const nextWordDiv = document.getElementById("nextWord");
+  const randomTip = tips[Math.floor(Math.random() * tips.length)];
+  nextWordDiv.textContent = randomTip;
 
   if (changeUsernameBtn) {
     changeUsernameBtn.addEventListener("click", showUsernameModal);
