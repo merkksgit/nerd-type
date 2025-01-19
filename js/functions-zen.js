@@ -422,7 +422,7 @@ function showGameOverModal(message) {
   const totalTime = calculateTotalTime();
 
   document.getElementById("gameOverModalLabel").textContent =
-    `[${playerUsername}@PENTAGON-CORE:/classified]$`;
+    `[${playerUsername}@PENTAGON-CORE:/~]$`;
 
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",

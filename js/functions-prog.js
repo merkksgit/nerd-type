@@ -412,7 +412,7 @@ function showGameOverModal(message) {
   const modalLabel = document.getElementById("gameOverModalLabel");
 
   if (modalLabel) {
-    modalLabel.textContent = `[${playerUsername}@PENTAGON-CORE:/classified]$`;
+    modalLabel.textContent = `[${playerUsername}@PENTAGON-CORE:/~]$`;
   }
 
   const terminalLines = [
