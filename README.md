@@ -43,6 +43,7 @@ This project began as a school assignment but has evolved into an ongoing journe
 - **Svenska (Swedish) Mode:** Practice basic Swedish words.
 - **English Mode:** Type English words.
 - **Nightmare Mode:** A tougher challenge with longer, difficult words and stricter time limits.
+- **Zen Mode** Relaxed game mode with no energy limit.
 
 ## 💻 Technologies Used
 
