@@ -495,19 +495,19 @@ Available commands:
           this.printToTerminal("No scoreboard data found", "command-error");
           return;
         }
-        // Filter for Classic Mode only
-        const classicResults = results.filter(
-          (result) => result.mode === "Classic Mode",
-        );
-        if (classicResults.length === 0) {
-          this.printToTerminal("No Classic Mode data found", "command-error");
-          return;
-        }
-        classicResults.reverse().forEach((result) => {
-          this.printToTerminal(
-            `${result.date} | ${result.username} | Score: ${result.score}, WPM: ${result.wpm}, Accuracy: ${result.accuracy}`,
-            "command-success",
-          );
+        results.reverse().forEach((result) => {
+          if (result.mode === "Classic Mode") {
+            this.printToTerminal(
+              `${result.date} | ${result.username} | ${result.mode} | Score: ${result.score}, WPM: ${result.wpm}, Accuracy: ${result.accuracy}`,
+              "command-success",
+            );
+          }
+          if (result.mode === "Zen Mode") {
+            this.printToTerminal(
+              `${result.date} | ${result.username} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm}, Accuracy: ${result.accuracy}%`,
+              "command-success",
+            );
+          }
         });
         break;
 
