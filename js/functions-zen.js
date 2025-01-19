@@ -422,7 +422,7 @@ function showGameOverModal(message) {
   const totalTime = calculateTotalTime();
 
   document.getElementById("gameOverModalLabel").textContent =
-    `[${playerUsername}@PENTAGON-CORE:/~]$`;
+    `[${playerUsername}@PENTAGON-CORE:~]$`;
 
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
@@ -554,7 +554,7 @@ if (clearResultsBtn) {
       const modalHeader = customAlertModal.querySelector(".modal-title");
 
       // Set up terminal-style header
-      modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/user.data/]$`;
+      modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:~]$`;
 
       const terminalLines = [
         "> INITIALIZING DELETION SEQUENCE...",
