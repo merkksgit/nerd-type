@@ -108,7 +108,7 @@ class Terminal {
             position: relative !important;
         }
         #terminalModal .terminal-output {
-            color: #a9b1d6 !important;
+            color: #f2f2f2 !important;
             white-space: pre-wrap !important;
             font-size: 14px !important;
             line-height: 1.4 !important;
@@ -125,7 +125,7 @@ class Terminal {
             margin-bottom: 5px !important;  // Space between output lines
         }
         #terminalModal .terminal-prompt {
-            color: #a9b1d6 !important;
+            color: #f2f2f2 !important;
             margin-right: 10px !important;
             font-size: 18px !important;
             background-color: #24283b !important;
@@ -140,7 +140,7 @@ class Terminal {
             outline: none !important;
             font-size: 18px !important;
             padding: 0 !important;
-            caret-color: #a9b1d6 !important;
+            caret-color: #f2f2f2 !important;
         }
         #terminalModal .terminal-input-line {
             display: flex !important;
