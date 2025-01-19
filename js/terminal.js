@@ -391,23 +391,23 @@ class Terminal {
   showHelp() {
     const helpText = `
 Available commands:
-  setwords <number>            - Set number of words for win (default: 30)
-  setbonus <seconds>            - Set bonus energy per word (default: 3)
-  setinitial <seconds>          - Set starting energy (default: 10)
-  setgoal <percentage>             - Set goal percentage (default: 100)
-  mode <type>                - Set game mode (classic/hard/practice)
-  rm <filename>                  - Delete file contents
-  status               - Show current game settings
-  su <username>                  - Switch user
-  cat <filename>                 - Display file contents
-  ls                   - List available files
-  time                 - Show current time and date
-  cls                  - Clear terminal screen
-  ping                 - Test neural connection latency
-  refresh              - Clear screen and show welcome art
-  reset                - Reset all settings to default
-  exit                 - Close terminal
-  help                 - Show this help message`;
+  setwords &lt;number&gt;              - Set number of words for win (default: 30)
+  setbonus &lt;number&gt;              - Set bonus energy per word (default: 3)
+  setinitial &lt;number&gt;            - Set starting energy (default: 10)
+  setgoal &lt;number&gt;               - Set goal percentage (default: 100)
+  mode &lt;type&gt;                    - Set game mode (classic/hard/practice)
+  rm &lt;filename&gt;                  - Delete file contents
+  status                         - Show current game settings
+  su &lt;username&gt;                  - Switch user
+  cat &lt;filename&gt;                 - Display file contents
+  ls                             - List available files
+  time                           - Show current time and date
+  cls                            - Clear terminal screen
+  ping                           - Test neural connection latency
+  refresh                        - Clear screen and show welcome art
+  reset                          - Reset all settings to default
+  exit                           - Close terminal
+  help                           - Show this help message`;
     this.printToTerminal(helpText, "command-success");
   }
 
