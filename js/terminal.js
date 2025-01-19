@@ -194,7 +194,7 @@ class Terminal {
             left: 50% !important;
             transform: translate(-50%, -70%) !important;
             background-color: #24283b !important;
-            max-width: 900px !important;
+            max-width: 1000px !important;
             width: 95% !important;  // This ensures some margin on mobile
             margin: 0 !important;
         }
