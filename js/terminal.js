@@ -682,7 +682,7 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
     );
 
     // Update terminal prompt
-    document.querySelector(".terminal-prompt").textContent = `$`;
+    document.querySelector(".terminal-prompt").textContent = `>>`;
     document.getElementById("terminalModalLabel").textContent =
       `${newUsername}@nerdtypeterminalv1.0.0`;
   }
