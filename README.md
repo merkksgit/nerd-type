@@ -1,4 +1,4 @@
-![nerdtype](./images/nerdtype.jpeg)
+![nerdtype](./images/nt-classic-blue.png)
 
 # NerdType
 
