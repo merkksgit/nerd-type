@@ -120,6 +120,7 @@ function handleUsernameConfirmation() {
     if (modalInstance) {
       modalInstance.hide();
       isUsernameModalOpen = false;
+      location.reload();
     }
   } else {
     usernameInput.classList.add("is-invalid");
