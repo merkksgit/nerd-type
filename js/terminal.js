@@ -107,11 +107,9 @@ class Terminal {
     const styles = `
         #terminalModal .terminal-container {
             background-color: #24283b !important;
-            padding: 0 20px 20px 20px !important;
+            padding: 20px 20px 60px 20px !important;
             font-family: "custom" !important;
-            height: 600px !important;
-            display: flex !important;
-            flex-direction: column !important;
+            height: 700px !important;
             position: relative !important;
         }
         #terminalModal .terminal-output {
@@ -121,15 +119,17 @@ class Terminal {
             line-height: 1.4 !important;
             background-color: #24283b !important;
             overflow-y: auto !important;
-            flex-grow: 1 !important;
-            padding-top: 10px !important;
-            padding-bottom: 60px !important;  // Adjusted to match new input height
-            margin-bottom: 20px !important;
-            max-height: calc(600px - 40px) !important;
+            height: 100% !important;
+            max-height: 640px !important;  // max-height
         }
         #terminalModal .terminal-output div {
             background-color: #24283b !important;
-            margin-bottom: 5px !important;  // Space between output lines
+            margin-bottom: 5px !important;
+            color: #f2f2f2 !important;  // Add this line
+        }
+
+        #terminalModal .terminal-output div.command-error {
+            color: #c53b53 !important;
         }
         #terminalModal .terminal-prompt {
             color: #f2f2f2 !important;
@@ -155,12 +155,11 @@ class Terminal {
             color: #c0caf5 !important;
             background-color: #24283b !important;
             position: absolute !important;
-            bottom: 0 !important;
+            bottom: 15px !important;
             left: 20px !important;
             right: 20px !important;
-            height: 60px !important;  // Explicitly set height
+            height: 45px !important;
             margin: 0 auto !important;
-        }
         }
         #terminalModal .command-success {
             color: #c3e88d !important;
@@ -178,9 +177,9 @@ class Terminal {
         }
         #terminalModal .modal-header {
             border-bottom: none !important;
-            padding: 1rem !important;
+            padding: 0.5rem !important;
             background-color: #24283b !important;
-            min-height: 60px !important;
+            min-height: 40px !important;
         }
         #terminalModal .modal-title {
             color: #f2f2f2 !important;
@@ -199,7 +198,7 @@ class Terminal {
             position: fixed !important;
             top: 50% !important;
             left: 50% !important;
-            transform: translate(-50%, -70%) !important;
+            transform: translate(-50%, -65%) !important;
             background-color: #24283b !important;
             max-width: 1000px !important;
             width: 95% !important;  // This ensures some margin on mobile
