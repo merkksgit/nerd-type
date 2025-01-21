@@ -165,6 +165,9 @@ class Terminal {
             color: #c3e88d !important;
             background-color: #24283b !important;
         }
+        // #terminalModal .terminal-output div.command-success {
+        //     color: #c3e88d !important;
+        // }
         #terminalModal .command-error {
             color: #ff007c !important;
             background-color: #24283b !important;
