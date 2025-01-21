@@ -237,10 +237,35 @@ class Terminal {
     const terminalInput = document.getElementById("terminalInput");
     const username = localStorage.getItem("nerdtype_username") || "runner";
 
+    // Set up terminal labels
     document.querySelector(".terminal-prompt").textContent = `$`;
     document.getElementById("terminalModalLabel").textContent =
       `${username}@nerdtypeterminalv1.0.0`;
 
+    // Add both click listeners and focus listener
+    const terminalModal = document.getElementById("terminalModal");
+    terminalModal.addEventListener("focusin", () => {
+      terminalInput.focus();
+    });
+
+    // Add click listeners to several modal elements
+    const modalElements = [
+      ".terminal-container",
+      ".terminal-output",
+      ".modal-content",
+      ".modal-body",
+    ];
+
+    modalElements.forEach((selector) => {
+      document.querySelector(selector).addEventListener("click", (e) => {
+        if (e.target.tagName !== "INPUT") {
+          // Don't refocus if clicking the input itself
+          terminalInput.focus();
+        }
+      });
+    });
+
+    // Handle terminal input events
     terminalInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -253,6 +278,22 @@ class Terminal {
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
         this.navigateHistory("down");
+      }
+    });
+
+    // Prevent enter propagation from modal
+    terminalModal.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    });
+
+    // Handle tab completion
+    terminalInput.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        this.handleTabCompletion(terminalInput);
       }
     });
 
@@ -476,7 +517,7 @@ Available commands:
   └─ WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
   └─ BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
   └─ INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
-  └─ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}</span>%
+  └─ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%</span>
 > ================================`;
 
       this.printToTerminal(statusText, "command-success");
