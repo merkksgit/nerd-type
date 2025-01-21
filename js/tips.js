@@ -1,6 +1,6 @@
 export const tips = [
-  "Enter (Start), Ctrl + Enter (Reset)",
-  "Type 'terminal' to open the terminal window",
+  " Enter (Start), Ctrl + Enter (Reset)",
+  " Type 'terminal' to open the terminal window",
   // "There is no 'God Mode'",
   // "Focus on accuracy over speed",
   // "Place your fingers on the 'home row' keys",
