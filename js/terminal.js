@@ -20,6 +20,7 @@ class Terminal {
       setinitial: this.setInitial.bind(this),
       setgoal: this.setGoal.bind(this),
       mode: this.setMode.bind(this),
+      listmodes: this.listModes.bind(this),
       reset: this.resetSettings.bind(this),
       exit: this.closeTerminal.bind(this),
       cls: this.clearTerminal.bind(this),
@@ -285,6 +286,7 @@ class Terminal {
       "setinitial",
       "setgoal",
       "mode",
+      "listmodes",
       "reset",
       "exit",
       "cls",
@@ -394,6 +396,29 @@ class Terminal {
     output.innerHTML = "";
   }
 
+  listModes() {
+    const modesText = `> AVAILABLE GAME MODES:`;
+    this.printToTerminal(modesText, "command-success");
+    const modeDescriptions = {
+      classic: "Balanced mode for regular gameplay",
+      hard: "Challenging mode with tighter time constraints",
+      practice: "Extended time limits for learning",
+      speedrunner: "Fast-paced mode for experts",
+    };
+
+    Object.entries(this.gameModes).forEach(([modeName, settings]) => {
+      const description = modeDescriptions[modeName];
+      const modeInfo = `
+  ┌─ ${modeName.toUpperCase()}
+  │  Description: <span style='color:#7dcfff'>${description}</span>
+  │  Words Needed: <span style='color:#c3e88d'>${settings.timeLimit}</span>
+  │  Bonus Energy: <span style='color:#bb9af7'>${settings.bonusTime}</span> units
+  │  Initial Energy: <span style='color:#7dcfff'>${settings.initialTime}</span> units
+  │  Goal Percentage: <span style='color:#ff9e64'>${settings.goalPercentage}%</span>`;
+      this.printToTerminal(modeInfo, "command-success");
+    });
+  }
+
   showTime() {
     const now = new Date();
     const timeStr = now.toLocaleTimeString();
@@ -418,6 +443,7 @@ Available commands:
   mode &lt;type&gt;                    - Set game mode (classic/hard/practice/speedrunner)
   rm &lt;filename&gt;                  - Delete file contents
   status                         - Show current game settings
+  listmodes                      - List all available game modes
   su &lt;username&gt;                  - Switch user
   cat &lt;filename&gt;                 - Display file contents
   ls                             - List available files
