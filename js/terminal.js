@@ -725,6 +725,11 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
       `Success: Switched to ${mode} mode`,
       "command-success",
     );
+    window.dispatchEvent(
+      new CustomEvent("gameSettingsChanged", {
+        detail: { setting: "currentMode", value: mode },
+      }),
+    );
     Object.entries(settings).forEach(([setting, value]) => {
       window.dispatchEvent(
         new CustomEvent("gameSettingsChanged", {
@@ -741,6 +746,15 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
       "Settings reset to classic mode defaults",
       "command-success",
     );
+
+    // First dispatch the mode
+    window.dispatchEvent(
+      new CustomEvent("gameSettingsChanged", {
+        detail: { setting: "currentMode", value: "classic" },
+      }),
+    );
+
+    // Then dispatch the other settings
     Object.entries(this.gameModes.classic).forEach(([setting, value]) => {
       window.dispatchEvent(
         new CustomEvent("gameSettingsChanged", {

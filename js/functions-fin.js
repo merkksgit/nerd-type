@@ -4,6 +4,7 @@ let gameSettings = JSON.parse(localStorage.getItem("terminalSettings")) || {
   bonusTime: 3,
   initialTime: 10,
   goalPercentage: 100,
+  currentMode: "classic",
 };
 
 let timeLeft = gameSettings.initialTime;
@@ -63,7 +64,9 @@ window.addEventListener("gameSettingsChanged", function (e) {
     case "goalPercentage":
       gameSettings.goalPercentage = value;
       goalPercentage = value; // Update current game
-      updateProgressBar();
+      break;
+    case "currentMode": // Add this case
+      gameSettings.currentMode = value;
       break;
   }
   localStorage.setItem("terminalSettings", JSON.stringify(gameSettings));
