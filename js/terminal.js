@@ -409,12 +409,14 @@ class Terminal {
     Object.entries(this.gameModes).forEach(([modeName, settings]) => {
       const description = modeDescriptions[modeName];
       const modeInfo = `
-  ┌─ ${modeName.toUpperCase()}
-  │  Description: <span style='color:#7dcfff'>${description}</span>
-  │  Words Needed: <span style='color:#c3e88d'>${settings.timeLimit}</span>
-  │  Bonus Energy: <span style='color:#bb9af7'>${settings.bonusTime}</span> units
-  │  Initial Energy: <span style='color:#7dcfff'>${settings.initialTime}</span> units
-  │  Goal Percentage: <span style='color:#ff9e64'>${settings.goalPercentage}%</span>`;
+> ${modeName.toUpperCase()}
+> ================================
+  └─  Description: <span style='color:#7dcfff'>${description}</span>
+  └─  Words Needed: <span style='color:#c3e88d'>${settings.timeLimit}</span>
+  └─  Bonus Energy: <span style='color:#bb9af7'>${settings.bonusTime}</span> units
+  └─  Initial Energy: <span style='color:#7dcfff'>${settings.initialTime}</span> units
+  └─  Goal Percentage: <span style='color:#ff9e64'>${settings.goalPercentage}%</span>
+> ================================`;
       this.printToTerminal(modeInfo, "command-success");
     });
   }
