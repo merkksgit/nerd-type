@@ -56,6 +56,12 @@ class Terminal {
         initialTime: 15,
         goalPercentage: 100,
       },
+      speedrunner: {
+        timeLimit: 10,
+        bonusTime: 2,
+        initialTime: 8,
+        goalPercentage: 100,
+      },
     };
 
     this.initializeTerminal();
@@ -296,6 +302,20 @@ class Terminal {
       "godmode.txt",
     ];
 
+    // Handle mode command completion
+    if (currentInput.startsWith("mode ")) {
+      const modePrefix = currentInput.split(" ")[1] || "";
+      const availableModes = ["classic", "hard", "practice", "speedrunner"];
+      const matches = availableModes.filter((mode) =>
+        mode.startsWith(modePrefix.toLowerCase()),
+      );
+
+      if (matches.length === 1) {
+        input.value = `mode ${matches[0]}`;
+      }
+      return;
+    }
+
     // If input starts with 'cat ' or 'rm ', complete filenames
     if (currentInput.startsWith("cat ") || currentInput.startsWith("rm ")) {
       const filePrefix = currentInput.split(" ")[1] || "";
@@ -395,7 +415,7 @@ Available commands:
   setbonus &lt;number&gt;              - Set bonus energy per word (default: 3)
   setinitial &lt;number&gt;            - Set starting energy (default: 10)
   setgoal &lt;number&gt;               - Set goal percentage (default: 100)
-  mode &lt;type&gt;                    - Set game mode (classic/hard/practice)
+  mode &lt;type&gt;                    - Set game mode (classic/hard/practice/speedrunner)
   rm &lt;filename&gt;                  - Delete file contents
   status                         - Show current game settings
   su &lt;username&gt;                  - Switch user
@@ -691,7 +711,7 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
     const mode = args[0];
     if (!this.gameModes[mode]) {
       this.printToTerminal(
-        "Error: Invalid mode. Available modes: classic, hard, practice",
+        "Error: Invalid mode. Available modes: classic, hard, practice, speedrunner, speedrunner",
         "command-error",
       );
       return;
