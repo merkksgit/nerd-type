@@ -27,6 +27,7 @@ class Terminal {
       time: this.showTime.bind(this),
       su: this.switchUser.bind(this),
       ls: this.listFiles.bind(this),
+      "ls -la": this.listFilesDetailed.bind(this),
       rm: this.removeFile.bind(this),
       ping: this.pingSystem.bind(this),
       ls: this.listFiles.bind(this),
@@ -391,15 +392,19 @@ class Terminal {
     this.commandHistory.push(input);
     this.historyIndex = this.commandHistory.length;
 
-    const args = input.trim().toLowerCase().split(" ");
-    const command = args[0];
+    // Special handling for 'ls -la' command
+    const trimmedInput = input.trim().toLowerCase();
+    const command =
+      trimmedInput === "ls -la" ? "ls -la" : trimmedInput.split(" ")[0];
+    const args =
+      trimmedInput === "ls -la" ? [] : trimmedInput.split(" ").slice(1);
 
     this.printToTerminal(
       `<br><span style="color:#bb9af7">[${localStorage.getItem("nerdtype_username") || "runner"}@PENTAGON-CORE:~]$ </span>${input}`,
     );
 
     if (this.commands[command]) {
-      this.commands[command](args.slice(1));
+      this.commands[command](args);
     } else {
       this.printToTerminal(
         'Command not found. Type "help" for available commands.',
@@ -492,6 +497,7 @@ Available commands:
   su &lt;username&gt;                  - Switch user
   cat &lt;filename&gt;                 - Display file contents
   ls                             - List available files
+  ls -la                         - List files with detailed information
   time                           - Show current time and date
   cls                            - Clear terminal screen
   ping                           - Test neural connection latency
@@ -543,6 +549,121 @@ Available commands:
 <span style="color:#7dcfff">godmode.txt</span>
 <span style="color:#7dcfff">scoreboard.data</span>`;
     this.printToTerminal(fileText, "command-success");
+  }
+
+  listFilesDetailed() {
+    // Get current username and game data from localStorage
+    const currentUser = localStorage.getItem("nerdtype_username") || "runner";
+
+    // Get the game results and find best performances
+    let lastGameDate = new Date();
+    let bestPerformanceDate = new Date();
+
+    try {
+      const gameResults = JSON.parse(localStorage.getItem("gameResults")) || [];
+      if (gameResults.length > 0) {
+        // Get last game date for scoreboard
+        const lastGame = gameResults[gameResults.length - 1];
+        if (lastGame && lastGame.date) {
+          const [datePart, timePart] = lastGame.date.split(", ");
+          const [day, month, year] = datePart.split("/");
+          const [hours, minutes] = timePart.split(":");
+          lastGameDate = new Date(year, month - 1, day, hours, minutes);
+        }
+
+        // Find game with best performance (highest WPM or accuracy)
+        let bestGame = gameResults.reduce((best, current) => {
+          const currentWPM = parseFloat(current.wpm) || 0;
+          const currentAcc = parseFloat(current.accuracy) || 0;
+          const bestWPM = parseFloat(best.wpm) || 0;
+          const bestAcc = parseFloat(best.accuracy) || 0;
+
+          // Prioritize WPM, use accuracy as tiebreaker
+          if (
+            currentWPM > bestWPM ||
+            (currentWPM === bestWPM && currentAcc > bestAcc)
+          ) {
+            return current;
+          }
+          return best;
+        });
+
+        if (bestGame && bestGame.date) {
+          const [datePart, timePart] = bestGame.date.split(", ");
+          const [day, month, year] = datePart.split("/");
+          const [hours, minutes] = timePart.split(":");
+          bestPerformanceDate = new Date(year, month - 1, day, hours, minutes);
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing game results:", error);
+    }
+
+    // Create DOOM release date with leet time
+    const doomDate = new Date(1993, 11, 10, 13, 37); // December 10, 1993 13:37
+
+    // Format date like Unix ls -la (MMM DD HH:mm)
+    const formatDate = (date) => {
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const month = months[date.getMonth()];
+      const day = String(date.getDate()).padStart(2, " ");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      return `${month} ${day} ${hours}:${minutes}`;
+    };
+
+    const files = [
+      {
+        perms: "-rw-r--r--",
+        links: 1,
+        owner: currentUser,
+        group: "users",
+        size: "4096",
+        date: formatDate(lastGameDate),
+        name: "scoreboard.data",
+      },
+      {
+        perms: "-rw-r--r--",
+        links: 1,
+        owner: currentUser,
+        group: "users",
+        size: "2048",
+        date: formatDate(bestPerformanceDate),
+        name: "achievements.data",
+      },
+      {
+        perms: "-r--r--r--",
+        links: 1,
+        owner: "root",
+        group: "root",
+        size: "1337",
+        date: formatDate(doomDate),
+        name: "godmode.txt",
+      },
+    ];
+
+    // Header of the listing
+    const header = "total 3";
+    this.printToTerminal(header, "command-success");
+
+    // Print each file details
+    files.forEach((file) => {
+      const line = `${file.perms} ${String(file.links).padStart(2, " ")} ${file.owner.padEnd(8, " ")} ${file.group.padEnd(8, " ")} ${file.size.padStart(8, " ")} ${file.date} ${file.name}`;
+      this.printToTerminal(line, "command-success");
+    });
   }
 
   pingSystem() {
