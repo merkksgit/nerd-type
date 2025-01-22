@@ -8,6 +8,7 @@ This project began as a school assignment but has evolved into an ongoing journe
 
 <!-- vim-markdown-toc GFM -->
 
+* [Play the game](#play-the-game)
 * [✨ Features](#-features)
 * [🎮 How to Play](#-how-to-play)
 * [🎯 Game Modes](#-game-modes)
@@ -16,6 +17,11 @@ This project began as a school assignment but has evolved into an ongoing journe
 * [📧 Contact](#-contact)
 
 <!-- vim-markdown-toc -->
+
+## Play the game
+
+- [Neocities: v1.1.0](https://nerdtype.neocities.org/)
+- [GitHub pages: Latest Release](https://merkksgit.github.io/nerd-type/)
 
 ## ✨ Features
 
