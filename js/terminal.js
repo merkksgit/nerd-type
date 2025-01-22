@@ -446,7 +446,7 @@ class Terminal {
       classic: "Balanced mode for regular gameplay",
       hard: "Challenging mode with tighter time constraints",
       practice: "Extended time limits for learning",
-      speedrunner: "Fast-paced mode for experts",
+      speedrunner: "Fast-paced mode",
     };
 
     Object.entries(this.gameModes).forEach(([modeName, settings]) => {
