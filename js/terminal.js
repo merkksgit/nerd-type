@@ -262,7 +262,6 @@ class Terminal {
     modalElements.forEach((selector) => {
       document.querySelector(selector).addEventListener("click", (e) => {
         if (e.target.tagName !== "INPUT") {
-          // Don't refocus if clicking the input itself
           terminalInput.focus();
         }
       });
