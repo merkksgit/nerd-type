@@ -272,7 +272,7 @@ function countDown() {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(
-      "Access <span style='color:#ff007c'>DENIED!</span> Firewall detected",
+      "Access <span style='color:#ff007c'>DENIED!</span> Firewall detected.",
     );
   }
 }
