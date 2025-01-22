@@ -176,7 +176,7 @@ class Terminal {
             border: 1px solid #1f2335 !important;
             background-color: #24283b !important;
             border-radius: 8px !important;
-            box-shadow: 0 0 15px rgba(30, 33, 48, 1) !important;
+            box-shadow: 0 0 25px 15px rgba(30, 33, 48, 1) !important;
         }
         #terminalModal .modal-header {
             border-bottom: none !important;
