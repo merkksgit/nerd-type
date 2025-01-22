@@ -21,7 +21,7 @@ This project began as a school assignment but has evolved into an ongoing journe
 ## 🎮 Play the game
 
 - [Neocities: v1.1.0](https://nerdtype.neocities.org/)
-- [GitHub pages: Latest Release](https://merkksgit.github.io/nerd-type/)
+- [GitHub pages: Latest](https://merkksgit.github.io/nerd-type/)
 
 ## ✨ Features
 
