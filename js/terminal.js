@@ -622,17 +622,25 @@ Highest Achievements:
         const secretText = `
 # BEGIN ENCRYPTED FILE #
 hj24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
+j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
+9fsöku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7
+j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
+02l2n0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
+hj24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
 jaö3pa7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6
 90laef9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4
-3nc3fjx4y3z2a1b2c3#####################4o5p6q7r8s9t0u1v2w
 1j0jdäjf8e7d6c5b4a#####################b2c1d0e9f8e7d6c5b4
 l9vn82åa1b2c3d4e5G#####MODE##zen#######jh34j24hjk2lh342jc
 zn7eö2u9f8e7d6c5b4#####CODE##iddqd#####ih23434hl23hk4l2h3 
 23lnf32c1d0e9f8e7d#####################c5b4a3b2c1d0e9f8e7
-l34j5l7h8i9j0k1l2m#####################x4y5z6a1b2c3d4e5f6
 9fsöku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7
 j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
 02l2n0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
+hj24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z
+jaö3pa7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6
+90laef9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4
+j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
+9fsöku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7
 # END ENCRYPTED FILE #`;
         this.printToTerminal(secretText, "command-success");
         break;
