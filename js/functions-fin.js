@@ -365,6 +365,9 @@ function checkInput(e) {
   if (userInput.toLowerCase() === "debug") {
     e.target.value = "";
     debugDisplay.toggle();
+    setTimeout(() => {
+      location.reload();
+    }, 100); // Small delay to let the toggle take effect
     return;
   }
 
