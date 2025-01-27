@@ -25,6 +25,29 @@ let goalPercentage = gameSettings.goalPercentage;
 import { words } from "./words-fin.js";
 import Terminal from "./terminal.js";
 import { tips } from "./tips.js";
+import { DebugDisplay } from "./debug.js";
+
+// Create debug display instance
+const debugDisplay = new DebugDisplay();
+
+function updateDebugInfo() {
+  const accuracy =
+    totalKeystrokes > 0
+      ? ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1)
+      : "0.0";
+  debugDisplay.updateInfo({
+    currentWord: words[currentWordIndex],
+    wordLength: words[currentWordIndex]?.length || 0,
+    totalCharactersTyped,
+    gameStartTime,
+    wordsTyped,
+    hasStartedTyping,
+    accuracy,
+  });
+}
+
+// Set up your update interval
+setInterval(updateDebugInfo, 100);
 
 // Initialize terminal
 const terminal = new Terminal();
@@ -333,6 +356,13 @@ function checkInput(e) {
   const wordDisplay = document.getElementById("wordToType");
 
   if (!wordDisplay) return;
+
+  // Check for debug command
+  if (userInput.toLowerCase() === "debug") {
+    e.target.value = "";
+    debugDisplay.toggle();
+    return;
+  }
 
   // Check for terminal command
   if (userInput.toLowerCase() === "terminal") {
