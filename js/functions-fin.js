@@ -35,14 +35,18 @@ function updateDebugInfo() {
     totalKeystrokes > 0
       ? ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1)
       : "0.0";
+  const wrongKeystrokes = totalKeystrokes - correctKeystrokes;
   debugDisplay.updateInfo({
-    currentWord: words[currentWordIndex],
-    wordLength: words[currentWordIndex]?.length || 0,
+    currentWord: hasStartedTyping ? words[currentWordIndex] : "",
+    wordLength: hasStartedTyping ? words[currentWordIndex]?.length || 0 : 0,
     totalCharactersTyped,
     gameStartTime,
     wordsTyped,
     hasStartedTyping,
     accuracy,
+    correctKeystrokes,
+    wrongKeystrokes,
+    totalKeystrokes,
   });
 }
 

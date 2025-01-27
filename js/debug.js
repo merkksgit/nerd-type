@@ -150,6 +150,9 @@ export class DebugDisplay {
       Current WPM: ${currentWPM}<br>
       Words Typed: ${wordsTyped.length}<br>
       Accuracy: ${gameData.accuracy}%<br>
+      Correct Keys: ${gameData.correctKeystrokes}<br>
+      Wrong Keys: ${gameData.wrongKeystrokes}<br>
+      Total Keys: ${gameData.totalKeystrokes}<br>
       Timer Started: ${gameStartTime ? "Yes" : "No"}<br>
       Typing Started: ${hasStartedTyping ? "Yes" : "No"}
     `;
