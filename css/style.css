@@ -237,7 +237,7 @@ div h2 {
 .terminal-output::after {
   content: "█";
   animation: blink 1s infinite;
-  color: #bb9af7;
+  color: #f2f2f2;
 }
 
 #restartGameBtn,
