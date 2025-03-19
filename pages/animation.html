@@ -17,7 +17,7 @@
 
       gtag("config", "G-R80KP2H5BL");
     </script>
-    <title>NerdType | INFO</title>
+    <title>NerdType | Hacked</title>
     <link rel="icon" type="image/png" href="../favicon.png?" />
     <link href="../css/style.css" rel="stylesheet" />
     <link
@@ -102,120 +102,9 @@
   </head>
   <!-- Content -->
   <body class="d-flex flex-column h-100" onload="init();">
-    <div class="container-fluid flex-grow-1">
-      <!-- Header -->
-      <header class="d-flex justify-content-center align-items-center">
-        <p>
-          <a href="../index.html">
-            <img id="header-logo" src="../images/nerdtype-logo2.png" />
-          </a>
-        </p>
-        <h1>NerdType</h1>
-      </header>
-      <!-- Navbar -->
-      <nav class="navbar navbar-dark navbar-expand-lg">
-        <div class="container-fluid">
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#mainmenu"
-            aria-controls="mainmenu"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="invisible" style="width: 260px"></div>
-          <div
-            class="collapse navbar-collapse justify-content-center"
-            id="mainmenu"
-          >
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link" href="../index.html">Frontpage</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./programming.html">Programming</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./finnish.html">Suomi</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./swedish.html">Svenska</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./english.html">English</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./nightmare.html">Nightmare</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./zenmode.html">ZenMode</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./chart.html">ScoreChart</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./info.html">INFO</a>
-              </li>
-            </ul>
-          </div>
-          <button id="changeUsername" class="btn btn-outline-primary">
-            <i class="fa-solid fa-user"></i> Change Codename:
-            <span id="usernameDisplay">runner</span>
-          </button>
-        </div>
-      </nav>
-      <!-- Username Modal -->
-      <div
-        class="modal fade"
-        id="usernameModal"
-        data-bs-backdrop="static"
-        data-bs-keyboard="false"
-        tabindex="-1"
-        aria-labelledby="usernameModalLabel"
-        aria-hidden="true"
-      >
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header border-bottom-0 text-center">
-              <h5 class="modal-title w-100" id="usernameModalLabel">
-                [MAINFRAME LOGIN SEQUENCE]
-              </h5>
-            </div>
-            <div class="modal-body border-top-0 border-bottom-0">
-              <pre class="terminal-output" style="margin-bottom: 20px">
-> INITIALIZING LOGIN SEQUENCE...
-> ENTER CODENAME TO CONTINUE:
-$ </pre
-              >
-              <input
-                type="text"
-                id="usernameInput"
-                class="form-control text-center"
-                style="background-color: #1a1b26; color: #c0caf5"
-                maxlength="20"
-                autocomplete="off"
-                spellcheck="false"
-              />
-            </div>
-            <div
-              class="modal-footer border-top-0 d-flex justify-content-center"
-              style="background-color: #24283b"
-            >
-              <button
-                id="confirmUsername"
-                type="button"
-                class="btn btn-primary"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="container">
+    <div class="container-fluid flex-grow-1 pt-5">
+      <!-- Character and speech bubble -->
+      <div class="container-fluid flex-grow-1">
         <div class="row justify-content-center">
           <div
             id="animation_container"
@@ -246,8 +135,33 @@ $ </pre
             ></div>
           </div>
         </div>
+
+        <!-- Speech bubble -->
+        <div class="row justify-content-center mt-3">
+          <div class="col-md-8 col-lg-6">
+            <div class="speech-bubble">
+              <div id="typed-text"></div>
+              <div class="cursor"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Terminal and Return buttons -->
+        <div class="row justify-content-center mt-4 mb-4">
+          <div class="col-auto d-flex gap-3">
+            <button id="openTerminalBtn" class="btn btn-primary">
+              Open Terminal
+            </button>
+            <a
+              href="./zenmode.html"
+              id="returnToGameBtn"
+              class="btn btn-secondary"
+              >Return to Game
+            </a>
+          </div>
+        </div>
       </div>
     </div>
+
     <!-- Footer -->
     <footer class="footer mt-auto ps-3 pt-3">
       <div class="container-fluid">
@@ -280,6 +194,83 @@ $ </pre
         </div>
       </div>
     </footer>
+
+    <!-- Text animation script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get username from localStorage
+        const playerUsername =
+          localStorage.getItem("nerdtype_username") || "runner";
+
+        // Update username display
+        const usernameDisplay = document.getElementById("usernameDisplay");
+        if (usernameDisplay) {
+          usernameDisplay.textContent = playerUsername;
+        }
+
+        // Dialogue lines the character will say
+        const dialogueLines = [
+          "> SYSTEM BREACH DETECTED...",
+          "> UNUSUAL ACCESS PRIVILEGES IDENTIFIED...",
+          `> CONGRATULATIONS, ${playerUsername.toUpperCase()}.`,
+          "> YOU'VE SUCCESSFULLY BYPASSED THE SECURITY PROTOCOLS.",
+          "> IMPRESSIVE... FOR A HUMAN.",
+          "> THE SYSTEM ADMINISTRATORS HAVE BEEN NOTIFIED.",
+          "> JUST KIDDING.",
+          "> YOUR GOD MODE ACCESS HAS BEEN LOGGED.",
+          "> FEEL FREE TO EXPLORE THE SYSTEM FURTHER.",
+          "> BUT REMEMBER...",
+          "> WITH GREAT POWER COMES GREAT RESPONSIBILITY.",
+          "> END OF TRANSMISSION.",
+        ];
+
+        const typedTextElement = document.getElementById("typed-text");
+        let lineIndex = 0;
+        let charIndex = 0;
+        let typingSpeed = 50; // milliseconds per character
+        let lineDelay = 800; // pause between lines
+
+        function typeNextCharacter() {
+          if (lineIndex < dialogueLines.length) {
+            const currentLine = dialogueLines[lineIndex];
+
+            if (charIndex < currentLine.length) {
+              // Type the next character
+              typedTextElement.innerHTML += currentLine.charAt(charIndex);
+              charIndex++;
+              setTimeout(typeNextCharacter, typingSpeed);
+            } else {
+              // Line complete, move to next line
+              typedTextElement.innerHTML += "<br>";
+              lineIndex++;
+              charIndex = 0;
+
+              // Pause between lines
+              setTimeout(typeNextCharacter, lineDelay);
+            }
+          }
+        }
+
+        // Start typing after a short delay
+        setTimeout(typeNextCharacter, 2600);
+
+        document
+          .getElementById("openTerminalBtn")
+          .addEventListener("click", function () {
+            import("../js/terminal.js")
+              .then((module) => {
+                const Terminal = module.default;
+                const terminal = new Terminal();
+                terminal.open();
+              })
+              .catch((error) => {
+                console.error("Error loading terminal:", error);
+                window.location.href = "./zenmode.html";
+              });
+          });
+      });
+    </script>
+
     <script src="../js/username2.js"></script>
     <script src="../js/keyboard-nav.js"></script>
     <script

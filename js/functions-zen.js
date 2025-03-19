@@ -413,10 +413,15 @@ function setupFormEventListeners(gameOverModal) {
       }
 
       if (isValid) {
+        // Save the custom result to localStorage
         saveResult(wpm, time, accuracy);
         displayPreviousResults();
+
+        // Close the modal
         gameOverModal.hide();
-        location.reload();
+
+        // Redirect to your animation page
+        window.location.href = "./animation.html"; // Change this to your actual animation page URL
       }
     });
   }

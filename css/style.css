@@ -96,6 +96,20 @@ footer {
   color: #ff9e64;
 }
 
+#returnToGameBtn,
+#openTerminalBtn {
+  color: #7aa2f7;
+  background-color: #24283b;
+  border: none;
+  padding: 10px 30px;
+  margin-top: 3em;
+}
+
+#returnToGameBtn:hover,
+#openTerminalBtn:hover {
+  color: #ff9e64;
+}
+
 #changeUsername {
   background-color: #24283b;
   color: #7aa2f7;
@@ -651,4 +665,55 @@ score h3 {
 
 .social-link:active .bi {
   transform: scale(0.95);
+}
+
+/* Speech bubble styling for animation.html */
+.speech-bubble {
+  position: relative;
+  background: #1f2335;
+  border-radius: 10px;
+  padding: 20px;
+  min-height: 120px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border: none;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.speech-bubble:before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 10px solid transparent;
+  border-bottom-color: #1f2335;
+}
+
+#typed-text {
+  font-size: 14px;
+  color: #bb9af7;
+  display: inline;
+  line-height: 1.6;
+}
+
+.cursor {
+  display: inline-block;
+  width: 10px;
+  height: 20px;
+  background-color: #ffffff;
+  margin-left: 5px;
+  animation: blink 1s infinite;
+  position: relative;
+  top: 3px;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
