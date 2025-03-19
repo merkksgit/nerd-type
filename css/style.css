@@ -667,6 +667,11 @@ score h3 {
   transform: scale(0.95);
 }
 
+/* animation */
+#animation_container {
+  margin-top: 100px;
+}
+
 /* Speech bubble styling for animation.html */
 .speech-bubble {
   position: relative;
