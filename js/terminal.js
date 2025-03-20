@@ -731,9 +731,11 @@ Available commands:
         }
         this.printToTerminal(
           `
-Highest Achievements:
-  Speed Tier: ${achievements.speedTier}
-  Accuracy Rank: ${achievements.accuracyRank}`,
+ Highest Achievements:
+ ==================================
+ Speed Tier: ${achievements.speedTier}
+ Accuracy Rank: ${achievements.accuracyRank}
+ ==================================`,
           "command-success",
         );
         break;
