@@ -1,7 +1,5 @@
 ![nerdtype](./images/nt-classic-blue.png)
 
-testi
-
 # NerdType
 
 NerdType is a fast-paced, minimalistic typing game designed to help you improve your typing skills while having fun with language learning. The game challenges you to type programming-related vocabulary as well as basic English, Swedish, and Finnish words before your energy runs out. With each correct word, you restore energy and get closer to hacking the Pentagon!
