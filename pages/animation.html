@@ -36,7 +36,7 @@
     ></script>
     <!-- write your code here -->
     <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
-    <script src="../js/nt-animation.js"></script>
+    <script src="../js/nt-running-talking-2.0.js"></script>
     <script>
       var canvas,
         stage,
@@ -50,7 +50,7 @@
         dom_overlay_container = document.getElementById(
           "dom_overlay_container",
         );
-        var comp = AdobeAn.getComposition("27AB6166938E7B41B16669CB563394BB");
+        var comp = AdobeAn.getComposition("8B44CEA086439B438893891F054CD871");
         var lib = comp.getLibrary();
         var loader = new createjs.LoadQueue(false);
         loader.addEventListener("fileload", function (evt) {
@@ -80,7 +80,7 @@
             frames: ssMetadata[i].frames,
           });
         }
-        exportRoot = new lib.Untitled1();
+        exportRoot = new lib.ntrunningtalking20();
         stage = new lib.Stage(canvas);
         //Registers the "tick" event listener.
         fnStartAnimation = function () {
@@ -225,8 +225,9 @@
           "> ...",
           "> JUST KIDDING, I'M IMPRESSED!",
           "> YOUR GOD MODE ACCESS HAS BEEN LOGGED.",
-          "> FEEL FREE TO EXPLORE THE SYSTEM FURTHER.",
-          "> BUT REMEMBER...",
+          "> ENJOY THIS VICTORY... WHILE IT LASTS.",
+          "> OUR PATHS WILL CROSS AGAIN, HACKER.",
+          "> JUST REMEMBER...",
           "> WITH ROOT PRIVILEGES COME ROOT RESPONSIBILITIES.",
           "> END OF TRANSMISSION.",
         ];
