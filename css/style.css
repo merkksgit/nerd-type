@@ -670,6 +670,7 @@ score h3 {
 /* animation */
 #animation_container {
   margin-top: 100px;
+  margin-right: 21px;
 }
 
 /* Speech bubble styling for animation.html */
