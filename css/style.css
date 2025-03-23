@@ -661,24 +661,14 @@ score h3 {
 /* Speech bubble styling for animation.html */
 .speech-bubble {
   position: relative;
-  background: #1f2335;
+  background: #24283b;
   border-radius: 10px;
   padding: 20px;
   min-height: 120px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
   border: none;
   max-width: 500px;
   margin: 0 auto;
-}
-
-.speech-bubble:before {
-  content: "";
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 10px solid transparent;
-  border-bottom-color: #1f2335;
 }
 
 #typed-text {
