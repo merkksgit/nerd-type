@@ -13,7 +13,6 @@ This project began as a school assignment but has evolved into an ongoing journe
 * [🎮 How to Play](#-how-to-play)
 * [🎯 Game Modes](#-game-modes)
 * [💻 Technologies Used](#-technologies-used)
-* [📄 License](#-license)
 * [📧 Contact](#-contact)
 
 <!-- vim-markdown-toc -->
@@ -56,10 +55,6 @@ This project began as a school assignment but has evolved into an ongoing journe
 - **HTML**: To structure the game interface.
 - **CSS (Bootstrap)**: For responsive design.
 - **JavaScript**: Handles game logic, such as timers, word checking, and user input.
-
-## 📄 License
-
-This project is licensed under the [MIT](https://mit-license.org/) License.
 
 ## 📧 Contact
 
