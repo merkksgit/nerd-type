@@ -198,11 +198,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (changeUsernameBtn) {
     changeUsernameBtn.addEventListener("click", showUsernameModal);
   }
-  nextWordDiv.textContent = randomTip;
-
-  if (changeUsernameBtn) {
-    changeUsernameBtn.addEventListener("click", showUsernameModal);
-  }
 
   if (confirmUsernameBtn) {
     confirmUsernameBtn.addEventListener("click", handleUsernameConfirmation);

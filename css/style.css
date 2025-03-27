@@ -82,6 +82,10 @@ footer {
   border: none;
   padding: 10px 30px;
   margin-top: 3em;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 4px rgba(122, 162, 247, 0.3);
+  transition: all 0.3s ease;
   border-radius: 4px;
 }
 
@@ -94,6 +98,11 @@ footer {
 #confirmUsername:hover,
 #resetBtn:hover {
   color: #ff9e64;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(122, 162, 247, 0.5);
+  transform: translateY(-2px);
+  background-color: #2a3047;
 }
 
 #returnToGameBtn,
@@ -328,10 +337,14 @@ score h3 {
 /* Terminal-style progress */
 .progress.terminal {
   background: #1f2335;
-  border: 1px solid #3b4261;
+  border: 1px solid #1f2335;
   padding: 3px;
   position: relative;
   height: 25px;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 6px rgba(122, 162, 247, 0.35);
+  transition: all 0.3s ease;
 }
 
 .progress.terminal .progress-bar {
@@ -367,21 +380,22 @@ score h3 {
   }
 }
 
-/* Glow effect */
-.progress.terminal {
-  box-shadow: 0 0 5px rgba(122, 162, 247, 0.3);
-}
-
-/* progress-bar flash */
+/* Progress-bar flash */
 @keyframes correctFlash {
   0% {
-    box-shadow: 0 0 5px rgba(122, 162, 247, 0.3);
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.25),
+      0 0 6px rgba(122, 162, 247, 0.35);
   }
   50% {
-    box-shadow: 0 0 15px rgba(122, 162, 247, 0.6);
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.3),
+      0 0 15px rgba(122, 162, 247, 0.7);
   }
   100% {
-    box-shadow: 0 0 5px rgba(122, 162, 247, 0.3);
+    box-shadow:
+      0 4px 8px rgba(0, 0, 0, 0.25),
+      0 0 6px rgba(122, 162, 247, 0.35);
   }
 }
 
