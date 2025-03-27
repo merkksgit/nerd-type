@@ -231,7 +231,7 @@ class Terminal {
 ██║ ╚████║███████╗██║  ██║██████╔╝   ██║      ██║   ██║     ███████╗
 ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═════╝    ╚═╝      ╚═╝   ╚═╝     ╚══════╝</span>
                                                 
-<span style="color:#bb9af7">Welcome to NerdType Terminal v1.0.0</span>
+<span style="color:#bb9af7">Welcome to NerdType Terminal v1.0.1</span>
 <span style="color:#7dcfff">Type 'help' for available commands</span>
 `;
   }
@@ -243,7 +243,7 @@ class Terminal {
     // Set up terminal labels
     document.querySelector(".terminal-prompt").textContent = `$`;
     document.getElementById("terminalModalLabel").textContent =
-      `${username}@nerdtypeterminalv1.0.0`;
+      `${username}@nerdtypeterminalv1.0.1`;
 
     // Add both click listeners and focus listener
     const terminalModal = document.getElementById("terminalModal");
@@ -905,7 +905,7 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
     // Update terminal prompt
     document.querySelector(".terminal-prompt").textContent = `$`;
     document.getElementById("terminalModalLabel").textContent =
-      `${newUsername}@nerdtypeterminalv1.0.0`;
+      `${newUsername}@nerdtypeterminalv1.0.1`;
   }
 
   setMode(args) {
