@@ -16,6 +16,41 @@ let isUsernameModalOpen = false;
 import { words } from "./words-fin.js";
 import { tips } from "./tips.js";
 
+// Tips rotation
+let tipsRotationInterval = null;
+
+function initializeRotatingTips() {
+  const nextWordDiv = document.getElementById("nextWord");
+  let tipIndex = Math.floor(Math.random() * tips.length);
+
+  // Display initial tip
+  nextWordDiv.textContent = tips[tipIndex];
+
+  // Clear any existing interval
+  if (tipsRotationInterval) {
+    clearInterval(tipsRotationInterval);
+  }
+
+  // Set up interval to change tips every few seconds
+  tipsRotationInterval = setInterval(() => {
+    // Fade out
+    nextWordDiv.classList.add("fade-out");
+
+    // After fade out completes, change tip and fade in
+    setTimeout(() => {
+      // Get next tip (avoid repeating the same tip)
+      let newIndex;
+      do {
+        newIndex = Math.floor(Math.random() * tips.length);
+      } while (newIndex === tipIndex && tips.length > 1);
+
+      tipIndex = newIndex;
+      nextWordDiv.textContent = tips[tipIndex];
+      nextWordDiv.classList.remove("fade-out");
+    }, 300); // Match this with CSS transition time
+  }, 5000); // Change tip every x seconds
+}
+
 // Track modal state
 document.addEventListener("DOMContentLoaded", function () {
   const usernameModal = document.getElementById("usernameModal");
@@ -93,6 +128,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const changeUsernameBtn = document.getElementById("changeUsername");
   const confirmUsernameBtn = document.getElementById("confirmUsername");
 
+  initializeRotatingTips();
+  if (changeUsernameBtn) {
+    changeUsernameBtn.addEventListener("click", showUsernameModal);
+  }
+
   const nextWordDiv = document.getElementById("nextWord");
   const randomTip = tips[Math.floor(Math.random() * tips.length)];
   nextWordDiv.textContent = randomTip;
@@ -155,6 +195,11 @@ document.getElementById("resetBtn")?.addEventListener("click", () => {
 document.getElementById("startButton").addEventListener("click", startGame);
 
 function startGame() {
+  if (tipsRotationInterval) {
+    clearInterval(tipsRotationInterval);
+    tipsRotationInterval = null;
+  }
+
   gameEnded = false;
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);

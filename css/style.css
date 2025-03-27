@@ -162,6 +162,11 @@ div#wordToType {
   color: #3b4261;
   font-size: 1.5em;
   margin-top: 20px;
+  transition: opacity 0.3s ease;
+}
+
+#nextWord.fade-out {
+  opacity: 0;
 }
 
 .navbar .navbar-nav .nav-link {
