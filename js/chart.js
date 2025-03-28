@@ -80,10 +80,14 @@ function displayScoreGraph() {
             title: {
               display: true,
               text: "Score",
+              color: "#7aa2f7",
             },
             grid: {
               display: true,
               color: "#3b4261",
+            },
+            ticks: {
+              color: "#7aa2f7",
             },
           },
           y1: {
@@ -91,19 +95,27 @@ function displayScoreGraph() {
             title: {
               display: true,
               text: "WPM",
+              color: "#ff9e64",
             },
             position: "right",
+            ticks: {
+              color: "#ff9e64",
+            },
           },
           y2: {
             display: true,
             title: {
               display: true,
               text: "Accuracy %",
+              color: "#bb9af7",
             },
             position: "right",
             grid: {
               drawOnChartArea: false,
               color: "#414868",
+            },
+            ticks: {
+              color: "#bb9af7",
             },
           },
         },
@@ -205,32 +217,44 @@ function displayScoreGraph() {
           title: {
             display: true,
             text: "Score",
+            color: "#7aa2f7",
           },
           position: "left",
           grid: {
             color: "#414868",
+          },
+          ticks: {
+            color: "#7aa2f7",
           },
         },
         y1: {
           title: {
             display: true,
             text: "WPM",
+            color: "#ff9e64",
           },
           position: "right",
           grid: {
             drawOnChartArea: false,
             color: "#414868",
+          },
+          ticks: {
+            color: "#ff9e64",
           },
         },
         y2: {
           title: {
             display: true,
             text: "Accuracy %",
+            color: "#bb9af7",
           },
           position: "right",
           grid: {
             drawOnChartArea: false,
             color: "#414868",
+          },
+          ticks: {
+            color: "#bb9af7",
           },
         },
       },
@@ -253,7 +277,7 @@ function displayScoreGraph() {
             ctx.stroke();
             ctx.restore();
 
-            ctx.fillStyle = "#414868";
+            ctx.fillStyle = "#7aa2f7";
             ctx.font = "12px Arial";
             ctx.fillText(
               `Avg Score: ${averageScore.toFixed(0)}`,
@@ -274,7 +298,7 @@ function displayScoreGraph() {
             ctx.stroke();
             ctx.restore();
 
-            ctx.fillStyle = "#414868";
+            ctx.fillStyle = "#ff9e64";
             ctx.font = "12px Arial";
             ctx.fillText(
               `Avg WPM: ${averageWPM.toFixed(0)}`,
@@ -295,7 +319,7 @@ function displayScoreGraph() {
             ctx.stroke();
             ctx.restore();
 
-            ctx.fillStyle = "#414868";
+            ctx.fillStyle = "#bb9af7";
             ctx.font = "12px Arial";
             ctx.fillText(
               `Avg Accuracy: ${averageAccuracy.toFixed(1)}%`,
@@ -387,10 +411,14 @@ function displayZenModeGraph() {
             title: {
               display: true,
               text: "Time",
+              color: "#c3e88d",
             },
             grid: {
               display: true,
               color: "#3b4261",
+            },
+            ticks: {
+              color: "#c3e88d",
             },
           },
           y1: {
@@ -398,19 +426,27 @@ function displayZenModeGraph() {
             title: {
               display: true,
               text: "WPM",
+              color: "#ff9e64",
             },
             position: "right",
+            ticks: {
+              color: "#ff9e64",
+            },
           },
           y2: {
             display: true,
             title: {
               display: true,
               text: "Accuracy %",
+              color: "#bb9af7",
             },
             position: "right",
             grid: {
               drawOnChartArea: false,
               color: "#414868",
+            },
+            ticks: {
+              color: "#bb9af7",
             },
           },
         },
@@ -519,32 +555,44 @@ function displayZenModeGraph() {
           title: {
             display: true,
             text: "Time (sec.)",
+            color: "#c3e88d",
           },
           position: "left",
           grid: {
             color: "#3b4261",
+          },
+          ticks: {
+            color: "#c3e88d",
           },
         },
         y1: {
           title: {
             display: true,
             text: "WPM",
+            color: "#ff9e64",
           },
           position: "right",
           grid: {
             drawOnChartArea: false,
             color: "#414868",
+          },
+          ticks: {
+            color: "#ff9e64",
           },
         },
         y2: {
           title: {
             display: true,
             text: "Accuracy %",
+            color: "#bb9af7",
           },
           position: "right",
           grid: {
             drawOnChartArea: false,
             color: "#414868",
+          },
+          ticks: {
+            color: "#bb9af7",
           },
         },
       },
@@ -567,7 +615,7 @@ function displayZenModeGraph() {
             ctx.stroke();
             ctx.restore();
 
-            ctx.fillStyle = "#414868";
+            ctx.fillStyle = "#c3e88d";
             ctx.font = "12px Arial";
             ctx.fillText(
               `Avg Time: ${averageTime.toFixed(0)}s`,
@@ -588,7 +636,7 @@ function displayZenModeGraph() {
             ctx.stroke();
             ctx.restore();
 
-            ctx.fillStyle = "#414868";
+            ctx.fillStyle = "#ff9e64";
             ctx.font = "12px Arial";
             ctx.fillText(
               `Avg WPM: ${averageWPM.toFixed(0)}`,
@@ -609,7 +657,7 @@ function displayZenModeGraph() {
             ctx.stroke();
             ctx.restore();
 
-            ctx.fillStyle = "#414868";
+            ctx.fillStyle = "#bb9af7";
             ctx.font = "12px Arial";
             ctx.fillText(
               `Avg Accuracy: ${averageAccuracy.toFixed(1)}%`,
