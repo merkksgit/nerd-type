@@ -327,10 +327,11 @@ if (resetBtn) {
 }
 
 function countDown() {
-  if (timeLeft > 0) {
+  // Only countdown if the player has started typing
+  if (hasStartedTyping && timeLeft > 0) {
     timeLeft--;
     updateTimer();
-  } else {
+  } else if (timeLeft <= 0) {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(
@@ -401,9 +402,7 @@ function checkInput(e) {
   if (userInput.toLowerCase() === "debug") {
     e.target.value = "";
     debugDisplay.toggle();
-    setTimeout(() => {
-      location.reload();
-    }, 100); // Small delay to let the toggle take effect
+    location.reload();
     return;
   }
 

@@ -310,14 +310,15 @@ if (resetBtn) {
 }
 
 function countDown() {
-  if (timeLeft > 0) {
+  // Only countdown if the player has started typing
+  if (hasStartedTyping && timeLeft > 0) {
     timeLeft--;
     updateTimer();
-  } else {
+  } else if (timeLeft <= 0) {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(
-      "Security <span style='color:#ff007c'>ALERT!</span> System lockdown.",
+      "System breach <span style='color:#ff007c'>FAILED!</span>",
     );
   }
 }

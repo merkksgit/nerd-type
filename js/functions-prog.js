@@ -309,14 +309,15 @@ if (resetBtn) {
 }
 
 function countDown() {
-  if (timeLeft > 0) {
+  // Only countdown if the player has started typing
+  if (hasStartedTyping && timeLeft > 0) {
     timeLeft--;
     updateTimer();
-  } else {
+  } else if (timeLeft <= 0) {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(
-      "Access <span style='color:#ff007c'>DENIED!</span> Firewall detected.",
+      "System breach <span style='color:#ff007c'>FAILED!</span>",
     );
   }
 }
