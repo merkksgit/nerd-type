@@ -74,6 +74,34 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+// For the clear results modal, add enter key support
+function setupClearResultsModal() {
+  const customAlertModal = document.getElementById("customAlertModal");
+  const clearResultsButton = document.getElementById("clrResults");
+
+  if (customAlertModal && clearResultsButton) {
+    // Remove previous event listeners if they exist
+    customAlertModal.removeEventListener("keydown", handleClearResultsKeyPress);
+
+    // Add keydown event listener to the modal
+    customAlertModal.addEventListener("keydown", handleClearResultsKeyPress);
+  }
+}
+
+// Handler for enter key in clear results modal
+function handleClearResultsKeyPress(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Trigger the clear results button
+    const clearResultsButton = document.getElementById("clrResults");
+    if (clearResultsButton) {
+      clearResultsButton.click();
+    }
+  }
+}
+
 function handleClearResults() {
   localStorage.removeItem("gameResults");
   localStorage.removeItem("highestAchievements");
@@ -104,7 +132,7 @@ function handleClearResults() {
       `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
       "> ================================",
       "> LOCAL STORAGE CLEARED_",
-      "> PRESS [CLOSE] TO CONFIRM",
+      "> PRESS [ENTER] OR [CLOSE] TO CONFIRM",
       "> END OF TRANSMISSION_",
     ];
 
@@ -125,13 +153,8 @@ function handleClearResults() {
     modal.show();
     typeNextLine();
 
-    // Prevent Enter key from starting game in this modal
-    customAlertModal.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    });
+    // Set up the event listeners for the modal
+    setupClearResultsModal();
 
     document
       .getElementById("clrResults")
