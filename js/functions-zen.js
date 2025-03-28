@@ -593,70 +593,91 @@ function displayPreviousResults() {
   });
 }
 
-const clearResultsBtn = document.getElementById("clearResultsBtn");
-if (clearResultsBtn) {
-  clearResultsBtn.addEventListener("click", function () {
-    localStorage.removeItem("gameResults");
-    localStorage.removeItem("highestAchievements");
-    const resultsContainer = document.getElementById("previousResults");
-    if (resultsContainer) {
-      resultsContainer.innerHTML = "";
-    }
+// For the clear results modal, add enter key support
+function setupClearResultsModal() {
+  const customAlertModal = document.getElementById("customAlertModal");
+  const clearResultsButton = document.getElementById("clrResults");
 
-    const customAlertModal = document.getElementById("customAlertModal");
-    if (customAlertModal) {
-      const modal = new bootstrap.Modal(customAlertModal);
-      const modalBody = customAlertModal.querySelector(".modal-body");
-      const modalHeader = customAlertModal.querySelector(".modal-title");
+  if (customAlertModal && clearResultsButton) {
+    // Remove previous event listeners if they exist
+    customAlertModal.removeEventListener("keydown", handleClearResultsKeyPress);
 
-      // Set up terminal-style header
-      modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:~]$`;
-
-      const terminalLines = [
-        "> INITIALIZING DELETION SEQUENCE...",
-        "> ACCESSING SCOREBOARD DATABASE...",
-        "> PREPARING DATA PURGE...",
-        "> ================================",
-        "> EXECUTING COMMANDS:",
-        "  └─ rm scoreboard.data",
-        "  └─ rm achievements.data",
-        `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
-        "> ================================",
-        "> LOCAL STORAGE CLEARED_",
-        "> PRESS [CLOSE] TO CONFIRM",
-        "> END OF TRANSMISSION_",
-      ];
-
-      let currentLine = 0;
-      let modalContent = "";
-
-      modalBody.innerHTML = '<pre class="terminal-output"></pre>';
-
-      function typeNextLine() {
-        if (currentLine < terminalLines.length) {
-          modalContent += terminalLines[currentLine] + "\n";
-          modalBody.querySelector(".terminal-output").innerHTML = modalContent;
-          currentLine++;
-          setTimeout(typeNextLine, 150);
-        }
-      }
-
-      modal.show();
-      typeNextLine();
-
-      // Prevent Enter key from starting game in this modal
-      customAlertModal.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      });
-
-      document
-        .getElementById("clrResults")
-        .addEventListener("click", function () {
-          location.reload();
-        });
-    }
-  });
+    // Add keydown event listener to the modal
+    customAlertModal.addEventListener("keydown", handleClearResultsKeyPress);
+  }
 }
+
+// Handler for enter key in clear results modal
+function handleClearResultsKeyPress(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Trigger the clear results button
+    const clearResultsButton = document.getElementById("clrResults");
+    if (clearResultsButton) {
+      clearResultsButton.click();
+    }
+  }
+}
+
+// Modify the clear results button click event
+clearResultsBtn.addEventListener("click", function () {
+  localStorage.removeItem("gameResults");
+  localStorage.removeItem("highestAchievements");
+  const resultsContainer = document.getElementById("previousResults");
+  if (resultsContainer) {
+    resultsContainer.innerHTML = "";
+  }
+
+  const customAlertModal = document.getElementById("customAlertModal");
+  if (customAlertModal) {
+    const modal = new bootstrap.Modal(customAlertModal);
+    const modalBody = customAlertModal.querySelector(".modal-body");
+    const modalHeader = customAlertModal.querySelector(".modal-title");
+
+    // Set up terminal-style header
+    modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/user.data/]$`;
+
+    const terminalLines = [
+      "> INITIALIZING DELETION SEQUENCE...",
+      "> ACCESSING SCOREBOARD DATABASE...",
+      "> PREPARING DATA PURGE...",
+      "> ================================",
+      "> EXECUTING COMMANDS:",
+      "  └─ rm scoreboard.data",
+      "  └─ rm achievements.data",
+      `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
+      "> ================================",
+      "> LOCAL STORAGE CLEARED_",
+      "> PRESS [ENTER] OR [CLOSE] TO CONFIRM", // Updated text to indicate Enter key support
+      "> END OF TRANSMISSION_",
+    ];
+
+    let currentLine = 0;
+    let modalContent = "";
+
+    modalBody.innerHTML = '<pre class="terminal-output"></pre>';
+
+    function typeNextLine() {
+      if (currentLine < terminalLines.length) {
+        modalContent += terminalLines[currentLine] + "\n";
+        modalBody.querySelector(".terminal-output").innerHTML = modalContent;
+        currentLine++;
+        setTimeout(typeNextLine, 150);
+      }
+    }
+
+    modal.show();
+    typeNextLine();
+
+    // Set up the event listeners for the modal
+    setupClearResultsModal();
+
+    document
+      .getElementById("clrResults")
+      .addEventListener("click", function () {
+        location.reload();
+      });
+  }
+});
