@@ -428,9 +428,6 @@ score h3 {
     right: 20px;
     margin-top: 10px;
   }
-  .container-fluid {
-    padding-top: 60px;
-  }
 }
 
 @media (max-width: 1200px) {
