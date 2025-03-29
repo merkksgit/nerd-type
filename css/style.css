@@ -58,9 +58,10 @@ footer {
 }
 
 .achievement-link,
+.terms-link,
 #archive-link {
   text-decoration: none;
-  color: #bb9af7;
+  color: #7aa2f7;
 }
 
 .wpm-info {
@@ -683,12 +684,14 @@ score h3 {
   letter-spacing: -0.1em;
 }
 
-.social-link:hover .bi {
+.social-link:hover .bi,
+a:hover .bi-c-circle {
   color: #5571a7;
   transform: scale(1.9);
 }
 
-.social-link:active .bi {
+.social-link:active .bi,
+a:active .bi-c-circle {
   transform: scale(0.95);
 }
 
