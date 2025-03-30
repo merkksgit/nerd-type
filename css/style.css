@@ -45,6 +45,10 @@ footer {
   color: #7aa2f7;
 }
 
+#info-link:hover {
+  color: #3d59a1;
+}
+
 #email-link {
   text-decoration: none;
   color: #7aa2f7;
@@ -61,11 +65,22 @@ footer {
   padding-bottom: 6px;
 }
 
-.achievement-link,
 .terms-link,
+.achievement-link,
 #archive-link {
   text-decoration: none;
   color: #7aa2f7;
+}
+
+.terms-link:hover,
+.achievement-link:hover,
+#archive-link:hover {
+  text-decoration: none;
+  color: #3d59a1;
+}
+
+.custom-link:hover {
+  color: #3d59a1;
 }
 
 .wpm-info {
