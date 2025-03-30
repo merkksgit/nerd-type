@@ -25,6 +25,10 @@
   background-color: #24283b;
 }
 
+#mainmenu {
+  margin-top: 10px;
+}
+
 header {
   margin-top: 2em;
   color: #7aa2f7;
