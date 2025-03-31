@@ -582,6 +582,14 @@ score h3 {
   margin: 0;
 }
 
+/* try to hide text suggestions */
+input#userInput {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-text-fill-color: currentColor;
+}
+
 .modal-body input[type="number"] {
   appearance: textfield;
   -webkit-appearance: textfield;
