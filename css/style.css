@@ -87,6 +87,25 @@ footer {
   padding-top: 5em;
 }
 
+#timer,
+#totalTime {
+  margin: 20px auto;
+  font-size: 1em;
+  color: #7aa2f7;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  #timer,
+  #totalTime {
+    font-size: 1em;
+    margin: 15px auto;
+    padding: 5px;
+    background-color: #24283b;
+    width: 90%;
+  }
+}
+
 #game {
   margin: auto;
   text-align: center;
