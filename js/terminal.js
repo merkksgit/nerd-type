@@ -102,6 +102,18 @@ class Terminal {
         // Restart the intervals
         window.dispatchEvent(new CustomEvent("terminalClosed"));
       });
+
+    // Add resize event listener to update terminal welcome message when window size changes
+    window.addEventListener("resize", () => {
+      if (document.getElementById("terminalOutput")) {
+        // Only refresh the welcome art if the terminal is open
+        if (
+          document.getElementById("terminalModal").classList.contains("show")
+        ) {
+          this.refresh();
+        }
+      }
+    });
   }
 
   addTerminalStyles() {
@@ -222,7 +234,18 @@ class Terminal {
   }
 
   getWelcomeArt() {
-    return `
+    // Check if the device is mobile (screen width less than 768px)
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile) {
+      // Return a simplified welcome message without the ASCII art
+      return `
+<span style="color:#bb9af7">Welcome to NerdType Terminal v1.0.1</span>
+<span style="color:#7dcfff">Type 'help' for available commands</span>
+`;
+    } else {
+      // Return the original ASCII art for larger screens
+      return `
 <span style="color:#7aa2f7">
 ███╗   ██╗███████╗██████╗ ██████╗ ████████╗██╗   ██╗██████╗ ███████╗
 ████╗  ██║██╔════╝██╔══██╗██╔══██╗╚══██╔══╝╚██╗ ██╔╝██╔══██╗██╔════╝
@@ -234,6 +257,7 @@ class Terminal {
 <span style="color:#bb9af7">Welcome to NerdType Terminal v1.0.1</span>
 <span style="color:#7dcfff">Type 'help' for available commands</span>
 `;
+    }
   }
 
   setupEventListeners() {
