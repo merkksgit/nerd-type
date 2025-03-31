@@ -156,67 +156,9 @@ $ </pre
         </div>
       </div>
 
-      <!-- Achievements Section -->
+      <!-- Charts Section -->
       <div class="row justify-content-center pt-5">
         <article class="col-md-12 p-3 flex-column d-flex align-items-center">
-          <button id="toggleAchievements" class="btn btn-primary mb-3 border-0">
-            <i class="fa-solid fa-trophy"></i> Hide Achievements
-          </button>
-          <div id="achievementsContainer" class="text-center w-100">
-            <div class="row justify-content-center">
-              <div class="col-12 col-md-8">
-                <h5 class="text-center mb-3 achievements-title">
-                  <a
-                    href="./achievements.html"
-                    style="
-                      color: inherit;
-                      text-decoration: none;
-                      transition: color 0.3s ease;
-                    "
-                    onmouseover="this.style.color='#545c7e'"
-                    onmouseout="this.style.color='inherit'"
-                  >
-                     Achievements table
-                  </a>
-                </h5>
-                <div class="row">
-                  <div class="col-6 pt-3">
-                    <div class="card achievement-card">
-                      <div class="card-header achievement-header">
-                        Speed Tier
-                      </div>
-                      <div class="card-body text-center">
-                        <h3 id="highestSpeedTier" class="achievement-tier">
-                          -
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-6 pt-3">
-                    <div class="card achievement-card">
-                      <div class="card-header achievement-header">
-                        Accuracy Rank
-                      </div>
-                      <div class="card-body text-center">
-                        <h3 id="highestAccuracyRank" class="achievement-tier">
-                          -
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <!-- Charts Section -->
-      <div class="row justify-content-center">
-        <article class="col-md-12 p-3 flex-column d-flex align-items-center">
-          <button id="toggleGraph" class="btn btn-primary mb-3 border-0">
-            <i class="fa-solid fa-trophy"></i> Hide Graph
-          </button>
           <div id="graphContainer" class="text-center w-100">
             <div class="row">
               <!-- Classic Mode Chart -->
@@ -231,6 +173,118 @@ $ </pre
                 <h4 class="text-center mb-4">Zen Mode</h4>
                 <div class="chart-container">
                   <canvas id="zenChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Achievements Section -->
+      <div id="achievements" class="row justify-content-center">
+        <article class="col-md-12 p-3 flex-column d-flex align-items-center">
+          <div id="achievementsContainer" class="text-center w-100">
+            <div class="row justify-content-center">
+              <div class="col-12 col-md-8 mb-4">
+                <h5 class="text-center mb-3 achievements-title">
+                  Achievements
+                </h5>
+                <div class="row">
+                  <div class="col-12 col-md-6 pt-3">
+                    <div class="card achievement-card">
+                      <div class="card-header achievement-header">
+                        Speed Tier
+                      </div>
+                      <div class="card-body text-center">
+                        <h3 id="highestSpeedTier" class="achievement-tier">
+                          -
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 pt-3">
+                    <div class="card achievement-card">
+                      <div class="card-header achievement-header">
+                        Accuracy Rank
+                      </div>
+                      <div class="card-body text-center">
+                        <h3 id="highestAccuracyRank" class="achievement-tier">
+                          -
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Achievements Table -->
+              <div class="col-12 col-lg-10 col-xl-8">
+                <div class="achievements-container mb-4">
+                  <table
+                    id="achievements-table"
+                    class="table table-dark table-bordered w-100 mx-auto table-sm"
+                    style="font-size: 0.85rem"
+                  >
+                    <thead>
+                      <tr>
+                        <th>Achievement Type</th>
+                        <th>Tier</th>
+                        <th>Requirement</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td rowspan="5">Speed Tier</td>
+                        <td>QUANTUM SPEED</td>
+                        <td>100+ WPM</td>
+                      </tr>
+                      <tr>
+                        <td>NEURAL MASTER</td>
+                        <td>80-99 WPM</td>
+                      </tr>
+                      <tr>
+                        <td>CYBER ADEPT</td>
+                        <td>60-79 WPM</td>
+                      </tr>
+                      <tr>
+                        <td>DIGITAL RUNNER</td>
+                        <td>40-59 WPM</td>
+                      </tr>
+                      <tr>
+                        <td>INITIATING</td>
+                        <td>Below 40 WPM</td>
+                      </tr>
+                      <tr>
+                        <td rowspan="7">Accuracy Rank</td>
+                        <td>PERFECT SYNC</td>
+                        <td>98-100% Accuracy</td>
+                      </tr>
+                      <tr>
+                        <td>NEURAL MASTER</td>
+                        <td>95-97.9% Accuracy</td>
+                      </tr>
+                      <tr>
+                        <td>CYBER EFFICIENT</td>
+                        <td>90-94.9% Accuracy</td>
+                      </tr>
+                      <tr>
+                        <td>DIGITAL PRECISE</td>
+                        <td>85-89.9% Accuracy</td>
+                      </tr>
+                      <tr>
+                        <td>SYSTEM UNSTABLE</td>
+                        <td>75-84.9% Accuracy</td>
+                      </tr>
+                      <tr>
+                        <td>NEURAL INTERFERENCE</td>
+                        <td>60-74.9% Accuracy</td>
+                      </tr>
+                      <tr>
+                        <td>SYSTEM FAILURE</td>
+                        <td>Below 60% Accuracy</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
