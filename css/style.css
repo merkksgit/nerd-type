@@ -784,3 +784,75 @@ a:active .bi-c-circle {
     opacity: 0;
   }
 }
+
+/* words list selector */
+
+.word-list-selector {
+  font-family: "custom", monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 5px;
+  background-color: #24283b;
+  border-radius: 5px;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.word-list-selector label {
+  color: #c0caf5;
+  margin-right: 10px;
+  font-size: 0.9rem;
+}
+
+.word-list-selector select {
+  background-color: #24283b;
+  color: #565f89;
+  font-family: custom;
+  border: none;
+  font-family: "custom", monospace;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  width: auto;
+  padding-right: 25px;
+}
+
+.word-list-selector .form-select:focus {
+  outline: none !important;
+  border-color: #24283b !important;
+  box-shadow: none !important;
+}
+
+.word-list-selector select:hover {
+  background-color: #24283b;
+  border: none;
+}
+
+.word-list-selector select:focus {
+  outline: none;
+  border-color: #7aa2f7;
+  box-shadow: 0 0 0 2px rgba(122, 162, 247, 0.2);
+}
+
+/* For Firefox */
+@-moz-document url-prefix() {
+  .word-list-selector select,
+  .word-list-selector select option {
+    font-family: "custom", monospace !important;
+  }
+}
+
+/* For Chrome/Safari */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .word-list-selector select,
+  .word-list-selector select option {
+    font-family: "custom", monospace !important;
+  }
+}

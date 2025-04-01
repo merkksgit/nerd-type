@@ -1,3 +1,4 @@
+// Modified version of functions-zen.js
 let totalTimeSpent = 0;
 let currentWordIndex = 0;
 let nextWordIndex = 0;
@@ -12,9 +13,58 @@ let correctKeystrokes = 0;
 let gameEnded = false;
 let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
 let isUsernameModalOpen = false;
+let words = [];
 
-import { words } from "./words-fin.js";
+const wordListDisplayNames = {
+  english: "🇬🇧 ",
+  finnish: "🇫🇮 ",
+  swedish: "🇸🇪 ",
+  programming: "🖥️ ",
+  nightmare: "💀 ",
+};
+
+// Import the tips and word list manager
 import { tips } from "./tips.js";
+import {
+  loadWordList,
+  createWordListSelector,
+  currentLanguage,
+} from "./word-list-manager.js";
+
+// Load words when the script initializes
+async function initializeGame() {
+  // Load the selected word list
+  words = await loadWordList(currentLanguage);
+
+  // After words are loaded, set up the UI
+  setupUI();
+
+  // Initialize event listeners and other game elements
+  initializeEventListeners();
+  initializeRotatingTips();
+  displayPreviousResults();
+}
+
+// Set up the UI elements, including the word list selector
+function setupUI() {
+  // Add the word list selector to the game area
+  const gameContainer = document.getElementById("game");
+  const buttonsContainer = document.getElementById("buttons");
+
+  // Create a container for the word list selector and position it above the buttons
+  const selectorContainer = document.createElement("div");
+  selectorContainer.style.marginTop = "20px"; // Add margin to move it down
+  selectorContainer.style.marginBottom = "10px"; // Add some space below it too
+  gameContainer.insertBefore(selectorContainer, buttonsContainer);
+  createWordListSelector(selectorContainer);
+
+  // Set the initial word if words are loaded
+  if (words.length > 0) {
+    const nextWordDiv = document.getElementById("nextWord");
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    nextWordDiv.textContent = randomTip;
+  }
+}
 
 // Tips rotation
 let tipsRotationInterval = null;
@@ -51,10 +101,10 @@ function initializeRotatingTips() {
   }, 5000); // Change tip every x seconds
 }
 
-// Track modal state
-document.addEventListener("DOMContentLoaded", function () {
+// Initialize event listeners
+function initializeEventListeners() {
+  // Track modal state
   const usernameModal = document.getElementById("usernameModal");
-
   if (usernameModal) {
     usernameModal.addEventListener("show.bs.modal", () => {
       isUsernameModalOpen = true;
@@ -64,26 +114,163 @@ document.addEventListener("DOMContentLoaded", function () {
       isUsernameModalOpen = false;
     });
   }
-});
 
-// Handle all keydown events
-document.addEventListener("keydown", (event) => {
-  // Handle username input Enter key
-  if (event.key === "Enter" && isUsernameModalOpen) {
-    event.preventDefault();
-    event.stopPropagation();
-    handleUsernameConfirmation();
-    return;
+  // Handle all keydown events
+  document.addEventListener("keydown", (event) => {
+    // Handle username input Enter key
+    if (event.key === "Enter" && isUsernameModalOpen) {
+      event.preventDefault();
+      event.stopPropagation();
+      handleUsernameConfirmation();
+      return;
+    }
+
+    // Handle game controls
+    if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
+      startGame();
+    }
+    if (event.key === "Enter" && event.ctrlKey) {
+      location.reload();
+    }
+  });
+
+  // Scoreboard toggle functionality
+  const toggleScoreboardBtn = document.getElementById("toggleScoreboard");
+  if (toggleScoreboardBtn) {
+    toggleScoreboardBtn.addEventListener("click", function () {
+      const container = document.getElementById("scoreboardContainer");
+      const button = this;
+      container.classList.toggle("hidden");
+      if (container.classList.contains("hidden")) {
+        button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
+      } else {
+        button.innerHTML = '<i class="fa-solid fa-trophy"></i> Hide Scoreboard';
+      }
+      localStorage.setItem(
+        "scoreboardHidden",
+        container.classList.contains("hidden"),
+      );
+    });
   }
 
-  // Handle game controls
-  if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
-    startGame();
+  // Reset button
+  const resetBtn = document.getElementById("resetBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      location.reload();
+    });
   }
-  if (event.key === "Enter" && event.ctrlKey) {
-    location.reload();
+
+  // Start button
+  const startButton = document.getElementById("startButton");
+  if (startButton) {
+    startButton.addEventListener("click", startGame);
   }
-});
+
+  // User input field
+  const userInput = document.getElementById("userInput");
+  if (userInput) {
+    userInput.addEventListener("input", function (e) {
+      if (!hasStartedTyping && e.target.value.length > 0) {
+        hasStartedTyping = true;
+        gameStartTime = Date.now();
+      }
+      checkInput(e);
+    });
+  }
+
+  // Clear results button
+  const clearResultsBtn = document.getElementById("clearResultsBtn");
+  if (clearResultsBtn) {
+    clearResultsBtn.addEventListener("click", function () {
+      localStorage.removeItem("gameResults");
+      localStorage.removeItem("highestAchievements");
+      const resultsContainer = document.getElementById("previousResults");
+      if (resultsContainer) {
+        resultsContainer.innerHTML = "";
+      }
+
+      const customAlertModal = document.getElementById("customAlertModal");
+      if (customAlertModal) {
+        const modal = new bootstrap.Modal(customAlertModal);
+        const modalBody = customAlertModal.querySelector(".modal-body");
+        const modalHeader = customAlertModal.querySelector(".modal-title");
+
+        // Set up terminal-style header
+        modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/user.data/]$`;
+
+        const terminalLines = [
+          "> INITIALIZING DELETION SEQUENCE...",
+          "> ACCESSING SCOREBOARD DATABASE...",
+          "> PREPARING DATA PURGE...",
+          "> ================================",
+          "> EXECUTING COMMANDS:",
+          "  └─ rm scoreboard.data",
+          "  └─ rm achievements.data",
+          `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
+          "> ================================",
+          "> LOCAL STORAGE CLEARED_",
+          "> PRESS [ENTER] OR [CLOSE] TO CONFIRM",
+          "> END OF TRANSMISSION_",
+        ];
+
+        let currentLine = 0;
+        let modalContent = "";
+
+        modalBody.innerHTML = '<pre class="terminal-output"></pre>';
+
+        function typeNextLine() {
+          if (currentLine < terminalLines.length) {
+            modalContent += terminalLines[currentLine] + "\n";
+            modalBody.querySelector(".terminal-output").innerHTML =
+              modalContent;
+            currentLine++;
+            setTimeout(typeNextLine, 150);
+          }
+        }
+
+        modal.show();
+        typeNextLine();
+
+        // Set up the event listeners for the modal
+        setupClearResultsModal();
+
+        document
+          .getElementById("clrResults")
+          .addEventListener("click", function () {
+            location.reload();
+          });
+      }
+    });
+  }
+
+  // Setup username related items
+  const changeUsernameBtn = document.getElementById("changeUsername");
+  const confirmUsernameBtn = document.getElementById("confirmUsername");
+
+  if (changeUsernameBtn) {
+    changeUsernameBtn.addEventListener("click", showUsernameModal);
+  }
+
+  if (confirmUsernameBtn) {
+    confirmUsernameBtn.addEventListener("click", handleUsernameConfirmation);
+  }
+
+  if (!localStorage.getItem("nerdtype_username")) {
+    showUsernameModal();
+  }
+
+  // Initialize scoreboard visibility state
+  const scoreboardContainer = document.getElementById("scoreboardContainer");
+  const scoreboardToggleBtn = document.getElementById("toggleScoreboard");
+  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
+
+  if (isHidden && scoreboardContainer && scoreboardToggleBtn) {
+    scoreboardContainer.classList.add("hidden");
+    scoreboardToggleBtn.innerHTML =
+      '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
+  }
+}
 
 function showUsernameModal() {
   const modal = new bootstrap.Modal(document.getElementById("usernameModal"));
@@ -123,63 +310,6 @@ function handleUsernameConfirmation() {
   }
 }
 
-// Initialize event listeners
-document.addEventListener("DOMContentLoaded", function () {
-  const changeUsernameBtn = document.getElementById("changeUsername");
-  const confirmUsernameBtn = document.getElementById("confirmUsername");
-
-  initializeRotatingTips();
-  if (changeUsernameBtn) {
-    changeUsernameBtn.addEventListener("click", showUsernameModal);
-  }
-
-  const nextWordDiv = document.getElementById("nextWord");
-  const randomTip = tips[Math.floor(Math.random() * tips.length)];
-  nextWordDiv.textContent = randomTip;
-
-  if (changeUsernameBtn) {
-    changeUsernameBtn.addEventListener("click", showUsernameModal);
-  }
-
-  if (confirmUsernameBtn) {
-    confirmUsernameBtn.addEventListener("click", handleUsernameConfirmation);
-  }
-
-  if (!localStorage.getItem("nerdtype_username")) {
-    showUsernameModal();
-  }
-
-  // Scoreboard initialization
-  const container = document.getElementById("scoreboardContainer");
-  const button = document.getElementById("toggleScoreboard");
-  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
-
-  if (isHidden && container && button) {
-    container.classList.add("hidden");
-    button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
-  }
-
-  displayPreviousResults();
-});
-
-// Scoreboard toggle functionality
-document
-  .getElementById("toggleScoreboard")
-  .addEventListener("click", function () {
-    const container = document.getElementById("scoreboardContainer");
-    const button = this;
-    container.classList.toggle("hidden");
-    if (container.classList.contains("hidden")) {
-      button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
-    } else {
-      button.innerHTML = '<i class="fa-solid fa-trophy"></i> Hide Scoreboard';
-    }
-    localStorage.setItem(
-      "scoreboardHidden",
-      container.classList.contains("hidden"),
-    );
-  });
-
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");
   progressBar.classList.add("flash");
@@ -187,12 +317,6 @@ function flashProgress() {
     progressBar.classList.remove("flash");
   }, 400);
 }
-
-document.getElementById("resetBtn")?.addEventListener("click", () => {
-  location.reload();
-});
-
-document.getElementById("startButton").addEventListener("click", startGame);
 
 function startGame() {
   if (tipsRotationInterval) {
@@ -262,14 +386,6 @@ function updateProgressBar() {
   document.getElementById("progressPercentage").textContent =
     "Progress " + Math.floor(progressPercentage) + "%";
 }
-
-document.getElementById("userInput").addEventListener("input", function (e) {
-  if (!hasStartedTyping && e.target.value.length > 0) {
-    hasStartedTyping = true;
-    gameStartTime = Date.now();
-  }
-  checkInput(e);
-});
 
 function validateTimeFormat(timeStr) {
   const timeRegex = /^([0-9]{1,2}):([0-5][0-9])$/;
@@ -465,8 +581,8 @@ function setupFormEventListeners(gameOverModal) {
         // Close the modal
         gameOverModal.hide();
 
-        // Redirect to your animation page
-        window.location.href = "./animation.html"; // Change this to your actual animation page URL
+        // Redirect to animation page
+        window.location.href = "./animation.html";
       }
     });
   }
@@ -477,13 +593,16 @@ function showGameOverModal(message) {
   const accuracy = calculateAccuracy();
   const totalTime = calculateTotalTime();
 
+  const languageName =
+    currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
+
   document.getElementById("gameOverModalLabel").textContent =
     `[${playerUsername}@PENTAGON-CORE:~]$`;
 
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
-    "> MODE: ZEN",
+    `> MODE: ZEN (${languageName})`,
     `> USER: ${playerUsername}`,
     `> STATUS: ${message}`,
     "> ================================",
@@ -570,6 +689,7 @@ function saveResult(wpm, totalTime, accuracy) {
     accuracy,
     date: new Date().toLocaleString("en-GB"),
     mode: "Zen Mode",
+    wordList: currentLanguage, // Add the word list info to results
   });
   localStorage.setItem("gameResults", JSON.stringify(results));
 }
@@ -584,10 +704,17 @@ function displayPreviousResults() {
 
   results.forEach((result) => {
     const resultItem = document.createElement("li");
+
+    // Use the mapping to get a friendly display name for the word list
+    const wordListName = result.wordList
+      ? wordListDisplayNames[result.wordList] || result.wordList
+      : "";
+    const wordListInfo = wordListName ? ` ${wordListName}` : "";
+
     if (result.mode === "Zen Mode") {
-      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
     } else {
-      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     }
     resultsContainer.appendChild(resultItem);
   });
@@ -621,63 +748,8 @@ function handleClearResultsKeyPress(event) {
   }
 }
 
-// Modify the clear results button click event
-clearResultsBtn.addEventListener("click", function () {
-  localStorage.removeItem("gameResults");
-  localStorage.removeItem("highestAchievements");
-  const resultsContainer = document.getElementById("previousResults");
-  if (resultsContainer) {
-    resultsContainer.innerHTML = "";
-  }
+// Initialize the game when the DOM is fully loaded
+document.addEventListener("DOMContentLoaded", initializeGame);
 
-  const customAlertModal = document.getElementById("customAlertModal");
-  if (customAlertModal) {
-    const modal = new bootstrap.Modal(customAlertModal);
-    const modalBody = customAlertModal.querySelector(".modal-body");
-    const modalHeader = customAlertModal.querySelector(".modal-title");
-
-    // Set up terminal-style header
-    modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/user.data/]$`;
-
-    const terminalLines = [
-      "> INITIALIZING DELETION SEQUENCE...",
-      "> ACCESSING SCOREBOARD DATABASE...",
-      "> PREPARING DATA PURGE...",
-      "> ================================",
-      "> EXECUTING COMMANDS:",
-      "  └─ rm scoreboard.data",
-      "  └─ rm achievements.data",
-      `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
-      "> ================================",
-      "> LOCAL STORAGE CLEARED_",
-      "> PRESS [ENTER] OR [CLOSE] TO CONFIRM", // Updated text to indicate Enter key support
-      "> END OF TRANSMISSION_",
-    ];
-
-    let currentLine = 0;
-    let modalContent = "";
-
-    modalBody.innerHTML = '<pre class="terminal-output"></pre>';
-
-    function typeNextLine() {
-      if (currentLine < terminalLines.length) {
-        modalContent += terminalLines[currentLine] + "\n";
-        modalBody.querySelector(".terminal-output").innerHTML = modalContent;
-        currentLine++;
-        setTimeout(typeNextLine, 150);
-      }
-    }
-
-    modal.show();
-    typeNextLine();
-
-    // Set up the event listeners for the modal
-    setupClearResultsModal();
-
-    document
-      .getElementById("clrResults")
-      .addEventListener("click", function () {
-        location.reload();
-      });
-  }
-});
+// Export anything that might be needed by other modules
+export { words, startGame, displayPreviousResults };

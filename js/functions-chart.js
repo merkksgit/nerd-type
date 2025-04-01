@@ -1,3 +1,11 @@
+const wordListDisplayNames = {
+  english: "🇬🇧 ",
+  finnish: "🇫🇮 ",
+  swedish: "🇸🇪 ",
+  programming: "🖥️ ",
+  nightmare: "💀 ",
+};
+
 // Toggle functionality for all sections
 function setupToggle(
   buttonId,
@@ -174,11 +182,16 @@ function displayPreviousResults() {
 
   results.forEach((result) => {
     const resultItem = document.createElement("li");
+
+    const wordListName = result.wordList
+      ? wordListDisplayNames[result.wordList] || result.wordList
+      : "";
+    const wordListInfo = wordListName ? `  ${wordListName}` : "";
+
     if (result.mode === "Zen Mode") {
-      resultItem.textContent = `${result.date} | ${result.username || "runner"} | Zen Mode | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
     } else {
-      const score = result.timeLeft ? result.timeLeft * 256 : "N/A";
-      resultItem.textContent = `${result.date} | ${result.username || "runner"} | Classic Mode | Score: ${score}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     }
     resultsContainer.appendChild(resultItem);
   });

@@ -26,6 +26,14 @@ import { words } from "./words-nm.js";
 import Terminal from "./terminal.js";
 import { tips } from "./tips.js";
 
+const wordListDisplayNames = {
+  english: "🇬🇧 ",
+  finnish: "🇫🇮 ",
+  swedish: "🇸🇪 ",
+  programming: "🖥️ ",
+  nightmare: "💀 ",
+};
+
 // Tips rotation
 let tipsRotationInterval = null;
 
@@ -565,6 +573,7 @@ function saveResult(timeLeft, wpm, accuracy) {
   // Current achievements
   const currentSpeedTier = getSpeedTier(wpm);
   const currentAccuracyRank = getAccuracyRank(accuracy);
+  const currentWordList = "nightmare";
 
   // Update highest achievements if needed
   const speedTierOrder = [
@@ -609,6 +618,7 @@ function saveResult(timeLeft, wpm, accuracy) {
       date: new Date().toLocaleString("en-GB"),
       mode: "Classic Mode",
       score: timeLeft * 256,
+      wordList: currentWordList,
     });
   } else {
     results.push({
@@ -618,6 +628,7 @@ function saveResult(timeLeft, wpm, accuracy) {
       date: new Date().toLocaleString("en-GB"),
       mode: "Zen Mode",
       score: totalCharactersTyped * 10,
+      wordList: currentWordList,
     });
   }
 
@@ -638,10 +649,16 @@ function displayPreviousResults() {
 
   results.forEach((result) => {
     const resultItem = document.createElement("li");
+
+    const wordListName = result.wordList
+      ? wordListDisplayNames[result.wordList] || result.wordList
+      : "";
+    const wordListInfo = wordListName ? `  ${wordListName}` : "";
+
     if (result.mode === "Classic Mode") {
-      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     } else {
-      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
     }
     resultsContainer.appendChild(resultItem);
   });
