@@ -79,14 +79,13 @@ function createWordListSelector(container) {
   });
 
   // Change language modal
-  // Change language modal
   select.addEventListener("change", async function () {
     const selectedLanguage = this.value;
     // Only reload if necessary
     if (selectedLanguage !== currentLanguage) {
       localStorage.setItem("nerdtype_wordlist", selectedLanguage);
 
-      // Create modal content using the same style as game over modal
+      // Create modal content
       const modalElement = document.getElementById("gameOverModal");
       const modalLabel = document.getElementById("gameOverModalLabel");
       const modalBody = modalElement.querySelector(".modal-body");

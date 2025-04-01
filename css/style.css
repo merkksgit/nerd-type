@@ -856,3 +856,17 @@ a:active .bi-c-circle {
     font-family: "custom", monospace !important;
   }
 }
+
+/* Custom dropdown arrow styling */
+.word-list-selector select {
+  /* Remove default arrow */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  /* Custom arrow using background-image */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%237aa2f7' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z' fill='%237aa2f7'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 50%;
+  background-size: 30px 30px; /* Arrow size */
+}
