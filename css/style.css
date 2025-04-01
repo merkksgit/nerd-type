@@ -769,7 +769,6 @@ a:active .bi-c-circle {
   width: 10px;
   height: 20px;
   background-color: #ffffff;
-  margin-left: 5px;
   animation: blink 1s infinite;
   position: relative;
   top: 3px;
