@@ -239,24 +239,6 @@ div#wordToType {
   border-color: #7aa2f7 !important;
 }
 
-/* Full-width navbar on mobile */
-@media (max-width: 992px) {
-  nav.navbar {
-    width: 100vw !important;
-    margin-left: calc(-50vw + 50%) !important;
-    margin-right: calc(-50vw + 50%) !important;
-  }
-
-  .navbar .container-fluid {
-    padding-left: 5% !important;
-    padding-right: 5% !important;
-  }
-
-  #mainmenu {
-    width: 100% !important;
-  }
-}
-
 div#content {
   display: flex;
   justify-content: center;
