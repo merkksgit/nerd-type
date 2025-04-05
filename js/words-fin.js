@@ -22,7 +22,6 @@ export const words = [
   "puolukka",
   "saippua",
   "tanssia",
-  "öljy",
   "tietokone",
   "oppilas",
   "raahata",
