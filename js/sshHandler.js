@@ -111,7 +111,7 @@ class SSHHandler {
     const modalLabelElement = document.getElementById("terminalModalLabel");
     if (modalLabelElement) {
       this.originalModalLabel = modalLabelElement.textContent;
-      modalLabelElement.textContent = "admin@cortanaosterminalv1.17";
+      modalLabelElement.textContent = "admin@10.0.13.37";
     }
 
     // Save the original command handler
