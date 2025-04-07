@@ -171,10 +171,6 @@ function initializeEventListeners() {
   const userInput = document.getElementById("userInput");
   if (userInput) {
     userInput.addEventListener("input", function (e) {
-      if (!hasStartedTyping && e.target.value.length > 0) {
-        hasStartedTyping = true;
-        gameStartTime = Date.now();
-      }
       checkInput(e);
     });
   }
@@ -328,10 +324,10 @@ function startGame() {
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
   updateWordDisplay();
-  totalTimeInterval = setInterval(totalTimeCount, 1000);
+  // Timer will start only when typing begins
   document.getElementById("userInput").focus();
   gameStartTime = null;
-  sessionStartTime = new Date();
+  sessionStartTime = null; // Don't start the session time yet
   hasStartedTyping = false;
   wordsTyped = [];
   totalCharactersTyped = 0;
@@ -399,6 +395,15 @@ function checkInput(e) {
   const currentWord = words[currentWordIndex];
   const wordDisplay = document.getElementById("wordToType");
   const chars = wordDisplay.children;
+
+  // Start the timer on first input
+  if (!hasStartedTyping && e.target.value.length > 0) {
+    hasStartedTyping = true;
+    gameStartTime = Date.now();
+    sessionStartTime = new Date();
+    // Only now start the timer interval
+    totalTimeInterval = setInterval(totalTimeCount, 1000);
+  }
 
   // Check for secret code word (wp you found it, nerd)
   if (userInput.toLowerCase() === "iddqd" && !gameEnded) {
