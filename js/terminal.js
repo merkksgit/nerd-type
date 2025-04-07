@@ -32,11 +32,13 @@ class Terminal {
       ping: this.pingSystem.bind(this),
       cat: this.catFile.bind(this),
       refresh: this.refresh.bind(this),
+      ssh: this.sshConnect.bind(this),
     };
 
     this.commandHistory = [];
     this.historyIndex = -1;
-    this.sessionCommandHistory = []; // New array to track commands in current session
+    this.sessionCommandHistory = [];
+
     this.sessionCommandHistory.push({
       command: "ssh admin@10.0.13.37",
       timestamp: "13:37:00",
@@ -885,6 +887,38 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
           `Error: File '${filename}' not found`,
           "command-error",
         );
+    }
+  }
+
+  sshConnect(args) {
+    if (args.length === 0) {
+      this.printToTerminal("Usage: ssh user@hostname", "command-error");
+      return;
+    }
+
+    const connection = args[0];
+
+    // Check if it's the easter egg connection
+    if (connection === "admin@10.0.13.37") {
+      // Import the SSH handler dynamically
+      import("./sshHandler.js")
+        .then((module) => {
+          const SSHHandler = module.default;
+          const sshHandler = new SSHHandler(this);
+          sshHandler.connect();
+        })
+        .catch((error) => {
+          console.error("Error loading SSH module:", error);
+          this.printToTerminal(
+            "Connection failed: Server unreachable",
+            "command-error",
+          );
+        });
+    } else {
+      this.printToTerminal(
+        `ssh: connect to host ${connection} port 22: Connection refused`,
+        "command-error",
+      );
     }
   }
 
