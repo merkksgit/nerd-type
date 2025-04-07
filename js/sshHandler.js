@@ -174,7 +174,7 @@ class SSHHandler {
           "command-success",
         );
         this.terminal.printToTerminal(
-          "Congratulations on discovering this easter egg.",
+          "70laef2f5e8d1c4b7a0b3c6d9e2f5g8h1i4j7k0l3m6n9o2p5q8r1s4t",
           "command-success",
         );
         return;
