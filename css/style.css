@@ -112,6 +112,8 @@ footer {
   color: #7aa2f7;
 }
 
+#returnToGameBtn,
+#openTerminalBtn,
 #clearResultsBtn,
 #startButton,
 #confirmUsername,
@@ -132,6 +134,8 @@ footer {
   margin-bottom: 5em;
 }
 
+#returnToGameBtn:hover,
+#openTerminalBtn:hover,
 #clearResultsBtn:hover,
 #startButton:hover,
 #confirmUsername:hover,
@@ -142,20 +146,6 @@ footer {
     0 0 8px rgba(122, 162, 247, 0.5);
   transform: translateY(-2px);
   background-color: #2a3047;
-}
-
-#returnToGameBtn,
-#openTerminalBtn {
-  color: #7aa2f7;
-  background-color: #24283b;
-  border: none;
-  padding: 10px 30px;
-  margin-top: 3em;
-}
-
-#returnToGameBtn:hover,
-#openTerminalBtn:hover {
-  color: #ff9e64;
 }
 
 #changeUsername {
