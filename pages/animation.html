@@ -102,68 +102,63 @@
   </head>
   <!-- Content -->
   <body class="d-flex flex-column h-100" onload="init();">
-    <div class="container-fluid flex-grow-1 pt-5">
-      <!-- Character and speech bubble -->
-      <div class="container-fluid flex-grow-1">
-        <div class="row justify-content-center">
+    <div class="container-fluid d-flex flex-column flex-grow-1 pt-5">
+      <!-- Character and animation -->
+      <div class="row justify-content-center">
+        <div
+          id="animation_container"
+          style="background-color: #24283b; width: 168px; height: 175px"
+        >
+          <canvas
+            id="canvas"
+            width="168"
+            height="175"
+            style="
+              position: absolute;
+              display: block;
+              background-color: #24283b;
+            "
+          ></canvas>
           <div
-            id="animation_container"
-            style="background-color: #24283b; width: 168px; height: 175px"
+            id="dom_overlay_container"
+            style="
+              pointer-events: none;
+              overflow: hidden;
+              width: 168px;
+              height: 175px;
+              position: absolute;
+              left: 0px;
+              top: 0px;
+              display: block;
+            "
+          ></div>
+        </div>
+      </div>
+      <!-- Speech bubble -->
+      <div class="row justify-content-center mt-3">
+        <div class="col-md-8 col-lg-6">
+          <div class="speech-bubble">
+            <div id="typed-text"></div>
+            <div class="cursor"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Spacer to push buttons to bottom -->
+      <div class="flex-grow-1"></div>
+      <div class="row justify-content-center mb-4">
+        <div class="col-auto d-flex flex-column flex-md-row gap-1 gap-md-3">
+          <button id="openTerminalBtn" class="btn btn-primary">
+            Open Terminal
+          </button>
+          <a
+            href="./zenmode.html"
+            id="returnToGameBtn"
+            class="btn btn-secondary"
+            >Return to Game</a
           >
-            <canvas
-              id="canvas"
-              width="168"
-              height="175"
-              style="
-                position: absolute;
-                display: block;
-                background-color: #24283b;
-              "
-            ></canvas>
-            <div
-              id="dom_overlay_container"
-              style="
-                pointer-events: none;
-                overflow: hidden;
-                width: 168px;
-                height: 175px;
-                position: absolute;
-                left: 0px;
-                top: 0px;
-                display: block;
-              "
-            ></div>
-          </div>
-        </div>
-
-        <!-- Speech bubble -->
-        <div class="row justify-content-center mt-3">
-          <div class="col-md-8 col-lg-6">
-            <div class="speech-bubble">
-              <div id="typed-text"></div>
-              <div class="cursor"></div>
-            </div>
-          </div>
-        </div>
-        <!-- Terminal and Return buttons -->
-        <div class="row justify-content-center mt-4 mb-4">
-          <div class="col-auto d-flex flex-column flex-md-row gap-1 gap-md-3">
-            <button id="openTerminalBtn" class="btn btn-primary">
-              Open Terminal
-            </button>
-            <a
-              href="./zenmode.html"
-              id="returnToGameBtn"
-              class="btn btn-secondary"
-              >Return to Game
-            </a>
-            <a
-              href="./chart.html"
-              id="returnToGameBtn"
-              class="btn btn-secondary"
-              >ScoreChart
-            </a>
-          </div>
+          <a href="./chart.html" id="returnToGameBtn" class="btn btn-secondary"
+            >ScoreChart</a
+          >
         </div>
       </div>
     </div>
