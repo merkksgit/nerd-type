@@ -324,10 +324,10 @@ function startGame() {
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
   updateWordDisplay();
-  // Timer will start only when typing begins
+  // Timer will start when typing begins
   document.getElementById("userInput").focus();
   gameStartTime = null;
-  sessionStartTime = null; // Don't start the session time yet
+  sessionStartTime = null;
   hasStartedTyping = false;
   wordsTyped = [];
   totalCharactersTyped = 0;
