@@ -95,15 +95,15 @@ class SSHHandler {
       "command-success",
     );
     this.terminal.printToTerminal(
-      "Welcome to CortanaOS v1.17",
+      `<span style="color:#c3e88d">Welcome to CortanaOS v1.17</span>`,
       "command-success",
     );
     this.terminal.printToTerminal(
-      "Last login: Thu Jan 13 13:37:00 2022",
+      `<span style="color:#c3e88d">Last login: Thu Jan 13 13:37:00 2022</span>`,
       "command-success",
     );
     this.terminal.printToTerminal(
-      "Type 'help' for available commands",
+      `<span style="color:#c3e88d">Type 'help' for available commands</span>`,
       "command-success",
     );
 
