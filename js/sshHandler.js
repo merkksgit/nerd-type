@@ -102,10 +102,10 @@ class SSHHandler {
       `<span style="color:#c3e88d">Last login: Thu Jan 13 13:37:00 2022</span>`,
       "command-success",
     );
-    this.terminal.printToTerminal(
-      `<span style="color:#c3e88d">Type 'help' for available commands</span>`,
-      "command-success",
-    );
+    // this.terminal.printToTerminal(
+    //   `<span style="color:#c3e88d">Type 'help' for available commands</span>`,
+    //   "command-success",
+    // );
 
     // Change the window title
     const modalLabelElement = document.getElementById("terminalModalLabel");
