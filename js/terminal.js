@@ -30,13 +30,18 @@ class Terminal {
       "ls -la": this.listFilesDetailed.bind(this),
       rm: this.removeFile.bind(this),
       ping: this.pingSystem.bind(this),
-      ls: this.listFiles.bind(this),
       cat: this.catFile.bind(this),
       refresh: this.refresh.bind(this),
     };
 
     this.commandHistory = [];
     this.historyIndex = -1;
+    this.sessionCommandHistory = []; // New array to track commands in current session
+    this.sessionCommandHistory.push({
+      command: "ssh admin@10.0.13.37",
+      timestamp: "13:37:00",
+      user: "unknown",
+    });
 
     // Preset modes
     this.gameModes = {
@@ -369,6 +374,7 @@ class Terminal {
       "scoreboard.data",
       "achievements.data",
       "godmode.txt",
+      "history",
     ];
 
     // Handle mode command completion
@@ -414,6 +420,15 @@ class Terminal {
 
     this.commandHistory.push(input);
     this.historyIndex = this.commandHistory.length;
+
+    // Add to session history with timestamp
+    const now = new Date();
+    const timestamp = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
+    this.sessionCommandHistory.push({
+      command: input,
+      timestamp: timestamp,
+      user: localStorage.getItem("nerdtype_username") || "runner",
+    });
 
     // Special handling for 'ls -la' command
     const trimmedInput = input.trim().toLowerCase();
@@ -570,6 +585,7 @@ Available commands:
     const fileText = `
 <span style="color:#7dcfff">achievements.data</span>
 <span style="color:#7dcfff">godmode.txt</span>
+<span style="color:#7dcfff">history</span>
 <span style="color:#7dcfff">scoreboard.data</span>`;
     this.printToTerminal(fileText, "command-success");
   }
@@ -625,6 +641,9 @@ Available commands:
     // Create DOOM release date with leet time
     const doomDate = new Date(1993, 11, 10, 13, 37); // December 10, 1993 13:37
 
+    // Create history file date as current date
+    const currentDate = new Date();
+
     // Format date like Unix ls -la (MMM DD HH:mm)
     const formatDate = (date) => {
       const months = [
@@ -676,10 +695,19 @@ Available commands:
         date: formatDate(doomDate),
         name: "godmode.txt",
       },
+      {
+        perms: "-rw-r--r--",
+        links: 1,
+        owner: currentUser,
+        group: "users",
+        size: String(this.sessionCommandHistory.length * 40),
+        date: formatDate(currentDate),
+        name: "history",
+      },
     ];
 
     // Header of the listing
-    const header = "total 3";
+    const header = "total 4";
     this.printToTerminal(header, "command-success");
 
     // Print each file details
@@ -791,6 +819,34 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
         this.printToTerminal(secretText, "command-success");
         break;
 
+      case "history":
+        if (this.sessionCommandHistory.length === 0) {
+          this.printToTerminal(
+            "No command history found for this session",
+            "command-error",
+          );
+          return;
+        }
+
+        this.printToTerminal("Command History:", "command-success");
+        this.printToTerminal(
+          "===================================",
+          "command-success",
+        );
+
+        this.sessionCommandHistory.forEach((entry, index) => {
+          this.printToTerminal(
+            `${index + 1}  [${entry.timestamp}] ${entry.user}: ${entry.command}`,
+            "command-success",
+          );
+        });
+
+        this.printToTerminal(
+          "===================================",
+          "command-success",
+        );
+        break;
+
       default:
         this.printToTerminal(
           `Error: File '${filename}' not found`,
@@ -813,6 +869,10 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
       case "achievements.data":
         localStorage.removeItem("highestAchievements");
         this.printToTerminal("Achievement data deleted", "command-success");
+        break;
+      case "history":
+        this.sessionCommandHistory = [];
+        this.printToTerminal("Command history cleared", "command-success");
         break;
       case "godmode.txt":
         this.printToTerminal(
@@ -936,7 +996,7 @@ j5jnaäx4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
     const mode = args[0];
     if (!this.gameModes[mode]) {
       this.printToTerminal(
-        "Error: Invalid mode. Available modes: classic, hard, practice, speedrunner, speedrunner",
+        "Error: Invalid mode. Available modes: classic, hard, practice, speedrunner",
         "command-error",
       );
       return;
