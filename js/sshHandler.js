@@ -170,7 +170,7 @@ class SSHHandler {
 
       if (input.trim().toLowerCase() === "cat secret_file.txt") {
         this.terminal.printToTerminal(
-          "YOU FOUND THE SECRET MESSAGE!",
+          "Content coming in the future",
           "command-success",
         );
         this.terminal.printToTerminal(
