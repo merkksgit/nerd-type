@@ -247,7 +247,7 @@ class Terminal {
     if (isMobile) {
       // Return a simplified welcome message without the ASCII art
       return `
-<span style="color:#bb9af7">Welcome to NerdType Terminal v1.0.1</span>
+<span style="color:#bb9af7">NerdType Terminal v1.0.1</span>
 <span style="color:#7dcfff">Type 'help' for available commands</span>
 `;
     } else {
