@@ -363,14 +363,21 @@ score h3 {
 .chart-container {
   position: relative;
   width: 100%;
-  height: 400px; /* Adjust this value as needed */
+  height: 500px;
+  background-color: #1f2335 !important;
+  border: 2px solid #3b4261 !important;
+  border-radius: 1px;
+  box-shadow: 0 0 15px rgba(59, 66, 97, 0.5);
+  padding: 30px;
+  margin-bottom: 20px;
 }
 
 #scoreChart,
 #zenChart {
   width: 100%;
-  height: 500px;
+  height: calc(100% - 40px); /* Account for padding */
   max-width: 1400px;
+  background-color: #1f2335;
 }
 
 /* Terminal-style progress */
