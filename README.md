@@ -58,4 +58,4 @@ This project began as a school assignment but has evolved into an ongoing journe
 
 ## 📧 Contact
 
-For feedback or suggestions, reach out via email: merkks@protonmail.com
+For feedback or suggestions, reach out via email: nerdtype-contact@protonmail.com
