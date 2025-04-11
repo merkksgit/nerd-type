@@ -76,7 +76,6 @@ class SSHHandler {
   }
 
   handleSuccessfulLogin() {
-    // Display the ASCII art logo
     const cortanaLogo = `
  ▄████▄   ▒█████   ██▀███  ▄▄▄█████▓ ▄▄▄       ███▄    █  ▄▄▄      
 ▒██▀ ▀█  ▒██▒  ██▒▓██ ▒ ██▒▓  ██▒ ▓▒▒████▄     ██ ▀█   █ ▒████▄    
