@@ -375,9 +375,35 @@ score h3 {
 #scoreChart,
 #zenChart {
   width: 100%;
-  height: calc(100% - 40px); /* Account for padding */
+  height: calc(100% - 40px);
   max-width: 1400px;
   background-color: #1f2335;
+}
+
+/* Chart padding for medium screens */
+@media (max-width: 991px) {
+  .chart-container {
+    padding: 20px;
+    height: 400px;
+  }
+
+  #scoreChart,
+  #zenChart {
+    height: calc(100% - 30px);
+  }
+}
+
+/* Chart padding for small mobile devices */
+@media (max-width: 576px) {
+  .chart-container {
+    padding: 10px;
+    height: 350px;
+  }
+
+  #scoreChart,
+  #zenChart {
+    height: calc(100% - 20px);
+  }
 }
 
 /* Terminal-style progress */
