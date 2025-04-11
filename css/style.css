@@ -74,6 +74,7 @@ footer {
 
 .terms-link:hover,
 .achievement-link:hover,
+#email-link:hover,
 #archive-link:hover {
   text-decoration: none;
   color: #3d59a1;
