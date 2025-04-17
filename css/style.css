@@ -208,17 +208,95 @@ div#wordToType {
   opacity: 0;
 }
 
-.navbar .navbar-nav .nav-link {
-  color: #545c7e;
-  font-size: 1.1em;
-}
-
 .nav-link:hover {
   color: #9d7cd8 !important;
 }
 
 #current {
   color: #bb9af7 !important;
+}
+
+/* Navbar styling */
+.navbar .navbar-nav .nav-link {
+  color: #545c7e;
+  font-size: 1.1em;
+  position: relative;
+  padding: 0.5rem 0.8rem;
+  margin: 0 0.2rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+/* Hover effect with underline animation */
+.navbar .navbar-nav .nav-link:hover {
+  color: #9d7cd8 !important;
+  text-shadow: 0 0 8px rgba(157, 124, 216, 0.4);
+}
+
+.navbar .navbar-nav .nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #7aa2f7;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+  transform-origin: right;
+  opacity: 0.7;
+}
+
+.navbar .navbar-nav .nav-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Current page indicator */
+#current {
+  color: #bb9af7 !important;
+  position: relative;
+}
+
+#current::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #ff9e64;
+  transform: scaleX(1);
+  box-shadow: 0 0 8px rgba(255, 158, 100, 0.5);
+}
+
+/* Add a subtle glow effect when nav items are active */
+.navbar .navbar-nav .nav-link:active {
+  text-shadow: 0 0 12px rgba(157, 124, 216, 0.7);
+  transform: translateY(1px);
+}
+
+/* Make the navbar more responsive */
+@media (max-width: 991px) {
+  .navbar .navbar-nav .nav-link {
+    padding: 0.6rem 1rem;
+    border-left: 3px solid transparent;
+  }
+
+  .navbar .navbar-nav .nav-link:hover {
+    border-left: 3px solid #7aa2f7;
+    background-color: rgba(31, 35, 53, 0.5);
+  }
+
+  #current {
+    border-left: 3px solid #ff9e64 !important;
+    background-color: rgba(31, 35, 53, 0.7);
+  }
+
+  .navbar .navbar-nav .nav-link::after,
+  #current::after {
+    display: none;
+  }
 }
 
 /* Custom hamburger icon color */
