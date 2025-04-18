@@ -34,6 +34,34 @@
       src="https://kit.fontawesome.com/fc21fca839.js"
       crossorigin="anonymous"
     ></script>
+    <style>
+      .terminal-command {
+        font-family: custom;
+        background-color: #1f2335;
+        color: #c3e88d;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin: 0 2px;
+      }
+
+      .command-description {
+        margin-bottom: 10px;
+      }
+
+      .terminal-output-example {
+        font-family: custom;
+        background-color: #1f2335;
+        color: #7aa2f7;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 15px 0;
+        white-space: pre-wrap;
+      }
+
+      .command-section {
+        margin-bottom: 20px;
+      }
+    </style>
   </head>
   <!-- Content -->
   <body class="d-flex flex-column h-100">
@@ -144,7 +172,6 @@ $ </pre
         <div class="row justify-content-center">
           <article class="col-md-8 p-3 pt-1">
             <div class="wpm-info">
-              <!-- Content remains the same -->
               <h4>How words per minute (WPM) is calculated</h4>
               <p>
                 In NerdType, your typing speed is measured in Words Per Minute
@@ -250,6 +277,18 @@ $ </pre
                 The accuracy calculation includes all characters typed, even if
                 you later correct them with backspace. This encourages precise
                 typing rather than rapid typing-and-correcting.
+              </p>
+              <h4>Terminal</h4>
+              <p>
+                NerdType features a terminal interface that allows you to
+                customize your gaming experience, manage files, and perform
+                various system operations. The terminal is available exclusively
+                in ClassicMode.
+              </p>
+              <p>
+                To access the terminal during a ClassicMode game, type
+                <span class="terminal-command">terminal</span> in the word input
+                field. The game will pause and the terminal interface will open.
               </p>
               <h4>Achievements</h4>
               <p>
