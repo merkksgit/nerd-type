@@ -527,25 +527,25 @@ class Terminal {
   showHelp() {
     const helpText = `
 Available commands:
-  setwords &lt;number&gt;              - Set number of words for win (default: 30)
-  setbonus &lt;number&gt;              - Set bonus energy per word (default: 3)
-  setinitial &lt;number&gt;            - Set starting energy (default: 10)
-  setgoal &lt;number&gt;               - Set goal percentage (default: 100)
-  mode &lt;type&gt;                    - Set game mode (classic/hard/practice/speedrunner)
-  rm &lt;filename&gt;                  - Delete file contents
-  status                         - Show current game settings
-  listmodes                      - List all available game modes
-  su &lt;username&gt;                  - Switch user
-  cat &lt;filename&gt;                 - Display file contents
-  ls                             - List available files
-  ls -la                         - List files with detailed information
-  time                           - Show current time and date
-  cls                            - Clear terminal screen
-  ping                           - Test neural connection latency
-  refresh                        - Clear screen and show welcome art
-  reset                          - Reset all settings to default
-  exit                           - Close terminal
-  help                           - Show this help message`;
+setwords &lt;number&gt;              - Set number of words for win (default: 30)
+setbonus &lt;number&gt;              - Set bonus energy per word (default: 3)
+setinitial &lt;number&gt;            - Set starting energy (default: 10)
+setgoal &lt;number&gt;               - Set goal percentage (default: 100)
+mode &lt;type&gt;                    - Set game mode (classic/hard/practice/speedrunner)
+rm &lt;filename&gt;                  - Delete file contents
+status                         - Show current game settings
+listmodes                      - List all available game modes
+su &lt;username&gt;                  - Switch user
+cat &lt;filename&gt;                 - Display file contents
+ls                             - List available files
+ls -la                         - List files with detailed information
+time                           - Show current time and date
+cls                            - Clear terminal screen
+ping                           - Test neural connection latency
+refresh                        - Clear screen and show welcome art
+reset                          - Reset all settings to default
+exit                           - Close terminal
+help                           - Show this help message`;
     this.printToTerminal(helpText, "command-success");
   }
 
