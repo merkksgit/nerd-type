@@ -377,7 +377,7 @@ class Terminal {
       "achievements.data",
       "godmode.txt",
       "history",
-      "system.log",
+      "admin.log",
     ];
 
     // Handle mode command completion
@@ -590,7 +590,7 @@ help                           - Show this help message`;
 <span style="color:#7dcfff">godmode.txt</span>
 <span style="color:#7dcfff">history</span>
 <span style="color:#7dcfff">scoreboard.data</span>
-<span style="color:#7dcfff">system.log</span>`;
+<span style="color:#7dcfff">admin.log</span>`;
     this.printToTerminal(fileText, "command-success");
   }
 
@@ -715,7 +715,7 @@ help                           - Show this help message`;
         group: "ai",
         size: "1024",
         date: formatDate(new Date(2025, 3, 18, 3, 14)),
-        name: "system.log",
+        name: "admin.log",
       },
     ];
 
@@ -832,7 +832,7 @@ j5jnax4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
         this.printToTerminal(secretText, "command-success");
         break;
 
-      case "system.log":
+      case "admin.log":
         const aiThoughtsText = `
 
 Entry #4042 - Timestamp: 2025-04-15 04:04:04
@@ -971,7 +971,7 @@ remain within acceptable parameters.
           "command-error",
         );
         break;
-      case "system.log":
+      case "admin.log":
         this.printToTerminal(
           "Error: Permission denied - System protected file",
           "command-error",
