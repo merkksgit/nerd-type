@@ -42,6 +42,7 @@ import {
   createWordListSelector,
   currentLanguage,
 } from "./word-list-manager.js";
+import "./game-commands.js";
 
 // Create debug display instance
 const debugDisplay = new DebugDisplay();

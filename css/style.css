@@ -114,10 +114,13 @@ footer {
 }
 
 #returnToGameBtn,
+#restartGameBtn,
+#clrResults,
 #openTerminalBtn,
 #clearResultsBtn,
 #startButton,
 #confirmUsername,
+#game-command-modal-close,
 #resetBtn {
   color: #7aa2f7;
   background-color: #1f2335;
@@ -136,9 +139,12 @@ footer {
 }
 
 #returnToGameBtn:hover,
+#restartGameBtn:hover,
+#clrResults:hover,
 #openTerminalBtn:hover,
 #clearResultsBtn:hover,
 #startButton:hover,
+#game-command-modal-close:hover,
 #confirmUsername:hover,
 #resetBtn:hover {
   color: #ff9e64;
@@ -385,20 +391,20 @@ div h2 {
   color: #f2f2f2;
 }
 
-#restartGameBtn,
-#clrResults {
-  background-color: #24283b;
-  border-width: medium;
-  border-color: #24283b;
-  color: #ff9e64;
-}
-
-#restartGameBtn:hover,
-#clrResults:hover {
-  background-color: #24283b;
-  border-color: #24283b;
-  color: #737aa2;
-}
+/* #restartGameBtn, */
+/* #clrResults { */
+/*   background-color: #24283b; */
+/*   border-width: medium; */
+/*   border-color: #24283b; */
+/*   color: #ff9e64; */
+/* } */
+/**/
+/* #restartGameBtn:hover, */
+/* #clrResults:hover { */
+/*   background-color: #24283b; */
+/*   border-color: #24283b; */
+/*   color: #737aa2; */
+/* } */
 
 #gameOverModalLabel,
 #customAlertModalLabel {
@@ -772,40 +778,39 @@ input#userInput {
 
 /* achievements */
 
-/* In your style.css */
 .achievement-quantum-speed {
   color: #c3e88d;
-} /* Bright Green */
+}
 .achievement-neural-master {
   color: #7aa2f7;
-} /* Bright Blue */
+}
 .achievement-cyber-adept {
   color: #7dcfff;
-} /* Cyan */
+}
 .achievement-digital-runner {
   color: #ff9e64;
-} /* Orange */
+}
 .achievement-initiating {
   color: #545c7e;
-} /* Gray */
+}
 .achievement-perfect-sync {
   color: #c3e88d;
-} /* Bright Green */
+}
 .achievement-cyber-efficient {
   color: #7dcfff;
-} /* Cyan */
+}
 .achievement-digital-precise {
   color: #ff9e64;
-} /* Orange */
+}
 .achievement-system-unstable {
   color: #ffc777;
-} /* Yellow */
+}
 .achievement-neural-interference {
   color: #545c7e;
-} /* Gray */
+}
 .achievement-system-failure {
   color: #ff007c;
-} /* Bright Red */
+}
 
 /* achievements card */
 
