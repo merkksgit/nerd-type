@@ -181,7 +181,6 @@ class GameCommands {
         .game-command-notification {
           padding: 10px 15px;
           margin-bottom: 10px;
-          border-radius: 5px;
           color: white;
           max-width: 350px;
           animation: fadeInOut 3s forwards;
