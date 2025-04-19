@@ -1,9 +1,7 @@
 // game-commands.js - Handles direct game commands input from the user input field
 // These allow players to use terminal commands directly in the game
-
 // This module allows using terminal commands directly in the game input field
 // All commands need to start with a slash (/)
-
 class GameCommands {
   constructor() {
     // Load saved settings from localStorage or use defaults
@@ -110,6 +108,39 @@ class GameCommands {
     const command = parts[0].toLowerCase();
     const args = parts.slice(1);
 
+    // Reset command mode state
+    if (typeof window.isCommandMode !== "undefined") {
+      window.isCommandMode = false;
+
+      // If we were tracking command start time, adjust game start time
+      if (
+        typeof window.commandStartTime !== "undefined" &&
+        window.commandStartTime &&
+        typeof window.gameStartTime !== "undefined" &&
+        window.gameStartTime
+      ) {
+        const commandDuration = Date.now() - window.commandStartTime;
+        window.gameStartTime += commandDuration; // Adjust for command mode duration
+      }
+
+      // Reset command start time
+      if (typeof window.commandStartTime !== "undefined") {
+        window.commandStartTime = null;
+      }
+    }
+
+    // Resume all timers if they were paused and game is active
+    if (
+      typeof window.wasPaused !== "undefined" &&
+      typeof window.hasStartedTyping !== "undefined"
+    ) {
+      if (window.wasPaused && window.hasStartedTyping) {
+        window.countDownInterval = setInterval(window.countDown, 800);
+        window.totalTimeInterval = setInterval(window.totalTimeCount, 1000);
+        window.wasPaused = false;
+      }
+    }
+
     // Check if the command exists
     if (this.commands[command]) {
       this.commands[command](args);
@@ -166,6 +197,7 @@ class GameCommands {
     let notificationContainer = document.getElementById(
       "game-command-notifications",
     );
+
     if (!notificationContainer) {
       notificationContainer = document.createElement("div");
       notificationContainer.id = "game-command-notifications";
@@ -223,6 +255,7 @@ class GameCommands {
   // Command implementations
   setWords(args) {
     const wordCount = parseInt(args[0]);
+
     if (isNaN(wordCount) || wordCount < 1) {
       this.showNotification(
         "Error: Please provide a valid number of words",
@@ -230,9 +263,11 @@ class GameCommands {
       );
       return;
     }
+
     this.gameSettings.timeLimit = wordCount;
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
     this.showNotification(`Word goal set to ${wordCount} words`, "success");
+
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
         detail: { setting: "timeLimit", value: wordCount },
@@ -242,6 +277,7 @@ class GameCommands {
 
   setBonus(args) {
     const bonus = parseInt(args[0]);
+
     if (isNaN(bonus) || bonus < 0) {
       this.showNotification(
         "Error: Please provide a valid bonus time",
@@ -249,9 +285,11 @@ class GameCommands {
       );
       return;
     }
+
     this.gameSettings.bonusTime = bonus;
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
     this.showNotification(`Bonus energy set to ${bonus} units`, "success");
+
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
         detail: { setting: "bonusTime", value: bonus },
@@ -261,6 +299,7 @@ class GameCommands {
 
   setInitial(args) {
     const initial = parseInt(args[0]);
+
     if (isNaN(initial) || initial < 1) {
       this.showNotification(
         "Error: Please provide a valid initial time",
@@ -268,9 +307,11 @@ class GameCommands {
       );
       return;
     }
+
     this.gameSettings.initialTime = initial;
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
     this.showNotification(`Initial energy set to ${initial} units`, "success");
+
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
         detail: { setting: "initialTime", value: initial },
@@ -280,6 +321,7 @@ class GameCommands {
 
   setGoal(args) {
     const goal = parseInt(args[0]);
+
     if (isNaN(goal) || goal < 1 || goal > 100) {
       this.showNotification(
         "Error: Please provide a valid goal percentage (1-100)",
@@ -287,9 +329,11 @@ class GameCommands {
       );
       return;
     }
+
     this.gameSettings.goalPercentage = goal;
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
     this.showNotification(`Goal set to ${goal}%`, "success");
+
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
         detail: { setting: "goalPercentage", value: goal },
@@ -299,6 +343,7 @@ class GameCommands {
 
   setMode(args) {
     const mode = args[0];
+
     if (!this.gameModes[mode]) {
       this.showNotification(
         "Error: Invalid mode. Available modes: classic, hard, practice, speedrunner",
@@ -310,7 +355,6 @@ class GameCommands {
     const settings = this.gameModes[mode];
     this.gameSettings = { ...settings, currentMode: mode };
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
-
     this.showNotification(`Switched to ${mode} mode`, "success");
 
     // First dispatch the mode change
@@ -333,7 +377,6 @@ class GameCommands {
   showHelp() {
     const helpText = `
 Available commands:
-
 /setwords       - Set number of words for win
 /setbonus       - Set bonus energy per word
 /setinitial     - Set starting energy
@@ -344,12 +387,12 @@ Available commands:
 /reset          - Reset to default settings
 /help           - Show this help message
 `;
-
     this.showInfoModal("Game Commands Help", helpText);
   }
 
   showStatus() {
     const settings = this.gameSettings;
+
     if (!settings) {
       this.showNotification("Error: Could not load game settings", "error");
       return;
@@ -365,7 +408,6 @@ INITIAL ENERGY: ${settings.initialTime || 10} units
 GOAL PERCENTAGE: ${settings.goalPercentage || 100}%
 ================================
 `;
-
     this.showInfoModal("Game Status", statusText);
   }
 

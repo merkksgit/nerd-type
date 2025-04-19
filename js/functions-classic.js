@@ -25,6 +25,11 @@ let words = [];
 let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
 let isUsernameModalOpen = false;
 
+// New variables for command mode
+let isCommandMode = false;
+let wasPaused = false;
+let commandStartTime = null; // Track when we entered command mode
+
 const wordListDisplayNames = {
   english: "🇬🇧 ",
   finnish: "🇫🇮 ",
@@ -71,18 +76,25 @@ function setupUI() {
   const selectorContainer = document.createElement("div");
   selectorContainer.style.marginTop = "20px"; // Add margin to move it down
   selectorContainer.style.marginBottom = "10px"; // Add some space below it too
-
   gameContainer.insertBefore(selectorContainer, buttonsContainer);
-
   createWordListSelector(selectorContainer);
 }
 
+// Add this after existing updateDebugInfo function
 function updateDebugInfo() {
   const accuracy =
     totalKeystrokes > 0
       ? ((correctKeystrokes / totalKeystrokes) * 100).toFixed(1)
       : "0.0";
   const wrongKeystrokes = totalKeystrokes - correctKeystrokes;
+
+  // Calculate time properly, accounting for command mode
+  let effectiveTime = gameStartTime ? Date.now() - gameStartTime : 0;
+  if (isCommandMode && commandStartTime) {
+    const commandDuration = Date.now() - commandStartTime;
+    effectiveTime -= commandDuration;
+  }
+
   debugDisplay.updateInfo({
     currentWord: hasStartedTyping ? words[currentWordIndex] : "",
     wordLength: hasStartedTyping ? words[currentWordIndex]?.length || 0 : 0,
@@ -94,6 +106,8 @@ function updateDebugInfo() {
     correctKeystrokes,
     wrongKeystrokes,
     totalKeystrokes,
+    isCommandMode,
+    effectiveTime,
   });
 }
 
@@ -145,7 +159,6 @@ function initializeEventListeners() {
     usernameModal.addEventListener("show.bs.modal", () => {
       isUsernameModalOpen = true;
     });
-
     usernameModal.addEventListener("hide.bs.modal", () => {
       isUsernameModalOpen = false;
     });
@@ -164,6 +177,7 @@ function initializeEventListeners() {
     if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
       startGame();
     }
+
     if (event.key === "Enter" && event.ctrlKey) {
       location.reload();
     }
@@ -172,6 +186,7 @@ function initializeEventListeners() {
   // Listen for terminal settings changes
   window.addEventListener("gameSettingsChanged", function (e) {
     const { setting, value } = e.detail;
+
     switch (setting) {
       case "timeLimit":
         gameSettings.timeLimit = value;
@@ -191,6 +206,7 @@ function initializeEventListeners() {
         gameSettings.currentMode = value;
         break;
     }
+
     localStorage.setItem("terminalSettings", JSON.stringify(gameSettings));
   });
 
@@ -200,7 +216,6 @@ function initializeEventListeners() {
     toggleScoreboardBtn.addEventListener("click", function () {
       const container = document.getElementById("scoreboardContainer");
       const button = this;
-
       container.classList.toggle("hidden");
 
       if (container.classList.contains("hidden")) {
@@ -238,6 +253,7 @@ function initializeEventListeners() {
         hasStartedTyping = true;
         gameStartTime = Date.now();
       }
+
       checkInput(e);
     });
   }
@@ -251,12 +267,15 @@ function initializeEventListeners() {
   // Setup username related items
   const changeUsernameBtn = document.getElementById("changeUsername");
   const confirmUsernameBtn = document.getElementById("confirmUsername");
+
   if (changeUsernameBtn) {
     changeUsernameBtn.addEventListener("click", showUsernameModal);
   }
+
   if (confirmUsernameBtn) {
     confirmUsernameBtn.addEventListener("click", handleUsernameConfirmation);
   }
+
   if (!localStorage.getItem("nerdtype_username")) {
     showUsernameModal();
   }
@@ -265,6 +284,7 @@ function initializeEventListeners() {
   const scoreboardContainer = document.getElementById("scoreboardContainer");
   const scoreboardToggleBtn = document.getElementById("toggleScoreboard");
   const isHidden = localStorage.getItem("scoreboardHidden") === "true";
+
   if (isHidden && scoreboardContainer && scoreboardToggleBtn) {
     scoreboardContainer.classList.add("hidden");
     scoreboardToggleBtn.innerHTML =
@@ -297,9 +317,11 @@ function handleUsernameConfirmation() {
     playerUsername = username;
     localStorage.setItem("nerdtype_username", username);
     document.getElementById("usernameDisplay").textContent = playerUsername;
+
     const modalInstance = bootstrap.Modal.getInstance(
       document.getElementById("usernameModal"),
     );
+
     if (modalInstance) {
       modalInstance.hide();
       isUsernameModalOpen = false;
@@ -312,8 +334,10 @@ function handleUsernameConfirmation() {
 
 function flashProgress() {
   const progressBar = document.querySelector(".progress.terminal");
+
   if (progressBar) {
     progressBar.classList.add("flash");
+
     setTimeout(() => {
       progressBar.classList.remove("flash");
     }, 400);
@@ -321,20 +345,26 @@ function flashProgress() {
 }
 
 function startGame() {
+  // Reset command mode
+  isCommandMode = false;
+  wasPaused = false;
+
   if (tipsRotationInterval) {
     clearInterval(tipsRotationInterval);
     tipsRotationInterval = null;
   }
+
   // Load latest settings
   const settings =
     JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+
   timeLeft = settings.initialTime;
   bonusTime = settings.bonusTime;
   goalPercentage = settings.goalPercentage;
   totalTimeSpent = 0;
-
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
+
   updateWordDisplay();
   updateTimer();
 
@@ -421,6 +451,7 @@ function updateProgressBar() {
     JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
   const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
   const progressPercentage = (totalTimeSpent / goalTime) * 100;
+
   const progressBar = document.getElementById("progressBar");
   const progressText = document.getElementById("progressPercentage");
 
@@ -439,8 +470,48 @@ function checkInput(e) {
   const userInput = e.target.value;
   const currentWord = words[currentWordIndex];
   const wordDisplay = document.getElementById("wordToType");
-
   if (!wordDisplay) return;
+
+  // Check if entering command mode (starts with /)
+  if (userInput.startsWith("/") && !isCommandMode) {
+    isCommandMode = true;
+    commandStartTime = Date.now(); // Track when command mode started
+
+    // Pause all game timers when entering command mode
+    if (countDownInterval) {
+      clearInterval(countDownInterval);
+      countDownInterval = null;
+      if (totalTimeInterval) {
+        clearInterval(totalTimeInterval);
+        totalTimeInterval = null;
+      }
+      wasPaused = true;
+    }
+    return; // Exit early to prevent normal word checking
+  }
+  // Check if exiting command mode (no longer starts with /)
+  else if (!userInput.startsWith("/") && isCommandMode) {
+    isCommandMode = false;
+
+    // If we tracked command start time, adjust gameStartTime to compensate
+    if (commandStartTime && gameStartTime) {
+      const commandDuration = Date.now() - commandStartTime;
+      gameStartTime += commandDuration; // Adjust game start time by command duration
+    }
+    commandStartTime = null;
+
+    // Resume all timers if it was previously running
+    if (wasPaused && hasStartedTyping) {
+      countDownInterval = setInterval(countDown, 800);
+      totalTimeInterval = setInterval(totalTimeCount, 1000);
+      wasPaused = false;
+    }
+  }
+
+  // Skip normal processing while in command mode
+  if (isCommandMode) {
+    return;
+  }
 
   // Check for debug command
   if (userInput.toLowerCase() === "debug") {
@@ -458,7 +529,6 @@ function checkInput(e) {
   }
 
   const chars = wordDisplay.children;
-
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
     if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
@@ -494,8 +564,19 @@ function checkInput(e) {
 
 function calculateWPM() {
   if (!gameStartTime) return { wpm: 0, accuracy: "0%" };
+
   const endTime = Date.now();
-  const timeElapsed = Math.max(0.08, (endTime - gameStartTime) / 60000);
+  let timeElapsed = (endTime - gameStartTime) / 60000;
+
+  // Adjust for time spent in command mode
+  if (isCommandMode && commandStartTime) {
+    const commandDuration = (endTime - commandStartTime) / 60000;
+    timeElapsed -= commandDuration; // Remove command time from calculation
+  }
+
+  // Ensure minimum time to avoid division by zero
+  timeElapsed = Math.max(0.08, timeElapsed);
+
   const CHARS_PER_WORD = 5;
 
   const accuracy =
@@ -565,7 +646,6 @@ function showGameOverModal(message) {
 
   let currentLine = 0;
   let modalContent = "";
-
   const gameOverModal = new bootstrap.Modal(
     document.getElementById("gameOverModal"),
   );
@@ -586,7 +666,6 @@ function showGameOverModal(message) {
 
   gameOverModal.show();
   typeNextLine();
-
   saveResult(timeLeft, stats.wpm, stats.accuracy);
   displayPreviousResults();
 
@@ -615,15 +694,18 @@ function showGameOverModal(message) {
 }
 
 window.addEventListener("terminalClosed", function () {
-  // Restart intervals
-  countDownInterval = setInterval(countDown, 800);
-  totalTimeInterval = setInterval(totalTimeCount, 1000);
+  // Don't restart intervals if we're in command mode
+  if (!isCommandMode) {
+    countDownInterval = setInterval(countDown, 800);
+    totalTimeInterval = setInterval(totalTimeCount, 1000);
+  }
 });
 
 function saveResult(timeLeft, wpm, accuracy) {
   if (timeLeft === 0) {
     return;
   }
+
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
   // Get current highest achievements
@@ -712,7 +794,6 @@ function displayPreviousResults() {
 
   results.forEach((result) => {
     const resultItem = document.createElement("li");
-
     const wordListName = result.wordList
       ? wordListDisplayNames[result.wordList] || result.wordList
       : "";
@@ -723,6 +804,7 @@ function displayPreviousResults() {
     } else {
       resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
     }
+
     resultsContainer.appendChild(resultItem);
   });
 }
@@ -730,6 +812,7 @@ function displayPreviousResults() {
 function clearResults() {
   localStorage.removeItem("gameResults");
   localStorage.removeItem("highestAchievements");
+
   const resultsContainer = document.getElementById("previousResults");
   if (resultsContainer) {
     resultsContainer.innerHTML = "";
@@ -761,7 +844,6 @@ function clearResults() {
 
     let currentLine = 0;
     let modalContent = "";
-
     modalBody.innerHTML = '<pre class="terminal-output"></pre>';
 
     function typeNextLine() {
@@ -778,7 +860,6 @@ function clearResults() {
 
     // Set up the event listeners for the modal
     setupClearResultsModal();
-
     document
       .getElementById("clrResults")
       .addEventListener("click", function () {

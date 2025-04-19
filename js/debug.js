@@ -134,13 +134,24 @@ export class DebugDisplay {
       gameStartTime,
       wordsTyped,
       hasStartedTyping,
+      isCommandMode,
+      effectiveTime,
     } = gameData;
 
-    const currentTime = gameStartTime ? (Date.now() - gameStartTime) / 1000 : 0;
+    // Use effective time if provided (accounts for command mode pauses)
+    // Otherwise calculate as before
+    let currentTime;
+    if (effectiveTime !== undefined) {
+      currentTime = effectiveTime / 1000;
+    } else {
+      currentTime = gameStartTime ? (Date.now() - gameStartTime) / 1000 : 0;
+    }
+
     const timeInMinutes = currentTime / 60;
-    const currentWPM = gameStartTime
-      ? Math.round(totalCharactersTyped / 5 / timeInMinutes)
-      : 0;
+    const currentWPM =
+      gameStartTime && timeInMinutes > 0
+        ? Math.round(totalCharactersTyped / 5 / timeInMinutes)
+        : 0;
 
     this.debugContent.innerHTML = `
       Current Word: ${currentWord} (${wordLength} chars)<br>
@@ -154,7 +165,8 @@ export class DebugDisplay {
       Wrong Keys: ${gameData.wrongKeystrokes}<br>
       Total Keys: ${gameData.totalKeystrokes}<br>
       Timer Started: ${gameStartTime ? "Yes" : "No"}<br>
-      Typing Started: ${hasStartedTyping ? "Yes" : "No"}
+      Typing Started: ${hasStartedTyping ? "Yes" : "No"}<br>
+      Command Mode: ${isCommandMode ? "Yes" : "No"}
     `;
   }
 }
