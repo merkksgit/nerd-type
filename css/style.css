@@ -305,6 +305,33 @@ div#wordToType {
   }
 }
 
+.terminal-command {
+  font-family: custom;
+  background-color: #1f2335;
+  color: #9d7cd8;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin: 0 2px;
+}
+
+.command-description {
+  margin-bottom: 10px;
+}
+
+.terminal-output-example {
+  font-family: custom;
+  background-color: #1f2335;
+  color: #7aa2f7;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 15px 0;
+  white-space: pre-wrap;
+}
+
+.command-section {
+  margin-bottom: 20px;
+}
+
 /* Custom hamburger icon color */
 .navbar-toggler-icon {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%237aa2f7' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
