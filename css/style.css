@@ -307,6 +307,7 @@ div#wordToType {
 
 .terminal-command {
   font-family: custom;
+  font-size: 0.8em;
   background-color: #1f2335;
   color: #9d7cd8;
   padding: 4px 8px;
