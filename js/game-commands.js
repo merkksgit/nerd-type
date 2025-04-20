@@ -520,7 +520,7 @@ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%<
     this.showInfoModal("Game Status", statusText);
   }
 
-  // Modify your showInfoModal method to render HTML
+  // Modify showInfoModal method to render HTML
   showInfoModal(title, content) {
     // Create a modal for displaying longer info
     let modalContainer = document.getElementById("game-command-modal");
