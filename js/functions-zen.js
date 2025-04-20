@@ -607,7 +607,7 @@ function showGameOverModal(message) {
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
-    `> MODE: ZEN (${languageName})`,
+    `> MODE: ZEN [${languageName}]`,
     `> USER: ${playerUsername}`,
     `> STATUS: ${message}`,
     "> ================================",

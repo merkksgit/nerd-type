@@ -724,7 +724,7 @@ function showGameOverModal(message) {
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
-    `> MODE: ${modeName} (${languageName})`,
+    `> MODE: ${modeName} [${languageName}]`,
     `> USER: ${playerUsername}`,
     `> STATUS: ${message}`,
     "> ================================",
