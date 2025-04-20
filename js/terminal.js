@@ -76,6 +76,33 @@ class Terminal {
     this.initializeTerminal();
   }
 
+  checkIfCustomMode() {
+    // Get current settings (excluding currentMode)
+    const currentSettings = {
+      timeLimit: this.gameSettings.timeLimit,
+      bonusTime: this.gameSettings.bonusTime,
+      initialTime: this.gameSettings.initialTime,
+      goalPercentage: this.gameSettings.goalPercentage,
+    };
+
+    // Convert to string for comparison
+    const currentSettingsString = JSON.stringify(currentSettings);
+
+    // Check against preset modes
+    const matchingMode = Object.entries(this.gameModes).find(
+      ([_, modeSettings]) =>
+        JSON.stringify(modeSettings) === currentSettingsString,
+    );
+
+    // If found a matching preset, return its name
+    if (matchingMode) {
+      return matchingMode[0];
+    }
+
+    // Otherwise it's custom
+    return "custom";
+  }
+
   initializeTerminal() {
     const modalHTML = `
             <div class="modal fade" id="terminalModal" tabindex="-1">
@@ -772,13 +799,13 @@ help                           - Show this help message`;
           return;
         }
         results.reverse().forEach((result) => {
-          if (result.mode === "Classic Mode") {
+          // Handle all possible mode types including custom
+          if (result.mode !== "Zen Mode") {
             this.printToTerminal(
               `${result.date} | ${result.username} | ${result.mode} | Score: ${result.score}, WPM: ${result.wpm}, Accuracy: ${result.accuracy}`,
               "command-success",
             );
-          }
-          if (result.mode === "Zen Mode") {
+          } else {
             this.printToTerminal(
               `${result.date} | ${result.username} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm}, Accuracy: ${result.accuracy}%`,
               "command-success",
@@ -1025,17 +1052,37 @@ remain within acceptable parameters.
       );
       return;
     }
+
     this.gameSettings.timeLimit = wordCount;
+
+    // Check if this creates a custom mode
+    const currentMode = this.checkIfCustomMode();
+    this.gameSettings.currentMode = currentMode;
+
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
+
+    // Show mode in notification only if it's custom
+    const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
     this.printToTerminal(
-      `Success: Word goal set to ${wordCount} words`,
+      `Success: Word goal set to ${wordCount} words${modeText}`,
       "command-success",
     );
+
+    // First dispatch the setting change
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
         detail: { setting: "timeLimit", value: wordCount },
       }),
     );
+
+    // If it's a custom mode, then update the mode
+    if (currentMode === "custom") {
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "currentMode", value: "custom" },
+        }),
+      );
+    }
   }
 
   setBonus(args) {
@@ -1047,17 +1094,37 @@ remain within acceptable parameters.
       );
       return;
     }
+
     this.gameSettings.bonusTime = bonus;
+
+    // Check if this creates a custom mode
+    const currentMode = this.checkIfCustomMode();
+    this.gameSettings.currentMode = currentMode;
+
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
+
+    // Show mode in notification only if it's custom
+    const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
     this.printToTerminal(
-      `Success: Bonus energy set to ${bonus} units`,
+      `Success: Bonus energy set to ${bonus} units${modeText}`,
       "command-success",
     );
+
+    // First dispatch the setting change
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
         detail: { setting: "bonusTime", value: bonus },
       }),
     );
+
+    // If it's a custom mode, then update the mode
+    if (currentMode === "custom") {
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "currentMode", value: "custom" },
+        }),
+      );
+    }
   }
 
   setInitial(args) {
@@ -1069,17 +1136,37 @@ remain within acceptable parameters.
       );
       return;
     }
+
     this.gameSettings.initialTime = initial;
+
+    // Check if this creates a custom mode
+    const currentMode = this.checkIfCustomMode();
+    this.gameSettings.currentMode = currentMode;
+
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
+
+    // Show mode in notification only if it's custom
+    const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
     this.printToTerminal(
-      `Success: Initial energy set to ${initial} units`,
+      `Success: Initial energy set to ${initial} units${modeText}`,
       "command-success",
     );
+
+    // First dispatch the setting change
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
         detail: { setting: "initialTime", value: initial },
       }),
     );
+
+    // If it's a custom mode, then update the mode
+    if (currentMode === "custom") {
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "currentMode", value: "custom" },
+        }),
+      );
+    }
   }
 
   setGoal(args) {
@@ -1091,14 +1178,37 @@ remain within acceptable parameters.
       );
       return;
     }
+
     this.gameSettings.goalPercentage = goal;
+
+    // Check if this creates a custom mode
+    const currentMode = this.checkIfCustomMode();
+    this.gameSettings.currentMode = currentMode;
+
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
-    this.printToTerminal(`Success: Goal set to ${goal}%`, "command-success");
+
+    // Show mode in notification only if it's custom
+    const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
+    this.printToTerminal(
+      `Success: Goal set to ${goal}%${modeText}`,
+      "command-success",
+    );
+
+    // First dispatch the setting change
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
         detail: { setting: "goalPercentage", value: goal },
       }),
     );
+
+    // If it's a custom mode, then update the mode
+    if (currentMode === "custom") {
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "currentMode", value: "custom" },
+        }),
+      );
+    }
   }
 
   switchUser(args) {

@@ -4,7 +4,13 @@ function displayScoreGraph() {
 
   // Filter only Classic Mode results
   const classicResults = results.filter(
-    (result) => result.mode === "Classic Mode" || !result.mode,
+    (result) =>
+      result.mode === "Classic Mode" ||
+      result.mode === "Custom Mode" ||
+      result.mode === "Speedrunner Mode" ||
+      result.mode === "Hard Mode" ||
+      result.mode === "Practice Mode" ||
+      !result.mode,
   );
 
   // If no classic results, don't display anything

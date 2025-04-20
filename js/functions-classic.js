@@ -1,3 +1,4 @@
+// functions-classic.js
 // Load saved settings or use defaults
 let gameSettings = JSON.parse(localStorage.getItem("terminalSettings")) || {
   timeLimit: 30,
@@ -49,6 +50,53 @@ import {
 } from "./word-list-manager.js";
 import "./game-commands.js";
 
+// Define preset modes (should match those in game-commands.js)
+const presetModes = {
+  classic: {
+    timeLimit: 30,
+    bonusTime: 3,
+    initialTime: 10,
+    goalPercentage: 100,
+  },
+  hard: {
+    timeLimit: 20,
+    bonusTime: 2,
+    initialTime: 8,
+    goalPercentage: 100,
+  },
+  practice: {
+    timeLimit: 60,
+    bonusTime: 5,
+    initialTime: 15,
+    goalPercentage: 100,
+  },
+  speedrunner: {
+    timeLimit: 10,
+    bonusTime: 2,
+    initialTime: 8,
+    goalPercentage: 100,
+  },
+};
+
+// Function to check if current settings don't match any preset mode
+function isCustomMode() {
+  // Get current settings
+  const currentSettings = {
+    timeLimit: gameSettings.timeLimit,
+    bonusTime: gameSettings.bonusTime,
+    initialTime: gameSettings.initialTime,
+    goalPercentage: gameSettings.goalPercentage,
+  };
+
+  const currentSettingsString = JSON.stringify(currentSettings);
+
+  // Check if it matches any preset mode
+  return !Object.values(presetModes).some(
+    (presetSettings) =>
+      JSON.stringify(presetSettings) === currentSettingsString,
+  );
+}
+
 // Create debug display instance
 const debugDisplay = new DebugDisplay();
 
@@ -80,7 +128,6 @@ function setupUI() {
   createWordListSelector(selectorContainer);
 }
 
-// Add this after existing updateDebugInfo function
 function updateDebugInfo() {
   const accuracy =
     totalKeystrokes > 0
@@ -183,10 +230,11 @@ function initializeEventListeners() {
     }
   });
 
-  // Listen for terminal settings changes
+  // Listen for terminal settings changes - simplified approach
   window.addEventListener("gameSettingsChanged", function (e) {
     const { setting, value } = e.detail;
 
+    // First update the setting
     switch (setting) {
       case "timeLimit":
         gameSettings.timeLimit = value;
@@ -202,9 +250,36 @@ function initializeEventListeners() {
         gameSettings.goalPercentage = value;
         goalPercentage = value; // Update current game
         break;
-      case "currentMode": // Add this case
+      case "currentMode":
         gameSettings.currentMode = value;
         break;
+    }
+
+    // If we're setting a specific mode, don't override it
+    if (setting === "currentMode") {
+      // Do nothing - mode is already set
+    }
+    // Otherwise check if the current settings match any preset
+    else {
+      // Set to custom if settings don't match any preset
+      if (isCustomMode()) {
+        gameSettings.currentMode = "custom";
+      } else {
+        // Otherwise try to find which preset mode it matches
+        Object.entries(presetModes).forEach(([modeName, presetSettings]) => {
+          if (
+            JSON.stringify(presetSettings) ===
+            JSON.stringify({
+              timeLimit: gameSettings.timeLimit,
+              bonusTime: gameSettings.bonusTime,
+              initialTime: gameSettings.initialTime,
+              goalPercentage: gameSettings.goalPercentage,
+            })
+          ) {
+            gameSettings.currentMode = modeName;
+          }
+        });
+      }
     }
 
     localStorage.setItem("terminalSettings", JSON.stringify(gameSettings));
@@ -619,6 +694,11 @@ function showGameOverModal(message) {
   const languageName =
     currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
 
+  // Get the proper mode name (capitalize first letter)
+  const modeName =
+    gameSettings.currentMode.charAt(0).toUpperCase() +
+    gameSettings.currentMode.slice(1);
+
   if (modalLabel) {
     modalLabel.textContent = `[${playerUsername}@PENTAGON-CORE:~]$`;
   }
@@ -626,7 +706,7 @@ function showGameOverModal(message) {
   const terminalLines = [
     "> INITIALIZING TERMINAL OUTPUT...",
     "> ANALYZING PERFORMANCE DATA...",
-    `> MODE: CLASSIC (${languageName})`,
+    `> MODE: ${modeName} (${languageName})`,
     `> USER: ${playerUsername}`,
     `> STATUS: ${message}`,
     "> ================================",
@@ -753,6 +833,11 @@ function saveResult(timeLeft, wpm, accuracy) {
     highestAchievements.accuracyRank = currentAccuracyRank;
   }
 
+  // Use proper mode name (capitalize first letter)
+  const modeName =
+    gameSettings.currentMode.charAt(0).toUpperCase() +
+    gameSettings.currentMode.slice(1);
+
   // Save results and highest achievements
   if (timeLeft) {
     results.push({
@@ -761,7 +846,7 @@ function saveResult(timeLeft, wpm, accuracy) {
       wpm,
       accuracy,
       date: new Date().toLocaleString("en-GB"),
-      mode: "Classic Mode",
+      mode: modeName + " Mode",
       score: timeLeft * 256,
       wordList: currentLanguage,
     });
@@ -799,7 +884,13 @@ function displayPreviousResults() {
       : "";
     const wordListInfo = wordListName ? `  ${wordListName}` : "";
 
-    if (result.mode === "Classic Mode") {
+    if (
+      result.mode === "Classic Mode" ||
+      result.mode === "Custom Mode" ||
+      result.mode === "Speedrunner Mode" ||
+      result.mode === "Hard Mode" ||
+      result.mode === "Practice Mode"
+    ) {
       resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     } else {
       resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;

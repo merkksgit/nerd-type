@@ -43,7 +43,7 @@ export class DebugDisplay {
     div.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
     div.style.color = "#00ff00";
     div.style.fontFamily = "monospace";
-    div.style.fontSize = "18px";
+    div.style.fontSize = "14px";
     div.style.zIndex = "1000";
     div.style.cursor = "move";
     div.style.userSelect = "none";
