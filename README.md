@@ -29,6 +29,8 @@ This project began as a school assignment but has evolved into an ongoing journe
 - **Random Word Selection:** Words are selected randomly from a predefined list, offering a unique challenge every time.
 - **Progress Bar:** Visually track your progress in real-time as you hack the Pentagon.
 - **Interactive Terminal:** Access a custom terminal interface by typing 'terminal' during gameplay. Customize game settings like time limits, bonus time, and completion goals through terminal commands.
+- **Command Mode:** Game timer pauses automatically when typing slash commands (/), allowing you to adjust settings mid-game without losing time.
+- **Custom Settings:** Create your own difficulty by modifying game parameters. The game intelligently detects custom configurations and marks them in your scoreboard.
 - **Automatic Saving:** When you finish a game, your results are saved directly in your browser's local storage. This means that your scores will remain available even if you refresh the page or close the browser.
 - **Score Chart:** View your typing performance history with an interactive score chart. The chart displays your scores and words per minute (WPM) over time, allowing you to track your progress and identify areas for improvement. The chart also includes average score and average WPM lines for quick reference.
 - **Responsive Design:** Built with Bootstrap for smooth performance on various screen sizes, including mobile devices.
@@ -40,14 +42,15 @@ This project began as a school assignment but has evolved into an ongoing journe
 3. Every correctly typed word will restore a bit of energy.
 4. The game ends when your energy runs out or when you successfully hack the Pentagon.
 5. Press **Enter** or the **Reset** button to start a new game.
+6. Enter the command mode with "/" to access quick settings (try "/help" to see all commands).
 
 ## 🎯 Game Modes
 
-- **Programming Mode:** Type programming-related vocabulary.
-- **Suomi (Finnish) Mode:** Practice basic Finnish words.
-- **Svenska (Swedish) Mode:** Practice basic Swedish words.
-- **English Mode:** Type English words.
-- **Nightmare Mode:** A tougher challenge with longer, difficult words and stricter time limits.
+- **Classic Mode:** Standard gameplay with balanced settings.
+- **Hard Mode:** More challenging with tighter time constraints.
+- **Practice Mode:** Extended time limits for learning.
+- **Speedrunner Mode:** Fast-paced mode.
+- **Custom Mode:** Your own personalized settings for a unique challenge.
 - **Zen Mode:** Relaxed game mode with no energy limit.
 
 ## 💻 Technologies Used
