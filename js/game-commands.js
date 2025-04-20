@@ -520,10 +520,24 @@ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%<
     this.showInfoModal("Game Status", statusText);
   }
 
-  // Modify showInfoModal method to render HTML
   showInfoModal(title, content) {
     // Create a modal for displaying longer info
     let modalContainer = document.getElementById("game-command-modal");
+
+    // Get the current username
+    const playerUsername =
+      localStorage.getItem("nerdtype_username") || "runner";
+
+    // Customize path based on command type
+    let terminalPath = "~";
+    if (title === "Game Status") {
+      terminalPath = "~/.config";
+    } else if (title === "Game Commands Help") {
+      terminalPath = "~/docs/manual";
+    }
+
+    // Title
+    const formattedTitle = `[${playerUsername}@PENTAGON-CORE:${terminalPath}]$`;
 
     if (!modalContainer) {
       // Create the modal if it doesn't exist
@@ -532,28 +546,25 @@ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%<
       modalContainer.className = "modal fade";
       modalContainer.tabIndex = "-1";
       modalContainer.role = "dialog";
-
       // Create the basic modal structure
       modalContainer.innerHTML = `
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header border-bottom-0 text-center">
-            <h5 class="modal-title w-100" id="game-command-modal-title"></h5>
-          </div>
-          <div class="modal-body border-top-0 border-bottom-0">
-            <pre id="game-command-modal-content" class="terminal-output"></pre>
-          </div>
-          <div class="modal-footer border-top-0 d-flex justify-content-center" style="background-color: #24283b">
-            <button id="game-command-modal-close" type="button" class="btn btn-primary">
-              Close
-            </button>
-          </div>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header border-bottom-0 text-center">
+          <h5 class="modal-title w-100" id="game-command-modal-title"></h5>
+        </div>
+        <div class="modal-body border-top-0 border-bottom-0">
+          <pre id="game-command-modal-content" class="terminal-output"></pre>
+        </div>
+        <div class="modal-footer border-top-0 d-flex justify-content-center" style="background-color: #24283b">
+          <button id="game-command-modal-close" type="button" class="btn btn-primary">
+            Close
+          </button>
         </div>
       </div>
-    `;
-
+    </div>
+  `;
       document.body.appendChild(modalContainer);
-
       // Add modal close button event listener
       document
         .getElementById("game-command-modal-close")
@@ -568,7 +579,6 @@ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%<
             }, 500);
           }
         });
-
       // Add modal hidden event listener
       modalContainer.addEventListener("hidden.bs.modal", () => {
         this.showNotification("Reloading game...", "info");
@@ -579,8 +589,9 @@ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%<
     }
 
     // Set modal content - use innerHTML instead of textContent
-    document.getElementById("game-command-modal-title").textContent = title;
-    document.getElementById("game-command-modal-content").innerHTML = content; // Changed from textContent to innerHTML
+    document.getElementById("game-command-modal-title").textContent =
+      formattedTitle;
+    document.getElementById("game-command-modal-content").innerHTML = content;
 
     // Show the modal
     const modal = new bootstrap.Modal(
