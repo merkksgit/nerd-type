@@ -500,17 +500,35 @@ function countDown() {
   }
 }
 
+// Function to get a random success message
+function getRandomSuccessMessage() {
+  const messages = [
+    "Database <span style='color:#c3e88d'>CRACKED!</span> Mission accomplished.",
+    "Access <span style='color:#c3e88d'>GRANTED!</span> Hack successful.",
+    "Firewall <span style='color:#c3e88d'>BYPASSED!</span> Target compromised.",
+    "System <span style='color:#c3e88d'>INFILTRATED!</span> Data secured.",
+    "Security <span style='color:#c3e88d'>BREACHED!</span> Objective complete.",
+    "Mainframe <span style='color:#c3e88d'>COMPROMISED!</span> Data secured.",
+    "System core <span style='color:#c3e88d'>BREACHED!</span> Access granted.",
+    "Firewall <span style='color:#c3e88d'>BYPASSED!</span> Systems accessed.",
+    "Network <span style='color:#c3e88d'>HIJACKED!</span> Control established.",
+  ];
+
+  // Get a random index from the messages array
+  const randomIndex = Math.floor(Math.random() * messages.length);
+
+  // Return the randomly selected message
+  return messages[randomIndex];
+}
+
 function totalTimeCount() {
   const settings =
     JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
   const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
-
   if (totalTimeSpent >= goalTime) {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
-    showGameOverModal(
-      "Database <span style='color:#c3e88d'>CRACKED!</span> Mission accomplished.",
-    );
+    showGameOverModal(getRandomSuccessMessage());
   }
 }
 
