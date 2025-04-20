@@ -510,16 +510,17 @@ Available commands:
     const statusText = `
 CURRENT GAME SETTINGS:
 ================================
-MODE: ${settings.currentMode?.toUpperCase() || "CLASSIC"}
-WORDS NEEDED: ${settings.timeLimit || 30}
-BONUS ENERGY: ${settings.bonusTime || 3} units
-INITIAL ENERGY: ${settings.initialTime || 10} units
-GOAL PERCENTAGE: ${settings.goalPercentage || 100}%
+MODE: <span style='color:#ff9e64'>${settings.currentMode?.toUpperCase() || "CLASSIC"}</span>
+WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
+BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
+INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
+GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%</span>
 ================================
 `;
     this.showInfoModal("Game Status", statusText);
   }
 
+  // Modify your showInfoModal method to render HTML
   showInfoModal(title, content) {
     // Create a modal for displaying longer info
     let modalContainer = document.getElementById("game-command-modal");
@@ -534,22 +535,22 @@ GOAL PERCENTAGE: ${settings.goalPercentage || 100}%
 
       // Create the basic modal structure
       modalContainer.innerHTML = `
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header border-bottom-0 text-center">
-              <h5 class="modal-title w-100" id="game-command-modal-title"></h5>
-            </div>
-            <div class="modal-body border-top-0 border-bottom-0">
-              <pre id="game-command-modal-content" class="terminal-output"></pre>
-            </div>
-            <div class="modal-footer border-top-0 d-flex justify-content-center" style="background-color: #24283b">
-              <button id="game-command-modal-close" type="button" class="btn btn-primary">
-                Close
-              </button>
-            </div>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 text-center">
+            <h5 class="modal-title w-100" id="game-command-modal-title"></h5>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            <pre id="game-command-modal-content" class="terminal-output"></pre>
+          </div>
+          <div class="modal-footer border-top-0 d-flex justify-content-center" style="background-color: #24283b">
+            <button id="game-command-modal-close" type="button" class="btn btn-primary">
+              Close
+            </button>
           </div>
         </div>
-      `;
+      </div>
+    `;
 
       document.body.appendChild(modalContainer);
 
@@ -577,9 +578,9 @@ GOAL PERCENTAGE: ${settings.goalPercentage || 100}%
       });
     }
 
-    // Set modal content
+    // Set modal content - use innerHTML instead of textContent
     document.getElementById("game-command-modal-title").textContent = title;
-    document.getElementById("game-command-modal-content").textContent = content;
+    document.getElementById("game-command-modal-content").innerHTML = content; // Changed from textContent to innerHTML
 
     // Show the modal
     const modal = new bootstrap.Modal(
