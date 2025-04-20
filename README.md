@@ -32,7 +32,7 @@ This project began as a school assignment but has evolved into an ongoing journe
 - **Command Mode:** Game timer pauses automatically when typing slash commands (/), allowing you to adjust settings mid-game without losing time.
 - **Custom Settings:** Create your own difficulty by modifying game parameters. The game intelligently detects custom configurations and marks them in your scoreboard.
 - **Automatic Saving:** When you finish a game, your results are saved directly in your browser's local storage. This means that your scores will remain available even if you refresh the page or close the browser.
-- **Score Chart:** View your typing performance history with an interactive score chart. The chart displays your scores and words per minute (WPM) over time, allowing you to track your progress and identify areas for improvement. The chart also includes average score and average WPM lines for quick reference.
+- **Score Chart:** View your typing performance history with an interactive score chart. The chart displays your scores, accuracy and words per minute (WPM) over time, allowing you to track your progress and identify areas for improvement.
 - **Responsive Design:** Built with Bootstrap for smooth performance on various screen sizes, including mobile devices.
 
 ## 🎮 How to Play
