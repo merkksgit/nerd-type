@@ -486,6 +486,7 @@ class GameCommands {
   showHelp() {
     const helpText = `
 Available commands:
+=============================================
 /setwords       - Set number of words for win
 /setbonus       - Set bonus energy per word
 /setinitial     - Set starting energy
@@ -495,6 +496,7 @@ Available commands:
 /status         - Show current game settings
 /reset          - Reset to default settings
 /help           - Show this help message
+=============================================
 `;
     this.showInfoModal("Game Commands Help", helpText);
   }
