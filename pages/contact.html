@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-R80KP2H5BL"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-R80KP2H5BL");
+    </script>
+    <title>NerdType | Contact</title>
+    <link rel="icon" type="image/png" href="../favicon.png?" />
+    <link href="../css/style.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/fc21fca839.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      /* Form styling */
+      .contact-form {
+        background-color: #24283b;
+        border: 1px solid #1f2335;
+        border-radius: 8px;
+        padding: 25px;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 0 20px rgba(30, 33, 48, 0.7);
+      }
+
+      .contact-form h4 {
+        color: #ff9e64;
+        margin-bottom: 20px;
+      }
+
+      .contact-form .form-control {
+        background-color: #1f2335;
+        border: 1px solid #3b4261;
+        border-radius: 4px;
+        padding: 12px;
+        color: #c0caf5;
+        transition: all 0.3s ease;
+        font-family: custom, monospace;
+        margin-bottom: 15px;
+      }
+
+      .contact-form .form-control:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.25rem rgba(122, 162, 247, 0.25);
+      }
+
+      .contact-form .form-label {
+        color: #7aa2f7;
+        margin-bottom: 6px;
+        font-family: custom, monospace;
+      }
+
+      .contact-form .form-control::placeholder {
+        color: #292e42;
+        opacity: 1;
+      }
+
+      /* Rating Scale */
+      .rating-container {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+      }
+
+      .rating-scale {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        max-width: 300px;
+      }
+
+      .rating-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #a9b1d6;
+      }
+
+      .rating-option input[type="radio"] {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #3b4261;
+        border-radius: 50%;
+        margin-bottom: 5px;
+        position: relative;
+        cursor: pointer;
+        background-color: #1f2335;
+        transition: all 0.2s ease;
+      }
+
+      .rating-option input[type="radio"]:checked {
+        border-color: #7aa2f7;
+        background-color: #1f2335;
+      }
+
+      .rating-option input[type="radio"]:checked::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #7aa2f7;
+      }
+
+      /* Submit Button */
+      .btn-contact {
+        color: #7aa2f7;
+        background-color: #1f2335;
+        border: none;
+        padding: 10px 30px;
+        margin-top: 1em;
+        box-shadow:
+          0 4px 8px rgba(0, 0, 0, 0.25),
+          0 0 4px rgba(122, 162, 247, 0.3);
+        transition: all 0.3s ease;
+        border-radius: 4px;
+        font-family: custom, monospace;
+      }
+
+      .btn-contact:hover {
+        color: #ff9e64;
+        box-shadow:
+          0 6px 12px rgba(0, 0, 0, 0.3),
+          0 0 8px rgba(122, 162, 247, 0.5);
+        transform: translateY(-2px);
+        background-color: #2a3047;
+      }
+
+      .btn-contact:active {
+        transform: translateY(0);
+      }
+
+      /* Form Success/Error Messages */
+      .form-success-message {
+        display: none;
+        background-color: #1f2335;
+        color: #c3e88d;
+        border-left: 4px solid #c3e88d;
+        border-radius: 0px;
+        padding: 15px;
+        margin-top: 20px;
+        font-family: custom, monospace;
+      }
+
+      .form-error-message {
+        display: none;
+        background-color: #1f2335;
+        color: #ff007c;
+        border-left: 4px solid #ff007c;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 20px;
+        font-family: custom, monospace;
+      }
+
+      /* Required field marker */
+      .required:after {
+        content: " *";
+        color: #ff007c;
+      }
+
+      #name {
+        margin: 0;
+        font-size: 1em;
+      }
+    </style>
+  </head>
+  <!-- Content -->
+  <body class="d-flex flex-column h-100">
+    <div class="container-fluid flex-grow-1">
+      <!-- Header -->
+      <header class="d-flex justify-content-center align-items-center">
+        <p>
+          <a href="../index.html">
+            <img id="header-logo" src="../images/nerdtype-logo2.png" />
+          </a>
+        </p>
+        <h1>NerdType</h1>
+      </header>
+      <!-- Navbar -->
+      <nav class="navbar navbar-dark navbar-expand-lg">
+        <div class="container-fluid">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainmenu"
+            aria-controls="mainmenu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="invisible" style="width: 260px"></div>
+          <div
+            class="collapse navbar-collapse justify-content-center"
+            id="mainmenu"
+          >
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="../index.html">Frontpage</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./classicmode.html">ClassicMode</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./zenmode.html">ZenMode</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./chart.html">ScoreChart</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./info.html">INFO</a>
+              </li>
+            </ul>
+          </div>
+          <button id="changeUsername" class="btn btn-outline-primary">
+            <i class="fa-solid fa-user"></i> Codename:
+            <span id="usernameDisplay">runner</span>
+          </button>
+        </div>
+      </nav>
+      <!-- Username Modal -->
+      <div
+        class="modal fade"
+        id="usernameModal"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="usernameModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header border-bottom-0 text-center">
+              <h5 class="modal-title w-100" id="usernameModalLabel">
+                [MAINFRAME LOGIN SEQUENCE]
+              </h5>
+            </div>
+            <div class="modal-body border-top-0 border-bottom-0">
+              <pre class="terminal-output" style="margin-bottom: 20px">
+> INITIALIZING LOGIN SEQUENCE...
+> ENTER CODENAME TO CONTINUE:
+> <span style="color:#ff9e64;">PRIVACY NOTICE:</span> Codename stored locally in your browser only. No data sent to servers.
+$ </pre>
+              <input
+                type="text"
+                id="usernameInput"
+                class="form-control text-center"
+                style="background-color: #1a1b26; color: #c0caf5"
+                maxlength="20"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <div
+              class="modal-footer border-top-0 d-flex justify-content-center"
+              style="background-color: #24283b"
+            >
+              <button
+                id="confirmUsername"
+                type="button"
+                class="btn btn-primary"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row justify-content-center">
+          <article class="col-md-8 p-3 pt-1">
+            <div class="wpm-info">
+              <h4>Contact Us</h4>
+              <p>
+                Feel free to submit feedback, report bugs, make suggestions, or
+                just say hi!
+              </p>
+              <div class="contact-form">
+                <form id="contactForm" action="javascript:void(0);">
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      autocomplete="off"
+                      autocapitalize="none"
+                      spellautocorrect="off"
+                      check="false"
+                      id="name"
+                      placeholder="Your name (optional)"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="message" class="form-label required"
+                      >Message</label
+                    >
+                    <textarea
+                      class="form-control"
+                      id="message"
+                      rows="5"
+                      required
+                      placeholder="Type your message here..."
+                    ></textarea>
+                  </div>
+                  <div class="rating-container">
+                    <label class="form-label">How do you like NerdType?</label>
+                    <div class="rating-scale">
+                      <div class="rating-option">
+                        <input
+                          type="radio"
+                          name="rating"
+                          id="rating1"
+                          value="1"
+                        />
+                        <label for="rating1">1</label>
+                      </div>
+                      <div class="rating-option">
+                        <input
+                          type="radio"
+                          name="rating"
+                          id="rating2"
+                          value="2"
+                        />
+                        <label for="rating2">2</label>
+                      </div>
+                      <div class="rating-option">
+                        <input
+                          type="radio"
+                          name="rating"
+                          id="rating3"
+                          value="3"
+                        />
+                        <label for="rating3">3</label>
+                      </div>
+                      <div class="rating-option">
+                        <input
+                          type="radio"
+                          name="rating"
+                          id="rating4"
+                          value="4"
+                        />
+                        <label for="rating4">4</label>
+                      </div>
+                      <div class="rating-option">
+                        <input
+                          type="radio"
+                          name="rating"
+                          id="rating5"
+                          value="5"
+                        />
+                        <label for="rating5">5</label>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-contact">
+                    SEND MESSAGE
+                  </button>
+                  <div
+                    class="form-success-message mt-3"
+                    id="formSuccessMessage"
+                  >
+                    <i class="fa-solid fa-check-circle me-2"></i> Thank you!
+                    Your message has been sent successfully.
+                  </div>
+                  <div class="form-error-message mt-3" id="formErrorMessage">
+                    <i class="fa-solid fa-exclamation-triangle me-2"></i> Please
+                    enter a message before submitting.
+                  </div>
+                </form>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <footer class="footer mt-auto p-3">
+      <div class="container-fluid">
+        <div class="row">
+          <div
+            class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 gap-md-4"
+          >
+            <span id="versionInfo" class="footer-text"></span>
+            <span class="d-flex align-items-center footer-text">
+              <i class="bi bi-c-circle me-2"></i>
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              ERKKA LEPPÄNEN
+            </span>
+            <div class="d-flex gap-4 mt-2 mt-md-0">
+              <a
+                href="https://github.com/merkksgit/nerd-type"
+                target="_blank"
+                class="text-decoration-none social-link"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-template='<div class="tooltip" role="tooltip"><div class="tooltip-inner"></div></div>'
+                title="GitHub"
+              >
+                <i class="bi bi-github"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/nerdtypegame/"
+                target="_blank"
+                class="text-decoration-none social-link"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-template='<div class="tooltip" role="tooltip"><div class="tooltip-inner"></div></div>'
+                title="Instagram"
+              >
+                <i class="bi bi-instagram"></i>
+              </a>
+              <a
+                href="./contact.html"
+                target="_blank"
+                class="text-decoration-none social-link"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-template='<div class="tooltip" role="tooltip"><div class="tooltip-inner"></div></div>'
+                title="Contact"
+              >
+                <i class="bi bi-envelope"></i>
+              </a>
+              <a
+                href="./terms.html"
+                class="text-decoration-none social-link"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-template='<div class="tooltip" role="tooltip"><div class="tooltip-inner"></div></div>'
+                title="Terms of Use"
+              >
+                <i class="bi bi-file-text"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="../js/version.js"></script>
+    <script src="../js/username.js"></script>
+    <script src="../js/username2.js"></script>
+    <script src="../js/contact.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
