@@ -8,3 +8,14 @@ document.addEventListener("DOMContentLoaded", function () {
     versionElement.textContent = APP_VERSION;
   }
 });
+
+// tooltips for footer
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialize all tooltips on the page
+  const tooltipTriggerList = [].slice.call(
+    document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+  );
+  const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+});

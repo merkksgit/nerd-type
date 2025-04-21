@@ -1014,3 +1014,14 @@ a:active .bi-c-circle {
   background-position-y: 50%;
   background-size: 30px 30px; /* Arrow size */
 }
+
+/* Custom styling for Bootstrap tooltips */
+.tooltip .tooltip-inner {
+  background-color: #1f2335;
+  color: #7aa2f7;
+  border: 1px solid #3b4261;
+  padding: 8px 12px;
+  font-family: "custom", monospace;
+  max-width: 200px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
