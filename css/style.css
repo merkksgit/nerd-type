@@ -65,6 +65,39 @@ footer {
   padding-bottom: 6px;
 }
 
+.floating-user-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: #24283b;
+  color: #7aa2f7;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.floating-user-btn:hover {
+  background-color: #2a3047;
+  color: #ff9e64;
+  transform: translateY(3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.floating-user-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .floating-user-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+
 .terms-link,
 .achievement-link,
 #archive-link {
@@ -175,10 +208,6 @@ footer {
   transform: translateY(1px);
 }
 
-#usernameDisplay {
-  color: #737aa2;
-}
-
 .modal-title {
   color: #ff007c;
   font-size: 1em;
@@ -281,29 +310,6 @@ div#wordToType {
 .navbar .navbar-nav .nav-link:active {
   text-shadow: 0 0 12px rgba(157, 124, 216, 0.7);
   transform: translateY(1px);
-}
-
-/* Make the navbar more responsive */
-@media (max-width: 991px) {
-  .navbar .navbar-nav .nav-link {
-    padding: 0.6rem 1rem;
-    border-left: 3px solid transparent;
-  }
-
-  .navbar .navbar-nav .nav-link:hover {
-    border-left: 3px solid #7aa2f7;
-    background-color: rgba(31, 35, 53, 0.5);
-  }
-
-  #current {
-    border-left: 3px solid #ff9e64 !important;
-    background-color: rgba(31, 35, 53, 0.7);
-  }
-
-  .navbar .navbar-nav .nav-link::after,
-  #current::after {
-    display: none;
-  }
 }
 
 .terminal-command {
