@@ -246,6 +246,91 @@ $ </pre>
                 you later correct them with backspace. This encourages precise
                 typing rather than rapid typing-and-correcting.
               </p>
+              <!doctype html>
+              <html lang="en">
+                <head>
+                  <meta charset="UTF-8" />
+                  <title>NerdType Score Calculation</title>
+                </head>
+                <body>
+                  <h4 id="how-score-is-calculated">How Score is Calculated</h4>
+                  <p>
+                    In NerdType, your score is calculated using a sophisticated
+                    formula that considers your typing performance and the
+                    game's energy settings. Here's a detailed breakdown:
+                  </p>
+                  <ol>
+                    <li>
+                      <strong>Base Score:</strong> The core of your score is
+                      calculated with: (WPM × 10) × (accuracy² as decimal) ×
+                      difficulty multiplier
+                      <ul>
+                        <li>
+                          WPM (Words Per Minute) measures your typing speed
+                        </li>
+                        <li>
+                          Accuracy is squared to heavily reward precision typing
+                        </li>
+                        <li>
+                          The difficulty multiplier adjusts based on game mode
+                          and settings
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <strong>Difficulty Multiplier:</strong> A dynamic
+                      calculation based on game energy settings
+                      <ul>
+                        <li>
+                          Total Words: More words needed increases the
+                          multiplier
+                        </li>
+                        <li>
+                          Bonus Energy: Less bonus energy increases the
+                          multiplier
+                        </li>
+                        <li>
+                          Initial Energy: Less initial energy increases the
+                          multiplier
+                        </li>
+                        <li>
+                          Classic Mode (30 words needed) serves as the baseline
+                        </li>
+                        <li>
+                          Multiplier ranges from 0.5 to 2.0, dynamically
+                          responding to game settings
+                        </li>
+                        <li>
+                          Custom settings generate an appropriate multiplier
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <strong>Energy Bonus:</strong> A small bonus is awarded
+                      for remaining energy
+                      <ul>
+                        <li>
+                          Bonus = min(remainingEnergy × 5, baseScore × 0.2)
+                        </li>
+                        <li>
+                          This is capped at 20% of your base score to keep it
+                          balanced
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      <strong>Final Score:</strong> Base Score + Energy Bonus
+                    </li>
+                  </ol>
+                  <p>
+                    This scoring system ensures that your results are comparable
+                    across different game modes and difficulty settings. Players
+                    are primarily rewarded for typing skill (speed and
+                    accuracy), with appropriate adjustments for the challenge
+                    level chosen.
+                  </p>
+                </body>
+              </html>
               <h4>Terminal</h4>
               <p>
                 NerdType features a terminal interface that allows you to

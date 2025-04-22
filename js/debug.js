@@ -38,7 +38,7 @@ export class DebugDisplay {
     const div = document.createElement("div");
     div.style.position = "fixed";
     // change debug window position
-    div.style.bottom = "40%";
+    div.style.bottom = "25%";
     div.style.left = "10%";
     div.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
     div.style.color = "#00ff00";
@@ -126,6 +126,56 @@ export class DebugDisplay {
     el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
   }
 
+  // Function to create a simple visual meter bar
+  createMeterBar(value, max, color) {
+    const percentage = Math.min(100, Math.max(0, (value / max) * 100));
+    return `
+      <div style="width: 100%; background-color: #333; height: 6px; margin: 0px 0;">
+        <div style="width: ${percentage}%; background-color: ${color}; height: 6px;"></div>
+      </div>
+    `;
+  }
+
+  // Calculate difficulty multiplier
+  calculateDifficultyMultiplier(settings) {
+    try {
+      // Reference values (classic mode settings)
+      const refTimeLimit = 30;
+      const refBonusTime = 3;
+      const refInitialTime = 10;
+
+      // Calculate individual difficulty factors
+      // For timeLimit, MORE words (HIGHER limit) is HARDER
+      const timeLimitFactor = Math.min(
+        3,
+        Math.max(1, settings.timeLimit) / refTimeLimit,
+      );
+
+      // For bonus and initial time, LOWER is HARDER
+      const bonusTimeFactor = Math.min(
+        3,
+        refBonusTime / Math.max(0.5, settings.bonusTime),
+      );
+      const initialTimeFactor = Math.min(
+        3,
+        refInitialTime / Math.max(0.5, settings.initialTime),
+      );
+
+      // Weighted calculation (balances the three factors)
+      const weightedMultiplier =
+        (timeLimitFactor * 1.5 +
+          bonusTimeFactor * 1.75 +
+          initialTimeFactor * 1.75) /
+        5;
+
+      // Normalize to a range with Classic at 1.0
+      return Math.max(0.5, Math.min(2.0, weightedMultiplier));
+    } catch (error) {
+      console.error("Error calculating difficulty multiplier:", error);
+      return 1.0;
+    }
+  }
+
   updateInfo(gameData) {
     const {
       currentWord,
@@ -134,12 +184,28 @@ export class DebugDisplay {
       gameStartTime,
       wordsTyped,
       hasStartedTyping,
+      accuracy,
+      correctKeystrokes,
+      wrongKeystrokes,
+      totalKeystrokes,
       isCommandMode,
       effectiveTime,
+      timeLeft,
     } = gameData;
 
-    // Use effective time if provided (accounts for command mode pauses)
-    // Otherwise calculate as before
+    // Get current settings
+    const settings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+      timeLimit: 30,
+      bonusTime: 3,
+      initialTime: 10,
+      goalPercentage: 100,
+      currentMode: "classic",
+    };
+
+    // Calculate difficulty multiplier
+    const difficultyMultiplier = this.calculateDifficultyMultiplier(settings);
+
+    // Calculate time and WPM
     let currentTime;
     if (effectiveTime !== undefined) {
       currentTime = effectiveTime / 1000;
@@ -153,6 +219,54 @@ export class DebugDisplay {
         ? Math.round(totalCharactersTyped / 5 / timeInMinutes)
         : 0;
 
+    // Prepare difficulty visualization
+    const refTimeLimit = 30;
+    const refBonusTime = 3;
+    const refInitialTime = 10;
+
+    const timeLimitFactor = Math.min(
+      3,
+      Math.max(1, settings.timeLimit) / refTimeLimit,
+    );
+    const bonusTimeFactor = Math.min(
+      3,
+      refBonusTime / Math.max(0.5, settings.bonusTime),
+    );
+    const initialTimeFactor = Math.min(
+      3,
+      refInitialTime / Math.max(0.5, settings.initialTime),
+    );
+
+    // Create difficulty meter bars with a simpler style
+    const timeLimitMeter = this.createMeterBar(timeLimitFactor, 3, "#ff9e64");
+    const bonusTimeMeter = this.createMeterBar(bonusTimeFactor, 3, "#7aa2f7");
+    const initialTimeMeter = this.createMeterBar(
+      initialTimeFactor,
+      3,
+      "#bb9af7",
+    );
+    const combinedMeter = this.createMeterBar(
+      difficultyMultiplier - 0.75,
+      1,
+      "#c3e88d",
+    );
+
+    // Simulate base score calculation for display
+    const accuracyValue = parseFloat(accuracy) / 100;
+    const safeWPM = Math.max(1, currentWPM);
+
+    const baseScore = Math.round(
+      safeWPM * 10 * (accuracyValue * accuracyValue) * difficultyMultiplier,
+    );
+
+    // Simulate energy bonus
+    const energyBonus =
+      timeLeft !== undefined
+        ? Math.round(Math.min(timeLeft * 5, baseScore * 0.2))
+        : 0;
+
+    const finalScore = Math.round(baseScore + energyBonus);
+
     this.debugContent.innerHTML = `
       Current Word: ${currentWord} (${wordLength} chars)<br>
       Total Characters: ${totalCharactersTyped}<br>
@@ -160,13 +274,29 @@ export class DebugDisplay {
       Time Elapsed: ${currentTime.toFixed(2)}s<br>
       Current WPM: ${currentWPM}<br>
       Words Typed: ${wordsTyped.length}<br>
-      Accuracy: ${gameData.accuracy}%<br>
-      Correct Keys: ${gameData.correctKeystrokes}<br>
-      Wrong Keys: ${gameData.wrongKeystrokes}<br>
-      Total Keys: ${gameData.totalKeystrokes}<br>
+      Accuracy: ${accuracy}%<br>
+      Correct Keys: ${correctKeystrokes}<br>
+      Wrong Keys: ${wrongKeystrokes}<br>
+      Total Keys: ${totalKeystrokes}<br>
       Timer Started: ${gameStartTime ? "Yes" : "No"}<br>
       Typing Started: ${hasStartedTyping ? "Yes" : "No"}<br>
-      Command Mode: ${isCommandMode ? "Yes" : "No"}
+      Command Mode: ${isCommandMode ? "Yes" : "No"}<br>
+      Time Left: ${timeLeft !== undefined ? timeLeft : "N/A"}<br>
+      <br>
+      <span style="color: #c3e88d;">Mode: ${settings.currentMode} (Multiplier: ${difficultyMultiplier.toFixed(2)}x)</span><br>
+      Goal Words Factor: ${timeLimitFactor.toFixed(2)}x<br>
+      ${timeLimitMeter}
+      Bonus Energy Factor: ${bonusTimeFactor.toFixed(2)}x<br>
+      ${bonusTimeMeter}
+      Initial Energy Factor: ${initialTimeFactor.toFixed(2)}x<br>
+      ${initialTimeMeter}
+      Combined Difficulty:<br>
+      ${combinedMeter}
+      <br>
+      Score Breakdown:<br>
+      Base Score: ${baseScore}<br>
+      Energy Bonus: ${energyBonus}<br>
+      Final Score: ${finalScore}
     `;
   }
 }

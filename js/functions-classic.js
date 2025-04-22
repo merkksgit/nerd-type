@@ -155,6 +155,7 @@ function updateDebugInfo() {
     totalKeystrokes,
     isCommandMode,
     effectiveTime,
+    timeLeft,
   });
 }
 
@@ -685,6 +686,86 @@ function calculateWPM() {
   };
 }
 
+// New improved scoring calculation function
+function calculateDifficultyMultiplier(settings) {
+  try {
+    // Reference values (classic mode settings)
+    const refTimeLimit = 30;
+    const refBonusTime = 3;
+    const refInitialTime = 10;
+
+    // Calculate individual difficulty factors
+    // For timeLimit, MORE words (HIGHER limit) is HARDER
+    const timeLimitFactor = Math.min(
+      3,
+      Math.max(1, settings.timeLimit) / refTimeLimit,
+    );
+
+    // For bonus and initial time, LOWER is HARDER
+    const bonusTimeFactor = Math.min(
+      3,
+      refBonusTime / Math.max(0.5, settings.bonusTime),
+    );
+    const initialTimeFactor = Math.min(
+      3,
+      refInitialTime / Math.max(0.5, settings.initialTime),
+    );
+
+    // Weighted calculation (balances the three factors)
+    const weightedMultiplier =
+      (timeLimitFactor * 1.5 +
+        bonusTimeFactor * 1.75 +
+        initialTimeFactor * 1.75) /
+      5;
+
+    // Normalize to a range with Classic at 1.0
+    return Math.max(0.5, Math.min(2.0, weightedMultiplier));
+  } catch (error) {
+    console.error("Error calculating difficulty multiplier:", error);
+    return 1.0;
+  }
+}
+
+// New improved scoring function
+function calculateScore() {
+  try {
+    // Get typing performance metrics
+    const wpmResult = calculateWPM();
+    const wpm = Math.max(1, wpmResult.wpm); // Minimum of 1 WPM to avoid division by zero
+    const accuracy = parseFloat(wpmResult.accuracy.replace("%", "")) / 100;
+
+    // Get game settings for difficulty multiplier
+    const settings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+      timeLimit: 30,
+      bonusTime: 3,
+      initialTime: 10,
+      goalPercentage: 100,
+      currentMode: "classic",
+    };
+
+    // Calculate difficulty multiplier based on game settings
+    const difficultyMultiplier = calculateDifficultyMultiplier(settings);
+
+    // Calculate base score based on WPM and accuracy
+    // Formula: (WPM * 10) * (accuracy^2) * difficultyMultiplier
+    // Squaring accuracy heavily rewards high accuracy
+    const baseScore = Math.round(
+      wpm * 10 * (accuracy * accuracy) * difficultyMultiplier,
+    );
+
+    // Energy bonus: Add a small bonus for remaining energy (timeLeft)
+    // But cap it to prevent it from being the dominant factor
+    const energyBonus = Math.min(timeLeft * 5, baseScore * 0.2); // Cap at 20% of base score
+
+    // Final score (rounded to nearest integer)
+    return Math.round(baseScore + energyBonus);
+  } catch (error) {
+    console.error("Error calculating score:", error);
+    // Fallback to original scoring if an error occurs
+    return timeLeft * 256;
+  }
+}
+
 function getSpeedTier(wpm) {
   if (wpm >= 100) return "QUANTUM SPEED";
   if (wpm >= 80) return "NEURAL MASTER";
@@ -708,6 +789,7 @@ function getAccuracyRank(accuracy) {
 
 function showGameOverModal(message) {
   const stats = calculateWPM();
+  const finalScore = calculateScore();
   const modalLabel = document.getElementById("gameOverModalLabel");
   const languageName =
     currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
@@ -732,7 +814,7 @@ function showGameOverModal(message) {
     `  └─ ENERGY REMAINING: <span style='color:#c3e88d'>${timeLeft}</span> units`,
     `  └─ TYPING SPEED: <span style='color:#ff9e64'>${stats.wpm}</span> WPM`,
     `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
-    `  └─ FINAL SCORE: <span style='color:#c3e88d'>${timeLeft * 256}</span>`,
+    `  └─ FINAL SCORE: <span style='color:#c3e88d'>${finalScore}</span>`,
     "> ================================",
     "> DETECTED ACHIEVEMENTS:",
     `  └─ SPEED TIER: <span style='color:#4fd6be'>${getSpeedTier(stats.wpm)}</span>`,
@@ -764,7 +846,7 @@ function showGameOverModal(message) {
 
   gameOverModal.show();
   typeNextLine();
-  saveResult(timeLeft, stats.wpm, stats.accuracy);
+  saveResult(timeLeft, stats.wpm, stats.accuracy, finalScore);
   displayPreviousResults();
 
   const restartBtn = document.getElementById("restartGameBtn");
@@ -799,7 +881,7 @@ window.addEventListener("terminalClosed", function () {
   }
 });
 
-function saveResult(timeLeft, wpm, accuracy) {
+function saveResult(timeLeft, wpm, accuracy, finalScore) {
   if (timeLeft === 0) {
     return;
   }
@@ -856,6 +938,15 @@ function saveResult(timeLeft, wpm, accuracy) {
     gameSettings.currentMode.charAt(0).toUpperCase() +
     gameSettings.currentMode.slice(1);
 
+  // Get current settings for calculating score
+  const settings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+    timeLimit: 30,
+    bonusTime: 3,
+    initialTime: 10,
+    goalPercentage: 100,
+    currentMode: "classic",
+  };
+
   // Save results and highest achievements
   if (timeLeft) {
     results.push({
@@ -865,7 +956,7 @@ function saveResult(timeLeft, wpm, accuracy) {
       accuracy,
       date: new Date().toLocaleString("en-GB"),
       mode: modeName + " Mode",
-      score: timeLeft * 256,
+      score: finalScore, // Use the calculated score from calculateScore()
       wordList: currentLanguage,
     });
   } else {
@@ -875,7 +966,7 @@ function saveResult(timeLeft, wpm, accuracy) {
       accuracy,
       date: new Date().toLocaleString("en-GB"),
       mode: "Zen Mode",
-      score: totalCharactersTyped * 10,
+      score: finalScore, // Use the calculated score
       wordList: currentLanguage,
     });
   }

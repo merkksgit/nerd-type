@@ -1,4 +1,60 @@
 // Chart
+function calculateDifficultyMultiplier(settings) {
+  try {
+    // Reference values (classic mode settings)
+    const refTimeLimit = 30;
+    const refBonusTime = 3;
+    const refInitialTime = 10;
+
+    // Calculate difficulty factors
+    const timeLimitFactor = refTimeLimit / Math.max(1, settings.timeLimit);
+    const bonusTimeFactor = refBonusTime / Math.max(1, settings.bonusTime);
+    const initialTimeFactor =
+      refInitialTime / Math.max(1, settings.initialTime);
+
+    // Combined multiplier
+    const multiplier = Math.pow(
+      timeLimitFactor * bonusTimeFactor * initialTimeFactor,
+      1 / 3,
+    );
+
+    // Normalize to a range of 0.75 - 1.75
+    // Classic mode would get a multiplier of 1.0
+    return 0.75 + multiplier * 0.5;
+  } catch (error) {
+    console.error("Error calculating difficulty multiplier:", error);
+    // Return default multiplier in case of error
+    return 1.0;
+  }
+}
+
+function calculateScore(timeLeft, wpm, accuracy, settings) {
+  try {
+    // Use max of 1 WPM to avoid division by zero
+    const safeWPM = Math.max(1, wpm);
+    const safeAccuracy = parseFloat(accuracy.replace("%", "")) / 100;
+
+    // Calculate difficulty multiplier
+    const difficultyMultiplier = calculateDifficultyMultiplier(settings);
+
+    // Base score calculation: (WPM * 10) * (accuracy^2) * difficultyMultiplier
+    const baseScore = Math.round(
+      safeWPM * 10 * (safeAccuracy * safeAccuracy) * difficultyMultiplier,
+    );
+
+    // Energy bonus: Add a small bonus for remaining energy (timeLeft)
+    // But cap it to prevent it from being the dominant factor
+    const energyBonus = Math.min(timeLeft * 5, baseScore * 0.2); // Cap at 20% of base score
+
+    // Final score (rounded to nearest integer)
+    return Math.round(baseScore + energyBonus);
+  } catch (error) {
+    console.error("Error calculating score:", error);
+    // Fallback to original scoring if an error occurs
+    return timeLeft * 256;
+  }
+}
+
 function displayScoreGraph() {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
@@ -130,8 +186,30 @@ function displayScoreGraph() {
     return;
   }
 
+  // Calculate scores
   const dates = classicResults.map((result) => result.date);
-  const scores = classicResults.map((result) => result.timeLeft * 256);
+  const scores = classicResults.map((result) => {
+    // Use default calculation if no score is present
+    if (result.score) return result.score;
+
+    // Reconstruct settings from the result or use defaults
+    const resultSettings = {
+      timeLimit: result.timeLimit || 30,
+      bonusTime: result.bonusTime || 3,
+      initialTime: result.initialTime || 10,
+      goalPercentage: result.goalPercentage || 100,
+      currentMode: result.mode || "classic",
+    };
+
+    // Calculate score using available data
+    return calculateScore(
+      result.timeLeft || 0,
+      result.wpm || 0,
+      result.accuracy || "0%",
+      resultSettings,
+    );
+  });
+
   const wpmScores = classicResults.map((result) => result.wpm);
   const accuracyScores = classicResults.map(
     (result) => parseFloat(result.accuracy) || 0,
