@@ -881,6 +881,8 @@ input#userInput {
   border: 2px solid #3b4261 !important;
   border-radius: 1px;
   box-shadow: 0 0 15px rgba(59, 66, 97, 0.5);
+  transition: all 0.3s ease;
+  transform: translateY(0);
 }
 .achievement-header.card-header {
   background-color: #1f2335 !important;
@@ -888,6 +890,15 @@ input#userInput {
 }
 .achievement-tier {
   color: #4fd6be !important;
+}
+
+.achievement-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 15px rgba(187, 154, 247, 0.3);
+}
+
+.achievement-card:hover .achievement-tier {
+  text-shadow: 0 0 8px rgba(79, 214, 190, 0.4);
 }
 
 /* bootstrap footer icons */

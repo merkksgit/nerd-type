@@ -49,6 +49,7 @@ import {
   currentLanguage,
 } from "./word-list-manager.js";
 import "./game-commands.js";
+import achievementSystem from "./achievements.js";
 
 // Define preset modes (should match those in game-commands.js)
 const presetModes = {
@@ -816,12 +817,8 @@ function showGameOverModal(message) {
     `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
     `  └─ FINAL SCORE: <span style='color:#c3e88d'>${finalScore}</span>`,
     "> ================================",
-    "> DETECTED ACHIEVEMENTS:",
-    `  └─ SPEED TIER: <span style='color:#4fd6be'>${getSpeedTier(stats.wpm)}</span>`,
-    `  └─ PRECISION RANK: <span style='color:#4fd6be'>${getAccuracyRank(stats.accuracy)}</span>`,
-    "> ================================",
-    "> PRESS [ENTER] TO RETRY",
-    "> END OF TRANSMISSION_",
+    `> SPEED TIER: <span style='color:#4fd6be'>${getSpeedTier(stats.wpm)}</span>`,
+    `> PRECISION RANK: <span style='color:#4fd6be'>${getAccuracyRank(stats.accuracy)}</span>`,
   ];
 
   let currentLine = 0;
@@ -947,18 +944,21 @@ function saveResult(timeLeft, wpm, accuracy, finalScore) {
     currentMode: "classic",
   };
 
+  // Create game data object
+  const gameData = {
+    username: playerUsername,
+    timeLeft,
+    wpm,
+    accuracy,
+    date: new Date().toLocaleString("en-GB"),
+    mode: modeName + " Mode",
+    score: finalScore,
+    wordList: currentLanguage,
+  };
+
   // Save results and highest achievements
   if (timeLeft) {
-    results.push({
-      username: playerUsername,
-      timeLeft,
-      wpm,
-      accuracy,
-      date: new Date().toLocaleString("en-GB"),
-      mode: modeName + " Mode",
-      score: finalScore, // Use the calculated score from calculateScore()
-      wordList: currentLanguage,
-    });
+    results.push(gameData);
   } else {
     results.push({
       username: playerUsername,
@@ -966,7 +966,7 @@ function saveResult(timeLeft, wpm, accuracy, finalScore) {
       accuracy,
       date: new Date().toLocaleString("en-GB"),
       mode: "Zen Mode",
-      score: finalScore, // Use the calculated score
+      score: finalScore,
       wordList: currentLanguage,
     });
   }
@@ -976,6 +976,9 @@ function saveResult(timeLeft, wpm, accuracy, finalScore) {
     "highestAchievements",
     JSON.stringify(highestAchievements),
   );
+
+  // Check for achievements
+  achievementSystem.handleGameCompletion(gameData);
 }
 
 function displayPreviousResults() {
@@ -1013,6 +1016,9 @@ function clearResults() {
   localStorage.removeItem("gameResults");
   localStorage.removeItem("highestAchievements");
 
+  // Reset achievements
+  achievementSystem.resetAchievements();
+
   const resultsContainer = document.getElementById("previousResults");
   if (resultsContainer) {
     resultsContainer.innerHTML = "";
@@ -1038,7 +1044,7 @@ function clearResults() {
       `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
       "> ================================",
       "> LOCAL STORAGE CLEARED_",
-      "> PRESS [ENTER] OR [CLOSE] TO CONFIRM", // Updated text to indicate Enter key support
+      "> PRESS [ENTER] OR [CLOSE] TO CONFIRM",
       "> END OF TRANSMISSION_",
     ];
 

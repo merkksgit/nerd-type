@@ -169,6 +169,7 @@ $ </pre>
       </div>
 
       <!-- Achievements Section -->
+      <!-- Full Achievements Section -->
       <div id="achievements" class="row justify-content-center">
         <article class="col-md-12 p-3 flex-column d-flex align-items-center">
           <div id="achievementsContainer" class="text-center w-100">
@@ -178,6 +179,7 @@ $ </pre>
                   Achievements
                 </h4>
                 <div class="row">
+                  <!-- Speed Tier -->
                   <div class="col-12 col-md-6 pt-3">
                     <div class="card achievement-card">
                       <div class="card-header achievement-header">
@@ -190,6 +192,7 @@ $ </pre>
                       </div>
                     </div>
                   </div>
+                  <!-- Accuracy Rank -->
                   <div class="col-12 col-md-6 pt-3">
                     <div class="card achievement-card">
                       <div class="card-header achievement-header">
@@ -205,7 +208,7 @@ $ </pre>
                 </div>
               </div>
 
-              <!-- Achievements Table -->
+              <!-- Achievement Table -->
               <div class="col-12 col-lg-10 col-xl-8">
                 <div class="achievements-container mb-4">
                   <table
@@ -273,6 +276,25 @@ $ </pre>
                       </tr>
                     </tbody>
                   </table>
+                </div>
+              </div>
+
+              <!-- Special Achievements Section -->
+              <div class="col-12 col-md-8 mb-4">
+                <h4 class="text-center mb-3 mt-4 achievements-title">
+                  Special Achievements
+                </h4>
+
+                <!-- Container for custom achievements -->
+                <div id="custom-achievements-container" class="mb-4">
+                  <!-- Achievements will be rendered here by the script -->
+                  <div class="text-center">
+                    <i
+                      class="fa-solid fa-spinner fa-spin"
+                      style="color: #7aa2f7"
+                    ></i>
+                    Loading achievements...
+                  </div>
                 </div>
               </div>
             </div>
@@ -400,6 +422,17 @@ $ </pre>
     </footer>
 
     <!-- Scripts -->
+    <script type="module">
+      import achievementSystem from "../js/achievements.js";
+
+      // When DOM is loaded, render achievements
+      document.addEventListener("DOMContentLoaded", function () {
+        // Render achievements
+        achievementSystem.renderAchievementsToContainer(
+          "custom-achievements-container",
+        );
+      });
+    </script>
     <script src="../js/username2.js"></script>
     <script src="../js/keyboard-nav.js"></script>
     <script src="../js/chart.js"></script>
