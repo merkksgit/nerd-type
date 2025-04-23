@@ -15,6 +15,9 @@ let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
 let isUsernameModalOpen = false;
 let words = [];
 
+const achievementSound = new Audio("../sounds/achievement.mp3");
+window.achievementSound = achievementSound;
+
 const wordListDisplayNames = {
   english: "🇬🇧 ",
   finnish: "🇫🇮 ",
