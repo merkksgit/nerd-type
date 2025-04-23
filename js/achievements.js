@@ -14,6 +14,15 @@ class AchievementSystem {
         gamesPlayedToday: 0,
         lastGameDate: null,
         highestScore: 0,
+        highestWPM: 0,
+        highestAccuracy: 0,
+        languageWPM: {
+          english: 0,
+          finnish: 0,
+          swedish: 0,
+          programming: 0,
+          nightmare: 0,
+        },
       },
       // Track pending notifications
       pendingNotifications: [],
@@ -85,6 +94,121 @@ class AchievementSystem {
           gameData.timeLeft !== undefined &&
           gameData.timeLeft > 0 &&
           gameData.timeLeft < 3,
+      },
+      the_admin: {
+        id: "the_admin",
+        name: "The Admin",
+        description: "System breached!",
+        icon: "fa-solid fa-user-secret",
+        category: "secret",
+        secret: true,
+        check: (stats, gameData) => gameData && gameData.adminAccess === true,
+      },
+      // WPM Achievements
+      script_kiddie: {
+        id: "script_kiddie",
+        name: "Script Kiddie",
+        description: "Complete your first game",
+        icon: "fa-solid fa-graduation-cap",
+        category: "progress",
+        secret: false,
+        check: (stats, gameData) => gameData && gameData.wpm !== undefined,
+      },
+
+      quantum_typist: {
+        id: "quantum_typist",
+        name: "Quantum Typist",
+        description: "Hit 80 WPM",
+        icon: "fa-solid fa-atom",
+        category: "speed",
+        secret: false,
+        check: (stats, gameData) =>
+          (gameData && gameData.wpm >= 80) || stats.highestWPM >= 80,
+      },
+
+      digital_overlord: {
+        id: "digital_overlord",
+        name: "Digital Overlord",
+        description: "Break 100 WPM",
+        icon: "fa-solid fa-crown",
+        category: "speed",
+        secret: false,
+        check: (stats, gameData) =>
+          (gameData && gameData.wpm >= 100) || stats.highestWPM >= 100,
+      },
+
+      bug_eliminator: {
+        id: "bug_eliminator",
+        name: "Bug Eliminator",
+        description: "Complete a game with 100% accuracy",
+        icon: "fa-solid fa-bug-slash",
+        category: "accuracy",
+        secret: false,
+        check: (stats, gameData) => {
+          const accuracy =
+            gameData && gameData.accuracy ? parseFloat(gameData.accuracy) : 0;
+          const statsAccuracy = stats.highestAccuracy
+            ? parseFloat(stats.highestAccuracy)
+            : 0;
+          return accuracy === 100 || statsAccuracy === 100;
+        },
+      },
+      completionist: {
+        id: "completionist",
+        name: "Completionist",
+        description: "Unlock all achievements",
+        icon: "fa-solid fa-shield-halved",
+        category: "meta",
+        secret: false,
+        check: function (stats, gameData) {
+          // Get all achievements except this one
+          const allOtherAchievements = Object.keys(
+            this.achievements || {},
+          ).filter((id) => id !== "completionist");
+
+          // Check if all other achievements are unlocked
+          return allOtherAchievements.every(
+            (id) =>
+              this.achievementsData.unlockedAchievements[id] !== undefined,
+          );
+        },
+      },
+
+      night_owl: {
+        id: "night_owl",
+        name: "Night Owl",
+        description: "Complete a game between midnight and 5am",
+        icon: "fa-solid fa-moon",
+        category: "lifestyle",
+        secret: false,
+        check: (stats, gameData) => {
+          const currentHour = new Date().getHours();
+          return currentHour >= 0 && currentHour < 5;
+        },
+      },
+      polyglot_programmer: {
+        id: "polyglot_programmer",
+        name: "Polyglot Programmer",
+        description: "Achieve 50+ WPM in all language modes",
+        icon: "fa-solid fa-language",
+        category: "mastery",
+        secret: false,
+        check: function (stats, gameData) {
+          // Log language WPM stats for debugging
+          console.log(
+            "Checking polyglot achievement with stats:",
+            stats.languageWPM,
+          );
+
+          return (
+            stats.languageWPM &&
+            stats.languageWPM.english >= 50 &&
+            stats.languageWPM.finnish >= 50 &&
+            stats.languageWPM.swedish >= 50 &&
+            stats.languageWPM.nightmare >= 50 &&
+            stats.languageWPM.programming >= 50
+          );
+        },
       },
     };
 
@@ -261,6 +385,54 @@ class AchievementSystem {
       this.achievementsData.stats.highestScore = gameData.score;
     }
 
+    // Update highest WPM if this game's WPM is higher
+    if (
+      gameData &&
+      gameData.wpm &&
+      gameData.wpm > this.achievementsData.stats.highestWPM
+    ) {
+      this.achievementsData.stats.highestWPM = gameData.wpm;
+    }
+
+    // Update highest accuracy if this game's accuracy is higher
+    if (gameData && gameData.accuracy) {
+      const accuracyValue = parseFloat(gameData.accuracy);
+      if (
+        !isNaN(accuracyValue) &&
+        accuracyValue > this.achievementsData.stats.highestAccuracy
+      ) {
+        this.achievementsData.stats.highestAccuracy = accuracyValue;
+      }
+    }
+
+    // Update language-specific WPM stats
+    if (gameData && gameData.wpm && gameData.wordList) {
+      const language = gameData.wordList.toLowerCase();
+      console.log(
+        "Game completed in language:",
+        language,
+        "with WPM:",
+        gameData.wpm,
+      );
+
+      if (
+        this.achievementsData.stats.languageWPM &&
+        this.achievementsData.stats.languageWPM[language] !== undefined
+      ) {
+        // Update if new WPM is higher
+        if (gameData.wpm > this.achievementsData.stats.languageWPM[language]) {
+          this.achievementsData.stats.languageWPM[language] = gameData.wpm;
+          console.log("Updated language WPM for", language, "to", gameData.wpm);
+        }
+
+        // Log current language WPM stats
+        console.log(
+          "Current language WPM stats:",
+          this.achievementsData.stats.languageWPM,
+        );
+      }
+    }
+
     // Save date of this game
     this.achievementsData.stats.lastGameDate = new Date().toLocaleDateString();
 
@@ -284,15 +456,29 @@ class AchievementSystem {
         return;
       }
 
-      // Check if achievement conditions are met
-      if (achievement.check(this.achievementsData.stats, gameData)) {
-        // Mark as unlocked
-        this.achievementsData.unlockedAchievements[achievementId] = {
-          unlockedAt: new Date().toISOString(),
-        };
+      try {
+        // Check if achievement conditions are met
+        // Bind 'this' context for function checks
+        const checkResult =
+          typeof achievement.check === "function"
+            ? achievement.check.call(
+                this,
+                this.achievementsData.stats,
+                gameData,
+              )
+            : achievement.check(this.achievementsData.stats, gameData);
 
-        // Add to newly unlocked list
-        newlyUnlocked.push(achievement);
+        if (checkResult) {
+          // Mark as unlocked
+          this.achievementsData.unlockedAchievements[achievementId] = {
+            unlockedAt: new Date().toISOString(),
+          };
+
+          // Add to newly unlocked list
+          newlyUnlocked.push(achievement);
+        }
+      } catch (error) {
+        console.error(`Error checking achievement ${achievementId}:`, error);
       }
     });
 
@@ -435,6 +621,15 @@ class AchievementSystem {
         gamesPlayedToday: 0,
         lastGameDate: null,
         highestScore: 0,
+        highestWPM: 0,
+        highestAccuracy: 0,
+        languageWPM: {
+          english: 0,
+          finnish: 0,
+          swedish: 0,
+          programming: 0,
+          nightmare: 0,
+        },
       },
       pendingNotifications: [],
     };

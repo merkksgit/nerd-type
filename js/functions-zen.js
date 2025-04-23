@@ -30,6 +30,7 @@ import {
   createWordListSelector,
   currentLanguage,
 } from "./word-list-manager.js";
+import achievementSystem from "./achievements.js";
 
 // Load words when the script initializes
 async function initializeGame() {
@@ -516,6 +517,23 @@ function showCheatModal() {
 
   gameOverModal.show();
   typeNextLine();
+
+  // Unlock "The Admin" achievement
+  try {
+    if (typeof achievementSystem !== "undefined") {
+      const adminGameData = {
+        adminAccess: true,
+        date: new Date().toLocaleString("en-GB"),
+        mode: "Zen Mode",
+        wordList: currentLanguage,
+        username: playerUsername,
+      };
+
+      achievementSystem.handleGameCompletion(adminGameData);
+    }
+  } catch (error) {
+    console.error("Error unlocking achievement:", error);
+  }
 }
 
 function setupFormEventListeners(gameOverModal) {
