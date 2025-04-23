@@ -486,7 +486,21 @@ class AchievementSystem {
 
       const body = document.createElement("div");
       body.className = "card-body text-center";
-      body.textContent = achievement.description;
+
+      if (achievement.unlocked) {
+        // For unlocked achievements, show the description
+        body.textContent = achievement.description;
+      } else {
+        // For locked achievements, show an icon and "Locked"
+        const lockedIcon = document.createElement("i");
+        lockedIcon.className = "fa-solid fa-lock me-2";
+
+        const lockedText = document.createElement("span");
+        lockedText.textContent = "Locked";
+
+        body.appendChild(lockedIcon);
+        body.appendChild(lockedText);
+      }
 
       card.appendChild(header);
       card.appendChild(body);
