@@ -31,6 +31,9 @@ let isCommandMode = false;
 let wasPaused = false;
 let commandStartTime = null; // Track when we entered command mode
 
+const achievementSound = new Audio("../sounds/achievement.mp3");
+window.achievementSound = achievementSound;
+
 const wordListDisplayNames = {
   english: "🇬🇧 ",
   finnish: "🇫🇮 ",
