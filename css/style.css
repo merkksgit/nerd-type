@@ -55,9 +55,22 @@ footer {
 }
 
 #header-logo {
-  width: 3.5em;
-  margin-bottom: 0.9em;
-  margin-right: 1em;
+  width: 180px;
+}
+
+/* Extra small devices (phones, less than 576px) */
+@media (max-width: 575.98px) {
+  #header-logo {
+    margin: 0 auto;
+    width: 250px;
+  }
+}
+
+/* Small devices (576px and up) */
+@media (min-width: 576px) {
+  #header-logo {
+    margin-left: 10px;
+  }
 }
 
 #footer-logo {
@@ -198,6 +211,12 @@ footer {
   text-transform: uppercase;
   letter-spacing: 1px;
   font-size: 14px;
+}
+
+@media (max-width: 575.98px) {
+  #changeUsername {
+    margin-top: 76px;
+  }
 }
 
 #changeUsername:hover {
@@ -366,11 +385,11 @@ div#wordToType {
 
 /* Custom hamburger icon color */
 .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%237aa2f7' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23565f89' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
 }
 
 .navbar-toggler {
-  border-color: #7aa2f7 !important;
+  border-color: #565f89 !important;
 }
 
 div#content {
