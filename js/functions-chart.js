@@ -112,7 +112,7 @@ function handleClearResultsKeyPress(event) {
 
 function handleClearResults() {
   localStorage.removeItem("gameResults");
-  localStorage.removeItem("highestAchievements");
+  // localStorage.removeItem("highestAchievements");
   document.getElementById("previousResults").innerHTML = "";
   displayHighestAchievements();
 
@@ -136,7 +136,6 @@ function handleClearResults() {
       "> ================================",
       "> EXECUTING COMMANDS:",
       "  └─ rm scoreboard.data",
-      "  └─ rm achievements.data",
       `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
       "> ================================",
       "> LOCAL STORAGE CLEARED_",

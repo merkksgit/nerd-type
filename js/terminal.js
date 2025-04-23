@@ -784,6 +784,7 @@ help                           - Show this help message`;
     startPing();
   }
 
+  // Enhanced catFile method for the Terminal class to display all achievements
   catFile(args) {
     const filename = args[0];
     if (!filename) {
@@ -815,21 +816,99 @@ help                           - Show this help message`;
         break;
 
       case "achievements.data":
-        const achievements =
-          JSON.parse(localStorage.getItem("highestAchievements")) || {};
-        if (!achievements.speedTier) {
-          this.printToTerminal("No achievement data found", "command-error");
-          return;
-        }
-        this.printToTerminal(
-          `
-Highest Achievements:
-==================================
-Speed Tier: ${achievements.speedTier}
-Accuracy Rank: ${achievements.accuracyRank}
+        // Try to get detailed achievements from the achievements system
+        try {
+          // First check the highest achievements (legacy format)
+          const highestAchievements =
+            JSON.parse(localStorage.getItem("highestAchievements")) || {};
+
+          // Look for the full nerdtype_achievements data
+          const fullAchievements =
+            JSON.parse(localStorage.getItem("nerdtype_achievements")) || {};
+
+          // If we don't have either, show an error
+          if (
+            !highestAchievements.speedTier &&
+            (!fullAchievements.unlockedAchievements ||
+              Object.keys(fullAchievements.unlockedAchievements).length === 0)
+          ) {
+            this.printToTerminal("No achievement data found", "command-error");
+            return;
+          }
+
+          // Start with a header
+          this.printToTerminal(
+            `
+ACHIEVEMENTS:
 ==================================`,
-          "command-success",
-        );
+            "command-success",
+          );
+
+          // Show highest tier achievements if available
+          if (
+            highestAchievements.speedTier ||
+            highestAchievements.accuracyRank
+          ) {
+            this.printToTerminal(
+              `
+Speed Tier: <span style='color:#ff9e64'>${highestAchievements.speedTier || "Not Achieved"}</span>
+Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank || "Not Achieved"}</span>
+`,
+              "command-success",
+            );
+          }
+
+          // If we have detailed achievement data, show that too
+          if (
+            fullAchievements.unlockedAchievements &&
+            Object.keys(fullAchievements.unlockedAchievements).length > 0
+          ) {
+            // Define the achievement descriptions for those not in detailed system
+            const achievementDescriptions = {
+              dedicated_typist: "Play 10 games in a single day",
+              typing_marathon: "Play 20 games in a single day",
+              code_apprentice: "Score over 500 points in a single game",
+              code_journeyman: "Score over 800 points in a single game",
+              code_master: "Score over 1000 points in a single game",
+              running_on_fumes: "Complete a game with less than 3 energy left",
+              the_admin: "System breached!",
+              script_kiddie: "Complete your first game",
+              quantum_typist: "Hit 80 WPM",
+              digital_overlord: "Break 100 WPM",
+              bug_eliminator: "Complete a game with 100% accuracy",
+              night_owl: "Complete a game between midnight and 5am",
+              polyglot_programmer: "Achieve 50+ WPM in all language modes",
+              completionist: "Unlock all achievements",
+            };
+
+            // Format and display each unlocked achievement
+            const unlockedAchievements = fullAchievements.unlockedAchievements;
+            for (const [id, data] of Object.entries(unlockedAchievements)) {
+              const unlockDate = new Date(data.unlockedAt);
+              const formattedDate = unlockDate.toLocaleString();
+              const name = id
+                .split("_")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ");
+              const description =
+                achievementDescriptions[id] || "Secret achievement";
+
+              this.printToTerminal(
+                `
+<span style='color:#ff9e64'>${name}</span>
+  Description: ${description}
+  Unlocked: ${formattedDate}`,
+                "command-success",
+              );
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing achievement data:", error);
+          this.printToTerminal(
+            `Error reading achievement data: ${error.message}`,
+            "command-error",
+          );
+        }
         break;
 
       case "godmode.txt":
@@ -979,31 +1058,97 @@ remain within acceptable parameters.
       this.printToTerminal("Error: Please specify a file", "command-error");
       return;
     }
+
     switch (filename) {
       case "scoreboard.data":
         localStorage.removeItem("gameResults");
         this.printToTerminal("Scoreboard data deleted", "command-success");
         break;
+
       case "achievements.data":
-        localStorage.removeItem("highestAchievements");
-        this.printToTerminal("Achievement data deleted", "command-success");
+        // Add confirmation for achievements deletion
+        this.commandHistory.pop(); // Remove the rm command from history to avoid confusion
+
+        // Create a more robust confirmation handler using a flag to track state
+        if (!this.waitingForConfirmation) {
+          // Set up for confirmation prompt
+          this.waitingForConfirmation = true;
+          this.confirmationFile = "achievements.data";
+
+          this.printToTerminal(
+            "<span style='color:#ff007c'>This will remove ALL achievement data. Are you sure you want to remove them? (yes/no)</span>",
+            "command-error",
+          );
+
+          // Save the original command handler
+          this.originalHandleCommand = this.handleCommand;
+
+          // Override the command handler temporarily
+          this.handleCommand = (input) => {
+            // Show the confirmation command in the terminal
+            this.printToTerminal(
+              `<br><span style="color:#bb9af7">[${localStorage.getItem("nerdtype_username") || "runner"}@PENTAGON-CORE:~]$ </span>${input}`,
+            );
+
+            const confirmInput = input.trim().toLowerCase();
+
+            // Debug: Log the confirmation input for troubleshooting
+            console.log("Confirmation input:", confirmInput);
+
+            if (confirmInput === "yes" || confirmInput === "y") {
+              // Remove all achievement data
+              localStorage.removeItem("highestAchievements");
+              localStorage.removeItem("nerdtype_achievements");
+
+              // Try to call resetAchievements function on achievement system if it exists
+              try {
+                // This will only work if the achievement system is loaded and has this method
+                if (
+                  window.achievementSystem &&
+                  typeof window.achievementSystem.resetAchievements ===
+                    "function"
+                ) {
+                  window.achievementSystem.resetAchievements();
+                }
+              } catch (error) {
+                console.error("Error resetting achievements system:", error);
+              }
+
+              this.printToTerminal(
+                "<span style='color:#c3e88d'>Achievement data successfully purged from system.</span>",
+                "command-success",
+              );
+            } else {
+              this.printToTerminal("Operation cancelled", "command-success");
+            }
+
+            // Restore original command handler
+            this.handleCommand = this.originalHandleCommand;
+            this.waitingForConfirmation = false;
+            this.confirmationFile = null;
+          };
+        }
         break;
+
       case "history":
         this.sessionCommandHistory = [];
         this.printToTerminal("Command history cleared", "command-success");
         break;
+
       case "godmode.txt":
         this.printToTerminal(
           "Error: Permission denied - Cannot delete system file",
           "command-error",
         );
         break;
+
       case "admin.log":
         this.printToTerminal(
           "Error: Permission denied - System protected file",
           "command-error",
         );
         break;
+
       default:
         this.printToTerminal(
           `Error: File '${filename}' not found`,

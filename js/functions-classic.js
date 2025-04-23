@@ -1017,10 +1017,10 @@ function displayPreviousResults() {
 
 function clearResults() {
   localStorage.removeItem("gameResults");
-  localStorage.removeItem("highestAchievements");
+  // localStorage.removeItem("highestAchievements");
 
   // Reset achievements
-  achievementSystem.resetAchievements();
+  // achievementSystem.resetAchievements();
 
   const resultsContainer = document.getElementById("previousResults");
   if (resultsContainer) {
@@ -1043,7 +1043,6 @@ function clearResults() {
       "> ================================",
       "> EXECUTING COMMANDS:",
       "  └─ rm scoreboard.data",
-      "  └─ rm achievements.data",
       `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
       "> ================================",
       "> LOCAL STORAGE CLEARED_",

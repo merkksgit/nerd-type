@@ -184,7 +184,7 @@ function initializeEventListeners() {
   if (clearResultsBtn) {
     clearResultsBtn.addEventListener("click", function () {
       localStorage.removeItem("gameResults");
-      localStorage.removeItem("highestAchievements");
+      // localStorage.removeItem("highestAchievements");
       const resultsContainer = document.getElementById("previousResults");
       if (resultsContainer) {
         resultsContainer.innerHTML = "";
@@ -206,7 +206,6 @@ function initializeEventListeners() {
           "> ================================",
           "> EXECUTING COMMANDS:",
           "  └─ rm scoreboard.data",
-          "  └─ rm achievements.data",
           `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
           "> ================================",
           "> LOCAL STORAGE CLEARED_",
