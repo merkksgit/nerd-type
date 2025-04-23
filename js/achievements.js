@@ -153,27 +153,6 @@ class AchievementSystem {
           return accuracy === 100 || statsAccuracy === 100;
         },
       },
-      completionist: {
-        id: "completionist",
-        name: "Completionist",
-        description: "Unlock all achievements",
-        icon: "fa-solid fa-shield-halved",
-        category: "meta",
-        secret: false,
-        check: function (stats, gameData) {
-          // Get all achievements except this one
-          const allOtherAchievements = Object.keys(
-            this.achievements || {},
-          ).filter((id) => id !== "completionist");
-
-          // Check if all other achievements are unlocked
-          return allOtherAchievements.every(
-            (id) =>
-              this.achievementsData.unlockedAchievements[id] !== undefined,
-          );
-        },
-      },
-
       night_owl: {
         id: "night_owl",
         name: "Night Owl",
@@ -207,6 +186,27 @@ class AchievementSystem {
             stats.languageWPM.swedish >= 50 &&
             stats.languageWPM.nightmare >= 50 &&
             stats.languageWPM.programming >= 50
+          );
+        },
+      },
+
+      completionist: {
+        id: "completionist",
+        name: "Completionist",
+        description: "Unlock all achievements",
+        icon: "fa-solid fa-shield-halved",
+        category: "meta",
+        secret: false,
+        check: function (stats, gameData) {
+          // Get all achievements except this one
+          const allOtherAchievements = Object.keys(
+            this.achievements || {},
+          ).filter((id) => id !== "completionist");
+
+          // Check if all other achievements are unlocked
+          return allOtherAchievements.every(
+            (id) =>
+              this.achievementsData.unlockedAchievements[id] !== undefined,
           );
         },
       },
