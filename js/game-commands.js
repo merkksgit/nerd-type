@@ -232,7 +232,7 @@ class GameCommands {
       notificationContainer.style.position = "fixed";
       notificationContainer.style.bottom = "10px";
       notificationContainer.style.right = "10px";
-      notificationContainer.style.zIndex = "1000";
+      notificationContainer.style.zIndex = "9999";
       document.body.appendChild(notificationContainer);
 
       // Add notification styles
