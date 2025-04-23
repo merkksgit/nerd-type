@@ -850,10 +850,9 @@ ACHIEVEMENTS:
             highestAchievements.accuracyRank
           ) {
             this.printToTerminal(
-              `
-Speed Tier: <span style='color:#ff9e64'>${highestAchievements.speedTier || "Not Achieved"}</span>
+              `Speed Tier: <span style='color:#ff9e64'>${highestAchievements.speedTier || "Not Achieved"}</span>
 Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank || "Not Achieved"}</span>
-`,
+==================================`,
               "command-success",
             );
           }
@@ -894,10 +893,10 @@ Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank ||
                 achievementDescriptions[id] || "Secret achievement";
 
               this.printToTerminal(
-                `
-<span style='color:#ff9e64'>${name}</span>
-  Description: ${description}
-  Unlocked: ${formattedDate}`,
+                `<span style='color:#ff9e64'>${name}</span>
+Description: ${description}
+Unlocked: ${formattedDate}
+==================================`,
                 "command-success",
               );
             }
