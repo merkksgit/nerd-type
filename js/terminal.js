@@ -116,7 +116,7 @@ class Terminal {
                                 <div id="terminalOutput" class="terminal-output"></div>
                                 <div class="terminal-input-line">
                                     <span class="terminal-prompt"></span>
-                                    <input type="text" id="terminalInput" class="terminal-input" autocomplete="off">
+                                    <input type="text" id="terminalInput" class="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                                 </div>
                             </div>
                         </div>
