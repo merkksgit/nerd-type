@@ -159,7 +159,7 @@ class AchievementSystem {
         description: "Complete a game between midnight and 5am",
         icon: "fa-solid fa-moon",
         category: "lifestyle",
-        secret: false,
+        secret: true,
         check: (stats, gameData) => {
           const currentHour = new Date().getHours();
           return currentHour >= 0 && currentHour < 5;
@@ -323,6 +323,49 @@ class AchievementSystem {
         
         .achievement-locked .card-header {
           color: #7aa2f7 !important;
+        }
+
+        /* Tooltip styles for achievements */
+        .tooltip.achievement-tooltip .tooltip-inner {
+          background-color: #1f2335;
+          color: #7aa2f7;
+          border: 2px solid #3b4261;
+          padding: 10px 15px;
+          font-family: "custom", monospace;
+          max-width: 250px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+          font-size: 0.9rem;
+          line-height: 1.4;
+        }
+
+        .custom-achievement-card[data-bs-toggle="tooltip"]::after {
+          content: "ℹ️";
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          font-size: 0.8rem;
+          opacity: 0.6;
+          transition: opacity 0.2s ease;
+        }
+
+        .custom-achievement-card[data-bs-toggle="tooltip"]:hover::after {
+          opacity: 1;
+        }
+
+        /* Special styling for secret achievements */
+        .custom-achievement-card.achievement-locked i.fa-lock {
+          color: #bb9af7;
+          opacity: 0.7;
+          transition: all 0.3s ease;
+        }
+
+        .custom-achievement-card.achievement-locked:hover i.fa-lock {
+          color: #ff9e64;
+          transform: scale(1.1);
+        }
+
+        .tooltip.achievement-tooltip {
+          opacity: 1 !important;
         }
       `;
       document.head.appendChild(style);
@@ -644,7 +687,7 @@ class AchievementSystem {
     );
   }
 
-  // Render achievements to a container element
+  // Render achievements to a container element with tooltips for non-secret achievements
   renderAchievementsToContainer(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -675,6 +718,17 @@ class AchievementSystem {
       const card = document.createElement("div");
       card.className = `card custom-achievement-card ${achievement.unlocked ? "" : "achievement-locked"}`;
 
+      // Add tooltip data attributes only for non-secret achievements
+      if (!achievement.secret && !achievement.unlocked) {
+        card.setAttribute("data-bs-toggle", "tooltip");
+        card.setAttribute("data-bs-placement", "top");
+        card.setAttribute(
+          "data-bs-template",
+          '<div class="tooltip achievement-tooltip" role="tooltip"><div class="tooltip-inner"></div></div>',
+        );
+        card.setAttribute("title", achievement.description);
+      }
+
       const header = document.createElement("div");
       header.className = "card-header achievement-header";
       header.innerHTML = `<i class="${achievement.icon}"></i> ${achievement.name}`;
@@ -691,7 +745,13 @@ class AchievementSystem {
         lockedIcon.className = "fa-solid fa-lock me-2";
 
         const lockedText = document.createElement("span");
-        lockedText.textContent = "Locked";
+
+        // For secret achievements, show different text
+        if (achievement.secret) {
+          lockedText.textContent = "Secret Achievement";
+        } else {
+          lockedText.textContent = "Locked";
+        }
 
         body.appendChild(lockedIcon);
         body.appendChild(lockedText);
@@ -702,6 +762,16 @@ class AchievementSystem {
       col.appendChild(card);
       row.appendChild(col);
     });
+
+    // Initialize tooltips after adding all achievement cards
+    setTimeout(() => {
+      const tooltipTriggerList = [].slice.call(
+        container.querySelectorAll('[data-bs-toggle="tooltip"]'),
+      );
+      tooltipTriggerList.forEach((el) => {
+        new bootstrap.Tooltip(el);
+      });
+    }, 100);
   }
 }
 
