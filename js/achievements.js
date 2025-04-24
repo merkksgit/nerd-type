@@ -245,7 +245,7 @@ class AchievementSystem {
           color: white;
           max-width: 350px;
           font-family: custom, monospace;
-          animation: fadeInOut 4s forwards;
+          animation: fadeInOut 9s forwards;
           box-shadow: 0 0 10px rgba(31, 35, 53, 1);
           display: flex;
           align-items: center;
@@ -279,8 +279,8 @@ class AchievementSystem {
         
         @keyframes fadeInOut {
           0% { opacity: 0; transform: translateX(20px); }
-          10% { opacity: 1; transform: translateX(0); }
-          80% { opacity: 1; transform: translateX(0); }
+          5% { opacity: 1; transform: translateX(0); }
+          90% { opacity: 1; transform: translateX(0); }
           100% { opacity: 0; transform: translateX(20px); }
         }
         
@@ -588,7 +588,7 @@ class AchievementSystem {
     // Remove after animation completes
     setTimeout(() => {
       notification.remove();
-    }, 4000);
+    }, 9000);
   }
 
   // Get all achievements with their unlock status
