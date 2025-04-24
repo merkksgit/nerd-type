@@ -168,6 +168,7 @@ footer {
 #confirmUsername,
 #game-command-modal-close,
 #back-to-game .btn,
+#confirmMobileWarning,
 #resetBtn {
   color: #7aa2f7;
   background-color: #1f2335;
@@ -194,6 +195,7 @@ footer {
 #game-command-modal-close:hover,
 #confirmUsername:hover,
 #back-to-game .btn:hover,
+#confirmMobileWarning,
 #resetBtn:hover {
   color: #ff9e64;
   box-shadow:
