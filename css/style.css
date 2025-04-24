@@ -56,21 +56,20 @@ footer {
 }
 
 #header-logo {
-  width: 180px;
+  width: 40px;
+  margin-left: 10px;
 }
 
-/* Extra small devices (phones, less than 576px) */
-@media (max-width: 575.98px) {
-  #header-logo {
-    margin: 0 auto;
-    width: 250px;
-  }
+#header-text {
+  width: 200px;
+  padding-top: 10px;
+  padding-left: 10px;
 }
 
-/* Small devices (576px and up) */
-@media (min-width: 576px) {
+@media (max-width: 576px) {
   #header-logo {
-    margin-left: 10px;
+    margin-left: 15px;
+    width: 50px;
   }
 }
 
@@ -220,7 +219,7 @@ footer {
 
 @media (max-width: 575.98px) {
   #changeUsername {
-    margin-top: 76px;
+    margin-top: 15px;
   }
 }
 
@@ -278,8 +277,8 @@ div#wordToType {
 
 /* Navbar styling */
 .navbar .navbar-nav .nav-link {
-  color: #545c7e;
-  font-size: 1.1em;
+  color: #565f89;
+  font-size: 1em;
   position: relative;
   padding: 0.5rem 0.8rem;
   margin: 0 0.2rem;
@@ -318,6 +317,7 @@ div#wordToType {
   .navbar .navbar-nav .nav-link {
     padding: 0.6rem 1rem;
     border-left: 3px solid transparent;
+    text-align: center;
   }
 
   .navbar .navbar-nav .nav-link:hover {
@@ -394,7 +394,7 @@ div#wordToType {
 }
 
 .navbar-toggler {
-  border-color: #565f89 !important;
+  border-color: #24283b !important;
 }
 
 div#content {

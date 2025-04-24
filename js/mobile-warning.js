@@ -35,7 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="modal-content">
                         <div class="modal-header border-bottom-0 text-center">
                             <div class="w-100 text-center mb-2">
-                                <img src="./images/nerdtypelogo-trasparent3.png" alt="NerdType Logo" style="width: 180px; margin: 0 auto;">
+                                <img src="./images/logo.png" alt="NerdType Logo" style="width: 40px; margin: 0 auto;">
+                                <img src="./images/nt-text-blue.png" alt="NerdType Text" style="width: 200px; margin: 0 auto; padding-top: 12px;">
                             </div>
                         </div>
                         <div class="modal-body border-top-0 border-bottom-0">
