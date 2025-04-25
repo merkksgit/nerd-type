@@ -95,6 +95,45 @@ class AchievementSystem {
           gameData.timeLeft > 0 &&
           gameData.timeLeft < 3,
       },
+      speed_demon: {
+        id: "speed_demon",
+        name: "Speed Demon",
+        description: "Complete a Zen Mode game in under 50 seconds",
+        icon: "fa-solid fa-gauge-high",
+        category: "speed",
+        secret: false,
+        check: function (stats, gameData) {
+          // Check if this is a Zen Mode game
+          if (!gameData || gameData.mode !== "Zen Mode") {
+            return false;
+          }
+
+          if (gameData.totalTime) {
+            console.log("Total time found:", gameData.totalTime);
+
+            try {
+              let totalSeconds = 0;
+
+              // Handle different possible formats
+              if (gameData.totalTime.includes(":")) {
+                // Format: "m:ss"
+                const timeParts = gameData.totalTime.split(":");
+                const minutes = parseInt(timeParts[0]);
+                const seconds = parseInt(timeParts[1]);
+                totalSeconds = minutes * 60 + seconds;
+              } else if (!isNaN(parseFloat(gameData.totalTime))) {
+                // Format: numeric seconds
+                totalSeconds = parseFloat(gameData.totalTime);
+              }
+
+              // Check if under 50 seconds
+              return totalSeconds > 0 && totalSeconds < 50;
+            } catch (error) {
+              return false;
+            }
+          }
+        },
+      },
       the_admin: {
         id: "the_admin",
         name: "The Admin",
@@ -103,6 +142,62 @@ class AchievementSystem {
         category: "secret",
         secret: true,
         check: (stats, gameData) => gameData && gameData.adminAccess === true,
+      },
+      get_up_joel: {
+        id: "get_up_joel",
+        name: "Get Up, Joel!",
+        description: "Lose a game, then win the next one",
+        icon: "fa-solid fa-arrows-up-from-ground",
+        category: "resilience",
+        secret: true,
+        check: function (stats, gameData) {
+          console.log("Checking Get Up Joel achievement:", gameData);
+
+          // First, make sure we're in Classic Mode (or variants)
+          if (
+            !gameData ||
+            (gameData.mode !== "Classic Mode" &&
+              gameData.mode !== "Custom Mode" &&
+              gameData.mode !== "Speedrunner Mode" &&
+              gameData.mode !== "Hard Mode" &&
+              gameData.mode !== "Practice Mode")
+          ) {
+            return false;
+          }
+
+          // Make sure the stats object has the lastGameLostByEnergy property
+          if (this.achievementsData.stats.lastGameLostByEnergy === undefined) {
+            this.achievementsData.stats.lastGameLostByEnergy = false;
+          }
+
+          console.log(
+            "Previous game lost by energy:",
+            this.achievementsData.stats.lastGameLostByEnergy,
+          );
+          console.log("Current game timeLeft:", gameData.timeLeft);
+
+          // Check if this is a win after a loss
+          const isWin = gameData.timeLeft > 0;
+          const wasLost = this.achievementsData.stats.lastGameLostByEnergy;
+
+          if (wasLost && isWin) {
+            // Reset the tracking state
+            this.achievementsData.stats.lastGameLostByEnergy = false;
+            console.log("Achievement unlocked: Get Up Joel!");
+            return true; // Achievement unlocked!
+          }
+
+          // Update tracking state if this game was lost by running out of energy
+          if (gameData.timeLeft === 0) {
+            console.log("Game lost by running out of energy, setting flag");
+            this.achievementsData.stats.lastGameLostByEnergy = true;
+          } else {
+            // If this was a win, don't reset the tracking state
+            // Only reset when the achievement actually triggers
+          }
+
+          return false; // Achievement not unlocked yet
+        },
       },
       // WPM Achievements
       script_kiddie: {

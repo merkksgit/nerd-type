@@ -707,16 +707,22 @@ function calculateAccuracy() {
 
 function saveResult(wpm, totalTime, accuracy) {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-  results.push({
+
+  // Create a game data object
+  const gameData = {
     username: playerUsername,
     wpm,
     totalTime,
     accuracy,
     date: new Date().toLocaleString("en-GB"),
     mode: "Zen Mode",
-    wordList: currentLanguage, // Add the word list info to results
-  });
+    wordList: currentLanguage,
+  };
+
+  results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
+
+  achievementSystem.handleGameCompletion(gameData);
 }
 
 function displayPreviousResults() {
