@@ -1086,7 +1086,7 @@ a:active .bi-c-circle {
 .tooltip .tooltip-inner {
   background-color: #1f2335;
   color: #7aa2f7;
-  border: 1px solid #3b4261;
+  border: 2px solid #3b4261;
   padding: 8px 12px;
   font-family: "custom", monospace;
   max-width: 200px;
