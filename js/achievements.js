@@ -143,71 +143,62 @@ class AchievementSystem {
         secret: true,
         check: (stats, gameData) => gameData && gameData.adminAccess === true,
       },
-      get_up_joel: {
-        id: "get_up_joel",
-        name: "Get Up, Joel!",
-        description: "Lose a game, then win the next one",
-        icon: "fa-solid fa-arrows-up-from-ground",
-        category: "resilience",
-        secret: true,
-        check: function (stats, gameData) {
-          console.log("Checking Get Up Joel achievement:", gameData);
+      // get_up_joel: {
+      //   id: "get_up_joel",
+      //   name: "Get Up, Joel!",
+      //   description: "Lose a game, win the next one",
+      //   icon: "fa-solid fa-person-arrow-up-from-line",
+      //   category: "resilience",
+      //   secret: true,
+      //   check: function (stats, gameData) {
+      //     if (
+      //       !gameData ||
+      //       (gameData.mode !== "Classic Mode" &&
+      //         gameData.mode !== "Custom Mode" &&
+      //         gameData.mode !== "Speedrunner Mode" &&
+      //         gameData.mode !== "Hard Mode" &&
+      //         gameData.mode !== "Practice Mode")
+      //     ) {
+      //       return false;
+      //     }
+      //
+      //     if (this.achievementsData.stats.lastGameLostByEnergy === undefined) {
+      //       this.achievementsData.stats.lastGameLostByEnergy = false;
+      //     }
+      //
+      //     const isWin = gameData.timeLeft > 0;
+      //     const wasLost = this.achievementsData.stats.lastGameLostByEnergy;
+      //
+      //     if (wasLost && isWin) {
+      //       this.achievementsData.stats.lastGameLostByEnergy = false;
+      //       return true; // Achievement unlocked!
+      //     }
+      //
+      //     // Update tracking state if this game was lost by running out of energy
+      //     if (gameData.timeLeft === 0) {
+      //       this.achievementsData.stats.lastGameLostByEnergy = true;
+      //     } else {
+      //     }
+      //
+      //     return false;
+      //   },
+      // },
 
-          // First, make sure we're in Classic Mode (or variants)
-          if (
-            !gameData ||
-            (gameData.mode !== "Classic Mode" &&
-              gameData.mode !== "Custom Mode" &&
-              gameData.mode !== "Speedrunner Mode" &&
-              gameData.mode !== "Hard Mode" &&
-              gameData.mode !== "Practice Mode")
-          ) {
-            return false;
-          }
-
-          // Make sure the stats object has the lastGameLostByEnergy property
-          if (this.achievementsData.stats.lastGameLostByEnergy === undefined) {
-            this.achievementsData.stats.lastGameLostByEnergy = false;
-          }
-
-          console.log(
-            "Previous game lost by energy:",
-            this.achievementsData.stats.lastGameLostByEnergy,
-          );
-          console.log("Current game timeLeft:", gameData.timeLeft);
-
-          // Check if this is a win after a loss
-          const isWin = gameData.timeLeft > 0;
-          const wasLost = this.achievementsData.stats.lastGameLostByEnergy;
-
-          if (wasLost && isWin) {
-            // Reset the tracking state
-            this.achievementsData.stats.lastGameLostByEnergy = false;
-            console.log("Achievement unlocked: Get Up Joel!");
-            return true; // Achievement unlocked!
-          }
-
-          // Update tracking state if this game was lost by running out of energy
-          if (gameData.timeLeft === 0) {
-            console.log("Game lost by running out of energy, setting flag");
-            this.achievementsData.stats.lastGameLostByEnergy = true;
-          } else {
-            // If this was a win, don't reset the tracking state
-            // Only reset when the achievement actually triggers
-          }
-
-          return false; // Achievement not unlocked yet
-        },
-      },
       // WPM Achievements
       script_kiddie: {
         id: "script_kiddie",
         name: "Script Kiddie",
-        description: "Complete your first game",
+        description: "Your first hack, gratz nerd!",
         icon: "fa-solid fa-graduation-cap",
         category: "progress",
-        secret: false,
-        check: (stats, gameData) => gameData && gameData.wpm !== undefined,
+        secret: true,
+        check: (stats, gameData) => {
+          // Check if gameData exists and has wpm
+          if (!gameData || gameData.wpm === undefined) return false;
+
+          // Check if the game was won (timeLeft > 0)
+          return gameData.timeLeft > 0;
+        },
       },
 
       quantum_typist: {
@@ -231,21 +222,21 @@ class AchievementSystem {
         check: (stats, gameData) =>
           (gameData && gameData.wpm >= 100) || stats.highestWPM >= 100,
       },
-
       bug_eliminator: {
         id: "bug_eliminator",
         name: "Bug Eliminator",
-        description: "Complete a game with 100% accuracy",
+        description: "Win with 100% accuracy",
         icon: "fa-solid fa-bug-slash",
         category: "accuracy",
         secret: false,
         check: (stats, gameData) => {
-          const accuracy =
-            gameData && gameData.accuracy ? parseFloat(gameData.accuracy) : 0;
-          const statsAccuracy = stats.highestAccuracy
-            ? parseFloat(stats.highestAccuracy)
-            : 0;
-          return accuracy === 100 || statsAccuracy === 100;
+          if (!gameData) return false;
+
+          const accuracy = parseFloat(gameData.accuracy);
+          const isVictory = gameData.timeLeft > 0;
+
+          // Achievement unlocks only when accuracy is 100% AND the game was won
+          return accuracy === 100 && isVictory;
         },
       },
       night_owl: {
@@ -806,14 +797,15 @@ class AchievementSystem {
     container.appendChild(row);
 
     // Add each achievement - using the same structure as the existing achievements
+    // Add each achievement - using a 3-column layout
     achievements.forEach((achievement) => {
       const col = document.createElement("div");
-      col.className = "col-12 col-md-6 pt-3";
+      col.className = "col-12 col-md-4 pt-3"; // Changed to 4 for 3 cards per row
 
       const card = document.createElement("div");
       card.className = `card custom-achievement-card ${achievement.unlocked ? "" : "achievement-locked"}`;
 
-      // Add tooltip data attributes only for non-secret achievements
+      // Add tooltip data attributes only for non-secret locked achievements
       if (!achievement.secret && !achievement.unlocked) {
         card.setAttribute("data-bs-toggle", "tooltip");
         card.setAttribute("data-bs-placement", "top");
@@ -832,8 +824,23 @@ class AchievementSystem {
       body.className = "card-body text-center";
 
       if (achievement.unlocked) {
-        // For unlocked achievements, show the description
-        body.textContent = achievement.description;
+        // Dynamically adjust font size based on description length
+        const description = achievement.description;
+        body.textContent = description;
+
+        // Default font size
+        body.style.fontSize = "0.9rem";
+
+        // Adjust based on text length
+        if (description.length > 30) {
+          body.style.fontSize = "0.85rem";
+        }
+        if (description.length > 45) {
+          body.style.fontSize = "0.8rem";
+        }
+        if (description.length > 60) {
+          body.style.fontSize = "0.75rem";
+        }
       } else {
         // For locked achievements, show an icon and "Locked"
         const lockedIcon = document.createElement("i");
@@ -857,7 +864,6 @@ class AchievementSystem {
       col.appendChild(card);
       row.appendChild(col);
     });
-
     // Initialize tooltips after adding all achievement cards
     setTimeout(() => {
       const tooltipTriggerList = [].slice.call(

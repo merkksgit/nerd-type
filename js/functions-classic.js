@@ -882,6 +882,9 @@ window.addEventListener("terminalClosed", function () {
 });
 
 function saveResult(timeLeft, wpm, accuracy, finalScore) {
+  if (timeLeft === 0) {
+    return;
+  }
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
   // Get current highest achievements

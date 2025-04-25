@@ -492,7 +492,7 @@ Available commands:
 /setinitial     - Set starting energy
 /setgoal        - Set goal percentage
 /mode           - Set game mode
-[classic, hard, practice, speedrunner]
+<span style= "color: #ff9e64">[classic, hard, practice, speedrunner]</span>
 /status         - Show current game settings
 /reset          - Reset to default settings
 /help           - Show this help message
