@@ -183,17 +183,13 @@ $ </pre>
                   <div class="container-fluid">
                     <div class="d-flex flex-column align-items-center">
                       <button
-                        id="toggleScoreboard"
+                        id="viewScoreboardBtn"
                         class="btn w-auto mb-3 border-0"
                         style="min-width: 200px"
                       >
-                        <i class="fa-solid fa-trophy"></i> Hide Scoreboard
+                        <i class="fa-solid fa-trophy"></i> View Scoreboard
                       </button>
                     </div>
-                  </div>
-                  <div id="scoreboardContainer">
-                    <ul id="previousResults"></ul>
-                    <button id="clearResultsBtn">Clear Scoreboard</button>
                   </div>
                 </div>
               </div>
@@ -265,7 +261,6 @@ $ </pre>
         </div>
       </div>
     </footer>
-
     <!-- Game Over Modal -->
     <div
       class="modal fade"
@@ -288,6 +283,44 @@ $ </pre>
           >
             <button id="restartGameBtn" type="button" class="btn btn-primary">
               Return
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="scoreboardModal"
+      tabindex="-1"
+      aria-labelledby="scoreboardModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg scoreboard-modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 text-center">
+            <h5 class="modal-title w-100" id="scoreboardModalLabel"></h5>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            <ul id="previousResults"></ul>
+          </div>
+          <div
+            class="modal-footer border-top-0 d-flex flex-row justify-content-center"
+          >
+            <button
+              id="clearResultsBtn"
+              class="btn mb-1"
+              style="min-width: 200px"
+            >
+              Clear Scoreboard
+            </button>
+            <button
+              id="scoreboardCloseBtn"
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              style="min-width: 200px"
+            >
+              Close
             </button>
           </div>
         </div>
@@ -341,5 +374,35 @@ $ </pre>
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script>
+      // Add event listener for the scoreboard button
+      document
+        .getElementById("viewScoreboardBtn")
+        .addEventListener("click", function () {
+          if (typeof displayPreviousResults === "function") {
+            displayPreviousResults();
+          }
+
+          const scoreboardModal = new bootstrap.Modal(
+            document.getElementById("scoreboardModal"),
+          );
+          scoreboardModal.show();
+
+          document.getElementById("scoreboardModal").addEventListener(
+            "hidden.bs.modal",
+            function () {
+              const backdrops = document.querySelectorAll(".modal-backdrop");
+              backdrops.forEach((backdrop) => {
+                backdrop.remove();
+              });
+
+              document.body.classList.remove("modal-open");
+
+              document.body.removeAttribute("style");
+            },
+            { once: true },
+          );
+        });
+    </script>
   </body>
 </html>

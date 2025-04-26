@@ -370,6 +370,19 @@ function initializeEventListeners() {
     scoreboardToggleBtn.innerHTML =
       '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
   }
+
+  document
+    .getElementById("viewScoreboardBtn")
+    .addEventListener("click", function () {
+      // Update the scoreboard contents before showing
+      displayPreviousResults();
+
+      // Then show the modal
+      const scoreboardModal = new bootstrap.Modal(
+        document.getElementById("scoreboardModal"),
+      );
+      scoreboardModal.show();
+    });
 }
 
 function showUsernameModal() {

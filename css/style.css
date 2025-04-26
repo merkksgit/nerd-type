@@ -180,6 +180,7 @@ footer {
 #back-to-game .btn,
 #confirmMobileWarning,
 #submitCustomScore,
+#scoreboardCloseBtn,
 #resetBtn {
   color: #7aa2f7;
   background-color: #1f2335;
@@ -208,6 +209,8 @@ footer {
 #back-to-game .btn:hover,
 #confirmMobileWarning:hover,
 #submitCustomScore:hover,
+#closeScoreboardBtn:hover,
+#scoreboardCloseBtn:hover,
 #resetBtn:hover {
   color: #ff9e64;
   box-shadow:
@@ -685,6 +688,13 @@ score h3 {
     width: 50%;
   }
   #previousResults {
+    width: 100%;
+    line-height: 3em;
+  }
+}
+
+@media (min-width: 1200px) {
+  #previousResults {
     width: 80%;
   }
 }
@@ -716,6 +726,17 @@ score h3 {
   overflow: hidden;
 }
 
+.scoreboard-modal-dialog {
+  max-width: 90% !important;
+  width: 1200px !important;
+}
+
+@media (max-width: 1200px) {
+  .scoreboard-modal-dialog {
+    width: 90% !important;
+  }
+}
+
 #scoreboardContainer.hidden {
   height: 0;
   opacity: 0;
@@ -729,7 +750,8 @@ score h3 {
 
 #toggleGraph,
 #toggleAchievements,
-#toggleScoreboard {
+#toggleScoreboard,
+#viewScoreboardBtn {
   background-color: #24283b;
   color: #7aa2f7;
   border: none;
@@ -743,7 +765,7 @@ score h3 {
 
 #toggleGraph:hover,
 #toggleAchievements:hover,
-#toggleScoreboard:hover {
+#viewScoreboardBtn:hover {
   color: #ff9e64;
   box-shadow:
     0 6px 12px rgba(0, 0, 0, 0.3),
@@ -754,7 +776,7 @@ score h3 {
 
 #toggleGraph:active,
 #toggleAchievements:active,
-#toggleScoreboard:active {
+#viewScoreboardBtn:active {
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.2),
     0 0 2px rgba(122, 162, 247, 0.3);
