@@ -143,47 +143,6 @@ class AchievementSystem {
         secret: true,
         check: (stats, gameData) => gameData && gameData.adminAccess === true,
       },
-      // get_up_joel: {
-      //   id: "get_up_joel",
-      //   name: "Get Up, Joel!",
-      //   description: "Lose a game, win the next one",
-      //   icon: "fa-solid fa-person-arrow-up-from-line",
-      //   category: "resilience",
-      //   secret: true,
-      //   check: function (stats, gameData) {
-      //     if (
-      //       !gameData ||
-      //       (gameData.mode !== "Classic Mode" &&
-      //         gameData.mode !== "Custom Mode" &&
-      //         gameData.mode !== "Speedrunner Mode" &&
-      //         gameData.mode !== "Hard Mode" &&
-      //         gameData.mode !== "Practice Mode")
-      //     ) {
-      //       return false;
-      //     }
-      //
-      //     if (this.achievementsData.stats.lastGameLostByEnergy === undefined) {
-      //       this.achievementsData.stats.lastGameLostByEnergy = false;
-      //     }
-      //
-      //     const isWin = gameData.timeLeft > 0;
-      //     const wasLost = this.achievementsData.stats.lastGameLostByEnergy;
-      //
-      //     if (wasLost && isWin) {
-      //       this.achievementsData.stats.lastGameLostByEnergy = false;
-      //       return true; // Achievement unlocked!
-      //     }
-      //
-      //     // Update tracking state if this game was lost by running out of energy
-      //     if (gameData.timeLeft === 0) {
-      //       this.achievementsData.stats.lastGameLostByEnergy = true;
-      //     } else {
-      //     }
-      //
-      //     return false;
-      //   },
-      // },
-
       // WPM Achievements
       script_kiddie: {
         id: "script_kiddie",
