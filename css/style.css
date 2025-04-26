@@ -171,16 +171,13 @@ footer {
 
 #returnToGameBtn,
 #restartGameBtn,
-#clrResults,
 #openTerminalBtn,
-#clearResultsBtn,
 #startButton,
 #confirmUsername,
 #game-command-modal-close,
 #back-to-game .btn,
 #confirmMobileWarning,
 #submitCustomScore,
-#scoreboardCloseBtn,
 #resetBtn {
   color: #7aa2f7;
   background-color: #1f2335;
@@ -194,8 +191,17 @@ footer {
   border-radius: 4px;
 }
 
-#clearResultsBtn {
-  margin-bottom: 5em;
+#clearResultsBtn,
+#scoreboardCloseBtn {
+  color: #7aa2f7;
+  background-color: #1f2335;
+  border: none;
+  padding: 10px 30px;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 4px rgba(122, 162, 247, 0.3);
+  transition: all 0.3s ease;
+  border-radius: 4px;
 }
 
 #returnToGameBtn:hover,
