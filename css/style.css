@@ -203,6 +203,7 @@ footer {
     0 0 4px rgba(122, 162, 247, 0.3);
   transition: all 0.3s ease;
   border-radius: 4px;
+  margin-bottom: 3em;
 }
 
 #returnToGameBtn:hover,
@@ -731,6 +732,7 @@ score h3 {
 #scoreboardContainer {
   transition: all 0.3s ease;
   overflow: hidden;
+  max-width: 1200px;
 }
 
 .scoreboard-modal-dialog {
