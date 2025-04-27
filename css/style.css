@@ -303,6 +303,12 @@ div h2 {
   padding: 10px 30px;
 }
 
+@media (max-width: 491px) {
+  #clearResultsBtn {
+    margin-right: 0;
+  }
+}
+
 #toggleGraph,
 #toggleAchievements,
 #toggleScoreboard,
