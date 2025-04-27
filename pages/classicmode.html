@@ -32,6 +32,7 @@
       sizes="192x192"
     />
     <link href="../css/style.css" rel="stylesheet" />
+    <link href="../css/settings-modal.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -105,6 +106,10 @@
           <button id="changeUsername" class="floating-user-btn">
             <i class="fa-solid fa-user"></i>
             <span id="usernameDisplay">runner</span>
+          </button>
+          <button id="openSettingsBtn" class="floating-settings-btn ms-2">
+            <i class="fa-solid fa-gear"></i>
+            <span id="settingsDisplay">Settings</span>
           </button>
         </div>
       </nav>
@@ -385,7 +390,261 @@ $ </pre>
         </div>
       </div>
     </div>
+    <!-- Settings Modal -->
+    <div
+      class="modal fade"
+      id="settingsModal"
+      tabindex="-1"
+      aria-labelledby="settingsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 text-center">
+            <h5 class="modal-title w-100" id="settingsModalLabel">
+              [GAME SETTINGS]
+            </h5>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            <div class="container-fluid">
+              <div class="row">
+                <!-- Game Mode Selection -->
+                <div class="col-md-6 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-gamepad me-2"></i>Game Mode
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="gameMode"
+                          id="modeClassic"
+                          value="classic"
+                          checked
+                        />
+                        <label class="form-check-label" for="modeClassic">
+                          Classic Mode
+                          <small class="d-block text-muted"
+                            >Balanced difficulty</small
+                          >
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="gameMode"
+                          id="modeHard"
+                          value="hard"
+                        />
+                        <label class="form-check-label" for="modeHard">
+                          Hard Mode
+                          <small class="d-block text-muted"
+                            >Challenging difficulty</small
+                          >
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="gameMode"
+                          id="modePractice"
+                          value="practice"
+                        />
+                        <label class="form-check-label" for="modePractice">
+                          Practice Mode
+                          <small class="d-block text-muted"
+                            >Extended time limits</small
+                          >
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="gameMode"
+                          id="modeSpeedrunner"
+                          value="speedrunner"
+                        />
+                        <label class="form-check-label" for="modeSpeedrunner">
+                          Speedrunner Mode
+                          <small class="d-block text-muted"
+                            >Fast-paced challenge</small
+                          >
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="gameMode"
+                          id="modeCustom"
+                          value="custom"
+                        />
+                        <label class="form-check-label" for="modeCustom">
+                          Custom Mode
+                          <small class="d-block text-muted"
+                            >Your own settings</small
+                          >
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Custom Settings -->
+                <div class="col-md-6 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-sliders me-2"></i>Custom Settings
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="mb-3">
+                        <label for="wordsGoal" class="form-label"
+                          >Words Goal</label
+                        >
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="wordsGoal"
+                            min="5"
+                            max="100"
+                            value="30"
+                          />
+                          <span class="input-group-text">words</span>
+                        </div>
+                        <small class="text-muted"
+                          >Number of words needed to win (1-100)</small
+                        >
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="bonusEnergy" class="form-label"
+                          >Bonus Energy</label
+                        >
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="bonusEnergy"
+                            min="1"
+                            max="10"
+                            value="3"
+                          />
+                          <span class="input-group-text">units</span>
+                        </div>
+                        <small class="text-muted"
+                          >Energy gained per correct word (1-10)</small
+                        >
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="initialEnergy" class="form-label"
+                          >Initial Energy</label
+                        >
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="initialEnergy"
+                            min="5"
+                            max="30"
+                            value="10"
+                          />
+                          <span class="input-group-text">units</span>
+                        </div>
+                        <small class="text-muted"
+                          >Starting energy amount (5-30)</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Additional Settings -->
+              <div class="row mt-3">
+                <div class="col-md-6 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-volume-high me-2"></i>Sound Settings
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="achievementSoundToggle"
+                          checked
+                        />
+                        <label
+                          class="form-check-label"
+                          for="achievementSoundToggle"
+                        >
+                          Achievement Sound
+                        </label>
+                        <small class="d-block text-muted"
+                          >Play sound when unlocking achievements</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                  <div class="difficulty-indicator mt-2 mb-3">
+                    <label class="form-label mb-1"
+                      >Difficulty Multiplier:
+                      <span id="difficultyValue">1.00x</span></label
+                    >
+                    <div class="progress terminal">
+                      <div
+                        id="difficultyBar"
+                        class="progress-bar"
+                        role="progressbar"
+                        style="width: 50%"
+                        aria-valuenow="50"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
+                    <small class="text-muted d-block mt-1"
+                      >Affects score calculation. Higher difficulty = higher
+                      potential score.</small
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="modal-footer border-top-0 d-flex justify-content-center"
+            style="background-color: #24283b"
+          >
+            <button id="resetSettingsBtn" type="button" class="btn">
+              Reset
+            </button>
+            <button id="applySettingsBtn" type="button" class="btn">
+              Apply
+            </button>
+            <button
+              id="closeSettingsBtn"
+              type="button"
+              class="btn"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <script src="../js/username.js"></script>
+    <script src="../js/settings-modal.js"></script>
     <script src="../js/functions-classic.js" type="module"></script>
     <script src="../js/keyboard-nav.js"></script>
     <script src="../js/version.js"></script>

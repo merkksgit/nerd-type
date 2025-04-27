@@ -1,0 +1,207 @@
+/* Settings Button Styling */
+.floating-settings-btn {
+  position: fixed;
+  top: 20px;
+  right: 140px; /* Position it to the left of the username button */
+  z-index: 1000;
+  background-color: #24283b;
+  color: #7aa2f7;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.floating-settings-btn:hover {
+  background-color: #2a3047;
+  color: #ff9e64;
+  transform: translateY(3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.floating-settings-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#openSettingsBtn:hover {
+  background-color: #24283b;
+}
+
+/* Settings Modal Styling */
+.settings-card {
+  background-color: #1f2335;
+  border: 2px solid #3b4261;
+  border-radius: 4px;
+  height: 100%;
+}
+
+.settings-card-header {
+  background-color: #1f2335;
+  color: #c3e88d;
+  padding: 10px 15px;
+  border-bottom: 1px solid #3b4261;
+  margin: 0;
+}
+
+.settings-card-body {
+  padding: 15px;
+  border-bottom: 1px solid #3b4261;
+}
+
+/* Form Controls */
+#settingsModal .form-control,
+#settingsModal .input-group-text {
+  background-color: #24283b;
+  border: 1px solid #3b4261;
+  color: #c0caf5;
+  height: 38px; /* Ensure consistent height */
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+}
+
+#settingsModal .form-control:focus {
+  background-color: #2a3047;
+  border-color: #7aa2f7;
+  box-shadow: 0 0 0 0.2rem rgba(122, 162, 247, 0.25);
+  color: #c0caf5;
+}
+
+/* Additional fixes for input fields */
+#settingsModal .mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+#settingsModal .form-control {
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+}
+
+/* Fix for number inputs */
+#settingsModal input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+#settingsModal input[type="number"]::-webkit-inner-spin-button,
+#settingsModal input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#settingsModal .form-check-input {
+  background-color: #24283b;
+  border-color: #3b4261;
+}
+
+#settingsModal .form-check-input:checked {
+  background-color: #7aa2f7;
+  border-color: #7aa2f7;
+}
+
+#settingsModal .form-check-label {
+  color: #c0caf5;
+}
+
+#settingsModal small.text-muted {
+  color: #565f89 !important;
+}
+
+/* Fix input group alignment */
+#settingsModal .input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+#settingsModal .input-group-text {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  justify-content: center;
+}
+
+/* Buttons */
+#resetSettingsBtn,
+#applySettingsBtn,
+#closeSettingsBtn {
+  color: #7aa2f7;
+  background-color: #1f2335;
+  min-width: 120px;
+  border: none;
+  border-radius: 4px;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 4px rgba(122, 162, 247, 0.3);
+  transition: all 0.3s ease;
+  padding: 10px 20px;
+  margin: 0 5px;
+}
+
+#resetSettingsBtn:hover,
+#applySettingsBtn:hover,
+#closeSettingsBtn:hover {
+  color: #ff9e64;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(122, 162, 247, 0.5);
+  transform: translateY(-2px);
+  background-color: #2a3047;
+}
+
+#resetSettingsBtn:active,
+#applySettingsBtn:active,
+#closeSettingsBtn:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 2px rgba(122, 162, 247, 0.3);
+}
+
+@media (max-width: 433px) {
+  #closeSettingsBtn {
+    margin-top: 1em;
+  }
+}
+
+/* Difficulty meter */
+.difficulty-indicator .progress {
+  height: 8px;
+  background-color: #1f2335;
+}
+
+.difficulty-indicator .progress .progress-bar {
+  background-image: linear-gradient(to right, #7aa2f7, #bb9af7, #ff9e64);
+  border-radius: 4px;
+}
+
+.difficulty-indicator label {
+  color: #c0caf5;
+}
+
+#difficultyValue {
+  color: #ff9e64;
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .floating-settings-btn {
+    right: 125px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+
+  .floating-settings-btn span {
+    display: none;
+  }
+}
+
+@media (max-width: 500px) {
+  .floating-settings-btn {
+    right: 125px;
+    top: 35px;
+  }
+}

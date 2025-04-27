@@ -578,6 +578,16 @@ class AchievementSystem {
     return newlyUnlocked;
   }
 
+  // sound toggle
+  setAchievementSoundEnabled(enabled) {
+    this.soundEnabled = enabled;
+
+    // If achievementSound exists globally, update its muted status
+    if (typeof window.achievementSound !== "undefined") {
+      window.achievementSound.muted = !enabled;
+    }
+  }
+
   // Show achievement unlock notification
   showNotification(achievement) {
     // Store in localStorage for persistence across reloads
@@ -666,7 +676,7 @@ class AchievementSystem {
     this.notificationContainer.appendChild(notification);
 
     // Play a sound if available
-    if (window.achievementSound) {
+    if (window.achievementSound && this.soundEnabled !== false) {
       window.achievementSound.currentTime = 0;
       window.achievementSound
         .play()

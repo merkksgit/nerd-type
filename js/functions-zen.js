@@ -18,6 +18,21 @@ let words = [];
 const achievementSound = new Audio("../sounds/achievement.mp3");
 window.achievementSound = achievementSound;
 
+// Check the sound setting on initialization
+const achievementSoundEnabled = localStorage.getItem(
+  "achievement_sound_enabled",
+);
+if (achievementSoundEnabled === "false") {
+  achievementSound.muted = true;
+}
+
+// Dispatch an event to notify that the sound is loaded
+window.dispatchEvent(
+  new CustomEvent("achievement_sound_loaded", {
+    detail: { sound: achievementSound },
+  }),
+);
+
 const wordListDisplayNames = {
   english: "🇬🇧 ",
   finnish: "🇫🇮 ",

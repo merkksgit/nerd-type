@@ -199,20 +199,21 @@ div#content {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-#changeUsername {
-  background-color: #24283b;
-  color: #7aa2f7;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 14px;
-}
+/* #changeUsername { */
+/*   background-color: #24283b; */
+/*   color: #7aa2f7; */
+/*   border: none; */
+/*   padding: 8px 15px; */
+/*   border-radius: 4px; */
+/*   cursor: pointer; */
+/*   text-transform: uppercase; */
+/*   letter-spacing: 1px; */
+/*   font-size: 14px; */
+/* } */
 
 #changeUsername:hover {
   color: #ff9e64;
+  background-color: #24283b;
 }
 
 #changeUsername:active {
@@ -1099,6 +1100,12 @@ score h3 {
   }
 }
 
+@media (max-width: 500px) {
+  .floating-user-btn {
+    top: 35px;
+  }
+}
+
 /* Small devices (phones, less than 600px) */
 @media (max-width: 600px) {
   #timer,
@@ -1165,13 +1172,6 @@ score h3 {
   #scoreChart,
   #zenChart {
     height: calc(100% - 20px);
-  }
-}
-
-/* Fix for exactly 575px - Bootstrap breakpoint edge case */
-@media (max-width: 575.98px) {
-  #changeUsername {
-    margin-top: 15px;
   }
 }
 
