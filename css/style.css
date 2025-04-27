@@ -294,10 +294,13 @@ div h2 {
   margin-top: 3em;
 }
 
-#clearResultsBtn,
+#clearResultsBtn {
+  padding: 10px 30px;
+  margin-right: 1em;
+}
+
 #scoreboardCloseBtn {
   padding: 10px 30px;
-  margin-bottom: 3em;
 }
 
 #toggleGraph,
