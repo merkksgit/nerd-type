@@ -352,7 +352,6 @@ $ </pre>
         </div>
       </div>
     </footer>
-
     <!-- Scripts -->
     <script type="module">
       import achievementSystem from "../js/achievements.js";
@@ -363,7 +362,64 @@ $ </pre>
         achievementSystem.renderAchievementsToContainer(
           "custom-achievements-container",
         );
+
+        // Display highest achievements (speed tier and accuracy rank)
+        displayHighestAchievements();
       });
+
+      // Define the displayHighestAchievements function directly in this file
+      function displayHighestAchievements() {
+        const highestAchievements = JSON.parse(
+          localStorage.getItem("highestAchievements"),
+        ) || {
+          speedTier: "",
+          accuracyRank: "",
+        };
+
+        const speedTierElement = document.getElementById("highestSpeedTier");
+        const accuracyRankElement = document.getElementById(
+          "highestAccuracyRank",
+        );
+
+        if (speedTierElement) {
+          speedTierElement.textContent = highestAchievements.speedTier || "-";
+          speedTierElement.className = "achievement-tier";
+          if (highestAchievements.speedTier) {
+            speedTierElement.classList.add(
+              getAchievementColor(highestAchievements.speedTier),
+            );
+          }
+        }
+
+        if (accuracyRankElement) {
+          accuracyRankElement.textContent =
+            highestAchievements.accuracyRank || "-";
+          accuracyRankElement.className = "achievement-tier";
+          if (highestAchievements.accuracyRank) {
+            accuracyRankElement.classList.add(
+              getAchievementColor(highestAchievements.accuracyRank),
+            );
+          }
+        }
+      }
+
+      // Add the helper function for achievement colors
+      function getAchievementColor(achievement) {
+        const colorMap = {
+          "QUANTUM SPEED": "achievement-quantum-speed",
+          "NEURAL MASTER": "achievement-neural-master",
+          "CYBER ADEPT": "achievement-cyber-adept",
+          "DIGITAL RUNNER": "achievement-digital-runner",
+          INITIATING: "achievement-initiating",
+          "PERFECT SYNC": "achievement-perfect-sync",
+          "CYBER EFFICIENT": "achievement-cyber-efficient",
+          "DIGITAL PRECISE": "achievement-digital-precise",
+          "SYSTEM UNSTABLE": "achievement-system-unstable",
+          "NEURAL INTERFERENCE": "achievement-neural-interference",
+          "SYSTEM FAILURE": "achievement-system-failure",
+        };
+        return colorMap[achievement] || "text-secondary";
+      }
     </script>
     <script src="../js/username2.js"></script>
     <script src="../js/keyboard-nav.js"></script>

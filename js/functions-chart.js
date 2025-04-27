@@ -257,3 +257,14 @@ function getAchievementColor(achievement) {
   };
   return colorMap[achievement] || "text-secondary";
 }
+
+// Export the functions so they can be imported in other files
+export {
+  displayPreviousResults,
+  displayHighestAchievements,
+  getAchievementColor,
+  setupToggle,
+  setupClearResultsModal,
+  handleClearResults,
+  handleClearResultsKeyPress,
+};
