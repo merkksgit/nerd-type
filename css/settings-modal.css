@@ -169,12 +169,24 @@
 /* Difficulty meter */
 .difficulty-indicator .progress {
   height: 8px;
-  background-color: #1f2335;
+  background-color: #1f2335 !important;
+  border: 1px solid #3b4261 !important;
 }
 
-.difficulty-indicator .progress .progress-bar {
-  background-image: linear-gradient(to right, #7aa2f7, #bb9af7, #ff9e64);
+.difficulty-indicator .progress .difficulty-progress-bar {
+  background-image: linear-gradient(
+    to right,
+    #7aa2f7,
+    #bb9af7,
+    #ff9e64
+  ) !important;
+  background-color: transparent !important;
   border-radius: 4px;
+}
+
+.progress.settings {
+  width: 80%;
+  margin: 0 auto; /* center it */
 }
 
 .difficulty-indicator label {
