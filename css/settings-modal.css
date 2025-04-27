@@ -50,6 +50,10 @@
   border-bottom: 1px solid #3b4261;
 }
 
+.form-label {
+  margin-left: 0 !important;
+}
+
 /* Form Controls */
 #settingsModal .form-control,
 #settingsModal .input-group-text {
