@@ -38,6 +38,19 @@ function setupToggle(
   }
 }
 
+document
+  .getElementById("viewScoreboardBtn")
+  .addEventListener("click", function () {
+    // Update the scoreboard contents before showing
+    displayPreviousResults();
+
+    // Then show the modal
+    const scoreboardModal = new bootstrap.Modal(
+      document.getElementById("scoreboardModal"),
+    );
+    scoreboardModal.show();
+  });
+
 // Initialize all functionality when DOM is loaded
 document.addEventListener("DOMContentLoaded", function () {
   // Setup toggles for each section with different icons
