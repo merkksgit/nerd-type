@@ -878,6 +878,7 @@ Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank ||
               night_owl: "Complete a game between midnight and 5am",
               polyglot_programmer: "Achieve 50+ WPM in all language modes",
               completionist: "Unlock all achievements",
+              speed_demon: "Complete a Zen Mode game in under 50 seconds",
             };
 
             // Format and display each unlocked achievement
