@@ -189,8 +189,7 @@
 }
 
 .progress.settings {
-  width: 80%;
-  margin: 0 auto; /* center it */
+  width: 100%;
 }
 
 .difficulty-indicator label {
