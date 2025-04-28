@@ -4,7 +4,7 @@ export const tips = [
   "There is no God Mode",
   "Use TAB key to auto-complete commands and filenames",
   "You can modify the game difficulty in the terminal",
-  "Use number keys 1-6 to quickly navigate between pages",
+  "Use number keys 1-5 to quickly navigate between pages",
   "Open terminal and type 'help' for available commands",
   "Use quick commands to modify game difficulty on-the-fly",
   "Focus on accuracy over speed - it builds your score faster",
