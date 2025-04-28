@@ -19,4 +19,6 @@ export const tips = [
   "Keep fingers on home row (ASDF JKL;) for optimal typing",
   "Daily practice greatly improves typing speed",
   "Energy only depletes after your first keystroke",
+  "Click the Settings button to switch to Zen Mode",
+  "Access game modes and sound options via the Settings button",
 ];
