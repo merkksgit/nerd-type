@@ -18,7 +18,7 @@
 
       gtag("config", "G-R80KP2H5BL");
     </script>
-    <title>NerdType | ClassicMode</title>
+    <title>NerdType | Game</title>
     <link
       rel="icon"
       type="image/png"
@@ -86,11 +86,8 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="current" href="./classicmode.html"
-                  >ClassicMode</a
+                  >NerdType</a
                 >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="./zenmode.html">ZenMode</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="./chart.html">ScoreChart</a>
@@ -164,9 +161,23 @@ $ </pre>
       <div class="row">
         <div class="col-md-12 p-3 pt-4">
           <div class="container-fluid">
-            <div class="row">
+            <div class="row pt-5">
               <div id="game">
-                <div id="timer">Energy: <span id="timeLeft"></span></div>
+                <!-- Game mode indicator - shows current mode -->
+                <div id="gameIndicator" class="mb-3">
+                  <span id="currentGameMode">Classic Mode</span>
+                </div>
+                <!-- Time/Energy indicator - changes based on mode -->
+                <div id="timer" class="classic-mode-element">
+                  Energy: <span id="timeLeft"></span>
+                </div>
+                <div
+                  id="totalTime"
+                  class="zen-mode-element"
+                  style="display: none"
+                >
+                  Time: <span id="totalTimeValue"></span>
+                </div>
                 <div id="nextWord">
                   <div id="keyboardTips"></div>
                 </div>
@@ -180,7 +191,7 @@ $ </pre>
                   check="false"
                   style="text-align: center"
                 />
-                <div id="progressPercentage">Hacked 0%</div>
+                <div id="progressPercentage">Progress 0%</div>
                 <div class="progress terminal">
                   <div
                     id="progressBar"
@@ -415,81 +426,102 @@ $ </pre>
                       <i class="fa-solid fa-gamepad me-2"></i>Game Mode
                     </h5>
                     <div class="settings-card-body">
-                      <div class="form-check mb-2">
+                      <!-- Zen Mode Toggle -->
+                      <div class="form-check form-switch mb-3">
                         <input
                           class="form-check-input"
-                          type="radio"
-                          name="gameMode"
-                          id="modeClassic"
-                          value="classic"
-                          checked
+                          type="checkbox"
+                          role="switch"
+                          id="zenModeToggle"
                         />
-                        <label class="form-check-label" for="modeClassic">
-                          Classic Mode
+                        <label class="form-check-label" for="zenModeToggle">
+                          Zen Mode
                           <small class="d-block text-muted"
-                            >Balanced difficulty</small
+                            >No energy, practice in perfect zen</small
                           >
                         </label>
                       </div>
-                      <div class="form-check mb-2">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gameMode"
-                          id="modeHard"
-                          value="hard"
-                        />
-                        <label class="form-check-label" for="modeHard">
-                          Hard Mode
-                          <small class="d-block text-muted"
-                            >Challenging difficulty</small
-                          >
-                        </label>
-                      </div>
-                      <div class="form-check mb-2">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gameMode"
-                          id="modePractice"
-                          value="practice"
-                        />
-                        <label class="form-check-label" for="modePractice">
-                          Practice Mode
-                          <small class="d-block text-muted"
-                            >Extended time limits</small
-                          >
-                        </label>
-                      </div>
-                      <div class="form-check mb-2">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gameMode"
-                          id="modeSpeedrunner"
-                          value="speedrunner"
-                        />
-                        <label class="form-check-label" for="modeSpeedrunner">
-                          Speedrunner Mode
-                          <small class="d-block text-muted"
-                            >Fast-paced challenge</small
-                          >
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gameMode"
-                          id="modeCustom"
-                          value="custom"
-                        />
-                        <label class="form-check-label" for="modeCustom">
-                          Custom Mode
-                          <small class="d-block text-muted"
-                            >Your own settings</small
-                          >
-                        </label>
+
+                      <hr class="classic-mode-setting" />
+
+                      <!-- Classic Mode Options - only visible when Zen Mode is off -->
+                      <div class="classic-mode-setting">
+                        <div class="form-check mb-2">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modeClassic"
+                            value="classic"
+                            checked
+                          />
+                          <label class="form-check-label" for="modeClassic">
+                            Classic Mode
+                            <small class="d-block text-muted"
+                              >Balanced difficulty</small
+                            >
+                          </label>
+                        </div>
+                        <div class="form-check mb-2">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modeHard"
+                            value="hard"
+                          />
+                          <label class="form-check-label" for="modeHard">
+                            Hard Mode
+                            <small class="d-block text-muted"
+                              >Challenging difficulty</small
+                            >
+                          </label>
+                        </div>
+                        <div class="form-check mb-2">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modePractice"
+                            value="practice"
+                          />
+                          <label class="form-check-label" for="modePractice">
+                            Practice Mode
+                            <small class="d-block text-muted"
+                              >Extended time limits</small
+                            >
+                          </label>
+                        </div>
+                        <div class="form-check mb-2">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modeSpeedrunner"
+                            value="speedrunner"
+                          />
+                          <label class="form-check-label" for="modeSpeedrunner">
+                            Speedrunner Mode
+                            <small class="d-block text-muted"
+                              >Fast-paced challenge</small
+                            >
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modeCustom"
+                            value="custom"
+                          />
+                          <label class="form-check-label" for="modeCustom">
+                            Custom Mode
+                            <small class="d-block text-muted"
+                              >Your own settings</small
+                            >
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -502,7 +534,7 @@ $ </pre>
                       <i class="fa-solid fa-sliders me-2"></i>Custom Settings
                     </h5>
                     <div class="settings-card-body">
-                      <div class="mb-3">
+                      <div class="mb-3 classic-mode-setting">
                         <label for="wordsGoal" class="form-label"
                           >Words Goal</label
                         >
@@ -522,7 +554,7 @@ $ </pre>
                         >
                       </div>
 
-                      <div class="mb-3">
+                      <div class="mb-3 classic-mode-setting">
                         <label for="bonusEnergy" class="form-label"
                           >Bonus Energy</label
                         >
@@ -542,7 +574,7 @@ $ </pre>
                         >
                       </div>
 
-                      <div class="mb-3">
+                      <div class="mb-3 classic-mode-setting">
                         <label for="initialEnergy" class="form-label"
                           >Initial Energy</label
                         >
@@ -596,7 +628,9 @@ $ </pre>
                   </div>
                 </div>
                 <div class="col-md-6 mb-4">
-                  <div class="difficulty-indicator mt-2 mb-3">
+                  <div
+                    class="difficulty-indicator mt-2 mb-3 classic-mode-setting"
+                  >
                     <label class="form-label mb-3"
                       >Difficulty Multiplier:
                       <span id="difficultyValue">1.00x</span></label

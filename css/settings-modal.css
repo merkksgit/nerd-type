@@ -127,6 +127,32 @@
   justify-content: center;
 }
 
+/* Zen mode toggle styling */
+#zenModeToggle {
+  transform: scale(1.2);
+}
+
+#zenModeToggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.zen-mode-element,
+.classic-mode-element {
+  transition: display 0.3s ease;
+}
+
+#gameIndicator {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+#currentGameMode {
+  color: #ff9e64;
+  transition: color 0.3s ease;
+}
+
 /* Buttons */
 #resetSettingsBtn,
 #applySettingsBtn,
@@ -199,6 +225,11 @@
 #difficultyValue {
   color: #ff9e64;
   font-weight: bold;
+}
+
+#achievementSoundToggle:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 /* Responsive adjustments */

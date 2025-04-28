@@ -35,6 +35,18 @@ function initSettingsModal() {
   setupInputChangeListeners();
 }
 
+const zenModeToggle = document.getElementById("zenModeToggle");
+if (zenModeToggle) {
+  zenModeToggle.checked = localStorage.getItem("nerdtype_zen_mode") === "true";
+  zenModeToggle.addEventListener("change", function () {
+    localStorage.setItem("nerdtype_zen_mode", this.checked);
+    // Update UI elements
+    document.querySelectorAll(".classic-mode-setting").forEach((el) => {
+      el.style.display = this.checked ? "none" : "block";
+    });
+  });
+}
+
 function openSettingsModal() {
   // Load current settings before opening
   loadSettings();
@@ -340,9 +352,7 @@ function applySettings() {
   showSettingsNotification("Settings applied successfully");
 
   // Reload the page to apply settings
-  setTimeout(() => {
-    location.reload();
-  }, 1500);
+  location.reload();
 }
 
 function initSoundSettings() {

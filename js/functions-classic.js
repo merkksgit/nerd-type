@@ -1,36 +1,51 @@
-// functions-classic.js
-// Load saved settings or use defaults
-let gameSettings = JSON.parse(localStorage.getItem("terminalSettings")) || {
-  timeLimit: 30,
-  bonusTime: 3,
-  initialTime: 10,
-  goalPercentage: 100,
-  currentMode: "classic",
-};
+// combined-game.js - Integrates Classic and Zen mode functionality
 
-let timeLeft = gameSettings.initialTime;
-let totalTimeSpent = 0;
+// Import common dependencies
+import { tips } from "./tips.js";
+import {
+  loadWordList,
+  createWordListSelector,
+  currentLanguage,
+} from "./word-list-manager.js";
+import Terminal from "./terminal.js";
+import { DebugDisplay } from "./debug.js";
+import achievementSystem from "./achievements.js";
+import "./game-commands.js";
+
+// Global variables for game state
+let words = [];
+let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
+let isUsernameModalOpen = false;
+let isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
+
+// Variables shared between both modes
 let currentWordIndex = 0;
 let nextWordIndex = 0;
-let countDownInterval;
-let totalTimeInterval;
-let gameStartTime = null;
 let wordsTyped = [];
 let totalCharactersTyped = 0;
 let hasStartedTyping = false;
 let totalKeystrokes = 0;
 let correctKeystrokes = 0;
-let bonusTime = gameSettings.bonusTime;
-let goalPercentage = gameSettings.goalPercentage;
-let words = [];
-let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
-let isUsernameModalOpen = false;
+let gameStartTime = null;
+let gameEnded = false;
 
-// New variables for command mode
+// Classic mode specific variables
+let timeLeft = 10; // Default, will be updated from settings
+let totalTimeSpent = 0;
+let countDownInterval;
+let totalTimeInterval;
+let bonusTime = 3; // Default, will be updated from settings
+let goalPercentage = 100;
+
+// Zen mode specific variables
+let sessionStartTime = null;
+
+// Command mode variables
 let isCommandMode = false;
 let wasPaused = false;
 let commandStartTime = null; // Track when we entered command mode
 
+// Set up sound for achievements
 const achievementSound = new Audio("../sounds/achievement.mp3");
 window.achievementSound = achievementSound;
 
@@ -49,6 +64,13 @@ window.dispatchEvent(
   }),
 );
 
+// Create debug display instance
+const debugDisplay = new DebugDisplay();
+
+// Initialize terminal
+const terminal = new Terminal();
+
+// Define word list display names for the UI
 const wordListDisplayNames = {
   english: "🇬🇧 ",
   finnish: "🇫🇮 ",
@@ -57,19 +79,16 @@ const wordListDisplayNames = {
   nightmare: "💀 ",
 };
 
-// Import the tips and word list manager
-import { tips } from "./tips.js";
-import Terminal from "./terminal.js";
-import { DebugDisplay } from "./debug.js";
-import {
-  loadWordList,
-  createWordListSelector,
-  currentLanguage,
-} from "./word-list-manager.js";
-import "./game-commands.js";
-import achievementSystem from "./achievements.js";
+// Load saved settings or use defaults for Classic Mode
+let gameSettings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+  timeLimit: 30,
+  bonusTime: 3,
+  initialTime: 10,
+  goalPercentage: 100,
+  currentMode: "classic",
+};
 
-// Define preset modes (should match those in game-commands.js)
+// Define preset modes
 const presetModes = {
   classic: {
     timeLimit: 30,
@@ -97,30 +116,62 @@ const presetModes = {
   },
 };
 
-// Function to check if current settings don't match any preset mode
-function isCustomMode() {
-  // Get current settings
-  const currentSettings = {
-    timeLimit: gameSettings.timeLimit,
-    bonusTime: gameSettings.bonusTime,
-    initialTime: gameSettings.initialTime,
-    goalPercentage: gameSettings.goalPercentage,
-  };
+// Tips rotation
+let tipsRotationInterval = null;
 
-  const currentSettingsString = JSON.stringify(currentSettings);
-
-  // Check if it matches any preset mode
-  return !Object.values(presetModes).some(
-    (presetSettings) =>
-      JSON.stringify(presetSettings) === currentSettingsString,
-  );
+// Game Mode Utilities
+function isZenModeActive() {
+  return localStorage.getItem("nerdtype_zen_mode") === "true";
 }
 
-// Create debug display instance
-const debugDisplay = new DebugDisplay();
+function setZenMode(enabled) {
+  localStorage.setItem("nerdtype_zen_mode", enabled.toString());
+  isZenMode = enabled;
+  updateUIForGameMode();
+}
+
+function updateUIForGameMode() {
+  // Get DOM elements
+  const gameIndicator = document.getElementById("currentGameMode");
+  const classicElements = document.querySelectorAll(".classic-mode-element");
+  const zenElements = document.querySelectorAll(".zen-mode-element");
+  const classicSettings = document.querySelectorAll(".classic-mode-setting");
+
+  // Update game indicator
+  if (gameIndicator) {
+    gameIndicator.textContent = isZenMode ? "Zen Mode" : "Classic Mode";
+    gameIndicator.style.color = isZenMode ? "#c3e88d" : "#ff9e64";
+  }
+
+  // Toggle visibility based on mode
+  classicElements.forEach((el) => {
+    el.style.display = isZenMode ? "none" : "block";
+  });
+
+  zenElements.forEach((el) => {
+    el.style.display = isZenMode ? "block" : "none";
+  });
+
+  // Update settings modal UI
+  const zenModeToggle = document.getElementById("zenModeToggle");
+  if (zenModeToggle) {
+    zenModeToggle.checked = isZenMode;
+  }
+
+  // Toggle visibility of classic mode settings
+  classicSettings.forEach((el) => {
+    el.style.display = isZenMode ? "none" : "block";
+  });
+}
 
 // Load words when the script initializes
 async function initializeGame() {
+  // Load the Zen Mode state
+  isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
+
+  // Update UI based on mode
+  updateUIForGameMode();
+
   // Load the selected word list
   words = await loadWordList(currentLanguage);
 
@@ -131,6 +182,10 @@ async function initializeGame() {
   initializeEventListeners();
   initializeRotatingTips();
   displayPreviousResults();
+
+  // Set initial time from settings
+  timeLeft = gameSettings.initialTime;
+  bonusTime = gameSettings.bonusTime;
 }
 
 // Set up the UI elements, including the word list selector
@@ -145,6 +200,16 @@ function setupUI() {
   selectorContainer.style.marginBottom = "10px"; // Add some space below it too
   gameContainer.insertBefore(selectorContainer, buttonsContainer);
   createWordListSelector(selectorContainer);
+
+  // Set the initial word if words are loaded
+  if (words.length > 0) {
+    const nextWordDiv = document.getElementById("nextWord");
+    const randomTip = tips[Math.floor(Math.random() * tips.length)];
+    nextWordDiv.textContent = randomTip;
+  }
+
+  // Update the UI based on current game mode
+  updateUIForGameMode();
 }
 
 function updateDebugInfo() {
@@ -178,8 +243,8 @@ function updateDebugInfo() {
   });
 }
 
-// Tips rotation
-let tipsRotationInterval = null;
+// Set up your update interval
+setInterval(updateDebugInfo, 100);
 
 function initializeRotatingTips() {
   const nextWordDiv = document.getElementById("nextWord");
@@ -213,21 +278,25 @@ function initializeRotatingTips() {
   }, 5000); // Change tip every x seconds
 }
 
-// Set up your update interval
-setInterval(updateDebugInfo, 100);
-
-// Initialize terminal
-const terminal = new Terminal();
-
-// Track modal state
 function initializeEventListeners() {
+  // Track modal state
   const usernameModal = document.getElementById("usernameModal");
   if (usernameModal) {
     usernameModal.addEventListener("show.bs.modal", () => {
       isUsernameModalOpen = true;
     });
+
     usernameModal.addEventListener("hide.bs.modal", () => {
       isUsernameModalOpen = false;
+    });
+  }
+
+  // Set up Zen Mode toggle in settings
+  const zenModeToggle = document.getElementById("zenModeToggle");
+  if (zenModeToggle) {
+    zenModeToggle.checked = isZenMode;
+    zenModeToggle.addEventListener("change", (e) => {
+      setZenMode(e.target.checked);
     });
   }
 
@@ -241,16 +310,16 @@ function initializeEventListeners() {
       return;
     }
 
+    // Handle game controls
     if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
       startGame();
     }
-
     if (event.key === "Enter" && event.ctrlKey) {
       location.reload();
     }
   });
 
-  // Listen for terminal settings changes - simplified approach
+  // Listen for terminal settings changes
   window.addEventListener("gameSettingsChanged", function (e) {
     const { setting, value } = e.detail;
 
@@ -305,27 +374,6 @@ function initializeEventListeners() {
     localStorage.setItem("terminalSettings", JSON.stringify(gameSettings));
   });
 
-  // Scoreboard toggle functionality
-  const toggleScoreboardBtn = document.getElementById("toggleScoreboard");
-  if (toggleScoreboardBtn) {
-    toggleScoreboardBtn.addEventListener("click", function () {
-      const container = document.getElementById("scoreboardContainer");
-      const button = this;
-      container.classList.toggle("hidden");
-
-      if (container.classList.contains("hidden")) {
-        button.innerHTML = '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
-      } else {
-        button.innerHTML = '<i class="fa-solid fa-trophy"></i> Hide Scoreboard';
-      }
-
-      localStorage.setItem(
-        "scoreboardHidden",
-        container.classList.contains("hidden"),
-      );
-    });
-  }
-
   // Reset button
   const resetBtn = document.getElementById("resetBtn");
   if (resetBtn) {
@@ -335,20 +383,15 @@ function initializeEventListeners() {
   }
 
   // Start button
-  const startBtn = document.getElementById("startButton");
-  if (startBtn) {
-    startBtn.addEventListener("click", startGame);
+  const startButton = document.getElementById("startButton");
+  if (startButton) {
+    startButton.addEventListener("click", startGame);
   }
 
   // User input field
   const userInput = document.getElementById("userInput");
   if (userInput) {
     userInput.addEventListener("input", function (e) {
-      if (!hasStartedTyping && e.target.value.length > 0) {
-        hasStartedTyping = true;
-        gameStartTime = Date.now();
-      }
-
       checkInput(e);
     });
   }
@@ -375,17 +418,7 @@ function initializeEventListeners() {
     showUsernameModal();
   }
 
-  // Initialize scoreboard visibility state
-  const scoreboardContainer = document.getElementById("scoreboardContainer");
-  const scoreboardToggleBtn = document.getElementById("toggleScoreboard");
-  const isHidden = localStorage.getItem("scoreboardHidden") === "true";
-
-  if (isHidden && scoreboardContainer && scoreboardToggleBtn) {
-    scoreboardContainer.classList.add("hidden");
-    scoreboardToggleBtn.innerHTML =
-      '<i class="fa-solid fa-trophy"></i> Show Scoreboard';
-  }
-
+  // Handle scoreboard view
   document
     .getElementById("viewScoreboardBtn")
     .addEventListener("click", function () {
@@ -398,6 +431,38 @@ function initializeEventListeners() {
       );
       scoreboardModal.show();
     });
+
+  // Handle terminal close event
+  window.addEventListener("terminalClosed", function () {
+    // Don't restart intervals if we're in command mode
+    if (!isCommandMode && !isZenMode) {
+      countDownInterval = setInterval(countDown, 800);
+      totalTimeInterval = setInterval(totalTimeCount, 1000);
+    }
+  });
+}
+
+// Function to check if current settings create a custom mode
+function isCustomMode() {
+  // Get current settings
+  const currentSettings = {
+    timeLimit: gameSettings.timeLimit,
+    bonusTime: gameSettings.bonusTime,
+    initialTime: gameSettings.initialTime,
+    goalPercentage: gameSettings.goalPercentage,
+  };
+
+  // Convert to string for comparison
+  const currentSettingsString = JSON.stringify(currentSettings);
+
+  // Check against preset modes
+  const matchingMode = Object.entries(presetModes).find(
+    ([_, modeSettings]) =>
+      JSON.stringify(modeSettings) === currentSettingsString,
+  );
+
+  // If found a matching preset, return its name
+  return !matchingMode;
 }
 
 function showUsernameModal() {
@@ -425,11 +490,9 @@ function handleUsernameConfirmation() {
     playerUsername = username;
     localStorage.setItem("nerdtype_username", username);
     document.getElementById("usernameDisplay").textContent = playerUsername;
-
     const modalInstance = bootstrap.Modal.getInstance(
       document.getElementById("usernameModal"),
     );
-
     if (modalInstance) {
       modalInstance.hide();
       isUsernameModalOpen = false;
@@ -440,61 +503,66 @@ function handleUsernameConfirmation() {
   }
 }
 
-function flashProgress() {
-  const progressBar = document.querySelector(".progress.terminal");
-
-  if (progressBar) {
-    progressBar.classList.add("flash");
-
-    setTimeout(() => {
-      progressBar.classList.remove("flash");
-    }, 400);
-  }
-}
-
+// Main game functionality
 function startGame() {
-  // Reset command mode
-  isCommandMode = false;
-  wasPaused = false;
-
+  // Clear tips rotation
   if (tipsRotationInterval) {
     clearInterval(tipsRotationInterval);
     tipsRotationInterval = null;
   }
 
-  // Load latest settings
-  const settings =
-    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+  // Reset command mode
+  isCommandMode = false;
+  wasPaused = false;
 
-  timeLeft = settings.initialTime;
-  bonusTime = settings.bonusTime;
-  goalPercentage = settings.goalPercentage;
-  totalTimeSpent = 0;
+  // Reset game state
+  gameEnded = false;
   currentWordIndex = Math.floor(Math.random() * words.length);
   nextWordIndex = Math.floor(Math.random() * words.length);
 
+  // Update word display
   updateWordDisplay();
-  updateTimer();
 
-  if (countDownInterval) clearInterval(countDownInterval);
-  if (totalTimeInterval) clearInterval(totalTimeInterval);
+  // Initialize mode-specific elements
+  if (isZenMode) {
+    // Zen Mode - no timer until first keystroke
+    document.getElementById("userInput").focus();
+    gameStartTime = null;
+    sessionStartTime = null;
+    if (document.getElementById("totalTimeValue")) {
+      document.getElementById("totalTimeValue").textContent = "0:00";
+    }
 
-  countDownInterval = setInterval(countDown, 800);
-  totalTimeInterval = setInterval(totalTimeCount, 1000);
+    // Clear any existing intervals
+    if (countDownInterval) clearInterval(countDownInterval);
+    if (totalTimeInterval) clearInterval(totalTimeInterval);
+  } else {
+    // Classic Mode - initialize timer with settings
+    timeLeft = gameSettings.initialTime;
+    bonusTime = gameSettings.bonusTime;
+    updateTimer();
 
-  const userInput = document.getElementById("userInput");
-  if (userInput) {
-    userInput.focus();
-    userInput.value = "";
+    // Clear previous intervals if they exist
+    if (countDownInterval) clearInterval(countDownInterval);
+    if (totalTimeInterval) clearInterval(totalTimeInterval);
+
+    // Set up timer intervals
+    countDownInterval = setInterval(countDown, 800);
+    totalTimeInterval = setInterval(totalTimeCount, 1000);
   }
 
+  // Reset game state variables
+  document.getElementById("userInput").value = "";
+  document.getElementById("userInput").focus();
   gameStartTime = null;
   hasStartedTyping = false;
   wordsTyped = [];
   totalCharactersTyped = 0;
   totalKeystrokes = 0;
   correctKeystrokes = 0;
+  totalTimeSpent = 0;
 
+  // Reset progress bar
   updateProgressBar();
 }
 
@@ -519,6 +587,18 @@ function updateWordDisplay() {
   }
 }
 
+// Flash animation for progress bar when word is completed
+function flashProgress() {
+  const progressBar = document.querySelector(".progress.terminal");
+  if (progressBar) {
+    progressBar.classList.add("flash");
+    setTimeout(() => {
+      progressBar.classList.remove("flash");
+    }, 400);
+  }
+}
+
+// Classic Mode: Countdown timer logic
 function countDown() {
   // Only countdown if the player has started typing
   if (hasStartedTyping && timeLeft > 0) {
@@ -529,11 +609,32 @@ function countDown() {
     clearInterval(totalTimeInterval);
     showGameOverModal(
       "System breach <span style='color:#ff007c'>FAILED!</span>",
+      false,
     );
   }
 }
 
-// Function to get a random success message
+// Classic Mode: Update timer display
+function updateTimer() {
+  const timerElement = document.getElementById("timeLeft");
+  if (timerElement) {
+    timerElement.textContent = timeLeft;
+  }
+}
+
+// Classic Mode: Total time counter
+function totalTimeCount() {
+  const settings =
+    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+  const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
+  if (totalTimeSpent >= goalTime) {
+    clearInterval(countDownInterval);
+    clearInterval(totalTimeInterval);
+    showGameOverModal(getRandomSuccessMessage(), true);
+  }
+}
+
+// Get a random success message for Classic mode
 function getRandomSuccessMessage() {
   const messages = [
     "Database <span style='color:#c3e88d'>CRACKED!</span> Mission accomplished.",
@@ -554,29 +655,50 @@ function getRandomSuccessMessage() {
   return messages[randomIndex];
 }
 
-function totalTimeCount() {
-  const settings =
-    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
-  const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
-  if (totalTimeSpent >= goalTime) {
-    clearInterval(countDownInterval);
+// Zen Mode: Calculate total time
+function calculateTotalTime() {
+  if (!sessionStartTime) return "0:00";
+  const now = new Date();
+  const totalSeconds = Math.floor((now - sessionStartTime) / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+// Zen Mode: Update the timer display
+function updateZenTimer() {
+  if (gameEnded) return;
+
+  // Update the timer display
+  const totalTimeElement = document.getElementById("totalTimeValue");
+  if (totalTimeElement) {
+    totalTimeElement.textContent = calculateTotalTime();
+  }
+
+  // Update progress bar
+  updateProgressBar();
+
+  if (isZenMode && totalTimeSpent >= 30) {
+    gameEnded = true;
     clearInterval(totalTimeInterval);
-    showGameOverModal(getRandomSuccessMessage());
+    showGameOverModal(getRandomSuccessMessage(), true);
   }
 }
 
-function updateTimer() {
-  const timerElement = document.getElementById("timeLeft");
-  if (timerElement) {
-    timerElement.textContent = timeLeft;
-  }
-}
-
+// Update progress bar for both modes
 function updateProgressBar() {
-  const settings =
-    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
-  const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
-  const progressPercentage = (totalTimeSpent / goalTime) * 100;
+  let progressPercentage;
+
+  if (isZenMode) {
+    // In Zen mode, progress is based on words typed (up to 30 words = 100%)
+    progressPercentage = (totalTimeSpent / 30) * 100;
+  } else {
+    // In Classic mode, progress is based on percentage of goal
+    const settings =
+      JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+    const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
+    progressPercentage = (totalTimeSpent / goalTime) * 100;
+  }
 
   const progressBar = document.getElementById("progressBar");
   const progressText = document.getElementById("progressPercentage");
@@ -588,15 +710,30 @@ function updateProgressBar() {
   }
 
   if (progressText) {
-    progressText.textContent = `Hacked ${Math.floor(progressPercentage)}%`;
+    progressText.textContent = isZenMode
+      ? `Progress ${Math.floor(progressPercentage)}%`
+      : `Hacked ${Math.floor(progressPercentage)}%`;
   }
 }
 
+// Input handling for both modes
 function checkInput(e) {
   const userInput = e.target.value;
   const currentWord = words[currentWordIndex];
   const wordDisplay = document.getElementById("wordToType");
   if (!wordDisplay) return;
+
+  // Start timers on first input for both modes
+  if (!hasStartedTyping && e.target.value.length > 0) {
+    hasStartedTyping = true;
+    gameStartTime = Date.now();
+
+    if (isZenMode) {
+      // For Zen mode, start the session timer
+      sessionStartTime = new Date();
+      totalTimeInterval = setInterval(updateZenTimer, 1000);
+    }
+  }
 
   // Check if entering command mode (starts with /)
   if (userInput.startsWith("/") && !isCommandMode) {
@@ -604,17 +741,27 @@ function checkInput(e) {
     commandStartTime = Date.now(); // Track when command mode started
 
     // Pause all game timers when entering command mode
-    if (countDownInterval) {
-      clearInterval(countDownInterval);
-      countDownInterval = null;
+    if (!isZenMode) {
+      if (countDownInterval) {
+        clearInterval(countDownInterval);
+        countDownInterval = null;
+        if (totalTimeInterval) {
+          clearInterval(totalTimeInterval);
+          totalTimeInterval = null;
+        }
+        wasPaused = true;
+      }
+    } else {
+      // For Zen mode, pause the time display
       if (totalTimeInterval) {
         clearInterval(totalTimeInterval);
         totalTimeInterval = null;
+        wasPaused = true;
       }
-      wasPaused = true;
     }
     return; // Exit early to prevent normal word checking
   }
+
   // Check if exiting command mode (no longer starts with /)
   else if (!userInput.startsWith("/") && isCommandMode) {
     isCommandMode = false;
@@ -626,10 +773,14 @@ function checkInput(e) {
     }
     commandStartTime = null;
 
-    // Resume all timers if it was previously running
+    // Resume timers if they were previously running
     if (wasPaused && hasStartedTyping) {
-      countDownInterval = setInterval(countDown, 800);
-      totalTimeInterval = setInterval(totalTimeCount, 1000);
+      if (!isZenMode) {
+        countDownInterval = setInterval(countDown, 800);
+        totalTimeInterval = setInterval(totalTimeCount, 1000);
+      } else {
+        totalTimeInterval = setInterval(updateZenTimer, 1000);
+      }
       wasPaused = false;
     }
   }
@@ -647,10 +798,19 @@ function checkInput(e) {
     return;
   }
 
-  // Check for terminal command
-  if (userInput.toLowerCase() === "terminal") {
+  // Check for terminal command (classic mode only)
+  if (userInput.toLowerCase() === "terminal" && !isZenMode) {
     e.target.value = "";
     terminal.open();
+    return;
+  }
+
+  // Check for "iddqd" secret code in Zen mode
+  if (isZenMode && userInput.toLowerCase() === "iddqd" && !gameEnded) {
+    gameEnded = true;
+    clearInterval(totalTimeInterval);
+    document.getElementById("userInput").disabled = true;
+    showCheatModal();
     return;
   }
 
@@ -678,7 +838,9 @@ function checkInput(e) {
     flashProgress();
     totalCharactersTyped += currentWord.length;
     totalTimeSpent += 1;
-    timeLeft += bonusTime;
+    if (!isZenMode) {
+      timeLeft += bonusTime;
+    }
     wordsTyped.push(currentWord);
     currentWordIndex = nextWordIndex;
     nextWordIndex = Math.floor(Math.random() * words.length);
@@ -688,6 +850,7 @@ function checkInput(e) {
   }
 }
 
+// Calculate WPM for both modes
 function calculateWPM() {
   if (!gameStartTime) return { wpm: 0, accuracy: "0%" };
 
@@ -718,7 +881,7 @@ function calculateWPM() {
   };
 }
 
-// New improved scoring calculation function
+// Classic Mode specific score calculation
 function calculateDifficultyMultiplier(settings) {
   try {
     // Reference values (classic mode settings)
@@ -758,7 +921,7 @@ function calculateDifficultyMultiplier(settings) {
   }
 }
 
-// New improved scoring function
+// Classic Mode score calculation
 function calculateScore() {
   try {
     // Get typing performance metrics
@@ -798,6 +961,7 @@ function calculateScore() {
   }
 }
 
+// Get Tier/Rank for achievements - used in both modes
 function getSpeedTier(wpm) {
   if (wpm >= 100) return "QUANTUM SPEED";
   if (wpm >= 80) return "NEURAL MASTER";
@@ -819,39 +983,79 @@ function getAccuracyRank(accuracy) {
   return "SYSTEM FAILURE";
 }
 
-function showGameOverModal(message) {
+// Game Over Modal for both modes
+function showGameOverModal(message, isSuccess = true) {
   const stats = calculateWPM();
-  const finalScore = calculateScore();
-  const modalLabel = document.getElementById("gameOverModalLabel");
   const languageName =
     currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
-
-  // Get the proper mode name (capitalize first letter)
-  const modeName =
-    gameSettings.currentMode.charAt(0).toUpperCase() +
-    gameSettings.currentMode.slice(1);
+  const modalLabel = document.getElementById("gameOverModalLabel");
 
   if (modalLabel) {
     modalLabel.textContent = `[${playerUsername}@PENTAGON-CORE:~]$`;
   }
 
-  const terminalLines = [
-    "> INITIALIZING TERMINAL OUTPUT...",
-    "> ANALYZING PERFORMANCE DATA...",
-    `> MODE: ${modeName} [${languageName}]`,
-    `> USER: ${playerUsername}`,
-    `> STATUS: ${message}`,
-    "> ================================",
-    "> PERFORMANCE METRICS:",
-    `  └─ ENERGY REMAINING: <span style='color:#c3e88d'>${timeLeft}</span> units`,
-    `  └─ TYPING SPEED: <span style='color:#ff9e64'>${stats.wpm}</span> WPM`,
-    `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
-    `  └─ FINAL SCORE: <span style='color:#c3e88d'>${finalScore}</span>`,
-    "> ================================",
-    `> SPEED TIER: <span style='color:#4fd6be'>${getSpeedTier(stats.wpm)}</span>`,
-    `> PRECISION RANK: <span style='color:#4fd6be'>${getAccuracyRank(stats.accuracy)}</span>`,
-  ];
+  if (isZenMode) {
+    // Zen Mode specific game over
+    const totalTime = calculateTotalTime();
 
+    const terminalLines = [
+      "> INITIALIZING TERMINAL OUTPUT...",
+      "> ANALYZING PERFORMANCE DATA...",
+      `> MODE: ZEN [${languageName}]`,
+      `> USER: ${playerUsername}`,
+      `> STATUS: ${message}`,
+      "> ================================",
+      "> PERFORMANCE METRICS:",
+      `  └─ SESSION TIME: <span style='color:#c3e88d'>${totalTime}</span>`,
+      `  └─ TYPING SPEED: <span style='color:#ff9e64'>${stats.wpm}</span> WPM`,
+      `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
+      "> ================================",
+      "> PRESS [ENTER] TO RETRY",
+      "> END OF TRANSMISSION_",
+    ];
+
+    displayGameOverContent(terminalLines);
+    saveZenResult(stats.wpm, totalTime, stats.accuracy);
+  } else {
+    // Classic Mode specific game over
+    const finalScore = calculateScore();
+
+    // Get the proper mode name (capitalize first letter)
+    const modeName =
+      gameSettings.currentMode.charAt(0).toUpperCase() +
+      gameSettings.currentMode.slice(1);
+
+    const terminalLines = [
+      "> INITIALIZING TERMINAL OUTPUT...",
+      "> ANALYZING PERFORMANCE DATA...",
+      `> MODE: ${modeName} [${languageName}]`,
+      `> USER: ${playerUsername}`,
+      `> STATUS: ${message}`,
+      "> ================================",
+      "> PERFORMANCE METRICS:",
+      `  └─ ENERGY REMAINING: <span style='color:#c3e88d'>${timeLeft}</span> units`,
+      `  └─ TYPING SPEED: <span style='color:#ff9e64'>${stats.wpm}</span> WPM`,
+      `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
+      `  └─ FINAL SCORE: <span style='color:#c3e88d'>${finalScore}</span>`,
+      "> ================================",
+      `> SPEED TIER: <span style='color:#4fd6be'>${getSpeedTier(stats.wpm)}</span>`,
+      `> PRECISION RANK: <span style='color:#4fd6be'>${getAccuracyRank(stats.accuracy)}</span>`,
+    ];
+
+    displayGameOverContent(terminalLines);
+    saveClassicResult(
+      isSuccess ? timeLeft : 0,
+      stats.wpm,
+      stats.accuracy,
+      finalScore,
+    );
+  }
+
+  displayPreviousResults();
+}
+
+// Helper function to display game over content
+function displayGameOverContent(terminalLines) {
   let currentLine = 0;
   let modalContent = "";
   const gameOverModal = new bootstrap.Modal(
@@ -874,8 +1078,6 @@ function showGameOverModal(message) {
 
   gameOverModal.show();
   typeNextLine();
-  saveResult(timeLeft, stats.wpm, stats.accuracy, finalScore);
-  displayPreviousResults();
 
   const restartBtn = document.getElementById("restartGameBtn");
   if (restartBtn) {
@@ -901,16 +1103,182 @@ function showGameOverModal(message) {
     });
 }
 
-window.addEventListener("terminalClosed", function () {
-  // Don't restart intervals if we're in command mode
-  if (!isCommandMode) {
-    countDownInterval = setInterval(countDown, 800);
-    totalTimeInterval = setInterval(totalTimeCount, 1000);
-  }
-});
+// Zen Mode: Show special cheat modal for "iddqd" code
+function showCheatModal() {
+  document.getElementById("gameOverModalLabel").textContent =
+    "[root@PENTAGON-CORE:~/godmode.txt]$";
 
-function saveResult(timeLeft, wpm, accuracy, finalScore) {
-  if (timeLeft === 0) {
+  const terminalLines = [
+    "> INIT BREACH SEQUENCE",
+    "> ESTABLISHING CONNECTION ... 100%",
+    "> BYPASSING FIREWALL ... 100%",
+    "> CRACKING ENCRYPTION ... 100%",
+    "> SUDO PRIVILEGES ESCALATED",
+    "> ROOT ACCESS OBTAINED",
+    "> SECURITY PROTOCOLS BYPASSED",
+    "> SYSTEM COMPROMISED",
+    "> GOD MODE ACTIVATED",
+    "> ENTER CUSTOM SCORE DATA:",
+  ];
+
+  let currentLine = 0;
+  let modalContent = "";
+
+  const gameOverModal = new bootstrap.Modal(
+    document.getElementById("gameOverModal"),
+  );
+  const modalBody = document
+    .getElementById("gameOverModal")
+    .querySelector(".modal-body");
+
+  modalBody.innerHTML = '<pre class="terminal-output"></pre>';
+
+  function typeNextLine() {
+    if (currentLine < terminalLines.length) {
+      modalContent += `<span style='color:#c3e88d'>${terminalLines[currentLine]}</span>\n`;
+      modalBody.querySelector(".terminal-output").innerHTML = `${modalContent}`;
+
+      if (currentLine === terminalLines.length - 1) {
+        modalBody.innerHTML = `
+          <pre class="terminal-output">${modalContent}</pre>
+          <div class="mt-2">
+            <div class="mb-2">
+              <label>WPM (0-300):</label>
+              <input type="number" id="customWpm" class="form-control bg-dark text-light" min="0" max="300">
+              <div id="wpmError" class="invalid-feedback"></div>
+            </div>
+            <div class="mb-2">
+              <label>Accuracy (0-100%):</label>
+              <input type="number" id="customAccuracy" class="form-control bg-dark text-light" min="0" max="100" step="0.1">
+              <div id="accuracyError" class="invalid-feedback"></div>
+            </div>
+            <div class="mb-2">
+              <label>Time (mm:ss):</label>
+              <input type="text" id="customTime" class="form-control bg-dark text-light">
+              <div id="timeError" class="invalid-feedback"></div>
+            </div>
+            <button id="submitCustomScore" class="btn btn-success pt-2">Submit</button>
+          </div>
+        `;
+        setupFormEventListeners(gameOverModal);
+        const wpmInput = document.getElementById("customWpm");
+        if (wpmInput) {
+          wpmInput.focus();
+        }
+      }
+
+      currentLine++;
+      const isLoadingLine = terminalLines[currentLine - 1]?.includes("100%");
+      setTimeout(typeNextLine, isLoadingLine ? 900 : 200);
+    }
+  }
+
+  gameOverModal.show();
+  typeNextLine();
+
+  // Unlock "The Admin" achievement
+  try {
+    if (typeof achievementSystem !== "undefined") {
+      const adminGameData = {
+        adminAccess: true,
+        date: new Date().toLocaleString("en-GB"),
+        mode: "Zen Mode",
+        wordList: currentLanguage,
+        username: playerUsername,
+      };
+
+      achievementSystem.handleGameCompletion(adminGameData);
+    }
+  } catch (error) {
+    console.error("Error unlocking achievement:", error);
+  }
+}
+
+function validateTimeFormat(timeStr) {
+  const timeRegex = /^([0-9]{1,2}):([0-5][0-9])$/;
+  if (!timeRegex.test(timeStr)) return false;
+  const [minutes, seconds] = timeStr.split(":").map(Number);
+  return minutes >= 0 && seconds >= 0 && seconds < 60;
+}
+
+function setupFormEventListeners(gameOverModal) {
+  const restartGameBtn = document.getElementById("restartGameBtn");
+  if (restartGameBtn) {
+    restartGameBtn.addEventListener("click", () => {
+      gameOverModal.hide();
+      location.reload();
+    });
+  }
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const submitBtn = document.getElementById("submitCustomScore");
+      if (submitBtn) {
+        submitBtn.click();
+      }
+    }
+  };
+
+  document.removeEventListener("keydown", handleKeyPress);
+  document.addEventListener("keydown", handleKeyPress);
+
+  const submitBtn = document.getElementById("submitCustomScore");
+  if (submitBtn) {
+    submitBtn.addEventListener("click", function () {
+      let isValid = true;
+
+      const wpmInput = document.getElementById("customWpm");
+      const wpm = parseInt(wpmInput.value);
+      if (isNaN(wpm) || wpm < 0 || wpm > 300) {
+        document.getElementById("wpmError").textContent =
+          "WPM must be between 0 and 300";
+        wpmInput.classList.add("is-invalid");
+        isValid = false;
+      } else {
+        wpmInput.classList.remove("is-invalid");
+      }
+
+      const accuracyInput = document.getElementById("customAccuracy");
+      const accuracy = parseFloat(accuracyInput.value);
+      if (isNaN(accuracy) || accuracy < 0 || accuracy > 100) {
+        document.getElementById("accuracyError").textContent =
+          "Accuracy must be between 0 and 100";
+        accuracyInput.classList.add("is-invalid");
+        isValid = false;
+      } else {
+        accuracyInput.classList.remove("is-invalid");
+      }
+
+      const timeInput = document.getElementById("customTime");
+      const time = timeInput.value;
+      if (!validateTimeFormat(time)) {
+        document.getElementById("timeError").textContent =
+          "Invalid time format. Use mm:ss (e.g. 1:30)";
+        timeInput.classList.add("is-invalid");
+        isValid = false;
+      } else {
+        timeInput.classList.remove("is-invalid");
+      }
+
+      if (isValid) {
+        // Save the custom result to localStorage
+        saveZenResult(wpm, time, accuracy);
+        displayPreviousResults();
+
+        // Close the modal
+        gameOverModal.hide();
+
+        // Redirect to animation page
+        window.location.href = "./animation.html";
+      }
+    });
+  }
+}
+
+// Save results for Classic Mode
+function saveClassicResult(timeLeft, wpm, accuracy, finalScore) {
+  if (timeLeft === 0 && !isZenMode) {
     return;
   }
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
@@ -965,15 +1333,6 @@ function saveResult(timeLeft, wpm, accuracy, finalScore) {
     gameSettings.currentMode.charAt(0).toUpperCase() +
     gameSettings.currentMode.slice(1);
 
-  // Get current settings for calculating score
-  const settings = JSON.parse(localStorage.getItem("terminalSettings")) || {
-    timeLimit: 30,
-    bonusTime: 3,
-    initialTime: 10,
-    goalPercentage: 100,
-    currentMode: "classic",
-  };
-
   // Create game data object
   const gameData = {
     username: playerUsername,
@@ -987,20 +1346,7 @@ function saveResult(timeLeft, wpm, accuracy, finalScore) {
   };
 
   // Save results and highest achievements
-  if (timeLeft) {
-    results.push(gameData);
-  } else {
-    results.push({
-      username: playerUsername,
-      wpm,
-      accuracy,
-      date: new Date().toLocaleString("en-GB"),
-      mode: "Zen Mode",
-      score: finalScore,
-      wordList: currentLanguage,
-    });
-  }
-
+  results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
   localStorage.setItem(
     "highestAchievements",
@@ -1011,6 +1357,28 @@ function saveResult(timeLeft, wpm, accuracy, finalScore) {
   achievementSystem.handleGameCompletion(gameData);
 }
 
+// Save results for Zen Mode
+function saveZenResult(wpm, totalTime, accuracy) {
+  let results = JSON.parse(localStorage.getItem("gameResults")) || [];
+
+  // Create a game data object
+  const gameData = {
+    username: playerUsername,
+    wpm,
+    totalTime,
+    accuracy,
+    date: new Date().toLocaleString("en-GB"),
+    mode: "Zen Mode",
+    wordList: currentLanguage,
+  };
+
+  results.push(gameData);
+  localStorage.setItem("gameResults", JSON.stringify(results));
+
+  achievementSystem.handleGameCompletion(gameData);
+}
+
+// Display previous results in scoreboard
 function displayPreviousResults() {
   const resultsContainer = document.getElementById("previousResults");
   if (!resultsContainer) return;
@@ -1026,28 +1394,18 @@ function displayPreviousResults() {
       : "";
     const wordListInfo = wordListName ? `  ${wordListName}` : "";
 
-    if (
-      result.mode === "Classic Mode" ||
-      result.mode === "Custom Mode" ||
-      result.mode === "Speedrunner Mode" ||
-      result.mode === "Hard Mode" ||
-      result.mode === "Practice Mode"
-    ) {
-      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
-    } else {
+    if (result.mode === "Zen Mode") {
       resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
+    } else {
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     }
-
     resultsContainer.appendChild(resultItem);
   });
 }
 
+// Clear results and set up modal
 function clearResults() {
   localStorage.removeItem("gameResults");
-  // localStorage.removeItem("highestAchievements");
-
-  // Reset achievements
-  // achievementSystem.resetAchievements();
 
   const resultsContainer = document.getElementById("previousResults");
   if (resultsContainer) {
@@ -1135,4 +1493,4 @@ function handleClearResultsKeyPress(event) {
 document.addEventListener("DOMContentLoaded", initializeGame);
 
 // Export anything that might be needed by other modules
-export { words, startGame, displayPreviousResults };
+export { displayPreviousResults };

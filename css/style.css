@@ -280,8 +280,6 @@ div h2 {
 }
 
 /* Button spacing differences */
-#returnToGameBtn,
-#restartGameBtn,
 #openTerminalBtn,
 #startButton,
 #clrResults,
@@ -293,6 +291,10 @@ div h2 {
 #resetBtn {
   padding: 10px 30px;
   margin-top: 3em;
+}
+
+#restartGameBtn {
+  padding: 10px 30px;
 }
 
 #clearResultsBtn {
