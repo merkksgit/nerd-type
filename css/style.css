@@ -1305,6 +1305,7 @@ div#wordToType,
 
   #startButton,
   /* Button text size adjustment */
+  #startButton,
   #resetBtn,
   #viewScoreboardBtn {
     font-size: 0.9em;
