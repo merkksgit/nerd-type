@@ -1233,3 +1233,109 @@ score h3 {
     font-size: 0.9em;
   }
 }
+
+/* Base Game Container Improvements */
+#game {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* Improve Input Field Responsiveness */
+input[type="text"] {
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
+  font-size: clamp(16px, 5vw, 24px);
+  box-sizing: border-box;
+}
+
+/* Make Word Display Responsive */
+div#wordToType,
+#nextWord {
+  font-size: clamp(16px, 4vw, 24px);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+  padding: 0 5px;
+}
+
+/* Progress Bar Improvements */
+.progress.terminal {
+  width: 80%;
+  max-width: 400px;
+}
+
+/* Game Buttons Layout */
+#buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1.5em;
+}
+
+#buttons button {
+  min-width: 120px;
+  margin: 5px;
+}
+
+/* Responsive Modals */
+@media (max-width: 576px) {
+  .modal-dialog {
+    max-width: 95%;
+    margin: 10px auto;
+  }
+
+  .terminal-output {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  /* Ensure game elements don't overflow */
+  #timer,
+  #totalTime,
+  #progressPercentage {
+    font-size: 0.9em;
+    margin: 10px auto;
+  }
+
+  #startButton,
+  /* Button text size adjustment */
+  #resetBtn,
+  #viewScoreboardBtn {
+    font-size: 0.9em;
+    padding: 8px 15px;
+  }
+}
+
+/* Very Small Devices */
+@media (max-width: 360px) {
+  input[type="text"] {
+    font-size: 16px; /* Prevent auto-zoom on iOS */
+    margin: 15px auto;
+  }
+
+  div#wordToType,
+  #nextWord {
+    font-size: 16px;
+  }
+
+  /* Compact buttons for very small screens */
+  #buttons button {
+    min-width: 100px;
+    padding: 8px 12px;
+  }
+
+  /* Smaller modals */
+  .modal-dialog {
+    margin: 5px auto;
+  }
+
+  .modal-body {
+    padding: 10px 5px;
+  }
+}

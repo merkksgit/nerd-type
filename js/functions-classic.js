@@ -301,6 +301,40 @@ function initializeRotatingTips() {
   }, 5000); // Change tip every x seconds
 }
 
+// Add this to your functions-classic.js file
+function optimizeForMobile() {
+  // Check if we're on a small screen
+  const isMobile = window.innerWidth < 576;
+
+  if (isMobile) {
+    // Smaller font for game elements
+    document.getElementById("wordToType").style.fontSize = "18px";
+    document.getElementById("nextWord").style.fontSize = "16px";
+
+    // Make sure input has appropriate size
+    const userInput = document.getElementById("userInput");
+    if (userInput) {
+      userInput.style.fontSize = "16px";
+      // Prevent zooming on mobile when focusing input
+      userInput.setAttribute("autocomplete", "off");
+      userInput.setAttribute("autocorrect", "off");
+      userInput.setAttribute("autocapitalize", "off");
+      userInput.setAttribute("spellcheck", "false");
+    }
+  }
+}
+
+// Call this during initialization
+document.addEventListener("DOMContentLoaded", function () {
+  // Your existing initialization code
+
+  // Add mobile optimization
+  optimizeForMobile();
+
+  // Re-optimize when window is resized
+  window.addEventListener("resize", optimizeForMobile);
+});
+
 function initializeEventListeners() {
   // Track modal state
   const usernameModal = document.getElementById("usernameModal");
