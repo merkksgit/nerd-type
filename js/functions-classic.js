@@ -273,8 +273,10 @@ function initializeRotatingTips() {
   const nextWordDiv = document.getElementById("nextWord");
   let tipIndex = Math.floor(Math.random() * tips.length);
 
-  // Display initial tip
-  nextWordDiv.textContent = tips[tipIndex];
+  // Apply inline styles directly to the tips
+  nextWordDiv.textContent = "Tip: " + tips[tipIndex];
+  nextWordDiv.style.fontSize = "0.85em"; // Smaller size for tips
+  nextWordDiv.style.color = "#565f89"; // Lighter color
 
   // Clear any existing interval
   if (tipsRotationInterval) {
@@ -295,7 +297,7 @@ function initializeRotatingTips() {
       } while (newIndex === tipIndex && tips.length > 1);
 
       tipIndex = newIndex;
-      nextWordDiv.textContent = tips[tipIndex];
+      nextWordDiv.textContent = "Tip: " + tips[tipIndex];
       nextWordDiv.classList.remove("fade-out");
     }, 300); // Match this with CSS transition time
   }, 5000); // Change tip every x seconds
@@ -576,6 +578,15 @@ function startGame() {
   if (tipsRotationInterval) {
     clearInterval(tipsRotationInterval);
     tipsRotationInterval = null;
+
+    // Reset the next word element styles to default game styles
+    const nextWordDiv = document.getElementById("nextWord");
+    if (nextWordDiv) {
+      // Reset styles for gameplay - remove all inline styles
+      nextWordDiv.style.fontSize = ""; // Reset to CSS default
+      nextWordDiv.style.color = ""; // Reset to CSS default
+      nextWordDiv.style.fontStyle = ""; // Reset to CSS default
+    }
   }
 
   // Reset command mode
