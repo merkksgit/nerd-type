@@ -98,7 +98,8 @@ class AchievementSystem {
       speed_demon: {
         id: "speed_demon",
         name: "Speed Demon",
-        description: "Complete a Zen Mode game in under 50 seconds",
+        description:
+          "Complete a Zen Mode game with default word goal (30) in under 50 seconds",
         icon: "fa-solid fa-gauge-high",
         category: "speed",
         secret: false,
@@ -108,12 +109,20 @@ class AchievementSystem {
             return false;
           }
 
+          // Check if the word goal is the default (30)
+          if (!gameData.wordGoal || gameData.wordGoal !== 30) {
+            return false;
+          }
+
+          // Check if the player completed the full goal (typed all 30 words)
+          if (!gameData.wordsTyped || gameData.wordsTyped < 30) {
+            return false;
+          }
+
           if (gameData.totalTime) {
             console.log("Total time found:", gameData.totalTime);
-
             try {
               let totalSeconds = 0;
-
               // Handle different possible formats
               if (gameData.totalTime.includes(":")) {
                 // Format: "m:ss"
@@ -125,13 +134,13 @@ class AchievementSystem {
                 // Format: numeric seconds
                 totalSeconds = parseFloat(gameData.totalTime);
               }
-
               // Check if under 50 seconds
               return totalSeconds > 0 && totalSeconds < 50;
             } catch (error) {
               return false;
             }
           }
+          return false;
         },
       },
       the_admin: {

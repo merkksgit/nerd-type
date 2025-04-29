@@ -1,5 +1,3 @@
-// Save this file as js/settings-modal.js
-
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize the settings modal
   initSettingsModal();
@@ -38,11 +36,17 @@ function initSettingsModal() {
 const zenModeToggle = document.getElementById("zenModeToggle");
 if (zenModeToggle) {
   zenModeToggle.checked = localStorage.getItem("nerdtype_zen_mode") === "true";
+
   zenModeToggle.addEventListener("change", function () {
     localStorage.setItem("nerdtype_zen_mode", this.checked);
+
     // Update UI elements
     document.querySelectorAll(".classic-mode-setting").forEach((el) => {
       el.style.display = this.checked ? "none" : "block";
+    });
+
+    document.querySelectorAll(".zen-mode-element").forEach((el) => {
+      el.style.display = this.checked ? "block" : "none";
     });
   });
 }
@@ -66,12 +70,26 @@ function loadSettings() {
     initialTime: 10,
     goalPercentage: 100,
     currentMode: "classic",
+    zenWordGoal: 30, // Default zen mode word goal
   };
 
   // Set form values
   document.getElementById("wordsGoal").value = gameSettings.timeLimit;
   document.getElementById("bonusEnergy").value = gameSettings.bonusTime;
   document.getElementById("initialEnergy").value = gameSettings.initialTime;
+
+  // Set Zen Mode toggle
+  const zenModeToggle = document.getElementById("zenModeToggle");
+  if (zenModeToggle) {
+    zenModeToggle.checked =
+      localStorage.getItem("nerdtype_zen_mode") === "true";
+  }
+
+  // Set zen word goal
+  const zenWordGoal = document.getElementById("zenWordGoal");
+  if (zenWordGoal) {
+    zenWordGoal.value = gameSettings.zenWordGoal || 30;
+  }
 
   // Set radio button for mode
   const modeRadio = document.querySelector(
@@ -243,6 +261,12 @@ function resetSettings() {
   // Load classic values
   loadPresetValues("classic");
 
+  // Reset zen word goal to default (30)
+  const zenWordGoal = document.getElementById("zenWordGoal");
+  if (zenWordGoal) {
+    zenWordGoal.value = 30;
+  }
+
   // Disable custom inputs
   toggleCustomSettings(false);
 
@@ -264,10 +288,17 @@ function applySettings() {
   const bonusTime = parseInt(document.getElementById("bonusEnergy").value);
   const initialTime = parseInt(document.getElementById("initialEnergy").value);
 
+  // Get Zen Mode word goal
+  const zenWordGoal = document.getElementById("zenWordGoal");
+  const zenWordGoalValue = zenWordGoal ? parseInt(zenWordGoal.value) : 30;
+
   // Get achievement sound toggle state
   const achievementSoundEnabled = document.getElementById(
     "achievementSoundToggle",
   ).checked;
+
+  // Get zen mode toggle state
+  const zenModeEnabled = document.getElementById("zenModeToggle").checked;
 
   // Validate inputs
   if (isNaN(timeLimit) || timeLimit < 1 || timeLimit > 100) {
@@ -288,17 +319,34 @@ function applySettings() {
     return;
   }
 
-  // Create settings object - keep goalPercentage at 100 for backward compatibility
+  // Validate zen word goal
+  if (
+    isNaN(zenWordGoalValue) ||
+    zenWordGoalValue < 5 ||
+    zenWordGoalValue > 100
+  ) {
+    showSettingsNotification(
+      "Zen Mode Word Goal must be between 5 and 100",
+      "error",
+    );
+    return;
+  }
+
+  // Create settings object
   const settings = {
     timeLimit: timeLimit,
     bonusTime: bonusTime,
     initialTime: initialTime,
     goalPercentage: 100, // Keep this for compatibility with existing code
     currentMode: selectedMode,
+    zenWordGoal: zenWordGoalValue, // Add zen word goal to settings
   };
 
   // Save game settings
   localStorage.setItem("terminalSettings", JSON.stringify(settings));
+
+  // Save zen mode toggle state
+  localStorage.setItem("nerdtype_zen_mode", zenModeEnabled);
 
   // Save achievement sound setting
   localStorage.setItem("achievement_sound_enabled", achievementSoundEnabled);
@@ -330,6 +378,12 @@ function applySettings() {
   window.dispatchEvent(
     new CustomEvent("gameSettingsChanged", {
       detail: { setting: "initialTime", value: initialTime },
+    }),
+  );
+
+  window.dispatchEvent(
+    new CustomEvent("gameSettingsChanged", {
+      detail: { setting: "zenWordGoal", value: zenWordGoalValue },
     }),
   );
 

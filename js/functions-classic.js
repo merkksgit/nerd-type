@@ -1,5 +1,3 @@
-// combined-game.js - Integrates Classic and Zen mode functionality
-
 // Import common dependencies
 import { tips } from "./tips.js";
 import {
@@ -39,6 +37,7 @@ let goalPercentage = 100;
 
 // Zen mode specific variables
 let sessionStartTime = null;
+let zenWordGoal = 30;
 
 // Command mode variables
 let isCommandMode = false;
@@ -139,7 +138,12 @@ function updateUIForGameMode() {
 
   // Update game indicator
   if (gameIndicator) {
-    gameIndicator.textContent = isZenMode ? "Zen Mode" : "Classic Mode";
+    // Show word goal in the mode indicator for Zen Mode
+    if (isZenMode) {
+      gameIndicator.textContent = "Zen Mode";
+    } else {
+      gameIndicator.textContent = "Classic Mode";
+    }
     gameIndicator.style.color = isZenMode ? "#c3e88d" : "#ff9e64";
   }
 
@@ -162,12 +166,31 @@ function updateUIForGameMode() {
   classicSettings.forEach((el) => {
     el.style.display = isZenMode ? "none" : "block";
   });
+
+  // Show/hide zen mode settings based on mode
+  const zenModeSettings = document.getElementById("zenModeSettings");
+  if (zenModeSettings && zenModeToggle) {
+    zenModeSettings.style.display = zenModeToggle.checked ? "block" : "none";
+  }
 }
 
 // Load words when the script initializes
 async function initializeGame() {
   // Load the Zen Mode state
   isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
+
+  // Load saved settings
+  const settings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+    timeLimit: 30,
+    bonusTime: 3,
+    initialTime: 10,
+    goalPercentage: 100,
+    currentMode: "classic",
+    zenWordGoal: 30, // Default zen word goal
+  };
+
+  // Set Zen Mode word goal
+  zenWordGoal = settings.zenWordGoal || 30;
 
   // Update UI based on mode
   updateUIForGameMode();
@@ -342,6 +365,11 @@ function initializeEventListeners() {
       case "currentMode":
         gameSettings.currentMode = value;
         break;
+      case "zenWordGoal":
+        gameSettings.zenWordGoal = value;
+        zenWordGoal = value; // Update current game variable
+        updateUIForGameMode(); // Update the UI to show the new goal
+        break;
     }
 
     // If we're setting a specific mode, don't override it
@@ -372,6 +400,11 @@ function initializeEventListeners() {
     }
 
     localStorage.setItem("terminalSettings", JSON.stringify(gameSettings));
+
+    // If zenWordGoal was changed, also update the UI
+    if (setting === "zenWordGoal") {
+      updateUIForGameMode();
+    }
   });
 
   // Reset button
@@ -678,10 +711,11 @@ function updateZenTimer() {
   // Update progress bar
   updateProgressBar();
 
-  if (isZenMode && totalTimeSpent >= 30) {
+  if (isZenMode && wordsTyped.length >= zenWordGoal) {
     gameEnded = true;
     clearInterval(totalTimeInterval);
     showGameOverModal(getRandomSuccessMessage(), true);
+    return;
   }
 }
 
@@ -690,8 +724,8 @@ function updateProgressBar() {
   let progressPercentage;
 
   if (isZenMode) {
-    // In Zen mode, progress is based on words typed (up to 30 words = 100%)
-    progressPercentage = (totalTimeSpent / 30) * 100;
+    // In Zen mode, progress is based on words typed compared to word goal
+    progressPercentage = (wordsTyped.length / zenWordGoal) * 100;
   } else {
     // In Classic mode, progress is based on percentage of goal
     const settings =
@@ -710,9 +744,11 @@ function updateProgressBar() {
   }
 
   if (progressText) {
-    progressText.textContent = isZenMode
-      ? `Progress ${Math.floor(progressPercentage)}%`
-      : `Hacked ${Math.floor(progressPercentage)}%`;
+    if (isZenMode) {
+      progressText.textContent = `Progress ${Math.floor(progressPercentage)}%`;
+    } else {
+      progressText.textContent = `Hacked ${Math.floor(progressPercentage)}%`;
+    }
   }
 }
 
@@ -847,6 +883,12 @@ function checkInput(e) {
     updateWordDisplay();
     e.target.value = "";
     updateProgressBar();
+
+    if (isZenMode && wordsTyped.length >= zenWordGoal) {
+      gameEnded = true;
+      clearInterval(totalTimeInterval);
+      showGameOverModal(getRandomSuccessMessage(), true);
+    }
   }
 }
 
@@ -1006,6 +1048,7 @@ function showGameOverModal(message, isSuccess = true) {
       `> STATUS: ${message}`,
       "> ================================",
       "> PERFORMANCE METRICS:",
+      `  └─ WORD GOAL: <span style='color:#c3e88d'>${zenWordGoal}</span> words`,
       `  └─ SESSION TIME: <span style='color:#c3e88d'>${totalTime}</span>`,
       `  └─ TYPING SPEED: <span style='color:#ff9e64'>${stats.wpm}</span> WPM`,
       `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
@@ -1370,6 +1413,8 @@ function saveZenResult(wpm, totalTime, accuracy) {
     date: new Date().toLocaleString("en-GB"),
     mode: "Zen Mode",
     wordList: currentLanguage,
+    wordGoal: zenWordGoal,
+    wordsTyped: wordsTyped.length,
   };
 
   results.push(gameData);
@@ -1395,7 +1440,9 @@ function displayPreviousResults() {
     const wordListInfo = wordListName ? `  ${wordListName}` : "";
 
     if (result.mode === "Zen Mode") {
-      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
+      const wordGoalInfo = result.wordGoal ? ` [${result.wordGoal}]` : "";
+
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordGoalInfo}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}`;
     } else {
       resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     }

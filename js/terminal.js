@@ -808,7 +808,7 @@ help                           - Show this help message`;
             );
           } else {
             this.printToTerminal(
-              `${result.date} | ${result.username} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm}, Accuracy: ${result.accuracy}%`,
+              `${result.date} | ${result.username} | ${result.mode} | Time: ${result.totalTime}, WPM: ${result.wpm}, Accuracy: ${result.accuracy}`,
               "command-success",
             );
           }
