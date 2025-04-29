@@ -308,13 +308,13 @@ function optimizeForMobile() {
 
   if (isMobile) {
     // Smaller font for game elements
-    document.getElementById("wordToType").style.fontSize = "18px";
-    document.getElementById("nextWord").style.fontSize = "16px";
+    document.getElementById("wordToType").style.fontSize = "20px";
+    document.getElementById("nextWord").style.fontSize = "18px";
 
     // Make sure input has appropriate size
     const userInput = document.getElementById("userInput");
     if (userInput) {
-      userInput.style.fontSize = "16px";
+      userInput.style.fontSize = "18px";
       // Prevent zooming on mobile when focusing input
       userInput.setAttribute("autocomplete", "off");
       userInput.setAttribute("autocorrect", "off");
