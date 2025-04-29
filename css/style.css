@@ -199,18 +199,6 @@ div#content {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* #changeUsername { */
-/*   background-color: #24283b; */
-/*   color: #7aa2f7; */
-/*   border: none; */
-/*   padding: 8px 15px; */
-/*   border-radius: 4px; */
-/*   cursor: pointer; */
-/*   text-transform: uppercase; */
-/*   letter-spacing: 1px; */
-/*   font-size: 14px; */
-/* } */
-
 #changeUsername:hover {
   color: #ff9e64;
   background-color: #24283b;
