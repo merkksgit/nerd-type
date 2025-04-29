@@ -1340,3 +1340,14 @@ div#wordToType,
     padding: 10px 5px;
   }
 }
+
+/* tips */
+.tip-style {
+  font-size: 0.85em !important;
+  color: #565f89 !important;
+  font-style: normal;
+  transition: opacity 0.3s ease;
+}
+#nextWord.fade-out {
+  opacity: 0;
+}
