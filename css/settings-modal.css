@@ -280,6 +280,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
+  font-size: 0.8em;
 }
 
 /* Position the username button on the right */
