@@ -55,6 +55,45 @@ function calculateScore(timeLeft, wpm, accuracy, settings) {
   }
 }
 
+function enhanceChartVisuals() {
+  Chart.defaults.color = "#a9b1d6";
+  Chart.defaults.borderColor = "#3b4261";
+  Chart.defaults.plugins.tooltip.displayColors = false;
+
+  // Tooltip appearance - fonts and colors
+  Chart.defaults.plugins.tooltip.backgroundColor = "#24283b";
+  Chart.defaults.plugins.tooltip.titleColor = "#7aa2f7";
+  Chart.defaults.plugins.tooltip.bodyColor = "#c0caf5";
+  Chart.defaults.plugins.tooltip.borderColor = "#3b4261";
+  Chart.defaults.plugins.tooltip.borderWidth = 1;
+  Chart.defaults.plugins.tooltip.padding = 12;
+  Chart.defaults.plugins.tooltip.cornerRadius = 4;
+  Chart.defaults.plugins.tooltip.boxPadding = 6;
+  Chart.defaults.plugins.tooltip.titleFont = {
+    family: "'custom', monospace",
+    size: 14,
+    weight: "bold",
+  };
+  Chart.defaults.plugins.tooltip.bodyFont = {
+    family: "'custom', monospace",
+    size: 13,
+  };
+
+  // Make text colors match data colors
+  Chart.defaults.plugins.tooltip.callbacks =
+    Chart.defaults.plugins.tooltip.callbacks || {};
+  Chart.defaults.plugins.tooltip.callbacks.labelTextColor = function (context) {
+    return context.dataset.borderColor;
+  };
+
+  const scoreChartCanvas = document.getElementById("scoreChart");
+  const zenChartCanvas = document.getElementById("zenChart");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(enhanceChartVisuals, 100);
+});
+
 function displayScoreGraph() {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
