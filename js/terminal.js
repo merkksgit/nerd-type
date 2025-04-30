@@ -105,24 +105,24 @@ class Terminal {
 
   initializeTerminal() {
     const modalHTML = `
-            <div class="modal fade" id="terminalModal" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header border-bottom-0">
-                            <h5 class="modal-title w-100 text-center" id="terminalModalLabel"></h5>
-                        </div>
-                        <div class="modal-body border-top-0 border-bottom-0">
-                            <div class="terminal-container">
-                                <div id="terminalOutput" class="terminal-output"></div>
-                                <div class="terminal-input-line">
-                                    <span class="terminal-prompt"></span>
-                                    <input type="text" id="terminalInput" class="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
+    <div class="modal fade" id="terminalModal" tabindex="-1" aria-labelledby="terminalModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0">
+            <h5 class="modal-title w-100 text-center" id="terminalModalLabel"></h5>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            <div class="terminal-container">
+              <div id="terminalOutput" class="terminal-output"></div>
+              <div class="terminal-input-line">
+                <span class="terminal-prompt"></span>
+                <input type="text" id="terminalInput" class="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
 
     document.body.insertAdjacentHTML("beforeend", modalHTML);
 
@@ -148,119 +148,237 @@ class Terminal {
         }
       }
     });
+
+    // Add event listener to adjust terminal size on device orientation change
+    window.addEventListener("orientationchange", () => {
+      if (document.getElementById("terminalOutput")) {
+        // Give the browser time to adjust to new orientation
+        setTimeout(() => {
+          if (
+            document.getElementById("terminalModal").classList.contains("show")
+          ) {
+            // Force modal to recalculate its position
+            const modalDialog = document.querySelector(
+              "#terminalModal .modal-dialog",
+            );
+            if (modalDialog) {
+              // Small jiggle to force layout recalculation
+              const currentTransform = modalDialog.style.transform;
+              modalDialog.style.transform =
+                currentTransform + " translateY(1px)";
+              setTimeout(() => {
+                modalDialog.style.transform = currentTransform;
+              }, 50);
+            }
+          }
+        }, 300);
+      }
+    });
   }
 
   addTerminalStyles() {
     const styles = `
-        #terminalModal .terminal-container {
-            background-color: #24283b !important;
-            padding: 20px 20px 60px 20px !important;
-            font-family: "custom" !important;
-            height: 700px !important;
-            position: relative !important;
-        }
-        #terminalModal .terminal-output {
-            color: #f2f2f2 !important;
-            white-space: pre-wrap !important;
-            font-size: 14px !important;
-            line-height: 1.4 !important;
-            background-color: #24283b !important;
-            overflow-y: auto !important;
-            height: 100% !important;
-            max-height: 640px !important;  // max-height
-        }
-        #terminalModal .terminal-output div {
-            background-color: #24283b !important;
-            margin-bottom: 5px !important;
-            color: #f2f2f2 !important;  // Add this line
-        }
+    #terminalModal .terminal-container {
+      background-color: #24283b !important;
+      padding: 15px 15px 50px 15px !important;
+      font-family: "custom" !important;
+      height: auto !important; /* Allow height to be flexible */
+      min-height: 600px !important; /* Minimum comfortable height */
+      max-height: 80vh !important; /* Maximum height relative to viewport */
+      position: relative !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
 
-        #terminalModal .terminal-output div.command-error {
-            color: #c53b53 !important;
-        }
-        #terminalModal .terminal-prompt {
-            color: #f2f2f2 !important;
-            margin-right: 10px !important;
-            font-size: 18px !important;
-            background-color: #24283b !important;
-            white-space: nowrap !important;
-        }
-        #terminalModal .terminal-input {
-            background-color: #24283b !important;
-            border: none !important;
-            color: #ffffff !important;
-            flex-grow: 1 !important;
-            font-family: "custom", monospace !important;
-            outline: none !important;
-            font-size: 18px !important;
-            padding: 0 !important;
-            caret-color: #f2f2f2 !important;
-        }
-        #terminalModal .terminal-input-line {
-            display: flex !important;
-            align-items: center !important;
-            color: #c0caf5 !important;
-            background-color: #24283b !important;
-            position: absolute !important;
-            bottom: 15px !important;
-            left: 20px !important;
-            right: 20px !important;
-            height: 45px !important;
-            margin: 0 auto !important;
-        }
-        #terminalModal .command-success {
-            color: #c3e88d !important;
-            background-color: #24283b !important;
-        }
-        // #terminalModal .terminal-output div.command-success {
-        //     color: #c3e88d !important;
-        // }
-        #terminalModal .command-error {
-            color: #ff007c !important;
-            background-color: #24283b !important;
-        }
-        #terminalModal .modal-content {
-            border: 1px solid #1f2335 !important;
-            background-color: #24283b !important;
-            border-radius: 8px !important;
-            box-shadow: 0 0 25px 15px rgba(30, 33, 48, 1) !important;
-        }
-        #terminalModal .modal-header {
-            border-bottom: none !important;
-            padding: 0.5rem !important;
-            background-color: #24283b !important;
-            min-height: 40px !important;
-        }
-        #terminalModal .modal-title {
-            color: #f2f2f2 !important;
-            font-family: monospace !important;
-            font-size: 14px !important;
-            background-color: #24283b !important;
-            width: 100% !important;
-            text-align: center !important;
-        }
-        #terminalModal .modal-body {
-            padding: 0 !important;
-            background-color: #24283b !important;
-            position: relative !important;
-        }
-        #terminalModal .modal-dialog {
-            position: fixed !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -65%) !important;
-            background-color: #24283b !important;
-            max-width: 1000px !important;
-            width: 95% !important;  // This ensures some margin on mobile
-            margin: 0 !important;
-        }
-        #terminalModal .terminal-input,
-        #terminalModal .terminal-output,
-        #terminalModal .terminal-prompt,
-        #terminalModal .modal-title {
-            font-family: "custom", monospace !important;
-        }
-    `;
+    #terminalModal .terminal-output {
+      color: #f2f2f2 !important;
+      white-space: pre-wrap !important;
+      font-size: 14px !important;
+      line-height: 1.4 !important;
+      background-color: #24283b !important;
+      overflow-y: auto !important;
+      flex-grow: 1 !important; /* Let output area expand */
+      height: auto !important;
+      min-height: 300px !important;
+    }
+
+    #terminalModal .terminal-output div {
+      background-color: #24283b !important;
+      margin-bottom: 5px !important;
+      color: #f2f2f2 !important;
+      word-break: break-word !important; /* Allow text to break and wrap when needed */
+    }
+
+    #terminalModal .terminal-output div.command-error {
+      color: #c53b53 !important;
+    }
+
+    #terminalModal .terminal-prompt {
+      color: #f2f2f2 !important;
+      margin-right: 5px !important; /* Reduced margin on small screens */
+      font-size: 16px !important; /* Slightly smaller font */
+      background-color: #24283b !important;
+      white-space: nowrap !important;
+    }
+
+    #terminalModal .terminal-input {
+      background-color: #24283b !important;
+      border: none !important;
+      color: #ffffff !important;
+      flex-grow: 1 !important;
+      font-family: "custom", monospace !important;
+      outline: none !important;
+      font-size: 16px !important; /* Slightly smaller font */
+      padding: 0 !important;
+      caret-color: #f2f2f2 !important;
+      width: 100% !important; /* Ensure input takes full width */
+    }
+
+    #terminalModal .terminal-input-line {
+      display: flex !important;
+      align-items: center !important;
+      color: #c0caf5 !important;
+      background-color: #24283b !important;
+      position: absolute !important;
+      bottom: 10px !important;
+      left: 15px !important;
+      right: 15px !important;
+      height: 40px !important;
+      margin: 0 auto !important;
+    }
+
+    #terminalModal .command-success {
+      color: #c3e88d !important;
+      background-color: #24283b !important;
+    }
+
+    #terminalModal .command-error {
+      color: #ff007c !important;
+      background-color: #24283b !important;
+    }
+
+    #terminalModal .modal-content {
+      border: 1px solid #1f2335 !important;
+      background-color: #24283b !important;
+      border-radius: 8px !important;
+      box-shadow: 0 0 25px 15px rgba(30, 33, 48, 1) !important;
+      height: auto !important;
+      max-height: 90vh !important; /* Limit height to viewport */
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    #terminalModal .modal-header {
+      border-bottom: none !important;
+      padding: 0.5rem !important;
+      background-color: #24283b !important;
+      min-height: 40px !important;
+    }
+
+    #terminalModal .modal-title {
+      color: #f2f2f2 !important;
+      font-family: monospace !important;
+      font-size: 14px !important;
+      background-color: #24283b !important;
+      width: 100% !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important; /* Make long usernames truncate with ellipsis */
+    }
+
+    #terminalModal .modal-body {
+      padding: 0 !important;
+      background-color: #24283b !important;
+      position: relative !important;
+      flex-grow: 1 !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    #terminalModal .modal-dialog {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      background-color: #24283b !important;
+      width: 95% !important;
+      max-width: 1000px !important;
+      margin: 0 !important;
+      height: auto !important;
+      max-height: 90vh !important;
+    }
+
+    /* Special handling for very small screens */
+    @media (max-width: 576px) {
+      #terminalModal .terminal-container {
+        padding: 10px 10px 45px 10px !important;
+        min-height: 350px !important;
+      }
+      
+      #terminalModal .terminal-output {
+        font-size: 12px !important;
+        min-height: 250px !important;
+      }
+      
+      #terminalModal .terminal-prompt {
+        font-size: 14px !important;
+      }
+      
+      #terminalModal .terminal-input {
+        font-size: 14px !important;
+      }
+      
+      #terminalModal .terminal-input-line {
+        height: 35px !important;
+        bottom: 5px !important;
+      }
+      
+      #terminalModal .modal-dialog {
+        width: 98% !important; /* Maximize width on very small screens */
+      }
+    }
+
+    /* Additional adjustments for landscape orientation on small screens */
+    @media (max-height: 500px) {
+      #terminalModal .terminal-container {
+        min-height: 250px !important;
+        max-height: 85vh !important;
+      }
+      
+      #terminalModal .terminal-output {
+        min-height: 180px !important;
+      }
+      
+      #terminalModal .modal-header {
+        padding: 0.25rem !important;
+      }
+    }
+
+    /* Ensure terminal fills most of the screen in landscape mode */
+    @media (max-height: 500px) and (orientation: landscape) {
+      #terminalModal .modal-dialog {
+        width: 95% !important;
+        max-height: 95vh !important;
+      }
+    }
+
+    /* Font scaling for readability across devices */
+    @media (max-width: 360px) {
+      #terminalModal .terminal-output {
+        font-size: 11px !important;
+      }
+      
+      #terminalModal .terminal-prompt {
+        font-size: 13px !important;
+      }
+      
+      #terminalModal .terminal-input {
+        font-size: 13px !important;
+      }
+    }
+  `;
 
     const styleSheet = document.createElement("style");
     styleSheet.textContent = styles;
@@ -914,26 +1032,26 @@ Unlocked: ${formattedDate}
       case "godmode.txt":
         const secretText = `
 # BEGIN ENCRYPTED FILE #
-hj24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5
-j5jnax4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
-9fsku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7
-j5jnax4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
-02l2n0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5
-hj24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5
-ja3pa7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6
-90laef9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b
-1j0jdjf8e7d6c5b4aj2k4l7n5f8g6h3d2s9b2c1d0e9f8e7d6c5b4le9
-l9vn82a1b2c3d4e5G#####MODE##zen#######jh34j24hjk2lh342jc
-zn7e2u9f8e7d6c5b4#####CODE##iddqd#####ih23434hl23hk4l2h3
-23lnf32c1d0e9f8e7dv5c8j2k7l3q9p4m6z3n2c5b4a3b2c1d0e9f8e7
-9fsku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7
-j5jnax4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
-02l2n0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5
-hj24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5
-ja3pa7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5f6
-90laef9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b
-j5jnax4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w
-9fsku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7
+24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4
+jnax4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v
+sku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8
+jnax4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v
+l2n0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4
+24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4
+3pa7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5
+laef9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c
+0jdjf8e7d6c5b4aj2k4l7n5f8g6h3d2s9b2c1d0e9f8e7d6c5b4l
+vn82a1b2c3d4e5G#####MODE##zen#######jh34j24hjk2lh342
+7e2u9f8e7d6c5b4#####CODE##iddqd#####ih23434hl23hk4l2
+lnf32c1d0e9f8e7dv5c8j2k7l3q9p4m6z3n2c5b4a3b2c1d0e9f8
+sku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8
+jnax4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v
+l2n0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4
+24lfa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4
+3pa7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a1b2c3d4e5
+laef9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c
+jnax4y3z2a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v
+sku2c1d0e9f8e7d6c5b4a3b2c1d0e9f8e7d6c5b4a3b2c1d0e9f8
 # END ENCRYPTED FILE #`;
         this.printToTerminal(secretText, "command-success");
         break;
@@ -1441,19 +1559,30 @@ remain within acceptable parameters.
       location.reload();
     }
   }
-
   open() {
     const modal = new bootstrap.Modal(document.getElementById("terminalModal"));
     modal.show();
     document.getElementById("terminalOutput").innerHTML = "";
     this.printToTerminal(this.getWelcomeArt());
-    setTimeout(() => {
-      document.getElementById("terminalInput").focus();
-    }, 500);
-  }
 
-  getSettings() {
-    return { ...this.gameSettings };
+    // Focus on terminal input with a delay to allow modal transition to complete
+    setTimeout(() => {
+      const terminalInput = document.getElementById("terminalInput");
+      if (terminalInput) {
+        terminalInput.focus();
+
+        // On mobile, scroll to the input to ensure the keyboard doesn't cover it
+        if (window.innerWidth < 768) {
+          // Give time for the keyboard to appear on mobile
+          setTimeout(() => {
+            terminalInput.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }, 500);
+        }
+      }
+    }, 300);
   }
 }
 

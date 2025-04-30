@@ -1464,3 +1464,205 @@ div#wordToType,
 #viewScoreboardChartBtn:active {
   transform: translateY(1px);
 }
+
+/* Base Terminal Styles with Responsive Improvements */
+#terminalModal .terminal-container {
+  background-color: #24283b !important;
+  padding: 15px 15px 50px 15px !important;
+  font-family: "custom" !important;
+  height: auto !important; /* Allow height to be flexible */
+  min-height: 400px !important; /* Minimum comfortable height */
+  max-height: 80vh !important; /* Maximum height relative to viewport */
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#terminalModal .terminal-output {
+  color: #f2f2f2 !important;
+  white-space: pre-wrap !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  background-color: #24283b !important;
+  overflow-y: auto !important;
+  flex-grow: 1 !important; /* Let output area expand */
+  height: auto !important;
+  min-height: 300px !important;
+}
+
+#terminalModal .terminal-output div {
+  background-color: #24283b !important;
+  margin-bottom: 5px !important;
+  color: #f2f2f2 !important;
+  word-break: break-word !important; /* Allow text to break and wrap when needed */
+}
+
+#terminalModal .terminal-output div.command-error {
+  color: #c53b53 !important;
+}
+
+#terminalModal .terminal-prompt {
+  color: #f2f2f2 !important;
+  margin-right: 5px !important; /* Reduced margin on small screens */
+  font-size: 16px !important; /* Slightly smaller font */
+  background-color: #24283b !important;
+  white-space: nowrap !important;
+}
+
+#terminalModal .terminal-input {
+  background-color: #24283b !important;
+  border: none !important;
+  color: #ffffff !important;
+  flex-grow: 1 !important;
+  font-family: "custom", monospace !important;
+  outline: none !important;
+  font-size: 16px !important; /* Slightly smaller font */
+  padding: 0 !important;
+  caret-color: #f2f2f2 !important;
+  width: 100% !important; /* Ensure input takes full width */
+}
+
+#terminalModal .terminal-input-line {
+  display: flex !important;
+  align-items: center !important;
+  color: #c0caf5 !important;
+  background-color: #24283b !important;
+  position: absolute !important;
+  bottom: 10px !important;
+  left: 15px !important;
+  right: 15px !important;
+  height: 40px !important;
+  margin: 0 auto !important;
+}
+
+#terminalModal .command-success {
+  color: #c3e88d !important;
+  background-color: #24283b !important;
+}
+
+#terminalModal .command-error {
+  color: #ff007c !important;
+  background-color: #24283b !important;
+}
+
+#terminalModal .modal-content {
+  border: 1px solid #1f2335 !important;
+  background-color: #24283b !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 25px 15px rgba(30, 33, 48, 1) !important;
+  height: auto !important;
+  max-height: 90vh !important; /* Limit height to viewport */
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#terminalModal .modal-header {
+  border-bottom: none !important;
+  padding: 0.5rem !important;
+  background-color: #24283b !important;
+  min-height: 40px !important;
+}
+
+#terminalModal .modal-title {
+  color: #f2f2f2 !important;
+  font-family: monospace !important;
+  font-size: 14px !important;
+  background-color: #24283b !important;
+  width: 100% !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important; /* Make long usernames truncate with ellipsis */
+}
+
+#terminalModal .modal-body {
+  padding: 0 !important;
+  background-color: #24283b !important;
+  position: relative !important;
+  flex-grow: 1 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#terminalModal .modal-dialog {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  background-color: #24283b !important;
+  width: 95% !important;
+  max-width: 1000px !important;
+  margin: 0 !important;
+  height: auto !important;
+  max-height: 90vh !important;
+}
+
+/* terminal-modal */
+@media (max-width: 576px) {
+  #terminalModal .terminal-container {
+    padding: 10px 10px 45px 10px !important;
+    min-height: 350px !important;
+  }
+
+  #terminalModal .terminal-output {
+    font-size: 12px !important;
+    min-height: 250px !important;
+  }
+
+  #terminalModal .terminal-prompt {
+    font-size: 14px !important;
+  }
+
+  #terminalModal .terminal-input {
+    font-size: 14px !important;
+  }
+
+  #terminalModal .terminal-input-line {
+    height: 35px !important;
+    bottom: 5px !important;
+  }
+
+  #terminalModal .modal-dialog {
+    width: 98% !important; /* Maximize width on very small screens */
+  }
+}
+
+/* Additional adjustments for landscape orientation on small screens */
+@media (max-height: 500px) {
+  #terminalModal .terminal-container {
+    min-height: 250px !important;
+    max-height: 85vh !important;
+  }
+
+  #terminalModal .terminal-output {
+    min-height: 180px !important;
+  }
+
+  #terminalModal .modal-header {
+    padding: 0.25rem !important;
+  }
+}
+
+/* Ensure terminal fills most of the screen in landscape mode */
+@media (max-height: 500px) and (orientation: landscape) {
+  #terminalModal .modal-dialog {
+    width: 95% !important;
+    max-height: 95vh !important;
+  }
+}
+
+/* Font scaling for readability across devices */
+@media (max-width: 360px) {
+  #terminalModal .terminal-output {
+    font-size: 11px !important;
+  }
+
+  #terminalModal .terminal-prompt {
+    font-size: 13px !important;
+  }
+
+  #terminalModal .terminal-input {
+    font-size: 13px !important;
+  }
+}
