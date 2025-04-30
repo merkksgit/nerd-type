@@ -284,7 +284,10 @@ article {
   color: #a9b1d6;
 }
 
-article h5,
+article h5 {
+  color: #c3e88d;
+}
+
 article h4,
 div h2 {
   color: #ff9e64;
