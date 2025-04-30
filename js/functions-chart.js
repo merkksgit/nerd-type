@@ -39,7 +39,7 @@ function setupToggle(
 }
 
 document
-  .getElementById("viewScoreboardBtn")
+  .getElementById("viewScoreboardChartBtn")
   .addEventListener("click", function () {
     // Update the scoreboard contents before showing
     displayPreviousResults();

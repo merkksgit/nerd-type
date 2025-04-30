@@ -274,7 +274,7 @@
   z-index: 1000;
 
   /* Fixed width for consistency */
-  min-width: 130px;
+  min-width: 150px;
   width: 130px;
   white-space: nowrap;
   overflow: hidden;
