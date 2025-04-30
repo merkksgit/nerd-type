@@ -61,11 +61,11 @@ function enhanceChartVisuals() {
   Chart.defaults.plugins.tooltip.displayColors = false;
 
   // Tooltip appearance - fonts and colors
-  Chart.defaults.plugins.tooltip.backgroundColor = "#24283b";
+  Chart.defaults.plugins.tooltip.backgroundColor = "#1f2335";
   Chart.defaults.plugins.tooltip.titleColor = "#a9b1d6";
   Chart.defaults.plugins.tooltip.bodyColor = "#c0caf5";
   Chart.defaults.plugins.tooltip.borderColor = "#3b4261";
-  Chart.defaults.plugins.tooltip.borderWidth = 1;
+  Chart.defaults.plugins.tooltip.borderWidth = 2;
   Chart.defaults.plugins.tooltip.padding = 12;
   Chart.defaults.plugins.tooltip.cornerRadius = 4;
   Chart.defaults.plugins.tooltip.boxPadding = 6;
