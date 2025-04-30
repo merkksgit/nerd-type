@@ -26,10 +26,73 @@ function initSettingsModal() {
     applyButton.addEventListener("click", applySettings);
   }
 
-  // Load saved settings
-  loadSettings();
+  // Add Enter key support for the settings modal
+  const settingsModal = document.getElementById("settingsModal");
+  if (settingsModal) {
+    // Add handler for modal-wide keydown events
+    settingsModal.addEventListener("keydown", function (event) {
+      // Check if Enter key is pressed
+      if (event.key === "Enter") {
+        // For the modal background and non-interactive elements
+        const tagName = event.target.tagName.toLowerCase();
+        const isInteractiveElement =
+          tagName === "input" ||
+          tagName === "textarea" ||
+          tagName === "select" ||
+          tagName === "button";
 
-  // Add event listeners for input changes to update the difficulty multiplier
+        if (!isInteractiveElement) {
+          event.preventDefault();
+          if (applyButton) {
+            applyButton.click();
+          }
+        }
+      }
+    });
+
+    // Add handlers for all number input fields
+    const inputFields = settingsModal.querySelectorAll('input[type="number"]');
+    inputFields.forEach((input) => {
+      input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          if (applyButton) {
+            applyButton.click();
+          }
+        }
+      });
+    });
+
+    // Add handlers for all radio buttons
+    const radioButtons = settingsModal.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach((radio) => {
+      radio.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          if (applyButton) {
+            applyButton.click();
+          }
+        }
+      });
+    });
+
+    // Add handlers for all toggle switches (checkboxes)
+    const toggleSwitches = settingsModal.querySelectorAll(
+      'input[type="checkbox"]',
+    );
+    toggleSwitches.forEach((toggle) => {
+      toggle.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          if (applyButton) {
+            applyButton.click();
+          }
+        }
+      });
+    });
+  }
+
+  loadSettings();
   setupInputChangeListeners();
 }
 
