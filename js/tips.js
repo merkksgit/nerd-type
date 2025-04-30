@@ -1,5 +1,5 @@
 export const tips = [
-  "Enter (Start), Ctrl + Enter (Reset)",
+  "Press Enter to start, Ctrl + Enter to reset game",
   "Type 'terminal' to open the NerdType terminal",
   "There is no God Mode",
   "Use TAB key to auto-complete commands and filenames",

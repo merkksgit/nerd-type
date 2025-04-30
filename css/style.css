@@ -1248,14 +1248,14 @@ input[type="text"] {
   width: 100%;
   max-width: 500px;
   margin: 20px auto;
-  font-size: clamp(16px, 5vw, 24px);
+  font-size: clamp(22px, 5vw, 24px);
   box-sizing: border-box;
 }
 
 /* Make Word Display Responsive */
 div#wordToType,
 #nextWord {
-  font-size: clamp(16px, 4vw, 24px);
+  font-size: clamp(20px, 4vw, 24px);
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
@@ -1303,7 +1303,6 @@ div#wordToType,
     margin: 10px auto;
   }
 
-  #startButton,
   /* Button text size adjustment */
   #startButton,
   #resetBtn,

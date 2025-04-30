@@ -321,7 +321,7 @@ function optimizeForMobile() {
     // Make sure input has appropriate size
     const userInput = document.getElementById("userInput");
     if (userInput) {
-      userInput.style.fontSize = "18px";
+      userInput.style.fontSize = "22px";
       // Prevent zooming on mobile when focusing input
       userInput.setAttribute("autocomplete", "off");
       userInput.setAttribute("autocorrect", "off");
