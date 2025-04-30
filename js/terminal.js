@@ -618,11 +618,27 @@ class Terminal {
     const output = document.getElementById("terminalOutput");
     const messageElement = document.createElement("div");
     messageElement.innerHTML = message;
+
     if (className) {
       messageElement.classList.add(className);
     }
+
+    // Add responsive class if it's a wide content to help with wrapping on mobile
+    if (message.length > 60) {
+      messageElement.classList.add("terminal-long-message");
+    }
+
     output.appendChild(messageElement);
-    output.scrollTop = output.scrollHeight;
+
+    // Ensure scroll to bottom - more reliable than just setting scrollTop
+    setTimeout(() => {
+      output.scrollTop = output.scrollHeight;
+
+      // For mobile devices, make sure the latest message is visible
+      if (window.innerWidth < 576) {
+        messageElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }, 10);
   }
 
   clearTerminal() {
