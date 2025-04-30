@@ -56,13 +56,13 @@ function calculateScore(timeLeft, wpm, accuracy, settings) {
 }
 
 function enhanceChartVisuals() {
-  Chart.defaults.color = "#a9b1d6";
+  Chart.defaults.color = "#ff007c";
   Chart.defaults.borderColor = "#3b4261";
   Chart.defaults.plugins.tooltip.displayColors = false;
 
   // Tooltip appearance - fonts and colors
   Chart.defaults.plugins.tooltip.backgroundColor = "#1f2335";
-  Chart.defaults.plugins.tooltip.titleColor = "#a9b1d6";
+  Chart.defaults.plugins.tooltip.titleColor = "#ff007c";
   Chart.defaults.plugins.tooltip.bodyColor = "#c0caf5";
   Chart.defaults.plugins.tooltip.borderColor = "#3b4261";
   Chart.defaults.plugins.tooltip.borderWidth = 2;
