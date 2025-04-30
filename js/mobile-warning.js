@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>
                         <div class="modal-body border-top-0 border-bottom-0">
                             <pre class="terminal-output" style="margin-bottom: 20px;">
-<span style="color:#ff9e64;">NOTICE:</span> NerdType is developed and designed to be played on desktop devices. Mobile gameplay is possible but limited. The site itself is responsive and fully accessible on mobile devices. For the optimal typing experience, a physical keyboard is recommended.
+<span style="color:#ff9e64;">NOTICE:</span> NerdType is developed and designed to be played on desktop devices. Mobile gameplay is possible but limited. The site itself is responsive and fully accessible on mobile devices. For the optimal typing experience, a physical keyboard is recommended. Happy typing!
 </pre>
       </div>
       <div class="modal-footer border-top-0 d-flex justify-content-center" style="background-color: #24283b">
