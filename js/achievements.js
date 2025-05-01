@@ -149,7 +149,7 @@ class AchievementSystem {
         description: "Complete 15 custom mode games in a single day",
         icon: "fa-solid fa-compass",
         category: "exploration",
-        secret: true,
+        secret: false,
         check: function (stats, gameData) {
           if (!gameData) {
             return stats.customGamesPlayedToday >= 15;
