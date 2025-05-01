@@ -143,9 +143,9 @@ class AchievementSystem {
           return false;
         },
       },
-      starfish_navigation: {
-        id: "starfish_navigation",
-        name: "Starfish Navigation System",
+      config_commander: {
+        id: "config_commander",
+        name: "Config Commander",
         description: "Complete 15 custom mode games in a single day",
         icon: "fa-solid fa-compass",
         category: "exploration",
