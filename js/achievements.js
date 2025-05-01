@@ -143,6 +143,37 @@ class AchievementSystem {
           return false;
         },
       },
+      starfish_navigation: {
+        id: "starfish_navigation",
+        name: "Starfish Navigation System",
+        description: "Complete 15 custom mode games in a single day",
+        icon: "fa-solid fa-compass",
+        category: "exploration",
+        secret: true,
+        check: function (stats, gameData) {
+          if (!gameData) {
+            return stats.customGamesPlayedToday >= 15;
+          }
+
+          if (gameData.mode === "Custom Mode" && gameData.timeLeft > 0) {
+            if (typeof stats.customGamesPlayedToday === "undefined") {
+              stats.customGamesPlayedToday = 1;
+              stats.lastCustomGameDate = new Date().toLocaleDateString();
+            } else if (
+              stats.lastCustomGameDate !== new Date().toLocaleDateString()
+            ) {
+              stats.customGamesPlayedToday = 1;
+              stats.lastCustomGameDate = new Date().toLocaleDateString();
+            } else {
+              stats.customGamesPlayedToday++;
+              this.saveData();
+            }
+            return stats.customGamesPlayedToday >= 15;
+          }
+
+          return false;
+        },
+      },
       the_admin: {
         id: "the_admin",
         name: "The Admin",
