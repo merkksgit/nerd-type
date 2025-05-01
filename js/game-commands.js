@@ -509,16 +509,44 @@ Available commands:
       return;
     }
 
-    const statusText = `
+    // Get the current Zen Mode state from localStorage
+    const isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
+
+    // Get achievement sound setting (null or undefined = true by default)
+    const achievementSoundEnabled = localStorage.getItem(
+      "achievement_sound_enabled",
+    );
+    const isSoundEnabled =
+      achievementSoundEnabled === null || achievementSoundEnabled === "true";
+
+    let statusText;
+
+    if (isZenMode) {
+      // Zen Mode status
+      statusText = `
 CURRENT GAME SETTINGS:
 ================================
+ZEN MODE: <span style='color:#c3e88d'>ON</span>
+ZEN WORD GOAL: <span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span> words
+ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
+================================
+`;
+    } else {
+      // Classic Mode status
+      statusText = `
+CURRENT GAME SETTINGS:
+================================
+ZEN MODE: <span style='color:#ff007c'>OFF</span>
 MODE: <span style='color:#ff9e64'>${settings.currentMode?.toUpperCase() || "CLASSIC"}</span>
 WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
 BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
 INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
 GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%</span>
+ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 ================================
 `;
+    }
+
     this.showInfoModal("Game Status", statusText);
   }
 
