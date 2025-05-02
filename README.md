@@ -8,21 +8,21 @@ This project began as a school assignment but has evolved into an ongoing journe
 
 <!-- vim-markdown-toc GFM -->
 
-* [🎮 Play the game](#-play-the-game)
-* [✨ Features](#-features)
-* [🎮 How to Play](#-how-to-play)
-* [🎯 Game Modes](#-game-modes)
-* [💻 Technologies Used](#-technologies-used)
-* [📧 Contact](#-contact)
+* [Play the game](#play-the-game)
+* [Features](#features)
+* [How to Play](#how-to-play)
+* [Game Modes](#game-modes)
+* [Technologies Used](#technologies-used)
+* [Contact](#contact)
 
 <!-- vim-markdown-toc -->
 
-## 🎮 Play the game
+## Play the game
 
 - [Neocities: v1.4.2](https://nerdtype.neocities.org/)
 - [GitHub pages: Development, 1.4.2](https://www.nerdtypegame.com)
 
-## ✨ Features
+## Features
 
 - **Multilingual Vocabulary:** Type programming terms and words from English, Finnish, and Swedish.
 - **Energy-Based Countdown:** Each correct word restores energy, allowing you to stay in the game longer.
@@ -35,7 +35,7 @@ This project began as a school assignment but has evolved into an ongoing journe
 - **Score Chart:** View your typing performance history with an interactive score chart. The chart displays your scores, accuracy and words per minute (WPM) over time, allowing you to track your progress and identify areas for improvement.
 - **Responsive Design:** Built with Bootstrap for smooth performance on various screen sizes, including mobile devices.
 
-## 🎮 How to Play
+## How to Play
 
 1. Click the **Start** button or press **Enter** to begin.
 2. Type the displayed word into the input field before your energy runs out.
@@ -44,7 +44,7 @@ This project began as a school assignment but has evolved into an ongoing journe
 5. Press **Enter** or the **Reset** button to start a new game.
 6. Enter the command mode with "/" to access quick settings (try "/help" to see all commands).
 
-## 🎯 Game Modes
+## Game Modes
 
 - **Classic Mode:** Standard gameplay with balanced settings.
 - **Hard Mode:** More challenging with tighter time constraints.
@@ -53,12 +53,12 @@ This project began as a school assignment but has evolved into an ongoing journe
 - **Custom Mode:** Your own personalized settings for a unique challenge.
 - **Zen Mode:** Relaxed game mode with no energy limit.
 
-## 💻 Technologies Used
+## Technologies Used
 
 - **HTML**: To structure the game interface.
 - **CSS (Bootstrap)**: For responsive design.
 - **JavaScript**: Handles game logic, such as timers, word checking, and user input.
 
-## 📧 Contact
+## Contact
 
 For feedback or suggestions, reach out via email: nerdtype-contact@protonmail.com
