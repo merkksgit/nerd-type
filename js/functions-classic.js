@@ -138,11 +138,22 @@ function updateUIForGameMode() {
 
   // Update game indicator
   if (gameIndicator) {
-    // Show word goal in the mode indicator for Zen Mode
     if (isZenMode) {
       gameIndicator.textContent = "Zen Mode";
     } else {
-      gameIndicator.textContent = "Classic Mode";
+      // Check current mode from gameSettings
+      const settings =
+        JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+      const currentMode = settings.currentMode || "classic";
+
+      // Format the text based on mode
+      if (currentMode === "classic") {
+        gameIndicator.textContent = "Classic Mode";
+      } else {
+        const formattedMode =
+          currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
+        gameIndicator.textContent = `Classic Mode: ${formattedMode}`;
+      }
     }
     gameIndicator.style.color = isZenMode ? "#c3e88d" : "#ff9e64";
   }
