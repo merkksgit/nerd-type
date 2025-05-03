@@ -95,6 +95,20 @@ class AchievementSystem {
           gameData.timeLeft > 0 &&
           gameData.timeLeft < 3,
       },
+      energy_reservoir: {
+        id: "energy_reservoir",
+        name: "Energy Reservoir",
+        description:
+          "Complete a Hard Mode game with at least 10 energy remaining",
+        icon: "fa-solid fa-battery-full",
+        category: "gameplay",
+        secret: false,
+        check: (stats, gameData) =>
+          gameData &&
+          gameData.mode === "Hard Mode" &&
+          gameData.timeLeft !== undefined &&
+          gameData.timeLeft >= 10,
+      },
       speed_demon: {
         id: "speed_demon",
         name: "Speed Demon",
