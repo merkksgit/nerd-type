@@ -514,8 +514,15 @@ class AchievementSystem {
 
   // Update stats and check for new achievements after a game
   handleGameCompletion(gameData) {
-    // Update daily game count
-    this.updateDailyStats();
+    // Check if the date has changed and reset counter if needed
+    const today = new Date().toLocaleDateString();
+    if (this.achievementsData.stats.lastGameDate !== today) {
+      // Reset the counter if it's a new day
+      this.achievementsData.stats.gamesPlayedToday = 0;
+      this.achievementsData.stats.lastGameDate = today;
+    }
+
+    // Now increment the counter after potential reset
     this.achievementsData.stats.gamesPlayedToday++;
 
     // Update highest score if this game's score is higher
@@ -575,8 +582,8 @@ class AchievementSystem {
       }
     }
 
-    // Save date of this game
-    this.achievementsData.stats.lastGameDate = new Date().toLocaleDateString();
+    // Save date of this game (already set earlier if it was a new day)
+    this.achievementsData.stats.lastGameDate = today;
 
     // Check for newly unlocked achievements
     this.checkAchievements(gameData);

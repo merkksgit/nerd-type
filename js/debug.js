@@ -38,7 +38,7 @@ export class DebugDisplay {
     const div = document.createElement("div");
     div.style.position = "fixed";
     // change debug window position
-    div.style.bottom = "25%";
+    div.style.bottom = "20%";
     div.style.left = "10%";
     div.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
     div.style.color = "#00ff00";
@@ -202,6 +202,13 @@ export class DebugDisplay {
       currentMode: "classic",
     };
 
+    // Get achievement stats to display games played today
+    const achievementData = JSON.parse(
+      localStorage.getItem("nerdtype_achievements"),
+    ) || {
+      stats: { gamesPlayedToday: 0, lastGameDate: null },
+    };
+
     // Calculate difficulty multiplier
     const difficultyMultiplier = this.calculateDifficultyMultiplier(settings);
 
@@ -267,6 +274,9 @@ export class DebugDisplay {
 
     const finalScore = Math.round(baseScore + energyBonus);
 
+    // Get the current date for display
+    const currentDate = new Date().toLocaleDateString();
+
     this.debugContent.innerHTML = `
       Current Word: ${currentWord} (${wordLength} chars)<br>
       Total Characters: ${totalCharactersTyped}<br>
@@ -281,7 +291,7 @@ export class DebugDisplay {
       Timer Started: ${gameStartTime ? "Yes" : "No"}<br>
       Typing Started: ${hasStartedTyping ? "Yes" : "No"}<br>
       Command Mode: ${isCommandMode ? "Yes" : "No"}<br>
-      Time Left: ${timeLeft !== undefined ? timeLeft : "N/A"}<br>
+      Energy Left: ${timeLeft !== undefined ? timeLeft : "N/A"}<br>
       <br>
       <span style="color: #c3e88d;">Mode: ${settings.currentMode} (Multiplier: ${difficultyMultiplier.toFixed(2)}x)</span><br>
       Goal Words Factor: ${timeLimitFactor.toFixed(2)}x<br>
@@ -293,10 +303,15 @@ export class DebugDisplay {
       Combined Difficulty:<br>
       ${combinedMeter}
       <br>
-      Score Breakdown:<br>
+      <span style="color: #ff9e64;">Score Breakdown:</span><br>
       Base Score: ${baseScore}<br>
       Energy Bonus: ${energyBonus}<br>
       Final Score: ${finalScore}
+      <br>
+      <span style="color: #ff9e64;">Achievement Data:</span><br>
+      Games Played Today: ${achievementData.stats.gamesPlayedToday}<br>
+      Date: ${currentDate}<br>
+      Last Game Date: ${achievementData.stats.lastGameDate || "None"}
     `;
   }
 }
