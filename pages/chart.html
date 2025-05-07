@@ -122,15 +122,51 @@
             </div>
             <div class="row justify-content-center">
               <!-- Zen Mode Chart -->
-              <div class="col-12 col-lg-10 col-xl-8 mb-4">
+              <div class="col-12 col-lg-10 col-xl-8 mb-5">
                 <h4 class="text-center mb-4">Zen Mode</h4>
                 <div class="chart-container">
                   <canvas id="zenChart"></canvas>
                 </div>
               </div>
             </div>
+            <div class="row justify-content-center">
+              <div class="col-12 col-lg-8 col-xl-6 mb-2">
+                <h4 style="text-align: left">NerdType Dashboard</h4>
+                <hr
+                  class="mb-3"
+                  style="
+                    border-color: #ff9e64;
+                    opacity: 1;
+                    border-width: 1px;
+                    margin-top: -10px;
+                  "
+                />
+                <p style="text-align: left">
+                  For more detailed analysis of your typing performance, check
+                  out the
+                  <a
+                    href="https://nerdtype-dashboard.streamlit.app/"
+                    target="_blank"
+                    style="color: #7aa2f7; text-decoration: none"
+                    >NerdType Dashboard</a
+                  >. This interactive tool provides comprehensive visualizations
+                  and statistics beyond what's available in the basic charts.
+                  Download your game data below and upload it to the dashboard
+                  to unlock personalized insights about your typing patterns and
+                  progress over time.
+                </p>
+              </div>
+            </div>
           </div>
         </article>
+      </div>
+      <div class="row justify-content-center pb-5">
+        <div id="buttons">
+          <button id="downloadDataBtn">
+            <i class="fa-solid fa-file-arrow-down"></i>
+            <span>Download Game Data</span>
+          </button>
+        </div>
       </div>
       <div class="row justify-content-center">
         <!-- Scoreboard Modal -->
@@ -300,6 +336,7 @@
     <script src="../js/chart.js"></script>
     <script src="../js/functions-chart.js" type="module"></script>
     <script src="../js/version.js"></script>
+    <script src="../js/download-game-data.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

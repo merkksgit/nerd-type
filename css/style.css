@@ -321,8 +321,37 @@ div h2 {
   transition: all 0.3s ease;
 }
 
+#buttons #downloadDataBtn {
+  color: #7aa2f7;
+  background-color: #1f2335;
+  border: none;
+  border-radius: 4px;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 4px rgba(122, 162, 247, 0.3);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#buttons #downloadDataBtn i,
+#buttons #downloadDataBtn span {
+  background-color: transparent;
+}
+
+#buttons #downloadDataBtn:hover {
+  color: #ff9e64;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(122, 162, 247, 0.5);
+  transform: translateY(-2px);
+  background-color: #2a3047;
+}
+
 /* Button spacing differences */
 #openTerminalBtn,
+#downloadDataBtn,
 #startButton,
 #clrResults,
 #confirmUsername,
@@ -362,6 +391,7 @@ div h2 {
 
 /* Common button hover effects */
 #returnToGameBtn:hover,
+#downloadDataBtn:hover,
 #restartGameBtn:hover,
 #clrResults:hover,
 #openTerminalBtn:hover,
