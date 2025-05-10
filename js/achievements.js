@@ -201,7 +201,8 @@ class AchievementSystem {
       script_kiddie: {
         id: "script_kiddie",
         name: "Script Kiddie",
-        description: "From zero to one",
+        description:
+          "Hello, World! Step one: look like you know what you're doing.",
         icon: "fa-solid fa-graduation-cap",
         category: "progress",
         secret: true,
