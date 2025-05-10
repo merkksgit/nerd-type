@@ -719,16 +719,50 @@ $ </pre>
           );
           scoreboardModal.show();
 
+          // Add Enter key handler specifically for scoreboard modal
+          const handleScoreboardKeyPress = (e) => {
+            // Only handle Enter if it's coming from the scoreboard modal itself
+            // and no other modal is currently showing
+            const customAlertModal =
+              document.getElementById("customAlertModal");
+            const isCustomAlertVisible =
+              customAlertModal && customAlertModal.classList.contains("show");
+
+            if (e.key === "Enter" && !isCustomAlertVisible) {
+              e.preventDefault();
+              e.stopPropagation();
+
+              // Close the modal and reload page
+              const modal = bootstrap.Modal.getInstance(
+                document.getElementById("scoreboardModal"),
+              );
+              if (modal) {
+                modal.hide();
+                // Add a small delay before reload to ensure modal closes properly
+                setTimeout(() => {
+                  location.reload();
+                }, 100);
+              }
+            }
+          };
+
+          // Add the event listener when modal is shown
+          document.addEventListener("keydown", handleScoreboardKeyPress);
+
+          // Clean up when modal is hidden
           document.getElementById("scoreboardModal").addEventListener(
             "hidden.bs.modal",
             function () {
+              // Remove the keydown listener
+              document.removeEventListener("keydown", handleScoreboardKeyPress);
+
+              // Clean up any remaining backdrops
               const backdrops = document.querySelectorAll(".modal-backdrop");
               backdrops.forEach((backdrop) => {
                 backdrop.remove();
               });
 
               document.body.classList.remove("modal-open");
-
               document.body.removeAttribute("style");
             },
             { once: true },

@@ -49,6 +49,24 @@ document
       document.getElementById("scoreboardModal"),
     );
     scoreboardModal.show();
+
+    // Setup Enter key handler
+    setupScoreboardModalEnterKey();
+
+    // Clean up when modal is hidden
+    document.getElementById("scoreboardModal").addEventListener(
+      "hidden.bs.modal",
+      function () {
+        const backdrops = document.querySelectorAll(".modal-backdrop");
+        backdrops.forEach((backdrop) => {
+          backdrop.remove();
+        });
+
+        document.body.classList.remove("modal-open");
+        document.body.removeAttribute("style");
+      },
+      { once: true },
+    );
   });
 
 // Initialize all functionality when DOM is loaded
@@ -95,37 +113,35 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// For the clear results modal, add enter key support
-function setupClearResultsModal() {
-  const customAlertModal = document.getElementById("customAlertModal");
-  const clearResultsButton = document.getElementById("clrResults");
+function setupScoreboardModalEnterKey() {
+  const scoreboardModal = document.getElementById("scoreboardModal");
 
-  if (customAlertModal && clearResultsButton) {
-    // Remove previous event listeners if they exist
-    customAlertModal.removeEventListener("keydown", handleClearResultsKeyPress);
+  if (scoreboardModal) {
+    // Remove any existing listener
+    scoreboardModal.removeEventListener("keydown", handleScoreboardKeyPress);
 
-    // Add keydown event listener to the modal
-    customAlertModal.addEventListener("keydown", handleClearResultsKeyPress);
+    // Add the event listener directly to the scoreboard modal
+    scoreboardModal.addEventListener("keydown", handleScoreboardKeyPress);
   }
 }
 
-// Handler for enter key in clear results modal
-function handleClearResultsKeyPress(event) {
+// Handler for enter key in scoreboard modal
+function handleScoreboardKeyPress(event) {
   if (event.key === "Enter") {
     event.preventDefault();
     event.stopPropagation();
 
-    // Trigger the clear results button
-    const clearResultsButton = document.getElementById("clrResults");
-    if (clearResultsButton) {
-      clearResultsButton.click();
+    const scoreboardModal = bootstrap.Modal.getInstance(
+      document.getElementById("scoreboardModal"),
+    );
+    if (scoreboardModal) {
+      scoreboardModal.hide();
     }
   }
 }
 
 function handleClearResults() {
   localStorage.removeItem("gameResults");
-  // localStorage.removeItem("highestAchievements");
   document.getElementById("previousResults").innerHTML = "";
   displayHighestAchievements();
 
@@ -170,17 +186,59 @@ function handleClearResults() {
       }
     }
 
+    // Create a single handler for both Enter key and close button
+    const handleModalClose = () => {
+      modal.hide();
+      // Wait for modal to fully hide before reloading
+      customAlertModal.addEventListener(
+        "hidden.bs.modal",
+        function () {
+          location.reload();
+        },
+        { once: true },
+      );
+    };
+
+    const clrResultsButton = document.getElementById("clrResults");
+    if (clrResultsButton) {
+      clrResultsButton.replaceWith(clrResultsButton.cloneNode(true));
+      const newClrResultsButton = document.getElementById("clrResults");
+      newClrResultsButton.addEventListener("click", handleModalClose);
+    }
+
+    // Set up Enter key handler for this specific modal
+    const keydownHandler = (event) => {
+      if (
+        event.key === "Enter" &&
+        customAlertModal.classList.contains("show")
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        handleModalClose();
+      }
+    };
+
     modal.show();
-    typeNextLine();
 
-    // Set up the event listeners for the modal
-    setupClearResultsModal();
+    customAlertModal.addEventListener("shown.bs.modal", function onShown() {
+      document.addEventListener("keydown", keydownHandler, { capture: true });
 
-    document
-      .getElementById("clrResults")
-      .addEventListener("click", function () {
-        location.reload();
-      });
+      customAlertModal.removeEventListener("shown.bs.modal", onShown);
+    });
+
+    // Start typing animation after modal is shown
+    setTimeout(typeNextLine, 300);
+
+    // Clean up event listener when modal is hidden
+    customAlertModal.addEventListener(
+      "hidden.bs.modal",
+      function cleanupHandler() {
+        document.removeEventListener("keydown", keydownHandler, {
+          capture: true,
+        });
+        customAlertModal.removeEventListener("hidden.bs.modal", cleanupHandler);
+      },
+    );
   }
 }
 
@@ -264,7 +322,7 @@ export {
   displayHighestAchievements,
   getAchievementColor,
   setupToggle,
-  setupClearResultsModal,
   handleClearResults,
-  handleClearResultsKeyPress,
+  setupScoreboardModalEnterKey,
+  handleScoreboardKeyPress,
 };

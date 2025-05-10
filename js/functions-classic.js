@@ -1596,8 +1596,41 @@ function handleClearResultsKeyPress(event) {
   }
 }
 
+function setupScoreboardModalEnterKey() {
+  const scoreboardModal = document.getElementById("scoreboardModal");
+  const scoreboardCloseBtn = document.getElementById("scoreboardCloseBtn");
+
+  if (scoreboardModal && scoreboardCloseBtn) {
+    // Remove previous event listeners if they exist
+    scoreboardModal.removeEventListener("keydown", handleScoreboardKeyPress);
+
+    // Add keydown event listener to the modal
+    scoreboardModal.addEventListener("keydown", handleScoreboardKeyPress);
+  }
+}
+
+// Handler for enter key in scoreboard modal
+function handleScoreboardKeyPress(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Close the modal using Bootstrap's modal instance
+    const scoreboardModal = bootstrap.Modal.getInstance(
+      document.getElementById("scoreboardModal"),
+    );
+    if (scoreboardModal) {
+      scoreboardModal.hide();
+    }
+  }
+}
+
 // Initialize the game when the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", initializeGame);
 
 // Export anything that might be needed by other modules
-export { displayPreviousResults };
+export {
+  displayPreviousResults,
+  setupScoreboardModalEnterKey,
+  handleScoreboardKeyPress,
+};
