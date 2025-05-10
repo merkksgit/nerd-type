@@ -202,7 +202,7 @@ class AchievementSystem {
         id: "script_kiddie",
         name: "Script Kiddie",
         description:
-          "Hello, World! Step one: look like you know what you're doing.",
+          "Hello, World! Step one: look like you know what you're doing",
         icon: "fa-solid fa-graduation-cap",
         category: "progress",
         secret: true,
