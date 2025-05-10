@@ -972,30 +972,30 @@ score h3 {
 /* Achievement Color Classes */
 .achievement-quantum-speed,
 .achievement-perfect-sync {
-  color: #c3e88d;
+  color: #c3e88d !important;
 }
 
 .achievement-neural-master,
 .achievement-cyber-adept {
-  color: #7aa2f7;
+  color: #7aa2f7 !important;
 }
 
 .achievement-digital-runner,
 .achievement-digital-precise {
-  color: #ff9e64;
+  color: #ff9e64 !important;
 }
 
 .achievement-initiating,
 .achievement-neural-interference {
-  color: #545c7e;
+  color: #545c7e !important;
 }
 
 .achievement-system-unstable {
-  color: #ffc777;
+  color: #ffc777 !important;
 }
 
 .achievement-system-failure {
-  color: #ff007c;
+  color: #ff007c !important;
 }
 
 /* Achievement Cards */
@@ -1018,7 +1018,7 @@ score h3 {
 }
 
 .achievement-tier {
-  color: #4fd6be !important;
+  color: #4fd6be;
 }
 
 .achievement-card:hover {
