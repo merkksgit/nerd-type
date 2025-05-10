@@ -201,7 +201,7 @@ class AchievementSystem {
       script_kiddie: {
         id: "script_kiddie",
         name: "Script Kiddie",
-        description: "Your first hack, gratz nerd!",
+        description: "From zero to one",
         icon: "fa-solid fa-graduation-cap",
         category: "progress",
         secret: true,
@@ -826,11 +826,10 @@ class AchievementSystem {
     row.className = "row";
     container.appendChild(row);
 
-    // Add each achievement - using the same structure as the existing achievements
-    // Add each achievement - using a 3-column layout
+    // Add each achievement
     achievements.forEach((achievement) => {
       const col = document.createElement("div");
-      col.className = "col-12 col-md-4 pt-3"; // Changed to 4 for 3 cards per row
+      col.className = "col-12 col-md-4 pt-3";
 
       const card = document.createElement("div");
       card.className = `card custom-achievement-card ${achievement.unlocked ? "" : "achievement-locked"}`;
@@ -854,23 +853,48 @@ class AchievementSystem {
       body.className = "card-body text-center";
 
       if (achievement.unlocked) {
+        // Create a container for the achievement content
+        const contentDiv = document.createElement("div");
+        contentDiv.style.color = "#c0caf5";
+
+        // Add the description
+        const description = document.createElement("div");
+        description.textContent = achievement.description;
+        description.style.marginBottom = "10px";
+
         // Dynamically adjust font size based on description length
-        const description = achievement.description;
-        body.textContent = description;
+        if (achievement.description.length > 30) {
+          description.style.fontSize = "0.85rem";
+        }
+        if (achievement.description.length > 45) {
+          description.style.fontSize = "0.8rem";
+        }
+        if (achievement.description.length > 60) {
+          description.style.fontSize = "0.75rem";
+        }
 
-        // Default font size
-        body.style.fontSize = "0.9rem";
+        // Add the unlock date
+        const unlockDate = document.createElement("div");
+        const date = new Date(achievement.unlockedAt);
+        const formattedDate = date.toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        unlockDate.textContent = `Unlocked: ${formattedDate}`;
+        unlockDate.style.fontSize = "0.7rem";
+        unlockDate.style.color = "#565f89";
+        unlockDate.style.marginTop = "6px";
+        unlockDate.style.marginBottom = "0";
+        unlockDate.style.borderTop = "1px solid #3b4261";
+        unlockDate.style.paddingTop = "6px";
+        unlockDate.style.paddingBottom = "0";
 
-        // Adjust based on text length
-        if (description.length > 30) {
-          body.style.fontSize = "0.85rem";
-        }
-        if (description.length > 45) {
-          body.style.fontSize = "0.8rem";
-        }
-        if (description.length > 60) {
-          body.style.fontSize = "0.75rem";
-        }
+        contentDiv.appendChild(description);
+        contentDiv.appendChild(unlockDate);
+        body.appendChild(contentDiv);
       } else {
         // For locked achievements, show an icon and "Locked"
         const lockedIcon = document.createElement("i");
@@ -894,6 +918,7 @@ class AchievementSystem {
       col.appendChild(card);
       row.appendChild(col);
     });
+
     // Initialize tooltips after adding all achievement cards
     setTimeout(() => {
       const tooltipTriggerList = [].slice.call(

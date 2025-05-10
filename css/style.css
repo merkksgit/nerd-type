@@ -1030,6 +1030,62 @@ score h3 {
   text-shadow: 0 0 8px rgba(79, 214, 190, 0.4);
 }
 
+.custom-achievement-card .card-body {
+  color: #c0caf5;
+  text-align: center;
+  padding: 1.25rem 1.25rem 1rem 1.25rem;
+  min-height: 100px;
+}
+
+.achievement-unlock-date {
+  font-size: 0.7rem;
+  color: #565f89;
+  margin-top: 6px;
+  margin-bottom: 0;
+  border-top: 1px solid #3b4261;
+  padding-top: 6px;
+  padding-bottom: 0;
+  font-style: italic;
+}
+
+/* Ensure description text adapts properly */
+.custom-achievement-card .achievement-description {
+  margin-bottom: 10px;
+  line-height: 1.4;
+  transition: font-size 0.2s ease;
+}
+
+/* Hover effect for whole card */
+.custom-achievement-card:hover .achievement-unlock-date {
+  color: #7aa2f7;
+}
+
+/* For very small screens, adjust font sizes */
+@media (max-width: 576px) {
+  .custom-achievement-card .card-body {
+    padding: 1rem 1rem 0.75rem 1rem;
+    min-height: 100px;
+  }
+
+  .achievement-unlock-date {
+    font-size: 0.65rem;
+    margin-top: 5px;
+    margin-bottom: 0;
+    padding-top: 5px;
+    padding-bottom: 0;
+  }
+}
+
+.terminal .achievement-unlock-date {
+  font-family: "custom", monospace;
+  letter-spacing: -0.5px;
+}
+
+/* Special styling for achievements with longer descriptions and dates */
+.custom-achievement-card .card-body:has(.achievement-unlock-date) {
+  padding-bottom: 0.75rem; /* Minimal bottom padding when unlock date is present */
+}
+
 /* ==== 11. Animation & Speech Bubble ==== */
 #animation_container {
   margin-top: 100px;
