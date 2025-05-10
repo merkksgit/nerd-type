@@ -253,6 +253,22 @@ class AchievementSystem {
           return accuracy === 100 && isVictory;
         },
       },
+      low_accuracy_victory: {
+        id: "low_accuracy_victory",
+        name: "Spray and Pray",
+        description: "Win a game with less than 40% accuracy",
+        icon: "fa-solid fa-fire",
+        category: "gameplay",
+        secret: false,
+        check: (stats, gameData) => {
+          if (!gameData) return false;
+
+          const isVictory = gameData.timeLeft > 0;
+          const accuracy = parseFloat(gameData.accuracy);
+
+          return !isNaN(accuracy) && accuracy < 40 && isVictory;
+        },
+      },
       night_owl: {
         id: "night_owl",
         name: "Night Owl",
