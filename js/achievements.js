@@ -235,6 +235,22 @@ class AchievementSystem {
         check: (stats, gameData) =>
           (gameData && gameData.wpm >= 100) || stats.highestWPM >= 100,
       },
+      advanced_operator: {
+        id: "keyboard_warrior",
+        name: "Keyboard Warrior",
+        description: "Win a game with at least 1.5x difficulty multiplier",
+        icon: "fa-solid fa-chart-simple",
+        category: "difficulty",
+        secret: false,
+        check: function (stats, gameData) {
+          if (!gameData || !gameData.mode || !gameData.mode.includes("Mode"))
+            return false;
+          if (gameData.mode === "Zen Mode") return false;
+          if (gameData.timeLeft <= 0) return false;
+
+          return gameData.difficultyMultiplier >= 1.49;
+        },
+      },
       bug_eliminator: {
         id: "bug_eliminator",
         name: "Bug Eliminator",

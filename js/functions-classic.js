@@ -1436,6 +1436,18 @@ function saveClassicResult(timeLeft, wpm, accuracy, finalScore) {
     gameSettings.currentMode.charAt(0).toUpperCase() +
     gameSettings.currentMode.slice(1);
 
+  // Calculate the difficulty multiplier
+  const settingsForCalculation = {
+    timeLimit: gameSettings.timeLimit,
+    bonusTime: gameSettings.bonusTime,
+    initialTime: gameSettings.initialTime,
+    goalPercentage: gameSettings.goalPercentage || 100,
+  };
+
+  const difficultyMultiplier = calculateDifficultyMultiplier(
+    settingsForCalculation,
+  );
+
   // Create game data object
   const gameData = {
     username: playerUsername,
@@ -1446,6 +1458,8 @@ function saveClassicResult(timeLeft, wpm, accuracy, finalScore) {
     mode: modeName + " Mode",
     score: finalScore,
     wordList: currentLanguage,
+    // Store the calculated multiplier
+    difficultyMultiplier: difficultyMultiplier,
   };
 
   // Save results and highest achievements
@@ -1475,6 +1489,7 @@ function saveZenResult(wpm, totalTime, accuracy) {
     wordList: currentLanguage,
     wordGoal: zenWordGoal,
     wordsTyped: wordsTyped.length,
+    difficultyMultiplier: difficultyMultiplier,
   };
 
   results.push(gameData);
