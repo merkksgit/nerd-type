@@ -790,27 +790,49 @@ div#wordToType {
   list-style-type: none;
   text-align: center;
   color: #a9b1d6;
-  line-height: 3em;
+  line-height: 2.5em;
   margin: 0;
   padding: 0;
   width: 100%;
-  max-width: 1000px;
+  max-width: 800px;
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
+  font-size: 0.9em;
 }
 
 #previousResults li {
-  padding: 0 15px;
+  padding: 0 8px;
   box-sizing: border-box;
   width: 100%;
   margin: 0;
+  font-size: 0.9em;
 }
 
 #previousResults li:nth-child(odd) {
   background-color: #1f2335;
-  padding: 0 15px; /* Keep padding consistent */
+  padding: 0 8px; /* Keep padding consistent */
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  #previousResults {
+    line-height: 2em; /* Further reduced for mobile */
+    font-size: 0.85em; /* Slightly smaller on mobile */
+  }
+
+  #previousResults li,
+  #previousResults li:nth-child(odd) {
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  #previousResults li,
+  #previousResults li:nth-child(odd) {
+    padding: 0 5px;
+    font-size: 0.8em; /* Even smaller on very small screens */
+  }
 }
 
 #resultsTittle {
@@ -882,8 +904,8 @@ score h3 {
 
 /* Scoreboard Modal Specific Styles - left aligned */
 .scoreboard-modal-dialog {
-  max-width: 90% !important;
-  width: 90% !important;
+  max-width: 70% !important;
+  width: 70% !important;
   margin: 0 auto;
 }
 
@@ -1189,7 +1211,7 @@ score h3 {
 /* Large devices (desktops, less than 1200px) */
 @media (max-width: 1200px) {
   .scoreboard-modal-dialog {
-    width: 90% !important;
+    width: 80% !important;
   }
 
   #previousResults {
@@ -1304,6 +1326,30 @@ score h3 {
   #scoreChart,
   #zenChart {
     height: calc(100% - 20px);
+  }
+}
+
+@media (max-width: 991px) {
+  .scoreboard-modal-dialog {
+    width: 90% !important;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .scoreboard-modal-dialog {
+    width: 95% !important;
+  }
+
+  #previousResults {
+    line-height: 2em;
+    font-size: 0.85em;
+    max-width: 95%;
+  }
+
+  #previousResults li,
+  #previousResults li:nth-child(odd) {
+    padding: 0 6px;
   }
 }
 

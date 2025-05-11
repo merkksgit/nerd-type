@@ -247,10 +247,12 @@ function displayPreviousResults() {
   if (!resultsContainer) return;
 
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-  results.reverse();
+
+  // Display previous results in scoreboard (only show last 20)
+  const displayResults = results.slice(-20).reverse();
   resultsContainer.innerHTML = "";
 
-  results.forEach((result) => {
+  displayResults.forEach((result) => {
     const resultItem = document.createElement("li");
 
     const wordListName = result.wordList
@@ -265,6 +267,15 @@ function displayPreviousResults() {
     }
     resultsContainer.appendChild(resultItem);
   });
+
+  // Add a note if there are more than 20 results
+  if (results.length > 20) {
+    const infoItem = document.createElement("li");
+    infoItem.textContent = `... (Showing last 20 of ${results.length} total games)`;
+    infoItem.style.color = "#565f89";
+    infoItem.style.fontStyle = "italic";
+    resultsContainer.appendChild(infoItem);
+  }
 }
 
 function displayHighestAchievements() {
