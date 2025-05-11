@@ -21,5 +21,5 @@ export const tips = [
   "Energy only depletes after your first keystroke",
   "Click the Settings button to switch to Zen Mode",
   "Access game modes and sound options via the Settings button",
-  "Adjust game settings to make some achievements easier to unlock",
+  "Tinker with game settings to unlock achievements more easily",
 ];
