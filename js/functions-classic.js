@@ -1043,22 +1043,15 @@ function calculateScore() {
     // Calculate difficulty multiplier based on game settings
     const difficultyMultiplier = calculateDifficultyMultiplier(settings);
 
-    // Calculate base score based on WPM and accuracy
-    // Formula: (WPM * 10) * (accuracy^2) * difficultyMultiplier
-    // Squaring accuracy heavily rewards high accuracy
     const baseScore = Math.round(
       wpm * 10 * (accuracy * accuracy) * difficultyMultiplier,
     );
 
-    // Energy bonus: Add a small bonus for remaining energy (timeLeft)
-    // But cap it to prevent it from being the dominant factor
-    const energyBonus = Math.min(timeLeft * 5, baseScore * 0.2); // Cap at 20% of base score
+    const energyBonus = Math.min(timeLeft * 5, baseScore * 0.2);
 
-    // Final score (rounded to nearest integer)
     return Math.round(baseScore + energyBonus);
   } catch (error) {
     console.error("Error calculating score:", error);
-    // Fallback to original scoring if an error occurs
     return timeLeft * 256;
   }
 }
@@ -1481,7 +1474,7 @@ function saveZenResult(wpm, totalTime, accuracy) {
   // Create a game data object
   const gameData = {
     username: playerUsername,
-    wpm,
+    wpm: wpm,
     totalTime,
     accuracy,
     date: new Date().toLocaleString("en-GB"),
@@ -1489,7 +1482,6 @@ function saveZenResult(wpm, totalTime, accuracy) {
     wordList: currentLanguage,
     wordGoal: zenWordGoal,
     wordsTyped: wordsTyped.length,
-    difficultyMultiplier: difficultyMultiplier,
   };
 
   results.push(gameData);

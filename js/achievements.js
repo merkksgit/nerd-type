@@ -248,7 +248,10 @@ class AchievementSystem {
           if (gameData.mode === "Zen Mode") return false;
           if (gameData.timeLeft <= 0) return false;
 
-          return gameData.difficultyMultiplier >= 1.49;
+          return (
+            gameData.difficultyMultiplier &&
+            gameData.difficultyMultiplier >= 1.49
+          );
         },
       },
       bug_eliminator: {
