@@ -113,6 +113,26 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+// Calculate the size of localStorage data in KB
+function calculateLocalStorageSize() {
+  let totalSize = 0;
+
+  // Get the game results data
+  const gameResults = localStorage.getItem("gameResults");
+  if (gameResults) {
+    totalSize += gameResults.length * 2; // Each character is 2 bytes in JavaScript
+  }
+
+  // Get achievements data size
+  const achievementsData = localStorage.getItem("nerdtype_achievements");
+  if (achievementsData) {
+    totalSize += achievementsData.length * 2;
+  }
+
+  // Convert to KB
+  return (totalSize / 1024).toFixed(2);
+}
+
 function setupScoreboardModalEnterKey() {
   const scoreboardModal = document.getElementById("scoreboardModal");
 
@@ -248,30 +268,32 @@ function displayPreviousResults() {
 
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
-  // Display previous results in scoreboard (only show last 20)
+  // Keep all results in localStorage but only display the last 20
   const displayResults = results.slice(-20).reverse();
   resultsContainer.innerHTML = "";
 
   displayResults.forEach((result) => {
     const resultItem = document.createElement("li");
-
     const wordListName = result.wordList
       ? wordListDisplayNames[result.wordList] || result.wordList
       : "";
     const wordListInfo = wordListName ? `  ${wordListName}` : "";
 
     if (result.mode === "Zen Mode") {
-      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}%`;
+      const wordGoalInfo = result.wordGoal ? ` [${result.wordGoal}]` : "";
+
+      resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordGoalInfo}${wordListInfo} | Time: ${result.totalTime}, WPM: ${result.wpm || "N/A"}, Accuracy: ${result.accuracy || "N/A"}`;
     } else {
       resultItem.textContent = `${result.date} | ${result.username || "runner"} | ${result.mode}${wordListInfo} | Score: ${result.score || result.timeLeft * 256}, WPM: ${result.wpm}, Accuracy: ${result.accuracy || "N/A"}`;
     }
     resultsContainer.appendChild(resultItem);
   });
 
-  // Add a note if there are more than 20 results
+  // Add storage info if there are more than 20 results
   if (results.length > 20) {
+    const storageSize = calculateLocalStorageSize();
     const infoItem = document.createElement("li");
-    infoItem.textContent = `... (Showing last 20 of ${results.length} total games)`;
+    infoItem.innerHTML = `... (Showing last 20 of ${results.length} total games | Storage used: ${storageSize} KB)`;
     infoItem.style.color = "#565f89";
     infoItem.style.fontStyle = "italic";
     resultsContainer.appendChild(infoItem);

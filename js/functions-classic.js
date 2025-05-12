@@ -246,6 +246,26 @@ function setupUI() {
   updateUIForGameMode();
 }
 
+// Calculate the size of localStorage data in KB
+function calculateLocalStorageSize() {
+  let totalSize = 0;
+
+  // Get the game results data
+  const gameResults = localStorage.getItem("gameResults");
+  if (gameResults) {
+    totalSize += gameResults.length * 2; // Each character is 2 bytes in JavaScript
+  }
+
+  // Get achievements data size
+  const achievementsData = localStorage.getItem("nerdtype_achievements");
+  if (achievementsData) {
+    totalSize += achievementsData.length * 2;
+  }
+
+  // Convert to KB
+  return (totalSize / 1024).toFixed(2);
+}
+
 function updateDebugInfo() {
   const accuracy =
     totalKeystrokes > 0
@@ -1498,7 +1518,7 @@ function displayPreviousResults() {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
   // Keep all results in localStorage but only display the last 20
-  const displayResults = results.slice(-20).reverse(); // Get last 20 and reverse for newest first
+  const displayResults = results.slice(-20).reverse();
   resultsContainer.innerHTML = "";
 
   displayResults.forEach((result) => {
@@ -1518,10 +1538,11 @@ function displayPreviousResults() {
     resultsContainer.appendChild(resultItem);
   });
 
-  // Add a note if there are more than 20 results
+  // Add storage info if there are more than 20 results
   if (results.length > 20) {
+    const storageSize = calculateLocalStorageSize();
     const infoItem = document.createElement("li");
-    infoItem.textContent = `... (Showing last 20 of ${results.length} total games)`;
+    infoItem.innerHTML = `... (Showing last 20 of ${results.length} total games | Storage used: ${storageSize} KB)`;
     infoItem.style.color = "#565f89";
     infoItem.style.fontStyle = "italic";
     resultsContainer.appendChild(infoItem);
