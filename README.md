@@ -19,7 +19,7 @@ This project began as a school assignment but has evolved into an ongoing journe
 
 ## Play the game
 
-- [GitHub pages: Development, 1.4.3](https://www.nerdtypegame.com)
+- [GitHub pages: Development, 1.4.4](https://www.nerdtypegame.com)
 - [Neocities: v1.4.2](https://nerdtype.neocities.org/)
 
 ## Features

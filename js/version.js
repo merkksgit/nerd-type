@@ -1,5 +1,5 @@
 // Set the application version in one place
-const APP_VERSION = "NerdType v1.4.3"; // Muista muuttaa versio myös README tiedostoon
+const APP_VERSION = "NerdType v1.4.4"; // Muista muuttaa versio myös README tiedostoon
 
 // When the document is loaded, update all version elements
 document.addEventListener("DOMContentLoaded", function () {
