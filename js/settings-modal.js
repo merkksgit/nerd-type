@@ -126,6 +126,12 @@ function openSettingsModal() {
 }
 
 function loadSettings() {
+  // Set show spaces toggle
+  const showSpacesToggle = document.getElementById("showSpacesToggle");
+  if (showSpacesToggle) {
+    showSpacesToggle.checked =
+      localStorage.getItem("showSpacesAfterWords") === "true";
+  }
   // Get saved settings or use defaults
   const gameSettings = JSON.parse(localStorage.getItem("terminalSettings")) || {
     timeLimit: 30,
@@ -330,6 +336,12 @@ function resetSettings() {
     zenWordGoal.value = 30;
   }
 
+  // Reset show spaces to default (off)
+  const showSpacesToggle = document.getElementById("showSpacesToggle");
+  if (showSpacesToggle) {
+    showSpacesToggle.checked = false;
+  }
+
   // Disable custom inputs
   toggleCustomSettings(false);
 
@@ -454,6 +466,19 @@ function applySettings() {
   window.dispatchEvent(
     new CustomEvent("achievementSoundChanged", {
       detail: { enabled: achievementSoundEnabled },
+    }),
+  );
+
+  // Get show spaces toggle state
+  const showSpacesEnabled = document.getElementById("showSpacesToggle").checked;
+
+  // Save show spaces setting
+  localStorage.setItem("showSpacesAfterWords", showSpacesEnabled);
+
+  // Dispatch event for show spaces setting
+  window.dispatchEvent(
+    new CustomEvent("gameSettingsChanged", {
+      detail: { setting: "showSpacesAfterWords", value: showSpacesEnabled },
     }),
   );
 

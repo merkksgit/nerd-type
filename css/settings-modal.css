@@ -25,6 +25,14 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+.space-character {
+  color: #3b4261;
+  background-color: #24283b;
+  padding: 0 2px;
+  border-radius: 2px;
+  margin-left: 2px;
+}
+
 #openSettingsBtn:hover {
   background-color: #24283b;
 }

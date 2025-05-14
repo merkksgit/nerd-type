@@ -26,6 +26,8 @@ let totalKeystrokes = 0;
 let correctKeystrokes = 0;
 let gameStartTime = null;
 let gameEnded = false;
+let showSpacesAfterWords =
+  localStorage.getItem("showSpacesAfterWords") === "true";
 
 // Classic mode specific variables
 let timeLeft = 10; // Default, will be updated from settings
@@ -683,15 +685,26 @@ function updateWordDisplay() {
   const wordToTypeElement = document.getElementById("wordToType");
   const nextWordElement = document.getElementById("nextWord");
   const currentWord = words[currentWordIndex];
+  const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
 
   if (wordToTypeElement) {
     wordToTypeElement.innerHTML = "";
 
+    // Display the word characters
     for (let i = 0; i < currentWord.length; i++) {
       const charSpan = document.createElement("span");
       charSpan.textContent = currentWord[i];
       charSpan.classList.add("remaining");
       wordToTypeElement.appendChild(charSpan);
+    }
+
+    // Add space character if enabled
+    if (showSpace) {
+      const spaceSpan = document.createElement("span");
+      spaceSpan.textContent = "␣"; // Using a visible space character
+      spaceSpan.classList.add("remaining");
+      spaceSpan.classList.add("space-character"); // Add special class for styling
+      wordToTypeElement.appendChild(spaceSpan);
     }
   }
 
@@ -837,6 +850,8 @@ function checkInput(e) {
   const userInput = e.target.value;
   const currentWord = words[currentWordIndex];
   const wordDisplay = document.getElementById("wordToType");
+  const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
+
   if (!wordDisplay) return;
 
   // Start timers on first input for both modes
@@ -930,29 +945,61 @@ function checkInput(e) {
     return;
   }
 
+  // Update character styling and count keystrokes
   const chars = wordDisplay.children;
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
-    if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
-      correctKeystrokes++;
+
+    // Check if the last character typed is correct
+    if (showSpace && userInput.length > currentWord.length) {
+      // We're typing the space
+      if (userInput[userInput.length - 1] === " ") {
+        correctKeystrokes++;
+      }
+    } else if (userInput.length <= currentWord.length) {
+      // We're typing the word
+      if (
+        userInput[userInput.length - 1] === currentWord[userInput.length - 1]
+      ) {
+        correctKeystrokes++;
+      }
     }
   }
 
-  for (let i = 0; i < currentWord.length; i++) {
+  // Style each character in the displayed word
+  for (let i = 0; i < chars.length; i++) {
     if (i < userInput.length) {
-      if (userInput[i] === currentWord[i]) {
-        chars[i].className = "correct";
+      if (showSpace && i === currentWord.length) {
+        // This is the space character
+        if (userInput[i] === " ") {
+          chars[i].className = "correct space-character";
+        } else {
+          chars[i].className = "incorrect space-character";
+        }
       } else {
-        chars[i].className = "incorrect";
+        // This is a regular character
+        if (userInput[i] === currentWord[i]) {
+          chars[i].className = "correct";
+        } else {
+          chars[i].className = "incorrect";
+        }
       }
     } else {
-      chars[i].className = "remaining";
+      // Characters not yet typed
+      if (showSpace && i === currentWord.length) {
+        chars[i].className = "remaining space-character";
+      } else {
+        chars[i].className = "remaining";
+      }
     }
   }
 
-  if (userInput === currentWord) {
+  // Check if word is complete
+  const expectedInput = showSpace ? currentWord + " " : currentWord;
+
+  if (userInput === expectedInput) {
     flashProgress();
-    totalCharactersTyped += currentWord.length;
+    totalCharactersTyped += currentWord.length + (showSpace ? 1 : 0);
     totalTimeSpent += 1;
     if (!isZenMode) {
       timeLeft += bonusTime;
