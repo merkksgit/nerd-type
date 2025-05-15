@@ -269,7 +269,7 @@ function displayPreviousResults() {
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
   // Keep all results in localStorage but only display the last 20
-  const displayResults = results.slice(-20).reverse();
+  const displayResults = results.slice(-15).reverse();
   resultsContainer.innerHTML = "";
 
   displayResults.forEach((result) => {
@@ -290,10 +290,10 @@ function displayPreviousResults() {
   });
 
   // Add storage info if there are more than 20 results
-  if (results.length > 20) {
+  if (results.length > 15) {
     const storageSize = calculateLocalStorageSize();
     const infoItem = document.createElement("li");
-    infoItem.innerHTML = `... (Showing last 20 of ${results.length} total games | Storage used: ${storageSize} KB)`;
+    infoItem.innerHTML = `... (Showing last 15 of ${results.length} total games | Storage used: ${storageSize} KB)`;
     infoItem.style.color = "#565f89";
     infoItem.style.fontStyle = "italic";
     resultsContainer.appendChild(infoItem);
