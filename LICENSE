@@ -12,6 +12,26 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
+The Software makes use of the following third-party components:
+
+---
+
+Tokyo Night Color Scheme  
+MIT License  
+Copyright (c) folke  
+https://github.com/folke/tokyonight.nvim
+
+---
+
+Nerd Fonts (patched fonts and glyph sets)  
+MIT License  
+Copyright (c) Ryan L McIntyre  
+https://github.com/ryanoasis/nerd-fonts
+
+Please note: Nerd Fonts includes various third-party fonts and icon sets, each with its own license. Refer to the Nerd Fonts project for full licensing details.
+
+---
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,3 +39,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
