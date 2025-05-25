@@ -50,6 +50,7 @@ class GameCommands {
       "/setinitial": this.setInitial.bind(this),
       "/setgoal": this.setGoal.bind(this),
       "/mode": this.setMode.bind(this),
+      "/zen": this.setZenMode.bind(this),
       "/help": this.showHelp.bind(this),
       "/status": this.showStatus.bind(this),
       "/reset": this.resetGame.bind(this),
@@ -62,6 +63,7 @@ class GameCommands {
       "/setinitial",
       "/setgoal",
       "/mode",
+      "/zen",
       "/reset",
     ];
   }
@@ -461,9 +463,25 @@ class GameCommands {
       return;
     }
 
+    // If we're currently in Zen mode, we need to switch out of it first
+    const isCurrentlyZenMode =
+      localStorage.getItem("nerdtype_zen_mode") === "true";
+    if (isCurrentlyZenMode) {
+      // Switch off Zen mode
+      localStorage.setItem("nerdtype_zen_mode", "false");
+
+      // Dispatch event to update UI
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "zenMode", value: false },
+        }),
+      );
+    }
+
     const settings = this.gameModes[mode];
     this.gameSettings = { ...settings, currentMode: mode };
     localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
+
     this.showNotification(`Switched to ${mode} mode`, "success");
 
     // First dispatch the mode change
@@ -483,6 +501,35 @@ class GameCommands {
     });
   }
 
+  setZenMode(args) {
+    // Toggle Zen mode if no argument provided, or set based on argument
+    let enableZen;
+    if (args.length === 0) {
+      // Toggle current state
+      enableZen = localStorage.getItem("nerdtype_zen_mode") !== "true";
+    } else {
+      // Set based on argument (on/off, true/false, 1/0)
+      const arg = args[0].toLowerCase();
+      enableZen = arg === "on" || arg === "true" || arg === "1";
+    }
+
+    // Update localStorage
+    localStorage.setItem("nerdtype_zen_mode", enableZen.toString());
+
+    // Dispatch event to update UI
+    window.dispatchEvent(
+      new CustomEvent("gameSettingsChanged", {
+        detail: { setting: "zenMode", value: enableZen },
+      }),
+    );
+
+    // Show notification
+    this.showNotification(
+      `Zen Mode ${enableZen ? "enabled" : "disabled"}`,
+      "success",
+    );
+  }
+
   showHelp() {
     const helpText = `
 Available commands:
@@ -493,6 +540,7 @@ Available commands:
 /setgoal        - Set goal percentage
 /mode           - Set game mode
 <span style= "color: #ff9e64">[classic, hard, practice, speedrunner]</span>
+/zen            - Toggle Zen Mode on/off
 /status         - Show current game settings
 /reset          - Reset to default settings
 /help           - Show this help message
@@ -519,6 +567,10 @@ Available commands:
     const isSoundEnabled =
       achievementSoundEnabled === null || achievementSoundEnabled === "true";
 
+    // Get space after words setting (null or undefined = true by default)
+    const showSpacesEnabled = localStorage.getItem("showSpacesAfterWords");
+    const isSpacesEnabled = showSpacesEnabled !== "false";
+
     let statusText;
 
     if (isZenMode) {
@@ -528,6 +580,7 @@ CURRENT GAME SETTINGS:
 ================================
 ZEN MODE: <span style='color:#c3e88d'>ON</span>
 ZEN WORD GOAL: <span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span> words
+SPACE AFTER WORDS: <span style='color:${isSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${isSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 ================================
 `;
@@ -542,6 +595,7 @@ WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
 BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
 INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
 GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%</span>
+SPACE AFTER WORDS: <span style='color:${isSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${isSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 ================================
 `;

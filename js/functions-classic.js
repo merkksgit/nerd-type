@@ -420,6 +420,12 @@ function initializeEventListeners() {
   window.addEventListener("gameSettingsChanged", function (e) {
     const { setting, value } = e.detail;
 
+    // Handle Zen mode toggle specifically
+    if (setting === "zenMode") {
+      setZenMode(value);
+      return;
+    }
+
     // First update the setting
     switch (setting) {
       case "timeLimit":
