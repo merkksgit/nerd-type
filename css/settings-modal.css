@@ -76,8 +76,8 @@
 
 #settingsModal .form-control:focus {
   background-color: #2a3047;
-  border-color: #7aa2f7;
-  box-shadow: 0 0 0 0.2rem rgba(122, 162, 247, 0.25);
+  /* border-color: #7aa2f7; */
+  box-shadow: 0 0 0 0.1rem rgba(122, 162, 247);
   color: #c0caf5;
 }
 

@@ -94,6 +94,7 @@ function initSettingsModal() {
 
   loadSettings();
   setupInputChangeListeners();
+  setupRealTimeValidation(); // Add real-time validation
 }
 
 const zenModeToggle = document.getElementById("zenModeToggle");
@@ -185,6 +186,9 @@ function loadSettings() {
 
   // Update difficulty multiplier
   updateDifficultyMultiplier();
+
+  // Clear any validation states when loading settings
+  clearAllValidationStates();
 }
 
 function toggleCustomSettings(isCustom) {
@@ -323,6 +327,93 @@ function updateDifficultyMultiplier() {
   }
 }
 
+// Validation helper functions
+function validateInput(inputId, min, max, fieldName) {
+  const input = document.getElementById(inputId);
+  const value = parseInt(input.value);
+  const errorElement =
+    document.getElementById(`${inputId}Error`) || createErrorElement(inputId);
+
+  // Clear previous validation state
+  input.classList.remove("is-invalid", "is-valid");
+  errorElement.textContent = "";
+  errorElement.style.display = "none";
+
+  if (isNaN(value) || value < min || value > max) {
+    // Show error state
+    input.classList.add("is-invalid");
+    errorElement.textContent = `${fieldName} must be between ${min} and ${max}`;
+    errorElement.style.display = "block";
+    return false;
+  } else {
+    // Show valid state
+    input.classList.add("is-valid");
+    return true;
+  }
+}
+
+function createErrorElement(inputId) {
+  const input = document.getElementById(inputId);
+  const errorElement = document.createElement("div");
+  errorElement.id = `${inputId}Error`;
+  errorElement.className = "invalid-feedback";
+  errorElement.style.display = "none";
+
+  // Insert after the input group or input element
+  const inputGroup = input.closest(".input-group");
+  if (inputGroup) {
+    inputGroup.parentNode.insertBefore(errorElement, inputGroup.nextSibling);
+  } else {
+    input.parentNode.insertBefore(errorElement, input.nextSibling);
+  }
+
+  return errorElement;
+}
+
+function clearAllValidationStates() {
+  const inputs = ["wordsGoal", "bonusEnergy", "initialEnergy", "zenWordGoal"];
+  inputs.forEach((inputId) => {
+    const input = document.getElementById(inputId);
+    const errorElement = document.getElementById(`${inputId}Error`);
+
+    if (input) {
+      input.classList.remove("is-invalid", "is-valid");
+    }
+    if (errorElement) {
+      errorElement.style.display = "none";
+    }
+  });
+}
+
+function setupRealTimeValidation() {
+  // Add real-time validation listeners
+  const validationRules = {
+    wordsGoal: { min: 1, max: 100, name: "Words Goal" },
+    bonusEnergy: { min: 1, max: 10, name: "Bonus Energy" },
+    initialEnergy: { min: 5, max: 30, name: "Initial Energy" },
+    zenWordGoal: { min: 5, max: 100, name: "Zen Word Goal" },
+  };
+
+  Object.entries(validationRules).forEach(([inputId, rules]) => {
+    const input = document.getElementById(inputId);
+    if (input) {
+      // Validate on blur (when user leaves the field)
+      input.addEventListener("blur", () => {
+        validateInput(inputId, rules.min, rules.max, rules.name);
+      });
+
+      // Clear validation state on focus (when user starts typing again)
+      input.addEventListener("focus", () => {
+        input.classList.remove("is-invalid", "is-valid");
+        const errorElement = document.getElementById(`${inputId}Error`);
+        if (errorElement) {
+          errorElement.style.display = "none";
+        }
+      });
+    }
+  });
+}
+
 function resetSettings() {
   // Reset to classic mode
   document.getElementById("modeClassic").checked = true;
@@ -348,17 +439,70 @@ function resetSettings() {
   // Update difficulty display
   updateDifficultyMultiplier();
 
+  // Clear validation states
+  clearAllValidationStates();
+
   // Show notification
   showSettingsNotification("Settings reset to defaults");
 }
 
 function applySettings() {
+  // Clear any previous validation states
+  clearAllValidationStates();
+
   // Get the selected mode
   const selectedMode = document.querySelector(
     'input[name="gameMode"]:checked',
   ).value;
 
-  // Get values from inputs
+  // Validate all inputs
+  let isValid = true;
+
+  // Validate Words Goal
+  if (!validateInput("wordsGoal", 1, 100, "Words Goal")) {
+    isValid = false;
+  }
+
+  // Validate Bonus Energy
+  if (!validateInput("bonusEnergy", 1, 10, "Bonus Energy")) {
+    isValid = false;
+  }
+
+  // Validate Initial Energy
+  if (!validateInput("initialEnergy", 5, 30, "Initial Energy")) {
+    isValid = false;
+  }
+
+  // Validate Zen Word Goal if visible
+  const zenWordGoalElement = document.getElementById("zenWordGoal");
+  const zenModeSettings = document.getElementById("zenModeSettings");
+  if (
+    zenWordGoalElement &&
+    zenModeSettings &&
+    zenModeSettings.style.display !== "none"
+  ) {
+    if (!validateInput("zenWordGoal", 5, 100, "Zen Word Goal")) {
+      isValid = false;
+    }
+  }
+
+  // If validation fails, show error notification and return early
+  if (!isValid) {
+    showSettingsNotification(
+      "Please correct the highlighted errors before applying settings",
+      "error",
+    );
+
+    // Focus on the first invalid input
+    const firstInvalidInput = document.querySelector(".is-invalid");
+    if (firstInvalidInput) {
+      firstInvalidInput.focus();
+    }
+
+    return;
+  }
+
+  // Get values from inputs (now we know they're valid)
   const timeLimit = parseInt(document.getElementById("wordsGoal").value);
   const bonusTime = parseInt(document.getElementById("bonusEnergy").value);
   const initialTime = parseInt(document.getElementById("initialEnergy").value);
@@ -374,38 +518,6 @@ function applySettings() {
 
   // Get zen mode toggle state
   const zenModeEnabled = document.getElementById("zenModeToggle").checked;
-
-  // Validate inputs
-  if (isNaN(timeLimit) || timeLimit < 1 || timeLimit > 100) {
-    showSettingsNotification("Words Goal must be between 1 and 100", "error");
-    return;
-  }
-
-  if (isNaN(bonusTime) || bonusTime < 1 || bonusTime > 10) {
-    showSettingsNotification("Bonus Energy must be between 1 and 10", "error");
-    return;
-  }
-
-  if (isNaN(initialTime) || initialTime < 5 || initialTime > 30) {
-    showSettingsNotification(
-      "Initial Energy must be between 5 and 30",
-      "error",
-    );
-    return;
-  }
-
-  // Validate zen word goal
-  if (
-    isNaN(zenWordGoalValue) ||
-    zenWordGoalValue < 5 ||
-    zenWordGoalValue > 100
-  ) {
-    showSettingsNotification(
-      "Zen Mode Word Goal must be between 5 and 100",
-      "error",
-    );
-    return;
-  }
 
   // Create settings object
   const settings = {
