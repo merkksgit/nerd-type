@@ -192,31 +192,100 @@ class GameCommands {
 
   // Reset the game
   resetGame() {
-    // Reset to classic mode settings
-    const classicSettings = this.gameModes.classic;
-    this.gameSettings = { ...classicSettings, currentMode: "classic" };
+    // Check if we're currently in Zen mode
+    const isCurrentlyZenMode =
+      localStorage.getItem("nerdtype_zen_mode") === "true";
 
-    // Save to localStorage
-    localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
+    if (isCurrentlyZenMode) {
+      // Reset Zen Mode settings
+      this.gameSettings.zenWordGoal = 30; // Reset to default zen word goal
+      localStorage.setItem(
+        "terminalSettings",
+        JSON.stringify(this.gameSettings),
+      );
 
-    // Show notification
-    this.showNotification("Resetting game to default settings...", "info");
+      // Reset other Zen-related settings to defaults
+      localStorage.setItem("nerdtype_zen_mode", "true"); // Keep in Zen mode but reset settings
+      localStorage.setItem("showSpacesAfterWords", "false"); // Reset to default
+      localStorage.setItem("achievement_sound_enabled", "true"); // Reset to default
 
-    // First dispatch the mode change to ensure it's not overridden
-    window.dispatchEvent(
-      new CustomEvent("gameSettingsChanged", {
-        detail: { setting: "currentMode", value: "classic" },
-      }),
-    );
+      this.showNotification(
+        "Resetting Zen Mode to default settings...",
+        "info",
+      );
 
-    // Then dispatch each setting individually
-    Object.entries(classicSettings).forEach(([setting, value]) => {
+      // Dispatch events to update Zen settings
       window.dispatchEvent(
         new CustomEvent("gameSettingsChanged", {
-          detail: { setting, value },
+          detail: { setting: "zenWordGoal", value: 30 },
         }),
       );
-    });
+
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "showSpacesAfterWords", value: false },
+        }),
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("achievementSoundChanged", {
+          detail: { enabled: true },
+        }),
+      );
+    } else {
+      // Reset to classic mode settings
+      const classicSettings = this.gameModes.classic;
+      this.gameSettings = { ...classicSettings, currentMode: "classic" };
+
+      // Save to localStorage
+      localStorage.setItem(
+        "terminalSettings",
+        JSON.stringify(this.gameSettings),
+      );
+
+      // Reset other Classic-related settings
+      localStorage.setItem("nerdtype_zen_mode", "false"); // Ensure Zen mode is off
+      localStorage.setItem("showSpacesAfterWords", "false"); // Reset to default
+      localStorage.setItem("achievement_sound_enabled", "true"); // Reset to default
+
+      this.showNotification("Resetting game to default settings...", "info");
+
+      // First dispatch the mode change to ensure it's not overridden
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "currentMode", value: "classic" },
+        }),
+      );
+
+      // Ensure Zen mode is turned off
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "zenMode", value: false },
+        }),
+      );
+
+      // Then dispatch each setting individually
+      Object.entries(classicSettings).forEach(([setting, value]) => {
+        window.dispatchEvent(
+          new CustomEvent("gameSettingsChanged", {
+            detail: { setting, value },
+          }),
+        );
+      });
+
+      // Reset other settings
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "showSpacesAfterWords", value: false },
+        }),
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("achievementSoundChanged", {
+          detail: { enabled: true },
+        }),
+      );
+    }
 
     // Note: The page will reload automatically after this due to being in reloadCommands
   }
@@ -294,35 +363,64 @@ class GameCommands {
       return;
     }
 
-    this.gameSettings.timeLimit = wordCount;
+    // Check if we're currently in Zen mode
+    const isCurrentlyZenMode =
+      localStorage.getItem("nerdtype_zen_mode") === "true";
 
-    // Check if this creates a custom mode
-    const currentMode = this.checkIfCustomMode();
-    this.gameSettings.currentMode = currentMode;
+    if (isCurrentlyZenMode) {
+      // Zen Mode: Update zenWordGoal
+      this.gameSettings.zenWordGoal = wordCount;
+      localStorage.setItem(
+        "terminalSettings",
+        JSON.stringify(this.gameSettings),
+      );
 
-    localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
+      this.showNotification(
+        `Zen Mode word goal set to ${wordCount} words`,
+        "success",
+      );
 
-    // Show mode in notification only if it's custom
-    const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
-    this.showNotification(
-      `Word goal set to ${wordCount} words${modeText}`,
-      "success",
-    );
-
-    // First dispatch the setting change
-    window.dispatchEvent(
-      new CustomEvent("gameSettingsChanged", {
-        detail: { setting: "timeLimit", value: wordCount },
-      }),
-    );
-
-    // If it's a custom mode, then update the mode
-    if (currentMode === "custom") {
+      // Dispatch event to update the zen word goal
       window.dispatchEvent(
         new CustomEvent("gameSettingsChanged", {
-          detail: { setting: "currentMode", value: "custom" },
+          detail: { setting: "zenWordGoal", value: wordCount },
         }),
       );
+    } else {
+      // Classic Mode: Update timeLimit and check for custom mode
+      this.gameSettings.timeLimit = wordCount;
+
+      // Check if this creates a custom mode
+      const currentMode = this.checkIfCustomMode();
+      this.gameSettings.currentMode = currentMode;
+
+      localStorage.setItem(
+        "terminalSettings",
+        JSON.stringify(this.gameSettings),
+      );
+
+      // Show mode in notification only if it's custom
+      const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
+      this.showNotification(
+        `Classic Mode word goal set to ${wordCount} words${modeText}`,
+        "success",
+      );
+
+      // First dispatch the setting change
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "timeLimit", value: wordCount },
+        }),
+      );
+
+      // If it's a custom mode, then update the mode
+      if (currentMode === "custom") {
+        window.dispatchEvent(
+          new CustomEvent("gameSettingsChanged", {
+            detail: { setting: "currentMode", value: "custom" },
+          }),
+        );
+      }
     }
   }
 
