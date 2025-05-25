@@ -2,7 +2,11 @@
 // These allow players to use terminal commands directly in the game
 // This module allows using terminal commands directly in the game input field
 // All commands need to start with a slash (/)
-import { currentLanguage } from "./word-list-manager.js";
+import {
+  currentLanguage,
+  loadWordList,
+  availableWordLists,
+} from "./word-list-manager.js";
 
 class GameCommands {
   constructor() {
@@ -53,6 +57,8 @@ class GameCommands {
       "/setgoal": this.setGoal.bind(this),
       "/mode": this.setMode.bind(this),
       "/zen": this.setZenMode.bind(this),
+      "/lang": this.setLanguage.bind(this),
+      "/language": this.setLanguage.bind(this), // Alias for /lang
       "/help": this.showHelp.bind(this),
       "/status": this.showStatus.bind(this),
       "/reset": this.resetGame.bind(this),
@@ -66,6 +72,8 @@ class GameCommands {
       "/setgoal",
       "/mode",
       "/zen",
+      "/lang",
+      "/language",
       "/reset",
     ];
   }
@@ -189,6 +197,57 @@ class GameCommands {
         `Unknown command: ${command}. Type /help for available commands.`,
         "error",
       );
+    }
+  }
+
+  // Set language command
+  async setLanguage(args) {
+    const language = args[0];
+
+    // If no argument provided, show available languages
+    if (!language) {
+      const availableLanguages = Object.keys(availableWordLists);
+      const languageList = availableLanguages
+        .map((lang) => {
+          const langInfo = availableWordLists[lang];
+          return `${lang} (${langInfo.name})`;
+        })
+        .join(", ");
+
+      this.showNotification(
+        `Available languages: ${languageList}. Usage: /lang <language>`,
+        "info",
+      );
+      return;
+    }
+
+    // Check if the language exists
+    if (!availableWordLists[language]) {
+      const availableLanguages = Object.keys(availableWordLists).join(", ");
+      this.showNotification(
+        `Error: Language '${language}' not found. Available: ${availableLanguages}`,
+        "error",
+      );
+      return;
+    }
+
+    try {
+      // Save the selected language to localStorage
+      localStorage.setItem("nerdtype_wordlist", language);
+
+      // Get the language display name
+      const languageDisplayName = availableWordLists[language].name;
+
+      this.showNotification(
+        `Language switched to ${languageDisplayName} (${language})`,
+        "success",
+      );
+
+      // The page will reload automatically due to being in reloadCommands,
+      // which will load the new language
+    } catch (error) {
+      console.error("Error switching language:", error);
+      this.showNotification("Error: Failed to switch language", "error");
     }
   }
 
@@ -641,6 +700,8 @@ Available commands:
 /mode           - Set game mode
 <span style= "color: #ff9e64">[classic, hard, practice, speedrunner]</span>
 /zen            - Toggle Zen Mode on/off
+/lang           - Switch language
+<span style= "color: #ff9e64">[finnish, english, swedish, programming, nightmare]</span>
 /status         - Show current game settings
 /reset          - Reset to default settings
 /help           - Show this help message
