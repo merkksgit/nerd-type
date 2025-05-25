@@ -59,6 +59,8 @@ class GameCommands {
       "/zen": this.setZenMode.bind(this),
       "/lang": this.setLanguage.bind(this),
       "/language": this.setLanguage.bind(this), // Alias for /lang
+      "/space": this.toggleSpaceAfterWords.bind(this),
+      "/spaces": this.toggleSpaceAfterWords.bind(this), // Alias for /space
       "/help": this.showHelp.bind(this),
       "/status": this.showStatus.bind(this),
       "/reset": this.resetGame.bind(this),
@@ -74,6 +76,8 @@ class GameCommands {
       "/zen",
       "/lang",
       "/language",
+      "/space",
+      "/spaces",
       "/reset",
     ];
   }
@@ -198,6 +202,45 @@ class GameCommands {
         "error",
       );
     }
+  }
+
+  // Toggle space after words command
+  toggleSpaceAfterWords(args) {
+    // Get current state
+    const currentState =
+      localStorage.getItem("showSpacesAfterWords") === "true";
+
+    // Determine new state
+    let newState;
+    if (args.length === 0) {
+      // Toggle current state
+      newState = !currentState;
+    } else {
+      // Set based on argument (on/off, true/false, 1/0)
+      const arg = args[0].toLowerCase();
+      newState =
+        arg === "on" ||
+        arg === "true" ||
+        arg === "1" ||
+        arg === "enable" ||
+        arg === "enabled";
+    }
+
+    // Update localStorage
+    localStorage.setItem("showSpacesAfterWords", newState.toString());
+
+    // Dispatch event to update the game setting
+    window.dispatchEvent(
+      new CustomEvent("gameSettingsChanged", {
+        detail: { setting: "showSpacesAfterWords", value: newState },
+      }),
+    );
+
+    // Show notification
+    this.showNotification(
+      `Space after words ${newState ? "enabled" : "disabled"}`,
+      "success",
+    );
   }
 
   // Set language command
@@ -702,6 +745,7 @@ Available commands:
 /zen            - Toggle Zen Mode on/off
 /lang           - Switch language
 <span style= "color: #ff9e64">[finnish, english, swedish, programming, nightmare]</span>
+/space          - Toggle space after words
 /status         - Show current game settings
 /reset          - Reset to default settings
 /help           - Show this help message
@@ -728,9 +772,9 @@ Available commands:
     const isSoundEnabled =
       achievementSoundEnabled === null || achievementSoundEnabled === "true";
 
-    // Get space after words setting (null or undefined = true by default)
-    const showSpacesEnabled = localStorage.getItem("showSpacesAfterWords");
-    const isSpacesEnabled = showSpacesEnabled !== "false";
+    // Get space after words setting (null or undefined = false by default)
+    const showSpacesEnabled =
+      localStorage.getItem("showSpacesAfterWords") === "true";
 
     let statusText;
 
@@ -742,7 +786,7 @@ CURRENT GAME SETTINGS:
 ZEN MODE: <span style='color:#c3e88d'>ON</span>
 ZEN WORD GOAL: <span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span> words
 LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
-SPACE AFTER WORDS: <span style='color:${isSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${isSpacesEnabled ? "ON" : "OFF"}</span>
+SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 ================================
 `;
@@ -758,7 +802,7 @@ BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> unit
 INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
 GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%</span>
 LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
-SPACE AFTER WORDS: <span style='color:${isSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${isSpacesEnabled ? "ON" : "OFF"}</span>
+SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 ================================
 `;
