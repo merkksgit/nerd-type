@@ -293,7 +293,7 @@ export class DebugDisplay {
       Command Mode: ${isCommandMode ? "Yes" : "No"}<br>
       Energy Left: ${timeLeft !== undefined ? timeLeft : "N/A"}<br>
       <br>
-      <span style="color: #c3e88d;">Mode: ${settings.currentMode} (Multiplier: ${difficultyMultiplier.toFixed(2)}x)</span><br>
+      <span style="color: #ff9e64;">Mode: ${settings.currentMode} (Multiplier: ${difficultyMultiplier.toFixed(2)}x)</span><br>
       Goal Words Factor: ${timeLimitFactor.toFixed(2)}x<br>
       ${timeLimitMeter}
       Bonus Energy Factor: ${bonusTimeFactor.toFixed(2)}x<br>
