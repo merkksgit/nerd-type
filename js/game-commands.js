@@ -2,6 +2,8 @@
 // These allow players to use terminal commands directly in the game
 // This module allows using terminal commands directly in the game input field
 // All commands need to start with a slash (/)
+import { currentLanguage } from "./word-list-manager.js";
+
 class GameCommands {
   constructor() {
     // Load saved settings from localStorage or use defaults
@@ -678,6 +680,7 @@ CURRENT GAME SETTINGS:
 ================================
 ZEN MODE: <span style='color:#c3e88d'>ON</span>
 ZEN WORD GOAL: <span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span> words
+LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
 SPACE AFTER WORDS: <span style='color:${isSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${isSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 ================================
@@ -693,6 +696,7 @@ WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
 BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
 INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
 GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%</span>
+LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
 SPACE AFTER WORDS: <span style='color:${isSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${isSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 ================================
