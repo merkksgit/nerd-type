@@ -236,8 +236,8 @@ class AchievementSystem {
           (gameData && gameData.wpm >= 100) || stats.highestWPM >= 100,
       },
       advanced_operator: {
-        id: "keyboard_warrior",
-        name: "Keyboard Warrior",
+        id: "advanced_operator",
+        name: "Advanced Operator",
         description: "Win a game with at least 1.5x difficulty multiplier",
         icon: "fa-solid fa-chart-simple",
         category: "difficulty",
@@ -331,18 +331,7 @@ class AchievementSystem {
         icon: "fa-solid fa-shield-halved",
         category: "meta",
         secret: false,
-        check: function (stats, gameData) {
-          // Get all achievements except this one
-          const allOtherAchievements = Object.keys(
-            this.achievements || {},
-          ).filter((id) => id !== "completionist");
-
-          // Check if all other achievements are unlocked
-          return allOtherAchievements.every(
-            (id) =>
-              this.achievementsData.unlockedAchievements[id] !== undefined,
-          );
-        },
+        check: () => false,
       },
     };
 
@@ -631,9 +620,14 @@ class AchievementSystem {
   checkAchievements(gameData = null) {
     const newlyUnlocked = [];
 
-    // Check each achievement
+    // First pass: Check all achievements EXCEPT completionist
     Object.values(this.achievements).forEach((achievement) => {
       const achievementId = achievement.id;
+
+      // Skip completionist for now - we'll check it separately
+      if (achievementId === "completionist") {
+        return;
+      }
 
       // Skip if already unlocked
       if (this.achievementsData.unlockedAchievements[achievementId]) {
@@ -642,7 +636,6 @@ class AchievementSystem {
 
       try {
         // Check if achievement conditions are met
-        // Bind 'this' context for function checks
         const checkResult =
           typeof achievement.check === "function"
             ? achievement.check.call(
@@ -665,6 +658,55 @@ class AchievementSystem {
         console.error(`Error checking achievement ${achievementId}:`, error);
       }
     });
+
+    // Second pass: Check completionist achievement AFTER all others
+    const completionistAchievement = this.achievements.completionist;
+    if (
+      completionistAchievement &&
+      !this.achievementsData.unlockedAchievements.completionist
+    ) {
+      try {
+        // Get all achievement IDs except completionist
+        const allOtherAchievementIds = Object.keys(this.achievements).filter(
+          (id) => id !== "completionist",
+        );
+
+        console.log("Checking completionist achievement:");
+        console.log("Total other achievements:", allOtherAchievementIds.length);
+        console.log("Other achievement IDs:", allOtherAchievementIds);
+
+        // Count how many are unlocked
+        const unlockedCount = allOtherAchievementIds.filter(
+          (id) => this.achievementsData.unlockedAchievements[id] !== undefined,
+        ).length;
+
+        console.log("Unlocked achievements:", unlockedCount);
+        console.log(
+          "Unlocked achievement data:",
+          this.achievementsData.unlockedAchievements,
+        );
+
+        // Check if ALL other achievements are unlocked
+        const allOthersUnlocked = allOtherAchievementIds.every(
+          (id) => this.achievementsData.unlockedAchievements[id] !== undefined,
+        );
+
+        console.log("All others unlocked?", allOthersUnlocked);
+
+        if (allOthersUnlocked && allOtherAchievementIds.length > 0) {
+          // Mark completionist as unlocked
+          this.achievementsData.unlockedAchievements.completionist = {
+            unlockedAt: new Date().toISOString(),
+          };
+
+          // Add to newly unlocked list
+          newlyUnlocked.push(completionistAchievement);
+          console.log("Completionist achievement unlocked!");
+        }
+      } catch (error) {
+        console.error("Error checking completionist achievement:", error);
+      }
+    }
 
     // Show notifications for new achievements
     newlyUnlocked.forEach((achievement) => {
