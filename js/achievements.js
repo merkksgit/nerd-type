@@ -490,6 +490,9 @@ class AchievementSystem {
         .tooltip.achievement-tooltip {
           opacity: 1 !important;
         }
+        i {
+        background-color: inherit;
+        }
       `;
       document.head.appendChild(style);
     }
