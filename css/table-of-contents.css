@@ -81,6 +81,7 @@
 .back-to-top-text,
 .fa-solid.fa-chevron-up {
   background-color: inherit;
+  font-size: 0.8em;
 }
 
 #backToTop.show {
