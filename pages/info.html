@@ -112,7 +112,7 @@
                   <!-- TOC items will be generated automatically -->
                 </ul>
               </div>
-              <h4>How words per minute (WPM) is calculated</h4>
+              <h4>1. How words per minute (WPM) is calculated</h4>
               <hr
                 class="mb-3"
                 style="
@@ -171,7 +171,7 @@
                 The WPM calculation only considers correctly typed words and
                 does not account for any errors or incorrect words.
               </p>
-              <h4>How Accuracy is calculated</h4>
+              <h4>2. How Accuracy is calculated</h4>
               <hr
                 class="mb-3"
                 style="
@@ -236,101 +236,81 @@
                 you later correct them with backspace. This encourages precise
                 typing rather than rapid typing-and-correcting.
               </p>
-              <!doctype html>
-              <html lang="en">
-                <head>
-                  <meta charset="UTF-8" />
-                  <title>NerdType Score Calculation</title>
-                </head>
-                <body>
-                  <h4 id="how-score-is-calculated">How Score is Calculated</h4>
-                  <hr
-                    class="mb-3"
-                    style="
-                      border-color: #ff9e64;
-                      opacity: 1;
-                      border-width: 1px;
-                      margin-top: -10px;
-                    "
-                  />
-                  <p>
-                    In NerdType, your score is calculated using a sophisticated
-                    formula that considers your typing performance and the
-                    game's energy settings. Here's a detailed breakdown:
-                  </p>
-                  <ol>
+              <h4 id="how-score-is-calculated">3. How Score is Calculated</h4>
+              <hr
+                class="mb-3"
+                style="
+                  border-color: #ff9e64;
+                  opacity: 1;
+                  border-width: 1px;
+                  margin-top: -10px;
+                "
+              />
+              <p>
+                In NerdType, your score is calculated using a sophisticated
+                formula that considers your typing performance and the game's
+                energy settings. Here's a detailed breakdown:
+              </p>
+              <ol>
+                <li>
+                  <strong>Base Score:</strong> The core of your score is
+                  calculated with: (WPM × 10) × (accuracy² as decimal) ×
+                  difficulty multiplier
+                  <ul>
+                    <li>WPM (Words Per Minute) measures your typing speed</li>
                     <li>
-                      <strong>Base Score:</strong> The core of your score is
-                      calculated with: (WPM × 10) × (accuracy² as decimal) ×
-                      difficulty multiplier
-                      <ul>
-                        <li>
-                          WPM (Words Per Minute) measures your typing speed
-                        </li>
-                        <li>
-                          Accuracy is squared to heavily reward precision typing
-                        </li>
-                        <li>
-                          The difficulty multiplier adjusts based on game mode
-                          and settings
-                        </li>
-                      </ul>
+                      Accuracy is squared to heavily reward precision typing
                     </li>
                     <li>
-                      <strong>Difficulty Multiplier:</strong> A dynamic
-                      calculation based on game energy settings
-                      <ul>
-                        <li>
-                          Total Words: More words needed increases the
-                          multiplier
-                        </li>
-                        <li>
-                          Bonus Energy: Less bonus energy increases the
-                          multiplier
-                        </li>
-                        <li>
-                          Initial Energy: Less initial energy increases the
-                          multiplier
-                        </li>
-                        <li>
-                          Classic Mode (30 words needed) serves as the baseline
-                        </li>
-                        <li>
-                          Multiplier ranges from 0.5 to 2.0, dynamically
-                          responding to game settings
-                        </li>
-                        <li>
-                          Custom settings generate an appropriate multiplier
-                        </li>
-                      </ul>
+                      The difficulty multiplier adjusts based on game mode and
+                      settings
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>Difficulty Multiplier:</strong> A dynamic calculation
+                  based on game energy settings
+                  <ul>
+                    <li>
+                      Total Words: More words needed increases the multiplier
                     </li>
                     <li>
-                      <strong>Energy Bonus:</strong> A small bonus is awarded
-                      for remaining energy
-                      <ul>
-                        <li>
-                          Bonus = min(remainingEnergy × 5, baseScore × 0.2)
-                        </li>
-                        <li>
-                          This is capped at 20% of your base score to keep it
-                          balanced
-                        </li>
-                      </ul>
+                      Bonus Energy: Less bonus energy increases the multiplier
                     </li>
                     <li>
-                      <strong>Final Score:</strong> Base Score + Energy Bonus
+                      Initial Energy: Less initial energy increases the
+                      multiplier
                     </li>
-                  </ol>
-                  <p>
-                    This scoring system ensures that your results are comparable
-                    across different game modes and difficulty settings. Players
-                    are primarily rewarded for typing skill (speed and
-                    accuracy), with appropriate adjustments for the challenge
-                    level chosen.
-                  </p>
-                </body>
-              </html>
-              <h4>Terminal</h4>
+                    <li>
+                      Classic Mode (30 words needed) serves as the baseline
+                    </li>
+                    <li>
+                      Multiplier ranges from 0.5 to 2.0, dynamically responding
+                      to game settings
+                    </li>
+                    <li>Custom settings generate an appropriate multiplier</li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>Energy Bonus:</strong> A small bonus is awarded for
+                  remaining energy
+                  <ul>
+                    <li>Bonus = min(remainingEnergy × 5, baseScore × 0.2)</li>
+                    <li>
+                      This is capped at 20% of your base score to keep it
+                      balanced
+                    </li>
+                  </ul>
+                </li>
+                <li><strong>Final Score:</strong> Base Score + Energy Bonus</li>
+              </ol>
+              <p>
+                This scoring system ensures that your results are comparable
+                across different game modes and difficulty settings. Players are
+                primarily rewarded for typing skill (speed and accuracy), with
+                appropriate adjustments for the challenge level chosen.
+              </p>
+              <h4>4. Terminal</h4>
               <hr
                 class="mb-3"
                 style="
@@ -359,7 +339,61 @@
                 <span class="terminal-command">/help</span> for all available
                 commands. The game pauses while in command mode.
               </p>
-              <h4>Achievements</h4>
+              <h4>5. Quick Commands</h4>
+              <hr
+                class="mb-3"
+                style="
+                  border-color: #ff9e64;
+                  opacity: 1;
+                  border-width: 1px;
+                  margin-top: -10px;
+                "
+              />
+              <p>
+                Quick Commands allow you to customize your NerdType experience
+                on-the-fly without opening the terminal or settings menu. Simply
+                type a command starting with a forward slash
+                <span class="terminal-command">/</span> in the game input field
+                and press Enter. The game will pause while processing the
+                command, and most commands will reload the game to apply
+                changes.
+              </p>
+              <h5>5.1 Available Commands</h5>
+              <p>Game Mode Management:</p>
+              <p>
+                <span class="terminal-command">/zen</span> - Toggle Zen Mode
+                on/off<br />
+                <span class="terminal-command">/mode &lt;mode&gt;</span> -
+                Switch game mode (classic, hard, practice, speedrunner)<br />
+                <span class="terminal-command">/reset</span> - Reset all
+                settings to defaults
+              </p>
+              <p>Difficulty Settings (Classic Mode):</p>
+              <p>
+                <span class="terminal-command">/setwords &lt;number&gt;</span> -
+                Set number of words needed to win (1-100)<br />
+                <span class="terminal-command">/setbonus &lt;number&gt;</span> -
+                Set bonus energy per correct word (1-10)<br />
+                <span class="terminal-command">/setinitial &lt;number&gt;</span>
+                - Set starting energy amount (5-30)<br />
+                <span class="terminal-command">/setgoal &lt;number&gt;</span> -
+                Set goal percentage (1-100)
+              </p>
+              <p>Language and Input:</p>
+              <p>
+                <span class="terminal-command">/lang &lt;language&gt;</span> -
+                Switch word language<br />
+                <span class="terminal-command">/space</span> - Toggle
+                space-after-words feature on/off
+              </p>
+              <p>Information Commands:</p>
+              <p>
+                <span class="terminal-command">/status</span> - Display current
+                game settings<br />
+                <span class="terminal-command">/help</span> - Show all available
+                commands
+              </p>
+              <h4>6. Achievements</h4>
               <hr
                 class="mb-3"
                 style="
@@ -386,7 +420,7 @@
                   >rm achievements.data</span
                 >. You can also clear your browser's local storage.
               </p>
-              <h4>Known Issues</h4>
+              <h4>7. Known Issues</h4>
               <hr
                 id="knownissues"
                 class="mb-3"
@@ -408,7 +442,7 @@
                   R to refresh the page.
                 </li>
               </ol>
-              <h4>Terms of Use</h4>
+              <h4>8. Terms of Use</h4>
               <hr
                 class="mb-3"
                 style="
@@ -423,7 +457,7 @@
                   >Terms of Use for NerdType</a
                 >
               </p>
-              <h4>Contact</h4>
+              <h4>9. Contact</h4>
               <hr
                 class="mb-3"
                 style="
