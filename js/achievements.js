@@ -271,8 +271,8 @@ class AchievementSystem {
           return accuracy === 100 && isVictory;
         },
       },
-      low_accuracy_victory: {
-        id: "low_accuracy_victory",
+      spray_and_pray: {
+        id: "spray_and_pray",
         name: "Spray and Pray",
         description: "Win a game with less than 40% accuracy",
         icon: "fa-solid fa-fire",
@@ -296,7 +296,7 @@ class AchievementSystem {
         secret: true,
         check: (stats, gameData) => {
           const currentHour = new Date().getHours();
-          return currentHour >= 0 && currentHour < 5;
+          return currentHour >= 0 && currentHour < 16;
         },
       },
       polyglot_programmer: {

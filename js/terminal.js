@@ -1013,6 +1013,11 @@ Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank ||
               polyglot_programmer: "Achieve 50+ WPM in all language modes",
               completionist: "Unlock all achievements",
               speed_demon: "Complete a Zen Mode game in under 50 seconds",
+              spray_and_pray: "Win a game with less than 40% accuracy",
+              advanced_operator:
+                "Win a game with at least 1.5x difficulty multiplier",
+              energy_reservoir:
+                "Complete a Hard Mode game with at least 10 energy remaining",
             };
 
             // Format and display each unlocked achievement
