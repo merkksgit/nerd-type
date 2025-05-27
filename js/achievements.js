@@ -296,7 +296,7 @@ class AchievementSystem {
         secret: true,
         check: (stats, gameData) => {
           const currentHour = new Date().getHours();
-          return currentHour >= 0 && currentHour < 16;
+          return currentHour >= 0 && currentHour < 5;
         },
       },
       polyglot_programmer: {
