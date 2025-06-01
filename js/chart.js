@@ -61,6 +61,9 @@ function enhanceChartVisuals() {
   Chart.defaults.plugins.tooltip.displayColors = false;
 
   // Tooltip appearance - fonts and colors
+  Chart.defaults.font.family = "'custom', monospace";
+  Chart.defaults.font.size = 12;
+  Chart.defaults.font.weight = "normal";
   Chart.defaults.plugins.tooltip.backgroundColor = "#1f2335";
   Chart.defaults.plugins.tooltip.titleColor = "#ff007c";
   Chart.defaults.plugins.tooltip.bodyColor = "#c0caf5";
@@ -143,6 +146,10 @@ function displayScoreGraph() {
         ],
       },
       options: {
+        font: {
+          family: "'custom', monospace",
+          size: 12,
+        },
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -165,6 +172,11 @@ function displayScoreGraph() {
               pointStyle: "circle",
               cursor: "pointer",
               color: "#f2f2f2",
+              font: {
+                family: "'custom', monospace",
+                size: 13,
+                weight: "normal",
+              },
             },
           },
         },
@@ -174,6 +186,10 @@ function displayScoreGraph() {
             title: {
               display: false,
               text: "Classic Mode History",
+              font: {
+                family: "'custom', monospace",
+                size: 14,
+              },
             },
           },
           y: {
@@ -182,6 +198,11 @@ function displayScoreGraph() {
               display: true,
               text: "Score",
               color: "#7aa2f7",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+                weight: "bold",
+              },
             },
             grid: {
               display: true,
