@@ -213,7 +213,7 @@ function displayScoreGraph() {
             position: "right",
             grid: {
               drawOnChartArea: false,
-              color: "#414868",
+              color: "#292e42",
             },
             ticks: {
               color: "#bb9af7",
@@ -277,6 +277,7 @@ function displayScoreGraph() {
           backgroundColor: "rgba(122, 162, 247, 0.2)",
           fill: false,
           yAxisID: "y",
+          borderWidth: 2,
         },
         {
           label: "WPM",
@@ -285,6 +286,7 @@ function displayScoreGraph() {
           backgroundColor: "rgba(255, 158, 100, 0.2)",
           fill: false,
           yAxisID: "y1",
+          borderWidth: 2,
         },
         {
           label: "Accuracy",
@@ -293,6 +295,7 @@ function displayScoreGraph() {
           backgroundColor: "rgba(187, 154, 247, 0.2)",
           fill: false,
           yAxisID: "y2",
+          borderWidth: 2,
         },
       ],
     },
@@ -316,7 +319,7 @@ function displayScoreGraph() {
           },
           labels: {
             usePointStyle: true,
-            pointStyle: "circle",
+            pointStyle: "rect",
             cursor: "pointer",
             color: "#f2f2f2",
           },
@@ -344,8 +347,8 @@ function displayScoreGraph() {
           },
           position: "left",
           grid: {
-            color: "#414868",
-            display: false,
+            color: "#292e42",
+            display: true,
           },
           ticks: {
             color: "#7aa2f7",
@@ -360,7 +363,7 @@ function displayScoreGraph() {
           position: "right",
           grid: {
             drawOnChartArea: false,
-            color: "#414868",
+            color: "#292e42",
           },
           ticks: {
             color: "#ff9e64",
@@ -375,7 +378,7 @@ function displayScoreGraph() {
           position: "right",
           grid: {
             drawOnChartArea: false,
-            color: "#414868",
+            color: "#292e42",
           },
           ticks: {
             color: "#bb9af7",
@@ -394,7 +397,7 @@ function displayScoreGraph() {
             ctx.save();
             ctx.strokeStyle = "#7aa2f7";
             ctx.lineWidth = 2;
-            ctx.setLineDash([9, 5]);
+            ctx.setLineDash([9, 3]);
             ctx.beginPath();
             ctx.moveTo(chartArea.left, yValue);
             ctx.lineTo(chartArea.right, yValue);
@@ -415,7 +418,7 @@ function displayScoreGraph() {
             ctx.save();
             ctx.strokeStyle = "#ff9e64";
             ctx.lineWidth = 2;
-            ctx.setLineDash([9, 5]);
+            ctx.setLineDash([9, 3]);
             ctx.beginPath();
             ctx.moveTo(chartArea.left, y1Value);
             ctx.lineTo(chartArea.right, y1Value);
@@ -436,7 +439,7 @@ function displayScoreGraph() {
             ctx.save();
             ctx.strokeStyle = "#bb9af7";
             ctx.lineWidth = 2;
-            ctx.setLineDash([9, 5]);
+            ctx.setLineDash([9, 3]);
             ctx.beginPath();
             ctx.moveTo(chartArea.left, y2Value);
             ctx.lineTo(chartArea.right, y2Value);
@@ -538,7 +541,7 @@ function displayZenModeGraph() {
               color: "#c3e88d",
             },
             grid: {
-              display: false,
+              display: true,
               color: "#3b4261",
             },
             ticks: {
@@ -567,7 +570,7 @@ function displayZenModeGraph() {
             position: "right",
             grid: {
               drawOnChartArea: false,
-              color: "#414868",
+              color: "#292e42",
             },
             ticks: {
               color: "#bb9af7",
@@ -616,6 +619,7 @@ function displayZenModeGraph() {
           backgroundColor: "rgba(195, 232, 141, 0.2)",
           fill: false,
           yAxisID: "y",
+          borderWidth: 2,
         },
         {
           label: "WPM",
@@ -624,6 +628,7 @@ function displayZenModeGraph() {
           backgroundColor: "rgba(255, 158, 100, 0.2)",
           fill: false,
           yAxisID: "y1",
+          borderWidth: 2,
         },
         {
           label: "Accuracy",
@@ -632,6 +637,7 @@ function displayZenModeGraph() {
           backgroundColor: "rgba(187, 154, 247, 0.2)",
           fill: false,
           yAxisID: "y2",
+          borderWidth: 2,
         },
       ],
     },
@@ -655,7 +661,7 @@ function displayZenModeGraph() {
           },
           labels: {
             usePointStyle: true,
-            pointStyle: "circle",
+            pointStyle: "rect",
             cursor: "pointer",
             color: "#f2f2f2",
           },
@@ -683,8 +689,8 @@ function displayZenModeGraph() {
           },
           position: "left",
           grid: {
-            color: "#3b4261",
-            display: false,
+            color: "#292e42",
+            display: true,
           },
           ticks: {
             color: "#c3e88d",
@@ -699,7 +705,7 @@ function displayZenModeGraph() {
           position: "right",
           grid: {
             drawOnChartArea: false,
-            color: "#414868",
+            color: "#292e42",
           },
           ticks: {
             color: "#ff9e64",
@@ -714,7 +720,7 @@ function displayZenModeGraph() {
           position: "right",
           grid: {
             drawOnChartArea: false,
-            color: "#414868",
+            color: "#292e42",
           },
           ticks: {
             color: "#bb9af7",
@@ -733,7 +739,7 @@ function displayZenModeGraph() {
             ctx.save();
             ctx.strokeStyle = "#c3e88d";
             ctx.lineWidth = 2;
-            ctx.setLineDash([9, 5]);
+            ctx.setLineDash([9, 3]);
             ctx.beginPath();
             ctx.moveTo(chartArea.left, yValue);
             ctx.lineTo(chartArea.right, yValue);
@@ -754,7 +760,7 @@ function displayZenModeGraph() {
             ctx.save();
             ctx.strokeStyle = "#ff9e64";
             ctx.lineWidth = 2;
-            ctx.setLineDash([9, 5]);
+            ctx.setLineDash([9, 3]);
             ctx.beginPath();
             ctx.moveTo(chartArea.left, y1Value);
             ctx.lineTo(chartArea.right, y1Value);
@@ -775,7 +781,7 @@ function displayZenModeGraph() {
             ctx.save();
             ctx.strokeStyle = "#bb9af7";
             ctx.lineWidth = 2;
-            ctx.setLineDash([9, 5]);
+            ctx.setLineDash([9, 3]);
             ctx.beginPath();
             ctx.moveTo(chartArea.left, y2Value);
             ctx.lineTo(chartArea.right, y2Value);
