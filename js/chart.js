@@ -332,7 +332,7 @@ function displayScoreGraph() {
             display: false,
           },
           grid: {
-            display: true,
+            display: false,
             color: "#3b4261",
           },
         },
@@ -345,6 +345,7 @@ function displayScoreGraph() {
           position: "left",
           grid: {
             color: "#414868",
+            display: false,
           },
           ticks: {
             color: "#7aa2f7",
@@ -537,7 +538,7 @@ function displayZenModeGraph() {
               color: "#c3e88d",
             },
             grid: {
-              display: true,
+              display: false,
               color: "#3b4261",
             },
             ticks: {
@@ -670,7 +671,7 @@ function displayZenModeGraph() {
             display: false,
           },
           grid: {
-            display: true,
+            display: false,
             color: "#3b4261",
           },
         },
@@ -683,6 +684,7 @@ function displayZenModeGraph() {
           position: "left",
           grid: {
             color: "#3b4261",
+            display: false,
           },
           ticks: {
             color: "#c3e88d",
