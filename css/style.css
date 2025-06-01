@@ -31,7 +31,6 @@
 /* Header */
 header {
   margin-top: 2em;
-  margin-bottom: 1em;
   color: #7aa2f7;
 }
 
@@ -43,7 +42,7 @@ header {
 #header-logo-no-text {
   width: 70px;
   display: none;
-  margin-left: 10px;
+  margin-left: 5px;
 }
 
 @media screen and (max-width: 768px) {
