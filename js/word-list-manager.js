@@ -97,8 +97,8 @@ function createWordListSelector(container) {
 
       // Create terminal-style content
       const terminalLines = [
-        "> INITIALIZING LANGUAGE SWITCH...",
-        `> TARGET LANGUAGE: <span style='color:#bb9af7'>${selectedLanguage.toUpperCase()}</span>`,
+        "> INITIALIZING WORD SET SWITCH...",
+        `> TARGET WORD SET: <span style='color:#bb9af7'>${selectedLanguage.toUpperCase()}</span>`,
         "> ================================",
         "> EXECUTING OPERATIONS:",
         "  └─ LOADING VOCABULARY DATABASE",
