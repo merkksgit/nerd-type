@@ -58,7 +58,7 @@ function createWordListSelector(container) {
 
   // Create label
   const label = document.createElement("label");
-  label.textContent = "Language:";
+  label.textContent = "word set:";
   label.className = "me-2";
   label.style.color = "#7aa2f7";
 
