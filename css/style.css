@@ -36,14 +36,23 @@ header {
 }
 
 #header-logo {
-  width: 40px;
+  width: 250px;
   margin-left: 10px;
 }
 
-#header-text {
-  width: 200px;
-  padding-top: 10px;
-  padding-left: 10px;
+#header-logo-no-text {
+  width: 70px;
+  display: none;
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  #header-logo-no-text {
+    display: block;
+  }
+  #header-logo {
+    display: none;
+  }
 }
 
 #contact-logo {
@@ -1307,11 +1316,6 @@ score h3 {
 
 /* Bootstrap sm breakpoint specific fixes */
 @media (max-width: 576px) {
-  #header-logo {
-    margin-left: 15px;
-    width: 50px;
-  }
-
   .modal-dialog.scoreboard-modal-dialog {
     margin: 0.5rem auto;
     max-width: none;
