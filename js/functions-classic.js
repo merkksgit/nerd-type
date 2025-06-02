@@ -1018,12 +1018,13 @@ function checkInput(e) {
     return;
   }
 
-  // Play keypress sound for actual typing (not backspace)
+  // Play keypress sound for actual typing AND backspace
   if (
-    e.inputType === "insertText" &&
-    e.data &&
     hasStartedTyping &&
-    !isCommandMode
+    !isCommandMode &&
+    ((e.inputType === "insertText" && e.data) ||
+      e.inputType === "deleteContentBackward" ||
+      e.inputType === "deleteContentForward")
   ) {
     playKeypressSound();
   }
