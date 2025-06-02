@@ -59,7 +59,7 @@ if (achievementSoundEnabled === "false") {
 }
 
 const keypressSound = new Audio("../sounds/keypress.wav");
-keypressSound.volume = 0.4; // Set volume to 30%
+keypressSound.volume = 0.3; // Set volume
 window.keypressSound = keypressSound;
 
 // Check the keypress sound setting on initialization
