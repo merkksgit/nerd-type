@@ -56,7 +56,7 @@ function calculateScore(timeLeft, wpm, accuracy, settings) {
 }
 
 function enhanceChartVisuals() {
-  Chart.defaults.color = "#ff007c";
+  Chart.defaults.color = "#7dcfff";
   Chart.defaults.borderColor = "#3b4261";
   Chart.defaults.plugins.tooltip.displayColors = false;
 
@@ -65,7 +65,7 @@ function enhanceChartVisuals() {
   Chart.defaults.font.size = 12;
   Chart.defaults.font.weight = "normal";
   Chart.defaults.plugins.tooltip.backgroundColor = "#1f2335";
-  Chart.defaults.plugins.tooltip.titleColor = "#ff007c";
+  Chart.defaults.plugins.tooltip.titleColor = "#7dcfff";
   Chart.defaults.plugins.tooltip.bodyColor = "#c0caf5";
   Chart.defaults.plugins.tooltip.borderColor = "#3b4261";
   Chart.defaults.plugins.tooltip.borderWidth = 2;
@@ -75,7 +75,6 @@ function enhanceChartVisuals() {
   Chart.defaults.plugins.tooltip.titleFont = {
     family: "'custom', monospace",
     size: 14,
-    weight: "bold",
   };
   Chart.defaults.plugins.tooltip.bodyFont = {
     family: "'custom', monospace",
