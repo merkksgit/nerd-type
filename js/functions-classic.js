@@ -1247,7 +1247,8 @@ function showGameOverModal(message, isSuccess = true) {
     const terminalLines = [
       "> INITIALIZING TERMINAL OUTPUT...",
       "> ANALYZING PERFORMANCE DATA...",
-      `> MODE: ZEN [${languageName}]`,
+      `> MODE: ZEN`,
+      `> WORD SET: ${languageName}`,
       `> USER: ${playerUsername}`,
       `> STATUS: ${message}`,
       "> ================================",
@@ -1275,7 +1276,8 @@ function showGameOverModal(message, isSuccess = true) {
     const terminalLines = [
       "> INITIALIZING TERMINAL OUTPUT...",
       "> ANALYZING PERFORMANCE DATA...",
-      `> MODE: ${modeName} [${languageName}]`,
+      `> MODE: ${modeName}`,
+      `> WORD SET: ${languageName}`,
       `> USER: ${playerUsername}`,
       `> STATUS: ${message}`,
       "> ================================",
