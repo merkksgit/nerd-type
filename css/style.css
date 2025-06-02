@@ -36,7 +36,7 @@ header {
 
 #header-logo {
   width: 250px;
-  margin-left: 10px;
+  margin-left: 100px;
 }
 
 #header-logo-no-text {
@@ -178,85 +178,6 @@ div#content {
 
 .navbar-toggler {
   border-color: #24283b !important;
-}
-
-/* User button */
-.floating-user-btn {
-  position: fixed;
-  top: 20px;
-  background-color: #24283b;
-  color: #7aa2f7;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-  z-index: 1000;
-
-  /* Fixed width for consistency */
-  min-width: 150px;
-  width: 150px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
-  font-size: 0.8em;
-}
-
-.floating-user-btn {
-  right: 20px;
-}
-
-.floating-user-btn i {
-  margin-right: 8px;
-  width: 16px; /* Fixed width for icons */
-  text-align: center;
-}
-
-.floating-user-btn:hover {
-  background-color: #2a3047;
-  color: #ff9e64;
-  transform: translateY(3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.floating-user-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-  /* On smaller screens, make buttons icon-only */
-  .floating-user-btn {
-    padding: 8px;
-    min-width: 40px;
-    width: 40px;
-    text-align: center;
-  }
-
-  /* Hide the text labels on small screens, show only icons */
-  .floating-user-btn span {
-    display: none;
-  }
-
-  /* Adjust icon margin for icon-only mode */
-  .floating-user-btn i {
-    margin-right: 0;
-  }
-
-  /* Position settings button back to horizontal with icon only */
-  .floating-settings-btn {
-    margin-top: 0;
-    right: 70px; /* Space for icon-only username button */
-  }
-}
-
-/* Additional adjustments for very small screens */
-@media (max-width: 500px) {
-  .floating-user-btn {
-    top: 10px;
-  }
 }
 
 #changeUsername:hover {
@@ -1176,15 +1097,6 @@ score h3 {
   }
 }
 
-/* Small devices (landscape phones, less than 768px) */
-@media (max-width: 768px) {
-  .floating-user-btn,
-  #viewScoreboardChartBtn {
-    padding: 6px 12px;
-    font-size: 0.9rem;
-  }
-}
-
 /* Small devices (phones, less than 600px) */
 @media (max-width: 600px) {
   #timer,
@@ -1401,113 +1313,6 @@ div#wordToType,
 }
 #nextWord.fade-out {
   opacity: 0;
-}
-
-/* Scoreboard Button Styling */
-.floating-scoreboard-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #24283b;
-  color: #7aa2f7;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-  z-index: 1000;
-  margin-top: 100px; /* Position below the settings button */
-
-  /* Fixed width to match other buttons */
-  min-width: 150px;
-  width: 130px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
-  font-size: 0.8em;
-}
-
-.floating-scoreboard-chart-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #24283b;
-  color: #7aa2f7;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-  z-index: 1000;
-
-  /* Fixed width to match other buttons */
-  min-width: 150px;
-  width: 130px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
-  font-size: 0.8em;
-}
-
-.floating-scoreboard-btn i,
-.floating-scoreboard-chart-btn i {
-  margin-right: 8px;
-  width: 16px; /* Fixed width for icons */
-  text-align: center;
-}
-
-.floating-scoreboard-btn:hover,
-.floating-scoreboard-chart-btn:hover {
-  background-color: #2a3047;
-  color: #ff9e64;
-  transform: translateY(3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.floating-scoreboard-btn:active,
-.floating-scoreboard-chart-btn:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-  /* On smaller screens, make buttons icon-only */
-  .floating-scoreboard-btn,
-  .floating-scoreboard-chart-btn {
-    padding: 8px;
-    min-width: 40px;
-    width: 40px;
-    text-align: center;
-  }
-
-  /* Hide the text labels on small screens, show only icons */
-  .floating-scoreboard-btn span,
-  .floating-scoreboard-chart-btn span {
-    display: none;
-  }
-
-  /* Adjust icon margin for icon-only mode */
-  .floating-scoreboard-btn i,
-  .floating-scoreboard-chart-btn i {
-    margin-right: 0;
-  }
-
-  /* Adjust positioning to match other buttons */
-  .floating-scoreboard-btn {
-    margin-top: 0;
-    right: 120px; /* Position to the left of settings button */
-  }
-}
-
-/* Additional adjustments for very small screens */
-@media (max-width: 500px) {
-  .floating-scoreboard-btn,
-  .floating-scoreboard-chart-btn {
-    top: 10px;
-  }
 }
 
 #viewScoreboardBtn:hover,
