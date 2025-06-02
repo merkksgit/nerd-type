@@ -143,6 +143,16 @@ function loadSettings() {
     zenWordGoal: 30, // Default zen mode word goal
   };
 
+  // Load language setting
+  const currentLanguage =
+    localStorage.getItem("nerdtype_wordlist") || "english";
+  const languageRadio = document.querySelector(
+    `input[name="languageMode"][value="${currentLanguage}"]`,
+  );
+  if (languageRadio) {
+    languageRadio.checked = true;
+  }
+
   // Set form values
   document.getElementById("wordsGoal").value = gameSettings.timeLimit;
   document.getElementById("bonusEnergy").value = gameSettings.bonusTime;
@@ -421,6 +431,21 @@ function setupRealTimeValidation() {
       });
     }
   });
+
+  // Add handlers for language radio buttons
+  const languageRadios = document.querySelectorAll(
+    'input[name="languageMode"]',
+  );
+  languageRadios.forEach((radio) => {
+    radio.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (applyButton) {
+          applyButton.click();
+        }
+      }
+    });
+  });
 }
 
 function resetSettings() {
@@ -441,6 +466,13 @@ function resetSettings() {
   if (showSpacesToggle) {
     showSpacesToggle.checked = false;
   }
+
+  // Reset language to English
+  const englishRadio = document.getElementById("langEnglish");
+  if (englishRadio) {
+    englishRadio.checked = true;
+  }
+  localStorage.setItem("nerdtype_wordlist", "english");
 
   // Disable custom inputs
   toggleCustomSettings(false);
@@ -463,6 +495,11 @@ function applySettings() {
   const selectedMode = document.querySelector(
     'input[name="gameMode"]:checked',
   ).value;
+
+  // Get selected language
+  const selectedLanguage =
+    document.querySelector('input[name="languageMode"]:checked')?.value ||
+    "english";
 
   // Validate all inputs
   let isValid = true;
@@ -509,6 +546,20 @@ function applySettings() {
     }
 
     return;
+  }
+
+  // Save language setting
+  const currentLanguage =
+    localStorage.getItem("nerdtype_wordlist") || "english";
+  if (selectedLanguage !== currentLanguage) {
+    localStorage.setItem("nerdtype_wordlist", selectedLanguage);
+
+    // Dispatch event for language change
+    window.dispatchEvent(
+      new CustomEvent("gameSettingsChanged", {
+        detail: { setting: "language", value: selectedLanguage },
+      }),
+    );
   }
 
   // Get values from inputs (now we know they're valid)

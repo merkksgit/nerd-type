@@ -303,7 +303,7 @@ class GameCommands {
         .join(", ");
 
       this.showNotification(
-        `Available languages: ${languageList}. Usage: /lang <language>`,
+        `Available languages: ${languageList}. Usage: /lang <language>. Tip: Use Settings panel for easier selection with radio buttons.`,
         "info",
       );
       return;
@@ -313,7 +313,7 @@ class GameCommands {
     if (!availableWordLists[language]) {
       const availableLanguages = Object.keys(availableWordLists).join(", ");
       this.showNotification(
-        `Error: Language '${language}' not found. Available: ${availableLanguages}`,
+        `Error: Language '${language}' not found. Available: ${availableLanguages}. Tip: Use Settings panel for easier selection.`,
         "error",
       );
       return;
@@ -331,8 +331,7 @@ class GameCommands {
         "success",
       );
 
-      // The page will reload automatically due to being in reloadCommands,
-      // which will load the new language
+      // The page will reload automatically due to being in reloadCommands
     } catch (error) {
       console.error("Error switching language:", error);
       this.showNotification("Error: Failed to switch language", "error");

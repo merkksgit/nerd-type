@@ -605,7 +605,6 @@ $ </pre>
                           practice</small
                         >
                       </div>
-
                       <div
                         id="zenModeSettings"
                         style="display: none; margin-top: 15px"
@@ -632,6 +631,31 @@ $ </pre>
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-4 mx-auto">
+                <div
+                  class="difficulty-indicator mt-2 mb-3 classic-mode-setting"
+                >
+                  <label class="form-label mb-3"
+                    >Difficulty Multiplier:
+                    <span id="difficultyValue">1.00x</span></label
+                  >
+                  <div class="progress settings">
+                    <div
+                      id="difficultyBar"
+                      class="progress-bar difficulty-progress-bar"
+                      role="progressbar"
+                      style="width: 50%"
+                      aria-valuenow="50"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    ></div>
+                  </div>
+                  <small class="text-muted d-block mt-1 pt-2"
+                    >Affects score calculation. Higher difficulty = higher
+                    potential score.</small
+                  >
                 </div>
               </div>
 
@@ -682,29 +706,75 @@ $ </pre>
                     </div>
                   </div>
                 </div>
+                <!-- Language Settings Section for Settings Modal -->
                 <div class="col-md-6 mb-4">
-                  <div
-                    class="difficulty-indicator mt-2 mb-3 classic-mode-setting"
-                  >
-                    <label class="form-label mb-3"
-                      >Difficulty Multiplier:
-                      <span id="difficultyValue">1.00x</span></label
-                    >
-                    <div class="progress settings">
-                      <div
-                        id="difficultyBar"
-                        class="progress-bar difficulty-progress-bar"
-                        role="progressbar"
-                        style="width: 50%"
-                        aria-valuenow="50"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      ></div>
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-language me-2"></i>Word Set
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langEnglish"
+                          value="english"
+                          checked
+                        />
+                        <label class="form-check-label" for="langEnglish">
+                          English
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langFinnish"
+                          value="finnish"
+                        />
+                        <label class="form-check-label" for="langFinnish">
+                          Finnish
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langSwedish"
+                          value="swedish"
+                        />
+                        <label class="form-check-label" for="langSwedish">
+                          Swedish
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langProgramming"
+                          value="programming"
+                        />
+                        <label class="form-check-label" for="langProgramming"
+                          >Programming
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langNightmare"
+                          value="nightmare"
+                        />
+                        <label class="form-check-label" for="langNightmare"
+                          >Nightmare
+                        </label>
+                      </div>
                     </div>
-                    <small class="text-muted d-block mt-1 pt-2"
-                      >Affects score calculation. Higher difficulty = higher
-                      potential score.</small
-                    >
                   </div>
                 </div>
               </div>

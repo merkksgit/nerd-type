@@ -1,10 +1,6 @@
 // Import common dependencies
 import { tips } from "./tips.js";
-import {
-  loadWordList,
-  createWordListSelector,
-  currentLanguage,
-} from "./word-list-manager.js";
+import { loadWordList, currentLanguage } from "./word-list-manager.js";
 import Terminal from "./terminal.js";
 import { DebugDisplay } from "./debug.js";
 import achievementSystem from "./achievements.js";
@@ -275,19 +271,7 @@ async function initializeGame() {
   bonusTime = gameSettings.bonusTime;
 }
 
-// Set up the UI elements, including the word list selector
 function setupUI() {
-  // Add the word list selector to the game area
-  const gameContainer = document.getElementById("game");
-  const buttonsContainer = document.getElementById("buttons");
-
-  // Create a container for the word list selector and position it above the buttons
-  const selectorContainer = document.createElement("div");
-  selectorContainer.style.marginTop = "20px"; // Add margin to move it down
-  selectorContainer.style.marginBottom = "10px"; // Add some space below it too
-  gameContainer.insertBefore(selectorContainer, buttonsContainer);
-  createWordListSelector(selectorContainer);
-
   // Set the initial word if words are loaded
   if (words.length > 0) {
     const nextWordDiv = document.getElementById("nextWord");
@@ -470,6 +454,14 @@ function initializeEventListeners() {
   // Listen for terminal settings changes
   window.addEventListener("gameSettingsChanged", function (e) {
     const { setting, value } = e.detail;
+
+    if (setting === "language") {
+      if (value !== currentLanguage) {
+        localStorage.setItem("nerdtype_wordlist", value);
+        location.reload(); // Simple reload instead of custom modal
+      }
+      return;
+    }
 
     // Handle Zen mode toggle specifically
     if (setting === "zenMode") {
