@@ -181,6 +181,15 @@ function loadSettings() {
       achievementSoundEnabled === null || achievementSoundEnabled === "true";
   }
 
+  const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
+  const keypressSoundToggle = document.getElementById("keypressSoundToggle");
+
+  // If setting exists, use it (default is enabled/checked if not set)
+  if (keypressSoundToggle) {
+    keypressSoundToggle.checked =
+      keypressSoundEnabled === null || keypressSoundEnabled === "true";
+  }
+
   // Toggle custom settings based on mode
   toggleCustomSettings(gameSettings.currentMode === "custom");
 
@@ -516,6 +525,10 @@ function applySettings() {
     "achievementSoundToggle",
   ).checked;
 
+  const keypressSoundEnabled = document.getElementById(
+    "keypressSoundToggle",
+  ).checked;
+
   // Get zen mode toggle state
   const zenModeEnabled = document.getElementById("zenModeToggle").checked;
 
@@ -538,9 +551,17 @@ function applySettings() {
   // Save achievement sound setting
   localStorage.setItem("achievement_sound_enabled", achievementSoundEnabled);
 
+  // Save keypress sound setting
+  localStorage.setItem("keypress_sound_enabled", keypressSoundEnabled);
+
   // Update achievement sound globally if possible
   if (typeof window.achievementSound !== "undefined") {
     window.achievementSound.muted = !achievementSoundEnabled;
+  }
+
+  // Update keypress sound globally if possible
+  if (typeof window.keypressSound !== "undefined") {
+    window.keypressSound.muted = !keypressSoundEnabled;
   }
 
   // Dispatch events to update game settings
@@ -581,6 +602,13 @@ function applySettings() {
     }),
   );
 
+  // Dispatch event for keypress sound setting
+  window.dispatchEvent(
+    new CustomEvent("keypressSoundChanged", {
+      detail: { enabled: keypressSoundEnabled },
+    }),
+  );
+
   // Get show spaces toggle state
   const showSpacesEnabled = document.getElementById("showSpacesToggle").checked;
 
@@ -615,19 +643,34 @@ function initSoundSettings() {
     "achievement_sound_enabled",
   );
 
+  const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
+
   // Default is enabled if setting doesn't exist
   const soundEnabled =
     achievementSoundEnabled === null || achievementSoundEnabled === "true";
+  const keypressSoundEnabledBool =
+    keypressSoundEnabled === null || keypressSoundEnabled === "true";
 
   // If the achievement sound exists, update its muted state
   if (typeof window.achievementSound !== "undefined") {
     window.achievementSound.muted = !soundEnabled;
   }
 
+  if (typeof window.keypressSound !== "undefined") {
+    window.keypressSound.muted = !keypressSoundEnabledBool;
+  }
+
   // Setup global event listener to handle achievement sound initialization
   // This helps when the achievement sound is loaded after this script runs
   window.addEventListener("achievement_sound_loaded", function (e) {
     const soundEnabled = localStorage.getItem("achievement_sound_enabled");
+    if (e.detail && e.detail.sound && soundEnabled === "false") {
+      e.detail.sound.muted = true;
+    }
+  });
+
+  window.addEventListener("keypress_sound_loaded", function (e) {
+    const soundEnabled = localStorage.getItem("keypress_sound_enabled");
     if (e.detail && e.detail.sound && soundEnabled === "false") {
       e.detail.sound.muted = true;
     }

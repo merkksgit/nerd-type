@@ -58,6 +58,33 @@ if (achievementSoundEnabled === "false") {
   achievementSound.muted = true;
 }
 
+const keypressSound = new Audio("../sounds/keypress.wav");
+keypressSound.volume = 0.4; // Set volume to 30%
+window.keypressSound = keypressSound;
+
+// Check the keypress sound setting on initialization
+const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
+if (keypressSoundEnabled === "false") {
+  keypressSound.muted = true;
+}
+
+// Dispatch an event to notify that the keypress sound is loaded
+window.dispatchEvent(
+  new CustomEvent("keypress_sound_loaded", {
+    detail: { sound: keypressSound },
+  }),
+);
+
+function playKeypressSound() {
+  if (window.keypressSound && !window.keypressSound.muted && hasStartedTyping) {
+    // Reset sound to beginning and play
+    window.keypressSound.currentTime = 0;
+    window.keypressSound
+      .play()
+      .catch((e) => console.log("Keypress sound play prevented:", e));
+  }
+}
+
 // Dispatch an event to notify that the sound is loaded
 window.dispatchEvent(
   new CustomEvent("achievement_sound_loaded", {
@@ -949,6 +976,16 @@ function checkInput(e) {
     document.getElementById("userInput").disabled = true;
     showCheatModal();
     return;
+  }
+
+  // Play keypress sound for actual typing (not backspace)
+  if (
+    e.inputType === "insertText" &&
+    e.data &&
+    hasStartedTyping &&
+    !isCommandMode
+  ) {
+    playKeypressSound();
   }
 
   // Update character styling and count keystrokes

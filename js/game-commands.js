@@ -61,6 +61,7 @@ class GameCommands {
       "/language": this.setLanguage.bind(this), // Alias for /lang
       "/space": this.toggleSpaceAfterWords.bind(this),
       "/spaces": this.toggleSpaceAfterWords.bind(this), // Alias for /space
+      "/sound": this.toggleKeypressSound.bind(this),
       "/help": this.showHelp.bind(this),
       "/status": this.showStatus.bind(this),
       "/reset": this.resetGame.bind(this),
@@ -79,6 +80,7 @@ class GameCommands {
       "/space",
       "/spaces",
       "/reset",
+      "/sound",
     ];
   }
 
@@ -204,6 +206,49 @@ class GameCommands {
     }
   }
 
+  toggleKeypressSound(args) {
+    // Get current state
+    const currentState =
+      localStorage.getItem("keypress_sound_enabled") === "false" ? false : true; // Default is true
+
+    // Determine new state
+    let newState;
+    if (args.length === 0) {
+      // Toggle current state
+      newState = !currentState;
+    } else {
+      // Set based on argument (on/off, true/false, 1/0)
+      const arg = args[0].toLowerCase();
+      newState =
+        arg === "on" ||
+        arg === "true" ||
+        arg === "1" ||
+        arg === "enable" ||
+        arg === "enabled";
+    }
+
+    // Update localStorage
+    localStorage.setItem("keypress_sound_enabled", newState.toString());
+
+    // Update the keypress sound if it exists
+    if (typeof window.keypressSound !== "undefined") {
+      window.keypressSound.muted = !newState;
+    }
+
+    // Dispatch event to update the setting
+    window.dispatchEvent(
+      new CustomEvent("keypressSoundChanged", {
+        detail: { enabled: newState },
+      }),
+    );
+
+    // Show notification
+    this.showNotification(
+      `Keypress sound ${newState ? "enabled" : "disabled"}`,
+      "success",
+    );
+  }
+
   // Toggle space after words command
   toggleSpaceAfterWords(args) {
     // Get current state
@@ -312,6 +357,7 @@ class GameCommands {
       localStorage.setItem("nerdtype_zen_mode", "true"); // Keep in Zen mode but reset settings
       localStorage.setItem("showSpacesAfterWords", "false"); // Reset to default
       localStorage.setItem("achievement_sound_enabled", "true"); // Reset to default
+      localStorage.setItem("keypress_sound_enabled", "true"); // Reset to default
 
       this.showNotification(
         "Resetting Zen Mode to default settings...",
@@ -336,6 +382,12 @@ class GameCommands {
           detail: { enabled: true },
         }),
       );
+
+      window.dispatchEvent(
+        new CustomEvent("keypressSoundChanged", {
+          detail: { enabled: true },
+        }),
+      );
     } else {
       // Reset to classic mode settings
       const classicSettings = this.gameModes.classic;
@@ -351,6 +403,7 @@ class GameCommands {
       localStorage.setItem("nerdtype_zen_mode", "false"); // Ensure Zen mode is off
       localStorage.setItem("showSpacesAfterWords", "false"); // Reset to default
       localStorage.setItem("achievement_sound_enabled", "true"); // Reset to default
+      localStorage.setItem("keypress_sound_enabled", "true"); // Reset to default
 
       this.showNotification("Resetting game to default settings...", "info");
 
@@ -390,6 +443,12 @@ class GameCommands {
         }),
       );
     }
+
+    window.dispatchEvent(
+      new CustomEvent("keypressSoundChanged", {
+        detail: { enabled: true },
+      }),
+    );
 
     // Note: The page will reload automatically after this due to being in reloadCommands
   }
@@ -746,6 +805,7 @@ Available commands:
 /lang           - Switch language
 <span style= "color: #ff9e64">[finnish, english, swedish, programming, nightmare]</span>
 /space          - Toggle space after words
+/sound          - Toggle keypress sound
 /status         - Show current game settings
 /reset          - Reset to default settings
 /help           - Show this help message
@@ -772,6 +832,11 @@ Available commands:
     const isSoundEnabled =
       achievementSoundEnabled === null || achievementSoundEnabled === "true";
 
+    // Get keypress sound setting (null or undefined = true by default)
+    const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
+    const isKeypressSoundEnabled =
+      keypressSoundEnabled === null || keypressSoundEnabled === "true";
+
     // Get space after words setting (null or undefined = false by default)
     const showSpacesEnabled =
       localStorage.getItem("showSpacesAfterWords") === "true";
@@ -788,6 +853,7 @@ ZEN WORD GOAL: <span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span> 
 LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
 SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
+KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
 ================================
 `;
     } else {
@@ -804,6 +870,7 @@ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%<
 LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
 SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
+KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
 ================================
 `;
     }
