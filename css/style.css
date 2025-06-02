@@ -1374,6 +1374,7 @@ score h3 {
   margin: 0 auto;
   padding: 0 10px;
   box-sizing: border-box;
+  padding-top: 2em;
 }
 
 /* Improve Input Field Responsiveness */
