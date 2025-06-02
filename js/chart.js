@@ -204,7 +204,7 @@ function displayScoreGraph() {
               },
             },
             grid: {
-              display: true,
+              display: false,
               color: "#292e42",
             },
             ticks: {
@@ -248,7 +248,7 @@ function displayScoreGraph() {
             },
             position: "right",
             grid: {
-              drawOnChartArea: false,
+              display: false,
               color: "#292e42",
             },
             ticks: {
@@ -402,7 +402,7 @@ function displayScoreGraph() {
           position: "left",
           grid: {
             color: "#292e42",
-            display: true,
+            display: false,
           },
           ticks: {
             color: "#7aa2f7",
@@ -420,7 +420,7 @@ function displayScoreGraph() {
           },
           position: "right",
           grid: {
-            drawOnChartArea: false,
+            display: false,
             color: "#292e42",
           },
           ticks: {
@@ -439,7 +439,7 @@ function displayScoreGraph() {
           },
           position: "right",
           grid: {
-            drawOnChartArea: false,
+            display: false,
             color: "#292e42",
           },
           ticks: {
@@ -616,7 +616,7 @@ function displayZenModeGraph() {
               },
             },
             grid: {
-              display: true,
+              display: false,
               color: "#292e42",
             },
             ticks: {
@@ -660,7 +660,7 @@ function displayZenModeGraph() {
             },
             position: "right",
             grid: {
-              drawOnChartArea: false,
+              display: false,
               color: "#292e42",
             },
             ticks: {
@@ -795,7 +795,7 @@ function displayZenModeGraph() {
           position: "left",
           grid: {
             color: "#292e42",
-            display: true,
+            display: false,
           },
           ticks: {
             color: "#c3e88d",
@@ -813,7 +813,7 @@ function displayZenModeGraph() {
           },
           position: "right",
           grid: {
-            drawOnChartArea: false,
+            display: false,
             color: "#292e42",
           },
           ticks: {
@@ -832,7 +832,7 @@ function displayZenModeGraph() {
           },
           position: "right",
           grid: {
-            drawOnChartArea: false,
+            display: false,
             color: "#292e42",
           },
           ticks: {
