@@ -169,7 +169,7 @@ function displayScoreGraph() {
             },
             labels: {
               usePointStyle: true,
-              pointStyle: "circle",
+              pointStyle: "rect",
               cursor: "pointer",
               color: "#f2f2f2",
               font: {
@@ -201,15 +201,18 @@ function displayScoreGraph() {
               font: {
                 family: "'custom', monospace",
                 size: 12,
-                weight: "bold",
               },
             },
             grid: {
               display: true,
-              color: "#3b4261",
+              color: "#292e42",
             },
             ticks: {
               color: "#7aa2f7",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
           },
           y1: {
@@ -218,10 +221,18 @@ function displayScoreGraph() {
               display: true,
               text: "WPM",
               color: "#ff9e64",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
             position: "right",
             ticks: {
               color: "#ff9e64",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
           },
           y2: {
@@ -230,6 +241,10 @@ function displayScoreGraph() {
               display: true,
               text: "Accuracy %",
               color: "#bb9af7",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
             position: "right",
             grid: {
@@ -238,6 +253,10 @@ function displayScoreGraph() {
             },
             ticks: {
               color: "#bb9af7",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
           },
         },
@@ -351,9 +370,18 @@ function displayScoreGraph() {
           title: {
             display: false,
             text: "Classic Mode History",
+            font: {
+              family: "'custom', monospace",
+              size: 14,
+              weight: "bold",
+            },
           },
           ticks: {
             display: false,
+            font: {
+              family: "'custom', monospace",
+              size: 12,
+            },
           },
           grid: {
             display: false,
@@ -373,6 +401,10 @@ function displayScoreGraph() {
           },
           ticks: {
             color: "#7aa2f7",
+            font: {
+              family: "'custom', monospace",
+              size: 12,
+            },
           },
         },
         y1: {
@@ -388,6 +420,10 @@ function displayScoreGraph() {
           },
           ticks: {
             color: "#ff9e64",
+            font: {
+              family: "'custom', monospace",
+              size: 12,
+            },
           },
         },
         y2: {
@@ -403,6 +439,10 @@ function displayScoreGraph() {
           },
           ticks: {
             color: "#bb9af7",
+            font: {
+              family: "'custom', monospace",
+              size: 12,
+            },
           },
         },
       },
@@ -426,10 +466,10 @@ function displayScoreGraph() {
             ctx.restore();
 
             ctx.fillStyle = "#7aa2f7";
-            ctx.font = "12px Arial";
+            ctx.font = "12px 'custom', monospace";
             ctx.fillText(
               `Avg Score: ${averageScore.toFixed(0)}`,
-              chartArea.right - 120,
+              chartArea.left + 10,
               yValue - 5,
             );
           }
@@ -447,10 +487,10 @@ function displayScoreGraph() {
             ctx.restore();
 
             ctx.fillStyle = "#ff9e64";
-            ctx.font = "12px Arial";
+            ctx.font = "12px 'custom', monospace";
             ctx.fillText(
               `Avg WPM: ${averageWPM.toFixed(0)}`,
-              chartArea.left + 10,
+              chartArea.right - 120,
               y1Value - 5,
             );
           }
@@ -468,7 +508,7 @@ function displayScoreGraph() {
             ctx.restore();
 
             ctx.fillStyle = "#bb9af7";
-            ctx.font = "12px Arial";
+            ctx.font = "12px 'custom', monospace";
             ctx.fillText(
               `Avg Accuracy: ${averageAccuracy.toFixed(1)}%`,
               chartArea.right - 150,
@@ -541,7 +581,7 @@ function displayZenModeGraph() {
             },
             labels: {
               usePointStyle: true,
-              pointStyle: "circle",
+              pointStyle: "rect",
               cursor: "pointer",
               color: "#f2f2f2",
             },
@@ -558,15 +598,23 @@ function displayZenModeGraph() {
             display: true,
             title: {
               display: true,
-              text: "Time",
+              text: "Time (sec.)",
               color: "#c3e88d",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
             grid: {
               display: true,
-              color: "#3b4261",
+              color: "#292e42",
             },
             ticks: {
               color: "#c3e88d",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
           },
           y1: {
@@ -575,10 +623,18 @@ function displayZenModeGraph() {
               display: true,
               text: "WPM",
               color: "#ff9e64",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
             position: "right",
             ticks: {
               color: "#ff9e64",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
           },
           y2: {
@@ -587,6 +643,10 @@ function displayZenModeGraph() {
               display: true,
               text: "Accuracy %",
               color: "#bb9af7",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
             position: "right",
             grid: {
@@ -595,6 +655,10 @@ function displayZenModeGraph() {
             },
             ticks: {
               color: "#bb9af7",
+              font: {
+                family: "'custom', monospace",
+                size: 12,
+              },
             },
           },
         },
@@ -693,13 +757,18 @@ function displayZenModeGraph() {
           title: {
             display: false,
             text: "Zen Mode History",
+            font: {
+              family: "'custom', monospace",
+              size: 12,
+              weight: "bold",
+            },
           },
           ticks: {
             display: false,
           },
           grid: {
             display: false,
-            color: "#3b4261",
+            color: "#292e42",
           },
         },
         y: {
@@ -715,6 +784,10 @@ function displayZenModeGraph() {
           },
           ticks: {
             color: "#c3e88d",
+            font: {
+              family: "'custom', monospace",
+              size: 12,
+            },
           },
         },
         y1: {
@@ -730,6 +803,10 @@ function displayZenModeGraph() {
           },
           ticks: {
             color: "#ff9e64",
+            font: {
+              family: "'custom', monospace",
+              size: 12,
+            },
           },
         },
         y2: {
@@ -745,6 +822,10 @@ function displayZenModeGraph() {
           },
           ticks: {
             color: "#bb9af7",
+            font: {
+              family: "'custom', monospace",
+              size: 12,
+            },
           },
         },
       },
@@ -768,7 +849,7 @@ function displayZenModeGraph() {
             ctx.restore();
 
             ctx.fillStyle = "#c3e88d";
-            ctx.font = "12px Arial";
+            ctx.font = "12px 'custom', monospace";
             ctx.fillText(
               `Avg Time: ${averageTime.toFixed(0)}s`,
               chartArea.left + 10,
@@ -789,7 +870,7 @@ function displayZenModeGraph() {
             ctx.restore();
 
             ctx.fillStyle = "#ff9e64";
-            ctx.font = "12px Arial";
+            ctx.font = "12px 'custom', monospace";
             ctx.fillText(
               `Avg WPM: ${averageWPM.toFixed(0)}`,
               chartArea.right - 120,
@@ -810,7 +891,7 @@ function displayZenModeGraph() {
             ctx.restore();
 
             ctx.fillStyle = "#bb9af7";
-            ctx.font = "12px Arial";
+            ctx.font = "12px 'custom', monospace";
             ctx.fillText(
               `Avg Accuracy: ${averageAccuracy.toFixed(1)}%`,
               chartArea.right - 150,
