@@ -58,32 +58,56 @@ if (achievementSoundEnabled === "false") {
   achievementSound.muted = true;
 }
 
-const keypressSound = new Audio("../sounds/keypress_1.wav");
-keypressSound.volume = 0.3; // Set volume
-window.keypressSound = keypressSound;
+// Create keypress audio pool for better performance
+const keypressAudioPool = [];
+const poolSize = 2; // Create multiple instances
+let currentAudioIndex = 0;
+
+// Create the audio pool
+for (let i = 0; i < poolSize; i++) {
+  const audio = new Audio("../sounds/keypress_1.wav");
+  audio.volume = 0.3;
+  audio.preload = "auto"; // Ensure it's preloaded
+  keypressAudioPool.push(audio);
+}
+
+// Keep reference for backward compatibility
+window.keypressSound = keypressAudioPool[0];
 
 // Check the keypress sound setting on initialization
 const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
 if (keypressSoundEnabled === "false") {
-  keypressSound.muted = true;
+  keypressAudioPool.forEach((audio) => (audio.muted = true));
 }
 
 // Dispatch an event to notify that the keypress sound is loaded
 window.dispatchEvent(
   new CustomEvent("keypress_sound_loaded", {
-    detail: { sound: keypressSound },
+    detail: { sound: keypressAudioPool[0] },
   }),
 );
 
 function playKeypressSound() {
-  if (window.keypressSound && !window.keypressSound.muted && hasStartedTyping) {
-    // Reset sound to beginning and play
-    window.keypressSound.currentTime = 0;
-    window.keypressSound
-      .play()
-      .catch((e) => console.log("Keypress sound play prevented:", e));
+  const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
+  if (keypressSoundEnabled !== "false" && hasStartedTyping) {
+    const audio = keypressAudioPool[currentAudioIndex];
+    audio.currentTime = 0;
+    audio.play().catch((e) => console.log("Keypress sound play prevented:", e));
+
+    // Move to next audio in pool
+    currentAudioIndex = (currentAudioIndex + 1) % poolSize;
   }
 }
+
+// Function to handle sound setting changes
+function updateKeypressSoundSetting(enabled) {
+  keypressAudioPool.forEach((audio) => {
+    audio.muted = !enabled;
+  });
+}
+
+// Make it available globally if needed by other modules
+window.updateKeypressSoundSetting = updateKeypressSoundSetting;
 
 // Dispatch an event to notify that the sound is loaded
 window.dispatchEvent(
@@ -645,6 +669,22 @@ function handleUsernameConfirmation() {
 
 // Main game functionality
 function startGame() {
+  keypressAudioPool.forEach((audio) => {
+    audio.load(); // Force immediate loading
+    // Attempt a silent play to prime the audio
+    audio.volume = 0;
+    audio
+      .play()
+      .then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 0.3; // Restore volume
+      })
+      .catch(() => {
+        // Silent fail - some browsers block this
+        audio.volume = 0.3;
+      });
+  });
   if (tipsRotationInterval) {
     clearInterval(tipsRotationInterval);
     tipsRotationInterval = null;
