@@ -58,7 +58,7 @@ if (achievementSoundEnabled === "false") {
   achievementSound.muted = true;
 }
 
-const keypressSound = new Audio("../sounds/keypress.wav");
+const keypressSound = new Audio("../sounds/keypress_1.wav");
 keypressSound.volume = 0.3; // Set volume
 window.keypressSound = keypressSound;
 
