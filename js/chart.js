@@ -449,7 +449,7 @@ function displayScoreGraph() {
     },
     plugins: [
       {
-        beforeDraw: (chart) => {
+        afterDraw: (chart) => {
           const ctx = chart.ctx;
           const chartArea = chart.chartArea;
 
@@ -832,7 +832,7 @@ function displayZenModeGraph() {
     },
     plugins: [
       {
-        beforeDraw: (chart) => {
+        afterDraw: (chart) => {
           const ctx = chart.ctx;
           const chartArea = chart.chartArea;
 
