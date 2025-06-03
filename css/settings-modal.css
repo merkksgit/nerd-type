@@ -1,7 +1,7 @@
 .floating-settings-btn {
   position: fixed;
   top: 30px;
-  right: 280px;
+  right: 180px;
   z-index: 1000;
   background-color: #24283b;
   color: #7aa2f7;
@@ -21,7 +21,7 @@
 .floating-scoreboard-chart-btn {
   position: fixed;
   top: 30px;
-  right: 330px;
+  right: 230px;
   z-index: 1000;
   background-color: #24283b;
   color: #7aa2f7;
@@ -38,13 +38,13 @@
 }
 
 .floating-scoreboard-chart-btn {
-  right: 120px;
+  right: 100px;
 }
 
 .floating-user-btn {
   position: fixed;
   top: 30px;
-  right: 120px;
+  right: 20px;
   background-color: #24283b;
   color: #7aa2f7;
   border: none;
@@ -93,14 +93,14 @@
 
 @media (max-width: 768px) {
   .floating-settings-btn {
-    top: 60px;
-    right: 20px;
+    top: 10px;
+    right: 70px;
   }
 
   .floating-scoreboard-btn,
   .floating-scoreboard-chart-btn {
-    top: 110px;
-    right: 20px;
+    top: 10px;
+    right: 120px;
   }
 
   .floating-scoreboard-chart-btn {
@@ -130,14 +130,6 @@
 }
 
 @media (max-width: 500px) {
-  .floating-settings-btn {
-    top: 60px;
-  }
-
-  .floating-scoreboard-btn {
-    top: 110px;
-  }
-
   .floating-scoreboard-chart-btn {
     top: 10px;
     right: 20px;
