@@ -150,6 +150,10 @@ div#content {
   transform: translateY(1px);
 }
 
+.navbar-nav .nav-item {
+  margin: 0 15px;
+}
+
 #current {
   color: #bb9af7 !important;
   position: relative;
