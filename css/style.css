@@ -36,11 +36,11 @@ header {
 
 #header-logo {
   width: 250px;
-  margin-left: 10px;
+  margin-left: 80px;
 }
 
 #header-logo-no-text {
-  width: 70px;
+  width: 60px;
   display: none;
   margin-left: 5px;
 }
