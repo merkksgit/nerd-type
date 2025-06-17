@@ -193,6 +193,10 @@ div#content {
   transform: translateY(1px);
 }
 
+#usernameDisplay {
+  font-size: 0.8em;
+}
+
 /* ==== 4. Links & Common Elements ==== */
 .terms-link,
 .achievement-link,
