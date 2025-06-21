@@ -145,10 +145,6 @@ function displayScoreGraph() {
         ],
       },
       options: {
-        font: {
-          family: "'custom', monospace",
-          size: 12,
-        },
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -264,13 +260,11 @@ function displayScoreGraph() {
     return;
   }
 
-  // Calculate scores
+  // Calculate scores and prepare data
   const dates = classicResults.map((result) => result.date);
   const scores = classicResults.map((result) => {
-    // Use default calculation if no score is present
     if (result.score) return result.score;
 
-    // Reconstruct settings from the result or use defaults
     const resultSettings = {
       timeLimit: result.timeLimit || 30,
       bonusTime: result.bonusTime || 3,
@@ -279,7 +273,6 @@ function displayScoreGraph() {
       currentMode: result.mode || "classic",
     };
 
-    // Calculate score using available data
     return calculateScore(
       result.timeLeft || 0,
       result.wpm || 0,
@@ -368,6 +361,35 @@ function displayScoreGraph() {
             },
           },
         },
+        // ENHANCED TOOLTIP WITH GAME MODE
+        tooltip: {
+          callbacks: {
+            afterTitle: function (context) {
+              if (context && context.length > 0) {
+                const dataIndex = context[0].dataIndex;
+                const result = classicResults[dataIndex];
+                let gameMode = result?.mode || "Classic Mode";
+                // Remove "Mode" from the end if it exists
+                gameMode = gameMode.replace(/ Mode$/, "");
+                return `Mode: ${gameMode}`;
+              }
+              return "";
+            },
+            label: function (context) {
+              const datasetLabel = context.dataset.label;
+              const value = context.parsed.y;
+
+              if (datasetLabel === "Score") {
+                return `Score: ${Math.round(value)} points`;
+              } else if (datasetLabel === "WPM") {
+                return `WPM: ${Math.round(value)} words`;
+              } else if (datasetLabel === "Accuracy") {
+                return `Accuracy: ${value.toFixed(1)}%`;
+              }
+              return `${datasetLabel}: ${value}`;
+            },
+          },
+        },
       },
       scales: {
         x: {
@@ -376,20 +398,16 @@ function displayScoreGraph() {
             text: "Classic Mode History",
             font: {
               family: "'custom', monospace",
-              size: 14,
+              size: 12,
               weight: "bold",
             },
           },
           ticks: {
             display: false,
-            font: {
-              family: "'custom', monospace",
-              size: 12,
-            },
           },
           grid: {
             display: false,
-            color: "#3b4261",
+            color: "#292e42",
           },
         },
         y: {
@@ -762,6 +780,37 @@ function displayZenModeGraph() {
               family: "'custom', monospace",
               size: 13,
               weight: "normal",
+            },
+          },
+        },
+        // ENHANCED TOOLTIP WITH GAME MODE FOR ZEN MODE
+        tooltip: {
+          callbacks: {
+            afterTitle: function (context) {
+              if (context && context.length > 0) {
+                const dataIndex = context[0].dataIndex;
+                const result = zenResults[dataIndex];
+                let gameMode = result?.mode || "Zen Mode";
+                // Remove "Mode" from the end if it exists
+                gameMode = gameMode.replace(/ Mode$/, "");
+                return `Mode: ${gameMode}`;
+              }
+              return "";
+            },
+            label: function (context) {
+              const datasetLabel = context.dataset.label;
+              const value = context.parsed.y;
+
+              if (datasetLabel === "Time") {
+                const minutes = Math.floor(value / 60);
+                const seconds = Math.round(value % 60);
+                return `Time: ${minutes}:${seconds.toString().padStart(2, "0")}`;
+              } else if (datasetLabel === "WPM") {
+                return `WPM: ${Math.round(value)} words`;
+              } else if (datasetLabel === "Accuracy") {
+                return `Accuracy: ${value.toFixed(1)}%`;
+              }
+              return `${datasetLabel}: ${value}`;
             },
           },
         },
