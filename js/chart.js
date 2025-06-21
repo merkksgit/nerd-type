@@ -793,6 +793,12 @@ function displayZenModeGraph() {
                 let gameMode = result?.mode || "Zen Mode";
                 // Remove "Mode" from the end if it exists
                 gameMode = gameMode.replace(/ Mode$/, "");
+
+                // Add word goal if available
+                const wordGoal = result?.wordGoal || "";
+                if (wordGoal) {
+                  return `Mode: ${gameMode} [${wordGoal}]`;
+                }
                 return `Mode: ${gameMode}`;
               }
               return "";
