@@ -201,10 +201,12 @@ body {
 .page-title {
   color: #ff9e64;
   font-weight: bold;
+  font-size: 2em;
 }
 
 .page-subtitle {
   color: #c3e88d;
+  font-size: 1em !important;
 }
 
 /* Info section */
