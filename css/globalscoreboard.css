@@ -151,6 +151,16 @@ body {
   border-color: #7aa2f7;
 }
 
+.fa-sync-alt,
+.fa-filter {
+  background-color: #1f2335;
+}
+
+#refreshScoresBtn:hover .fa-sync-alt,
+#modeFilter:hover .fa-filter {
+  background-color: #2a3047;
+}
+
 /* Dropdown styling */
 .dropdown-menu {
   background-color: #24283b;
