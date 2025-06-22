@@ -94,7 +94,7 @@ body {
   background: linear-gradient(135deg, #7aa2f7, #bb9af7) !important;
   color: #1a1b26 !important;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1rem !important;
   padding: 6px 12px;
   border-radius: 10px !important;
   text-shadow: none;
