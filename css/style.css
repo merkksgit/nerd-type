@@ -1303,7 +1303,7 @@ div#wordToType,
 
 /* tips */
 .tip-style {
-  font-size: 0.85em !important;
+  font-size: 1em !important;
   color: #565f89 !important;
   font-style: normal;
   transition: opacity 0.3s ease;
