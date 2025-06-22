@@ -42,6 +42,103 @@ let isCommandMode = false;
 let wasPaused = false;
 let commandStartTime = null; // Track when we entered command mode
 
+const reservedUsernames = ["merkks", "admin", "moderator", "nerdtype"];
+
+function isReservedUsername(username) {
+  return reservedUsernames.some(
+    (reserved) => username.toLowerCase() === reserved.toLowerCase(),
+  );
+}
+
+function canUseUsername(username) {
+  // Check admin mode for "merkks"
+  const isAdminMode = localStorage.getItem("nerdtype_admin") === "true";
+
+  if (username.toLowerCase() === "merkks") {
+    return isAdminMode;
+  }
+  // Block other reserved usernames
+  return !isReservedUsername(username);
+}
+
+function showUsernameError(message) {
+  const usernameInput = document.getElementById("usernameInput");
+
+  // Add error styling
+  usernameInput.classList.add("is-invalid");
+
+  // Get or create error element
+  let errorElement = document.getElementById("usernameInputError");
+  if (!errorElement) {
+    errorElement = document.createElement("div");
+    errorElement.id = "usernameInputError";
+    errorElement.className = "invalid-feedback";
+    errorElement.style.marginTop = "5px";
+    errorElement.style.fontSize = "0.875rem";
+    errorElement.style.color = "#f7768e";
+
+    // Insert after the input
+    usernameInput.parentNode.insertBefore(
+      errorElement,
+      usernameInput.nextSibling,
+    );
+  }
+
+  errorElement.textContent = message;
+  errorElement.style.display = "block";
+}
+
+function clearUsernameError() {
+  const usernameInput = document.getElementById("usernameInput");
+  const errorElement = document.getElementById("usernameInputError");
+
+  usernameInput.classList.remove("is-invalid");
+  usernameInput.classList.remove("is-valid");
+
+  if (errorElement) {
+    errorElement.style.display = "none";
+  }
+}
+
+function validateUsernameClassic(username) {
+  const trimmedUsername = username.trim();
+
+  // Check if empty
+  if (!trimmedUsername) {
+    showUsernameError("Username cannot be empty");
+    return false;
+  }
+
+  // Check length (2-20 characters as per terms)
+  if (trimmedUsername.length < 2 || trimmedUsername.length > 20) {
+    showUsernameError("Username must be between 2-20 characters");
+    return false;
+  }
+
+  // Check for reserved usernames
+  if (!canUseUsername(trimmedUsername)) {
+    if (isReservedUsername(trimmedUsername)) {
+      showUsernameError(
+        `"${trimmedUsername}" is a reserved codename and cannot be used`,
+      );
+    } else {
+      showUsernameError("This codename is restricted");
+    }
+    return false;
+  }
+
+  // Check for invalid characters (only letters, numbers, spaces, underscores, hyphens)
+  const validPattern = /^[a-zA-Z0-9 _-]+$/;
+  if (!validPattern.test(trimmedUsername)) {
+    showUsernameError(
+      "Username can only contain letters, numbers, spaces, underscores, and hyphens",
+    );
+    return false;
+  }
+
+  return true;
+}
+
 // Set up sound for achievements
 const achievementSound = new Audio("../sounds/achievement.mp3");
 window.achievementSound = achievementSound;
@@ -265,6 +362,7 @@ async function initializeGame() {
   initializeEventListeners();
   initializeRotatingTips();
   displayPreviousResults();
+  setupUsernameValidation();
 
   // Set initial time from settings
   timeLeft = gameSettings.initialTime;
@@ -376,7 +474,6 @@ function initializeRotatingTips() {
   }, 5000); // Change tip every x seconds
 }
 
-// Add this to your functions-classic.js file
 function optimizeForMobile() {
   // Check if we're on a small screen
   const isMobile = window.innerWidth < 576;
@@ -401,8 +498,6 @@ function optimizeForMobile() {
 
 // Call this during initialization
 document.addEventListener("DOMContentLoaded", function () {
-  // Your existing initialization code
-
   // Add mobile optimization
   optimizeForMobile();
 
@@ -642,10 +737,12 @@ function handleUsernameConfirmation() {
   const usernameInput = document.getElementById("usernameInput");
   const username = usernameInput.value.trim();
 
-  if (username) {
+  if (validateUsernameClassic(username)) {
     playerUsername = username;
     localStorage.setItem("nerdtype_username", username);
     document.getElementById("usernameDisplay").textContent = playerUsername;
+    clearUsernameError();
+
     const modalInstance = bootstrap.Modal.getInstance(
       document.getElementById("usernameModal"),
     );
@@ -654,8 +751,52 @@ function handleUsernameConfirmation() {
       isUsernameModalOpen = false;
       location.reload();
     }
-  } else {
-    usernameInput.classList.add("is-invalid");
+  }
+}
+
+function setupUsernameValidation() {
+  const usernameInput = document.getElementById("usernameInput");
+
+  if (usernameInput) {
+    // Real-time validation as user types
+    usernameInput.addEventListener("input", (event) => {
+      const username = event.target.value.trim();
+
+      // Clear error when user starts typing
+      if (username.length === 0) {
+        clearUsernameError();
+        return;
+      }
+
+      // Real-time validation for reserved usernames
+      if (username.length >= 2) {
+        if (!canUseUsername(username)) {
+          if (isReservedUsername(username)) {
+            showUsernameError(
+              `"${username}" is a reserved codename and cannot be used`,
+            );
+          } else {
+            showUsernameError("This codename is restricted");
+          }
+        } else {
+          clearUsernameError();
+          usernameInput.classList.add("is-valid");
+        }
+      }
+    });
+
+    // Clear error when user focuses on input
+    usernameInput.addEventListener("focus", () => {
+      clearUsernameError();
+    });
+
+    // Handle Enter key
+    usernameInput.addEventListener("keypress", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleUsernameConfirmation();
+      }
+    });
   }
 }
 

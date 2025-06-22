@@ -489,6 +489,10 @@ input#userInput {
   padding-top: 2em;
 }
 
+#usernameInputError {
+  text-align: center;
+}
+
 /* ==== 7. Game Elements ==== */
 #game {
   margin: auto;
