@@ -154,6 +154,12 @@ div#content {
   margin: 0 15px;
 }
 
+@media (max-width: 491px) {
+  .navbar-nav .nav-item {
+    margin: 0 5px;
+  }
+}
+
 #current {
   color: #bb9af7 !important;
   position: relative;
