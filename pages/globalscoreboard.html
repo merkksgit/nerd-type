@@ -640,18 +640,9 @@
           tbody.appendChild(row);
         });
       }
-
+      // add rank icon here if you feel like it
       function getRankIcon(rank) {
-        switch (rank) {
-          case 1:
-            return "🥇";
-          case 2:
-            return "🥈";
-          case 3:
-            return "🥉";
-          default:
-            return rank <= 10 ? "🏆" : "🎯";
-        }
+        return "";
       }
 
       function updateStats(scores) {
