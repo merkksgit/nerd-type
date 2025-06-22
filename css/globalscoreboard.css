@@ -194,7 +194,6 @@ body {
 .stats-number {
   color: #7aa2f7 !important;
   font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* Header styling */
@@ -370,6 +369,14 @@ body {
 }
 
 .admin-username::after {
-  content: " 👑";
-  font-size: 1.1em;
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url("../images/logo-no-keyboard-blue-bg-32x32.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-left: 5px;
+  vertical-align: middle;
 }
