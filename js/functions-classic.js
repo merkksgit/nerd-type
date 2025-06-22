@@ -1608,6 +1608,27 @@ function saveClassicResult(timeLeft, wpm, accuracy, finalScore) {
     JSON.stringify(highestAchievements),
   );
 
+  const firebaseGameData = {
+    username: playerUsername || "Anonymous",
+    score: finalScore,
+    wpm: wpm,
+    accuracy: accuracy,
+    date: new Date().toISOString(),
+    mode: modeName + " Mode",
+    wordList: currentLanguage,
+    timestamp: Date.now(),
+    difficultyMultiplier: difficultyMultiplier,
+  };
+
+  // Save to Firebase (non-blocking)
+  saveScoreToFirebase(firebaseGameData)
+    .then(() => {
+      console.log("Score saved to Firebase successfully");
+    })
+    .catch((error) => {
+      console.error("Error saving to Firebase:", error);
+    });
+
   // Check for achievements
   achievementSystem.handleGameCompletion(gameData);
 }

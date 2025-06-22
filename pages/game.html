@@ -62,6 +62,50 @@
       src="https://kit.fontawesome.com/fc21fca839.js"
       crossorigin="anonymous"
     ></script>
+    <!-- Firebase -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        push,
+        query,
+        orderByChild,
+        limitToLast,
+        get,
+        equalTo,
+        set,
+        remove,
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+      // Make Firebase modules available globally
+      window.firebaseModules = {
+        initializeApp,
+        getDatabase,
+        ref,
+        push,
+        query,
+        orderByChild,
+        limitToLast,
+        get,
+        equalTo,
+        set,
+        remove,
+      };
+
+      // Initialize Firebase using the config file
+      if (typeof window.initializeFirebaseApp === "function") {
+        window.initializeFirebaseApp(window.firebaseModules);
+      } else {
+        // If config file isn't loaded yet, wait for it
+        document.addEventListener("DOMContentLoaded", () => {
+          if (typeof window.initializeFirebaseApp === "function") {
+            window.initializeFirebaseApp(window.firebaseModules);
+          }
+        });
+      }
+    </script>
+    <script src="../js/firebase-config.js"></script>
   </head>
   <body class="d-flex flex-column h-100">
     <div class="container-fluid flex-grow-1">
@@ -107,6 +151,11 @@
                 ></a>
               </li>
               <li class="nav-item">
+                <a class="nav-link" href="./globalscoreboard.html"
+                  ><i class="fa-solid fa-medal"></i
+                ></a>
+              </li>
+              <li class="nav-item">
                 <a class="nav-link" href="./info.html"
                   ><i class="fa-solid fa-circle-info"></i
                 ></a>
@@ -148,7 +197,7 @@
               <pre class="terminal-output" style="margin-bottom: 20px">
 > INITIALIZING LOGIN SEQUENCE...
 > ENTER CODENAME TO CONTINUE:
-> <span style="color:#ff9e64;">PRIVACY NOTICE:</span> Codename stored locally in your browser only. No data sent to servers.
+> <span style="color:#ff9e64;">PRIVACY NOTICE:</span> Codename will appear publicly on global leaderboards. Game scores and usernames are stored on secure servers for leaderboard functionality. No personal information is collected.
 $ </pre>
               <input
                 type="text"
@@ -818,6 +867,26 @@ $ </pre>
     <script type="module" src="../js/game-commands.js"></script>
     <script>
       // Add event listener for the scoreboard button
+      document
+        .getElementById("global-scores-tab")
+        .addEventListener("shown.bs.tab", function () {
+          if (typeof displayGlobalHighScores === "function") {
+            displayGlobalHighScores();
+          } else {
+            console.error("displayGlobalHighScores function not found");
+          }
+        });
+
+      // Add refresh button functionality
+      document
+        .getElementById("refreshHighScores")
+        .addEventListener("click", function () {
+          if (typeof displayGlobalHighScores === "function") {
+            displayGlobalHighScores();
+          } else {
+            console.error("displayGlobalHighScores function not found");
+          }
+        });
       document
         .getElementById("viewScoreboardBtn")
         .addEventListener("click", function () {
