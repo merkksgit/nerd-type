@@ -161,6 +161,10 @@ body {
   background-color: #2a3047;
 }
 
+#modeFilter:focus .fa-filter {
+  background-color: #2a3047;
+}
+
 /* Dropdown styling */
 .dropdown-menu {
   background-color: #24283b;
