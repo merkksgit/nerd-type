@@ -143,6 +143,15 @@ function loadSettings() {
     zenWordGoal: 30, // Default zen mode word goal
   };
 
+  // Load data collection setting (default is enabled)
+  const dataCollectionEnabled = localStorage.getItem("data_collection_enabled");
+  const dataCollectionToggle = document.getElementById("dataCollectionToggle");
+
+  if (dataCollectionToggle) {
+    dataCollectionToggle.checked =
+      dataCollectionEnabled === null || dataCollectionEnabled === "true";
+  }
+
   // Load language setting
   const currentLanguage =
     localStorage.getItem("nerdtype_wordlist") || "english";
@@ -500,6 +509,14 @@ function applySettings() {
   const selectedLanguage =
     document.querySelector('input[name="languageMode"]:checked')?.value ||
     "english";
+
+  const dataCollectionToggle = document.getElementById("dataCollectionToggle");
+  if (dataCollectionToggle) {
+    localStorage.setItem(
+      "data_collection_enabled",
+      dataCollectionToggle.checked.toString(),
+    );
+  }
 
   // Validate all inputs
   let isValid = true;

@@ -16,6 +16,11 @@ const firebaseConfig = {
 let firebaseApp = null;
 let database = null;
 
+function isDataCollectionEnabled() {
+  const setting = localStorage.getItem("data_collection_enabled");
+  return setting === null || setting === "true"; // Default to enabled
+}
+
 // Initialize Firebase (called from HTML module)
 window.initializeFirebaseApp = function (firebaseModules) {
   const {
@@ -64,6 +69,10 @@ async function testConnection(firebaseModules) {
 
 // Save score to Firebase
 window.saveScoreToFirebase = async function (gameData) {
+  if (!isDataCollectionEnabled()) {
+    console.log("📴 Data collection disabled - score not saved to Firebase");
+    return Promise.resolve({ key: "local-only" }); // Return success-like response
+  }
   // Wait for Firebase modules to be available
   const firebaseModules = window.firebaseModules;
   if (!firebaseModules || !database) {
@@ -97,6 +106,10 @@ window.saveScoreToFirebase = async function (gameData) {
 
 // Get top 10 scores
 window.getTopScores = async function () {
+  if (!isDataCollectionEnabled()) {
+    console.log("📴 Data collection disabled - returning empty leaderboard");
+    return [];
+  }
   const firebaseModules = window.firebaseModules;
   if (!firebaseModules || !database) {
     console.error("Firebase not ready for getTopScores");
@@ -130,6 +143,13 @@ window.getTopScores = async function () {
 
 // Get top scores for a specific mode
 window.getTopScoresByMode = async function (mode) {
+  // Check if data collection is enabled
+  if (!isDataCollectionEnabled()) {
+    console.log(
+      "📴 Data collection disabled - returning empty leaderboard by mode",
+    );
+    return [];
+  }
   const firebaseModules = window.firebaseModules;
   if (!firebaseModules || !database) {
     console.error("Firebase not ready for getTopScoresByMode");
@@ -162,6 +182,12 @@ window.displayGlobalHighScores = async function () {
   const highScoresContainer = document.getElementById("globalHighScores");
   if (!highScoresContainer) {
     console.log("globalHighScores container not found");
+    return;
+  }
+
+  if (!isDataCollectionEnabled()) {
+    highScoresContainer.innerHTML =
+      '<li style="color: #565f89; font-style: italic;">Global leaderboards disabled. Enable "Share game data for leaderboards" in Settings to view global scores.</li>';
     return;
   }
 

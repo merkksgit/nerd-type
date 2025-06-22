@@ -65,6 +65,7 @@ class GameCommands {
       "/help": this.showHelp.bind(this),
       "/status": this.showStatus.bind(this),
       "/reset": this.resetGame.bind(this),
+      "/data": this.toggleDataCollection.bind(this),
     };
 
     // Commands that need reload after execution
@@ -81,6 +82,7 @@ class GameCommands {
       "/spaces",
       "/reset",
       "/sound",
+      "/data",
     ];
   }
 
@@ -204,6 +206,37 @@ class GameCommands {
         "error",
       );
     }
+  }
+
+  toggleDataCollection(args) {
+    // Get current state
+    const currentState = localStorage.getItem("data_collection_enabled");
+    const isCurrentlyEnabled = currentState === null || currentState === "true";
+
+    // Determine new state
+    let newState;
+    if (args.length === 0) {
+      // Toggle current state
+      newState = !isCurrentlyEnabled;
+    } else {
+      // Set based on argument (on/off, true/false, 1/0)
+      const arg = args[0].toLowerCase();
+      newState =
+        arg === "on" ||
+        arg === "true" ||
+        arg === "1" ||
+        arg === "enable" ||
+        arg === "enabled";
+    }
+
+    // Update localStorage
+    localStorage.setItem("data_collection_enabled", newState.toString());
+
+    // Show notification
+    this.showNotification(
+      `Data collection ${newState ? "enabled" : "disabled"}. ${newState ? "Scores will be saved to global leaderboards." : "All data stays local on your device."}`,
+      "success",
+    );
   }
 
   toggleKeypressSound(args) {
@@ -805,6 +838,7 @@ Available commands:
 <span style= "color: #ff9e64">[finnish, english, swedish, programming, nightmare]</span>
 /space          - Toggle space after words
 /sound          - Toggle keypress sound
+/data           - Toggle data collection
 /status         - Show current game settings
 /reset          - Reset to default settings
 /help           - Show this help message
@@ -840,6 +874,12 @@ Available commands:
     const showSpacesEnabled =
       localStorage.getItem("showSpacesAfterWords") === "true";
 
+    const dataCollectionEnabled = localStorage.getItem(
+      "data_collection_enabled",
+    );
+    const isDataCollectionEnabled =
+      dataCollectionEnabled === null || dataCollectionEnabled === "true";
+
     let statusText;
 
     if (isZenMode) {
@@ -853,6 +893,7 @@ LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
 SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
+DATA COLLECTION: <span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "ON" : "OFF"}</span>
 ================================
 `;
     } else {
@@ -870,6 +911,7 @@ LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
 SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
+DATA COLLECTION: <span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "ON" : "OFF"}</span>
 ================================
 `;
     }

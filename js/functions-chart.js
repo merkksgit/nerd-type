@@ -111,6 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
   if (clearResultsBtn) {
     clearResultsBtn.addEventListener("click", handleClearResults);
   }
+
+  updateDataCollectionIndicator();
 });
 
 // Calculate the size of localStorage data in KB
