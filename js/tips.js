@@ -2,7 +2,7 @@ export const tips = [
   "Press Enter to start, Ctrl + Enter to reset game",
   "Type 'terminal' to open the NerdType terminal",
   "There is no God Mode",
-  "Use number keys 1-5 to quickly navigate between pages",
+  "Use number keys 1-6 to quickly navigate between pages",
   "Open terminal and type 'help' for available commands",
   "Use quick commands to modify game difficulty on-the-fly",
   "Focus on accuracy over speed - it builds your score faster",
