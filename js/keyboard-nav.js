@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("keydown", (event) => {
     if (
       event.key >= "1" &&
-      event.key <= "5" &&
+      event.key <= "6" &&
       document.activeElement.tagName !== "INPUT" &&
       document.activeElement.tagName !== "TEXTAREA" &&
       !document.querySelector(".modal.show")
