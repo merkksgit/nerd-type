@@ -232,7 +232,7 @@ function loadSettings() {
 
 function toggleCustomSettings(isCustom) {
   const customInputs = document.querySelectorAll(
-    "#wordsGoal, #bonusEnergy, #initialEnergy, #goalPercentage",
+    "#wordsGoal, #bonusEnergy, #initialEnergy",
   );
 
   // If custom mode is selected, enable inputs, otherwise disable them
@@ -262,7 +262,7 @@ function setupInputChangeListeners() {
 
   // Listen for custom setting changes
   const customInputs = document.querySelectorAll(
-    "#wordsGoal, #bonusEnergy, #initialEnergy, #goalPercentage",
+    "#wordsGoal, #bonusEnergy, #initialEnergy",
   );
   customInputs.forEach((input) => {
     input.addEventListener("input", updateDifficultyMultiplier);

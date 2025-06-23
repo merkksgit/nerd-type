@@ -575,10 +575,6 @@ function initializeEventListeners() {
       case "initialTime":
         gameSettings.initialTime = value;
         break;
-      case "goalPercentage":
-        gameSettings.goalPercentage = value;
-        goalPercentage = value; // Update current game
-        break;
       case "currentMode":
         gameSettings.currentMode = value;
         break;
