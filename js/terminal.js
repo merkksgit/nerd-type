@@ -1502,16 +1502,98 @@ remain within acceptable parameters.
       return;
     }
 
-    localStorage.setItem("nerdtype_username", newUsername);
+    // Apply the same validation rules as the username modal
+    const validationResult = this.validateUsernameForTerminal(newUsername);
+
+    if (!validationResult.isValid) {
+      this.printToTerminal(
+        `Error: ${validationResult.message}`,
+        "command-error",
+      );
+      return;
+    }
+
+    // If validation passes, proceed with the username change
+    const trimmedUsername = newUsername.trim();
+    localStorage.setItem("nerdtype_username", trimmedUsername);
+
     this.printToTerminal(
-      `Success: Switched user to ${newUsername}`,
+      `Success: Switched user to ${trimmedUsername}`,
       "command-success",
     );
 
     // Update terminal prompt
     document.querySelector(".terminal-prompt").textContent = `$`;
     document.getElementById("terminalModalLabel").textContent =
-      `${newUsername}@nerdtypeterminalv1.0.1`;
+      `${trimmedUsername}@nerdtypeterminalv1.0.1`;
+
+    // Update any username displays on the page if they exist
+    const usernameDisplays = document.querySelectorAll("#usernameDisplay");
+    usernameDisplays.forEach((display) => {
+      display.textContent = trimmedUsername;
+    });
+  }
+
+  // Add this new validation method to the Terminal class
+  validateUsernameForTerminal(username) {
+    const trimmedUsername = username.trim();
+
+    // Check if empty
+    if (!trimmedUsername) {
+      return { isValid: false, message: "Username cannot be empty" };
+    }
+
+    // Check length (2-20 characters as per terms)
+    if (trimmedUsername.length < 2 || trimmedUsername.length > 20) {
+      return {
+        isValid: false,
+        message: "Username must be between 2-20 characters",
+      };
+    }
+
+    // Reserved usernames list (same as in other validation files)
+    const reservedUsernames = ["merkks", "admin", "moderator", "nerdtype"];
+
+    const isReservedUsername = (username) => {
+      return reservedUsernames.some(
+        (reserved) => username.toLowerCase() === reserved.toLowerCase(),
+      );
+    };
+
+    const canUseUsername = (username) => {
+      // Check admin mode for "merkks"
+      const isAdminMode = localStorage.getItem("nerdtype_admin") === "true";
+
+      if (username.toLowerCase() === "merkks") {
+        return isAdminMode;
+      }
+      // Block other reserved usernames
+      return !isReservedUsername(username);
+    };
+
+    // Check for reserved usernames
+    if (!canUseUsername(trimmedUsername)) {
+      if (isReservedUsername(trimmedUsername)) {
+        return {
+          isValid: false,
+          message: `"${trimmedUsername}" is a reserved codename and cannot be used`,
+        };
+      } else {
+        return { isValid: false, message: "This codename is restricted" };
+      }
+    }
+
+    // Check for invalid characters (only letters, numbers, spaces, underscores, hyphens)
+    const validPattern = /^[a-zA-Z0-9 _-]+$/;
+    if (!validPattern.test(trimmedUsername)) {
+      return {
+        isValid: false,
+        message:
+          "Username can only contain letters, numbers, spaces, underscores, and hyphens",
+      };
+    }
+
+    return { isValid: true };
   }
 
   setMode(args) {
