@@ -17,4 +17,5 @@ export const tips = [
   "Click the Settings button to switch to Zen Mode",
   "Access game modes and sound options via the Settings button",
   "Tinker with game settings to unlock achievements more easily",
+  "Press Enter during game for a quick restart",
 ];
