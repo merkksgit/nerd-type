@@ -832,6 +832,20 @@ Available commands:
     const isDataCollectionEnabled =
       dataCollectionEnabled === null || dataCollectionEnabled === "true";
 
+    // Get current font selection
+    const currentFont =
+      localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+
+    // Convert font name to display format
+    const fontDisplayNames = {
+      "jetbrains-mono": "JetBrains Mono",
+      "departure-mono": "Departure Mono",
+      "firacode-mono": "FiraCode Mono",
+      "bigblueterm-mono": "BigBlueTerm Mono",
+    };
+
+    const fontDisplayName = fontDisplayNames[currentFont] || currentFont;
+
     let statusText;
 
     if (isZenMode) {
@@ -842,6 +856,7 @@ CURRENT GAME SETTINGS:
 ZEN MODE: <span style='color:#c3e88d'>ON</span>
 ZEN WORD GOAL: <span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span> words
 LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
+FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
 SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
@@ -859,6 +874,7 @@ WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
 BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
 INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
 LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
+FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
 SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
