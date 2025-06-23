@@ -269,7 +269,7 @@ function displayScoreGraph() {
       timeLimit: result.timeLimit || 30,
       bonusTime: result.bonusTime || 3,
       initialTime: result.initialTime || 10,
-      goalPercentage: result.goalPercentage || 100,
+      goalPercentage: 100,
       currentMode: result.mode || "classic",
     };
 

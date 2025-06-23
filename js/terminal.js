@@ -18,7 +18,6 @@ class Terminal {
       setwords: this.setWords.bind(this),
       setbonus: this.setBonus.bind(this),
       setinitial: this.setInitial.bind(this),
-      setgoal: this.setGoal.bind(this),
       mode: this.setMode.bind(this),
       listmodes: this.listModes.bind(this),
       reset: this.resetSettings.bind(this),
@@ -82,7 +81,6 @@ class Terminal {
       timeLimit: this.gameSettings.timeLimit,
       bonusTime: this.gameSettings.bonusTime,
       initialTime: this.gameSettings.initialTime,
-      goalPercentage: this.gameSettings.goalPercentage,
     };
 
     // Convert to string for comparison
@@ -503,7 +501,6 @@ class Terminal {
       "setwords",
       "setbonus",
       "setinitial",
-      "setgoal",
       "mode",
       "listmodes",
       "reset",
@@ -665,7 +662,6 @@ class Terminal {
   └─  Words Needed: <span style='color:#c3e88d'>${settings.timeLimit}</span>
   └─  Bonus Energy: <span style='color:#bb9af7'>${settings.bonusTime}</span> units
   └─  Initial Energy: <span style='color:#7dcfff'>${settings.initialTime}</span> units
-  └─  Goal Percentage: <span style='color:#ff9e64'>${settings.goalPercentage}%</span>
 > ================================`;
       this.printToTerminal(modeInfo, "command-success");
     });
@@ -691,7 +687,6 @@ Available commands:
 setwords &lt;number&gt;              - Set number of words for win (default: 30)
 setbonus &lt;number&gt;              - Set bonus energy per word (default: 3)
 setinitial &lt;number&gt;            - Set starting energy (default: 10)
-setgoal &lt;number&gt;               - Set goal percentage (default: 100)
 mode &lt;type&gt;                    - Set game mode (classic/hard/practice/speedrunner)
 rm &lt;filename&gt;                  - Delete file contents
 status                         - Show current game settings
@@ -727,7 +722,6 @@ help                           - Show this help message`;
   └─ WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
   └─ BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
   └─ INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
-  └─ GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%</span>
 > ================================`;
 
       this.printToTerminal(statusText, "command-success");
@@ -1440,48 +1434,6 @@ remain within acceptable parameters.
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
         detail: { setting: "initialTime", value: initial },
-      }),
-    );
-
-    // If it's a custom mode, then update the mode
-    if (currentMode === "custom") {
-      window.dispatchEvent(
-        new CustomEvent("gameSettingsChanged", {
-          detail: { setting: "currentMode", value: "custom" },
-        }),
-      );
-    }
-  }
-
-  setGoal(args) {
-    const goal = parseInt(args[0]);
-    if (isNaN(goal) || goal < 1 || goal > 100) {
-      this.printToTerminal(
-        "Error: Please provide a valid goal percentage (1-100)",
-        "command-error",
-      );
-      return;
-    }
-
-    this.gameSettings.goalPercentage = goal;
-
-    // Check if this creates a custom mode
-    const currentMode = this.checkIfCustomMode();
-    this.gameSettings.currentMode = currentMode;
-
-    localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
-
-    // Show mode in notification only if it's custom
-    const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
-    this.printToTerminal(
-      `Success: Goal set to ${goal}%${modeText}`,
-      "command-success",
-    );
-
-    // First dispatch the setting change
-    window.dispatchEvent(
-      new CustomEvent("gameSettingsChanged", {
-        detail: { setting: "goalPercentage", value: goal },
       }),
     );
 

@@ -239,25 +239,21 @@ const presetModes = {
     timeLimit: 30,
     bonusTime: 3,
     initialTime: 10,
-    goalPercentage: 100,
   },
   hard: {
     timeLimit: 20,
     bonusTime: 2,
     initialTime: 8,
-    goalPercentage: 100,
   },
   practice: {
     timeLimit: 60,
     bonusTime: 5,
     initialTime: 15,
-    goalPercentage: 100,
   },
   speedrunner: {
     timeLimit: 10,
     bonusTime: 2,
     initialTime: 8,
-    goalPercentage: 100,
   },
 };
 
@@ -611,7 +607,6 @@ function initializeEventListeners() {
               timeLimit: gameSettings.timeLimit,
               bonusTime: gameSettings.bonusTime,
               initialTime: gameSettings.initialTime,
-              goalPercentage: gameSettings.goalPercentage,
             })
           ) {
             gameSettings.currentMode = modeName;
@@ -703,7 +698,6 @@ function isCustomMode() {
     timeLimit: gameSettings.timeLimit,
     bonusTime: gameSettings.bonusTime,
     initialTime: gameSettings.initialTime,
-    goalPercentage: gameSettings.goalPercentage,
   };
 
   // Convert to string for comparison

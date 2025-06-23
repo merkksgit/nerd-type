@@ -27,25 +27,21 @@ class GameCommands {
         timeLimit: 30,
         bonusTime: 3,
         initialTime: 10,
-        goalPercentage: 100,
       },
       hard: {
         timeLimit: 20,
         bonusTime: 2,
         initialTime: 8,
-        goalPercentage: 100,
       },
       practice: {
         timeLimit: 60,
         bonusTime: 5,
         initialTime: 15,
-        goalPercentage: 100,
       },
       speedrunner: {
         timeLimit: 10,
         bonusTime: 2,
         initialTime: 8,
-        goalPercentage: 100,
       },
     };
 
@@ -54,7 +50,6 @@ class GameCommands {
       "/setwords": this.setWords.bind(this),
       "/setbonus": this.setBonus.bind(this),
       "/setinitial": this.setInitial.bind(this),
-      "/setgoal": this.setGoal.bind(this),
       "/mode": this.setMode.bind(this),
       "/zen": this.setZenMode.bind(this),
       "/lang": this.setLanguage.bind(this),
@@ -73,7 +68,6 @@ class GameCommands {
       "/setwords",
       "/setbonus",
       "/setinitial",
-      "/setgoal",
       "/mode",
       "/zen",
       "/lang",
@@ -128,7 +122,6 @@ class GameCommands {
       timeLimit: this.gameSettings.timeLimit,
       bonusTime: this.gameSettings.bonusTime,
       initialTime: this.gameSettings.initialTime,
-      goalPercentage: this.gameSettings.goalPercentage,
     };
 
     // Convert to string for comparison
@@ -705,46 +698,6 @@ class GameCommands {
     }
   }
 
-  setGoal(args) {
-    const goal = parseInt(args[0]);
-
-    if (isNaN(goal) || goal < 1 || goal > 100) {
-      this.showNotification(
-        "Error: Please provide a valid goal percentage (1-100)",
-        "error",
-      );
-      return;
-    }
-
-    this.gameSettings.goalPercentage = goal;
-
-    // Check if this creates a custom mode
-    const currentMode = this.checkIfCustomMode();
-    this.gameSettings.currentMode = currentMode;
-
-    localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
-
-    // Show mode in notification only if it's custom
-    const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
-    this.showNotification(`Goal set to ${goal}%${modeText}`, "success");
-
-    // First dispatch the setting change
-    window.dispatchEvent(
-      new CustomEvent("gameSettingsChanged", {
-        detail: { setting: "goalPercentage", value: goal },
-      }),
-    );
-
-    // If it's a custom mode, then update the mode
-    if (currentMode === "custom") {
-      window.dispatchEvent(
-        new CustomEvent("gameSettingsChanged", {
-          detail: { setting: "currentMode", value: "custom" },
-        }),
-      );
-    }
-  }
-
   setMode(args) {
     const mode = args[0];
 
@@ -830,7 +783,6 @@ Available commands:
 /setwords       - Set number of words for win
 /setbonus       - Set bonus energy per word
 /setinitial     - Set starting energy
-/setgoal        - Set goal percentage
 /mode           - Set game mode
 <span style= "color: #ff9e64">[classic, hard, practice, speedrunner]</span>
 /zen            - Toggle Zen Mode on/off
@@ -906,7 +858,6 @@ MODE: <span style='color:#ff9e64'>${settings.currentMode?.toUpperCase() || "CLAS
 WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
 BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
 INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
-GOAL PERCENTAGE: <span style='color:#ff9e64'>${settings.goalPercentage || 100}%</span>
 LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
 SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
