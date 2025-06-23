@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (settingsButton) {
     settingsButton.addEventListener("click", openSettingsModal);
   }
-
+  initFontSettings();
   // Initialize sound settings
   initSoundSettings();
 });
@@ -208,6 +208,17 @@ function loadSettings() {
     keypressSoundToggle.checked =
       keypressSoundEnabled === null || keypressSoundEnabled === "true";
   }
+
+  // font selection
+  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+  const fontRadio = document.querySelector(
+    `input[name="fontFamily"][value="${currentFont}"]`,
+  );
+  if (fontRadio) {
+    fontRadio.checked = true;
+  }
+  applyFont(currentFont);
+  updateFontPreview(currentFont);
 
   // Toggle custom settings based on mode
   toggleCustomSettings(gameSettings.currentMode === "custom");
@@ -518,6 +529,14 @@ function applySettings() {
     );
   }
 
+  // Font selection
+  const selectedFont = document.querySelector(
+    'input[name="fontFamily"]:checked',
+  );
+  if (selectedFont) {
+    saveFontSetting(selectedFont.value);
+  }
+
   // Validate all inputs
   let isValid = true;
 
@@ -777,4 +796,67 @@ function showSettingsNotification(message, type = "success") {
   setTimeout(() => {
     notification.remove();
   }, 3000);
+}
+
+// Font management functions
+function initFontSettings() {
+  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+  applyFont(currentFont);
+
+  const fontRadio = document.querySelector(
+    `input[name="fontFamily"][value="${currentFont}"]`,
+  );
+  if (fontRadio) {
+    fontRadio.checked = true;
+  }
+
+  // Add event listeners for font preview
+  const fontRadios = document.querySelectorAll('input[name="fontFamily"]');
+  fontRadios.forEach((radio) => {
+    radio.addEventListener("change", function () {
+      if (this.checked) {
+        updateFontPreview(this.value);
+      }
+    });
+  });
+
+  updateFontPreview(currentFont);
+}
+
+function updateFontPreview(fontFamily) {
+  const preview = document.getElementById("fontPreview");
+  if (preview) {
+    preview.style.fontFamily = fontFamily;
+  }
+}
+
+function applyFont(fontFamily) {
+  document.documentElement.style.setProperty("--game-font", fontFamily);
+
+  const gameElements = document.querySelectorAll(`
+    #userInput, 
+    #nextWord, 
+    #wordToType,
+    #wordToType span,
+    #currentGameMode,
+    #timer,
+    #progressPercentage,
+    .game-interface,
+    .typing-area
+  `);
+
+  gameElements.forEach((element) => {
+    element.style.fontFamily = fontFamily;
+  });
+}
+
+function saveFontSetting(fontFamily) {
+  localStorage.setItem("nerdtype_font", fontFamily);
+  applyFont(fontFamily);
+
+  window.dispatchEvent(
+    new CustomEvent("fontChanged", {
+      detail: { fontFamily: fontFamily },
+    }),
+  );
 }

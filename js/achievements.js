@@ -367,7 +367,7 @@ class AchievementSystem {
           margin-bottom: 10px;
           color: white;
           max-width: 350px;
-          font-family: custom, monospace;
+          font-family: jetbrains-mono, monospace;
           animation: fadeInOut 9s forwards;
           box-shadow: 0 0 10px rgba(31, 35, 53, 1);
           display: flex;
@@ -454,7 +454,7 @@ class AchievementSystem {
           color: #7aa2f7;
           border: 2px solid #3b4261;
           padding: 10px 15px;
-          font-family: "custom", monospace;
+          font-family: "jetbrains-mono";
           max-width: 250px;
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
           font-size: 0.9rem;

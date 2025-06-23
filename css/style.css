@@ -1,12 +1,38 @@
-/* ==== 1. Base Styles & Fonts ==== */
+/* Font Definitions */
 @font-face {
   src: url(../font/JetBrainsMonoNLNerdFontMono-SemiBold.ttf);
-  font-family: "custom";
+  font-family: "jetbrains-mono";
+}
+
+@font-face {
+  src: url(../font/DepartureMonoNerdFontMono-Regular.otf);
+  font-family: "departure-mono";
+}
+
+@font-face {
+  src: url(../font/FiraCodeNerdFontMono-SemiBold.ttf);
+  font-family: "firacode-mono";
 }
 
 * {
-  font-family: custom;
+  font-family: "jetbrains-mono";
   background-color: #24283b;
+}
+
+#userInput,
+#nextWord,
+#wordToType,
+#wordToType span,
+#currentGameMode,
+#timer,
+#timeLeft,
+#progressPercentage,
+#resetBtn,
+#startButton,
+#usernameDisplay,
+.game-interface,
+.typing-area {
+  font-family: var(--game-font, "jetbrains-mono") !important;
 }
 
 /* Scrollbar styling */
@@ -543,7 +569,7 @@ div#wordToType {
 
 /* Word Styling */
 .word-display {
-  font-family: monospace;
+  font-family: "jetbrains-mono";
   font-size: 2em;
 }
 
@@ -645,7 +671,7 @@ div#wordToType {
   border-radius: 4px !important;
   padding: 10px !important;
   color: #c0caf5 !important;
-  font-family: "custom", monospace !important;
+  font-family: "jetbrains-mono" !important;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
 }
 
@@ -796,7 +822,7 @@ score h3 {
 
 /* Terminal Output in Modals */
 .terminal-output {
-  font-family: custom;
+  font-family: "jetbrains-mono";
   color: #7aa2f7;
   white-space: pre-wrap;
   margin: 0;
@@ -813,7 +839,7 @@ score h3 {
 
 /* Terminal Command Styles */
 .terminal-command {
-  font-family: custom;
+  font-family: "jetbrains-mono";
   font-size: 0.8em;
   background-color: #1f2335;
   color: #9d7cd8;
@@ -827,7 +853,7 @@ score h3 {
 }
 
 .terminal-output-example {
-  font-family: custom;
+  font-family: "jetbrains-mono";
   background-color: #1f2335;
   color: #7aa2f7;
   padding: 10px;
@@ -963,7 +989,7 @@ score h3 {
 }
 
 .terminal .achievement-unlock-date {
-  font-family: "custom", monospace;
+  font-family: "jetbrains-mono" !important;
   letter-spacing: -0.5px;
 }
 
@@ -1018,7 +1044,7 @@ score h3 {
   color: #7aa2f7;
   border: 2px solid #3b4261;
   padding: 8px 12px;
-  font-family: "custom", monospace;
+  font-family: "jetbrains-mono" !important;
   max-width: 200px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 }
@@ -1327,7 +1353,7 @@ div#wordToType,
 #terminalModal .terminal-container {
   background-color: #24283b !important;
   padding: 15px 15px 50px 15px !important;
-  font-family: "custom" !important;
+  font-family: "jetbrains-mono" !important;
   height: auto !important; /* Allow height to be flexible */
   min-height: 400px !important; /* Minimum comfortable height */
   max-height: 80vh !important; /* Maximum height relative to viewport */
@@ -1372,7 +1398,7 @@ div#wordToType,
   border: none !important;
   color: #ffffff !important;
   flex-grow: 1 !important;
-  font-family: "custom", monospace !important;
+  font-family: "jetbrains-mono" !important;
   outline: none !important;
   font-size: 16px !important; /* Slightly smaller font */
   padding: 0 !important;
@@ -1423,7 +1449,7 @@ div#wordToType,
 
 #terminalModal .modal-title {
   color: #f2f2f2 !important;
-  font-family: monospace !important;
+  font-family: "jetbrains-mono" !important;
   font-size: 14px !important;
   background-color: #24283b !important;
   width: 100% !important;

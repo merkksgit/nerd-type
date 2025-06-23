@@ -335,6 +335,9 @@ function updateUIForGameMode() {
 async function initializeGame() {
   // Load the Zen Mode state
   isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
+  // Font selection
+  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+  applyFont(currentFont);
 
   // Load saved settings
   const settings = JSON.parse(localStorage.getItem("terminalSettings")) || {

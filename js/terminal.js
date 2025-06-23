@@ -181,7 +181,7 @@ class Terminal {
     #terminalModal .terminal-container {
       background-color: #24283b !important;
       padding: 15px 15px 50px 15px !important;
-      font-family: "custom" !important;
+      font-family: "jetbrains-mono" !important;
       height: auto !important; /* Allow height to be flexible */
       min-height: 600px !important; /* Minimum comfortable height */
       max-height: 80vh !important; /* Maximum height relative to viewport */
@@ -226,7 +226,7 @@ class Terminal {
       border: none !important;
       color: #ffffff !important;
       flex-grow: 1 !important;
-      font-family: "custom", monospace !important;
+      font-family: "jetbrains-mono", !important;
       outline: none !important;
       font-size: 16px !important; /* Slightly smaller font */
       padding: 0 !important;
