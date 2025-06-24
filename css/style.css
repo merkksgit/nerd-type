@@ -1555,3 +1555,149 @@ div#wordToType,
     font-size: 13px !important;
   }
 }
+
+/* Cursor Settings Styling */
+.cursor-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.cursor-option {
+  margin-bottom: 0;
+}
+
+.cursor-theme-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 10px;
+  border: 2px solid #3b4261;
+  border-radius: 6px;
+  background-color: #24283b;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  min-height: 90px;
+  justify-content: center;
+}
+
+/* Orange cursor hover */
+#cursorOrange + .cursor-theme-label:hover {
+  border-color: #ff9e64;
+}
+
+#cursorOrange:checked + .cursor-theme-label {
+  border-color: #ff9e64 !important;
+}
+
+/* Green cursor hover */
+#cursorGreen + .cursor-theme-label:hover {
+  border-color: #c3e88d;
+}
+
+#cursorGreen:checked + .cursor-theme-label {
+  border-color: #c3e88d !important;
+}
+
+/* Purple cursor hover */
+#cursorPurple + .cursor-theme-label:hover {
+  border-color: #bb9af7;
+}
+
+#cursorPurple:checked + .cursor-theme-label {
+  border-color: #bb9af7 !important;
+}
+
+/* Default cursor hover */
+#cursorDefault + .cursor-theme-label:hover {
+  border-color: #c0caf5;
+}
+
+#cursorDefault:checked + .cursor-theme-label {
+  border-color: #c0caf5 !important;
+}
+
+.cursor-option input[type="radio"]:checked + .cursor-theme-label {
+  border-color: #c3e88d;
+}
+
+.cursor-theme-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 32px;
+}
+
+.cursor-mini-img {
+  width: 24px;
+  height: 24px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  transition: transform 0.2s ease;
+}
+
+.cursor-theme-label:hover .cursor-mini-img {
+  transform: scale(1.1);
+}
+
+.default-cursor-placeholder {
+  width: 72px;
+  height: 24px;
+  background-color: #3b4261;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7aa2f7;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.cursor-theme-name {
+  color: #c0caf5;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center !important;
+  padding-top: 10px;
+
+  /* Block centering */
+  display: block;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Hide the actual radio button */
+.cursor-option input[type="radio"] {
+  display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .cursor-selection-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cursor-theme-label {
+    min-height: 80px;
+    padding: 12px 8px;
+  }
+
+  .cursor-theme-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers children horizontally */
+    justify-content: center; /* Centers children vertically */
+    text-align: center; /* Centers text within children */
+  }
+
+  .cursor-mini-img {
+    width: 20px;
+    height: 20px;
+  }
+}
