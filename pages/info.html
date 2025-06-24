@@ -497,9 +497,24 @@
               </p>
               <ol>
                 <li>
+                  <strong>🟡 Medium</strong> - Global scoreboard synchronization
+                  issue when completing games with very low energy (0-1
+                  remaining).<br />
+                  When players finish a game with energy very close to 0, the
+                  game over modal may show "0 energy remain" and indicate the
+                  game was won, but the score may only register to the local
+                  scoreboard and not to the global scoreboard due to
+                  floating-point precision differences in win condition
+                  validation.<br />
+                  <strong>Workaround:</strong> I'm looking for the best solution
+                  for this, for now we need to live with it.
+                </li>
+                <li>
                   <strong>🟢 Low</strong> - Terminal input loses focus when
-                  alt-tabbing back to the window.<br />Workaround: Press Ctrl +
-                  R to refresh the page.
+                  alt-tabbing back to the window.<br /><strong
+                    >Workaround:</strong
+                  >
+                  Press Ctrl + R to refresh the page.
                 </li>
               </ol>
               <h4>10. Terms of Use</h4>
