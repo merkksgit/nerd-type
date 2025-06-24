@@ -1562,6 +1562,7 @@ div#wordToType,
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 12px;
   margin-top: 10px;
+  margin-right: 25px;
 }
 
 .cursor-option {
@@ -1642,7 +1643,7 @@ div#wordToType,
 }
 
 .cursor-theme-label:hover .cursor-mini-img {
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
 .default-cursor-placeholder {
