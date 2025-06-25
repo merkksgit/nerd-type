@@ -1594,7 +1594,7 @@ div#wordToType,
   border-color: #ff9e64 !important;
 }
 
-#cursorOrangeOuline + .cursor-theme-label:hover {
+#cursorOrangeOutline + .cursor-theme-label:hover {
   border-color: #ff9e64;
 }
 
@@ -1611,7 +1611,7 @@ div#wordToType,
   border-color: #c3e88d !important;
 }
 
-#cursorGreenOuline + .cursor-theme-label:hover {
+#cursorGreenOutline + .cursor-theme-label:hover {
   border-color: #c3e88d;
 }
 
@@ -1645,7 +1645,7 @@ div#wordToType,
   border-color: #7aa2f7 !important;
 }
 
-#cursorBlueOutlie + .cursor-theme-label:hover {
+#cursorBlueOutline + .cursor-theme-label:hover {
   border-color: #7aa2f7;
 }
 
