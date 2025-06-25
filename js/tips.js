@@ -18,4 +18,5 @@ export const tips = [
   "Access game modes and sound options via the Settings button",
   "Tinker with game settings to unlock achievements more easily",
   "Press Enter during game for a quick restart",
+  "Press Ctrl + O to open the settings panel",
 ];
