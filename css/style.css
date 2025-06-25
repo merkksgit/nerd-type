@@ -1653,21 +1653,33 @@ div#wordToType,
   border-color: #7aa2f7 !important;
 }
 
-/* Blue cursor hover */
+/* Gradient cursor hover */
 #cursorGradient + .cursor-theme-label:hover {
-  border-color: #ffd93d;
+  border-left: 2px solid #7aa2f7 !important;
+  border-top: 2px solid #bb9af7 !important;
+  border-right: 2px solid #c3e88d !important;
+  border-bottom: 2px solid #ff9e64 !important;
 }
 
 #cursorGradient:checked + .cursor-theme-label {
-  border-color: #ffd93d !important;
+  border-top: 2px solid #bb9af7 !important;
+  border-left: 2px solid #7aa2f7 !important;
+  border-right: 2px solid #c3e88d !important;
+  border-bottom: 2px solid #ff9e64 !important;
 }
 
 #cursorGradientOutline + .cursor-theme-label:hover {
-  border-color: #ffd93d;
+  border-left: 2px solid #7aa2f7 !important;
+  border-top: 2px solid #bb9af7 !important;
+  border-right: 2px solid #c3e88d !important;
+  border-bottom: 2px solid #ff9e64 !important;
 }
 
 #cursorGradientOutline:checked + .cursor-theme-label {
-  border-color: #ffd93d !important;
+  border-top: 2px solid #bb9af7 !important;
+  border-left: 2px solid #7aa2f7 !important;
+  border-right: 2px solid #c3e88d !important;
+  border-bottom: 2px solid #ff9e64 !important;
 }
 
 /* Default cursor hover */
