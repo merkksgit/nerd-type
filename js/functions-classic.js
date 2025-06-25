@@ -535,6 +535,12 @@ function initializeEventListeners() {
       handleUsernameConfirmation();
       return;
     }
+    // Open settings panel with Ctrl + O
+    if (event.ctrlKey && event.key === "o") {
+      event.preventDefault(); // Prevent browser's default "Open file" dialog
+      openSettingsModal();
+      return;
+    }
 
     // Handle game controls
     if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
