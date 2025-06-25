@@ -1366,6 +1366,12 @@ function showGameOverModal(message, isSuccess = true) {
     modalLabel.textContent = `[${playerUsername}@PENTAGON-CORE:~]$`;
   }
 
+  const dataCollectionEnabled = localStorage.getItem("data_collection_enabled");
+  const isDataCollectionEnabled =
+    dataCollectionEnabled === null || dataCollectionEnabled === "true";
+  const leaderboardStatus = isDataCollectionEnabled ? "ENABLED" : "DISABLED";
+  const leaderboardColor = isDataCollectionEnabled ? "#c3e88d" : "#ff007c";
+
   if (isZenMode) {
     // Zen Mode specific game over
     const totalTime = calculateTotalTime();
@@ -1405,6 +1411,7 @@ function showGameOverModal(message, isSuccess = true) {
       `> MODE: ${modeName}`,
       `> WORD SET: ${languageName}`,
       `> USER: ${playerUsername}`,
+      `> GLOBAL SCOREBOARD: <span style='color:${leaderboardColor}'>${leaderboardStatus}</span>`,
       `> STATUS: ${message}`,
       "> ================================",
       "> PERFORMANCE METRICS:",
