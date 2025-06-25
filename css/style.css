@@ -1562,11 +1562,11 @@ div#wordToType,
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 12px;
   margin-top: 10px;
-  margin-right: 25px;
 }
 
 .cursor-option {
   margin-bottom: 0;
+  padding: 0 !important;
 }
 
 .cursor-theme-label {
@@ -1594,12 +1594,28 @@ div#wordToType,
   border-color: #ff9e64 !important;
 }
 
+#cursorOrangeOuline + .cursor-theme-label:hover {
+  border-color: #ff9e64;
+}
+
+#cursorOrangeOutline:checked + .cursor-theme-label {
+  border-color: #ff9e64 !important;
+}
+
 /* Green cursor hover */
 #cursorGreen + .cursor-theme-label:hover {
   border-color: #c3e88d;
 }
 
 #cursorGreen:checked + .cursor-theme-label {
+  border-color: #c3e88d !important;
+}
+
+#cursorGreenOuline + .cursor-theme-label:hover {
+  border-color: #c3e88d;
+}
+
+#cursorGreenOutline:checked + .cursor-theme-label {
   border-color: #c3e88d !important;
 }
 
@@ -1610,6 +1626,31 @@ div#wordToType,
 
 #cursorPurple:checked + .cursor-theme-label {
   border-color: #bb9af7 !important;
+}
+
+#cursorPurpleOutline + .cursor-theme-label:hover {
+  border-color: #bb9af7;
+}
+
+#cursorPurpleOutline:checked + .cursor-theme-label {
+  border-color: #bb9af7 !important;
+}
+
+/* Blue cursor hover */
+#cursorBlue + .cursor-theme-label:hover {
+  border-color: #7aa2f7;
+}
+
+#cursorBlue:checked + .cursor-theme-label {
+  border-color: #7aa2f7 !important;
+}
+
+#cursorBlueOutlie + .cursor-theme-label:hover {
+  border-color: #7aa2f7;
+}
+
+#cursorBlueOutline:checked + .cursor-theme-label {
+  border-color: #7aa2f7 !important;
 }
 
 /* Default cursor hover */

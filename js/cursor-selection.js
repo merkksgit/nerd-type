@@ -50,20 +50,40 @@ function applyCursorTheme(color) {
         pointer: "../images/nt-pointer-orange.png",
         text: "../images/nt-text-orange.png",
       },
+      "orange-outline": {
+        default: "../images/nt-arrow-orange-outline.png",
+        pointer: "../images/nt-pointer-orange-outline.png",
+        text: "../images/nt-text-orange-outline.png",
+      },
       blue: {
         default: "../images/nt-arrow-blue.png",
         pointer: "../images/nt-pointer-blue.png",
         text: "../images/nt-text-blue.png",
+      },
+      "blue-outline": {
+        default: "../images/nt-arrow-blue-outline.png",
+        pointer: "../images/nt-pointer-blue-outline.png",
+        text: "../images/nt-text-blue-outline.png",
       },
       green: {
         default: "../images/nt-arrow-green.png",
         pointer: "../images/nt-pointer-green.png",
         text: "../images/nt-text-green.png",
       },
+      "green-outline": {
+        default: "../images/nt-arrow-green-outline.png",
+        pointer: "../images/nt-pointer-green-outline.png",
+        text: "../images/nt-text-green-outline.png",
+      },
       purple: {
         default: "../images/nt-arrow-purple.png",
         pointer: "../images/nt-pointer-purple.png",
         text: "../images/nt-text-purple.png",
+      },
+      "purple-outline": {
+        default: "../images/nt-arrow-purple-outline.png",
+        pointer: "../images/nt-pointer-purple-outline.png",
+        text: "../images/nt-text-purple-outline.png",
       },
     };
 
