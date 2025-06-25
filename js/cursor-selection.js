@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function initCursorSettings() {
   // Load saved cursor preference
-  const savedCursor = localStorage.getItem("nerdtype_cursor_color") || "orange";
+  const savedCursor =
+    localStorage.getItem("nerdtype_cursor_color") || "default";
   const cursorRadio = document.querySelector(
     `input[name="cursorTheme"][value="${savedCursor}"]`,
   );
