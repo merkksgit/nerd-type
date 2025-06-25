@@ -85,6 +85,11 @@ function applyCursorTheme(color) {
         pointer: "../images/nt-pointer-purple-outline.png",
         text: "../images/nt-text-purple-outline.png",
       },
+      gradient: {
+        default: "../images/nt-arrow-gradient-outline.png",
+        pointer: "../images/nt-pointer-gradient-outline.png",
+        text: "../images/nt-text-gradient.png",
+      },
     };
 
     const cursors = cursorPaths[color];

@@ -1653,6 +1653,23 @@ div#wordToType,
   border-color: #7aa2f7 !important;
 }
 
+/* Blue cursor hover */
+#cursorGradient + .cursor-theme-label:hover {
+  border-color: #ffd93d;
+}
+
+#cursorGradient:checked + .cursor-theme-label {
+  border-color: #ffd93d !important;
+}
+
+#cursorGradientOutline + .cursor-theme-label:hover {
+  border-color: #ffd93d;
+}
+
+#cursorGradientOutline:checked + .cursor-theme-label {
+  border-color: #ffd93d !important;
+}
+
 /* Default cursor hover */
 #cursorDefault + .cursor-theme-label:hover {
   border-color: #c0caf5;
