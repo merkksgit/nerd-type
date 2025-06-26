@@ -744,6 +744,133 @@ score h3 {
 /* Common Modal Styles */
 
 /* Modal Styles - Left aligned text, no flickering */
+.scoreboard-modal-dialog .modal-body {
+  display: block; /* Change from flex to block for table display */
+  text-align: left; /* Left align for table */
+  padding: 0; /* Remove padding for full-width table */
+}
+
+/* Ensure the modal content can handle the table */
+.scoreboard-modal-dialog .modal-content {
+  position: static;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+/* Table styling within the modal - inherit from global scoreboard */
+.scoreboard-modal-dialog .table-dark {
+  --bs-table-bg: #24283b !important;
+  --bs-table-striped-bg: #24283b !important;
+  --bs-table-hover-bg: #292e42 !important;
+  border-color: #3b4261;
+  margin-bottom: 0;
+}
+
+.scoreboard-modal-dialog .table-dark th {
+  background-color: #24283b !important;
+  color: #bb9af7 !important;
+  border-color: #3b4261;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 12px 8px;
+}
+
+.scoreboard-modal-dialog .table-dark td {
+  border-color: #3b4261;
+  padding: 12px 8px;
+  vertical-align: middle;
+}
+
+.scoreboard-modal-dialog .table-hover tbody tr:hover {
+  background-color: #292e42 !important;
+  transition: background-color 0.2s ease;
+}
+
+/* Score badge styling within modal */
+.scoreboard-modal-dialog .score-badge {
+  background: linear-gradient(135deg, #7aa2f7, #bb9af7) !important;
+  color: #1a1b26 !important;
+  font-weight: bold;
+  font-size: 1rem !important;
+  padding: 6px 12px;
+  border-radius: 4px !important;
+  text-shadow: none;
+}
+
+/* Metric styling within modal */
+.scoreboard-modal-dialog .wpm-cell {
+  color: #7dcfff !important;
+  font-weight: bold;
+}
+.scoreboard-modal-dialog .accuracy-cell {
+  color: #c3e88d !important;
+  font-weight: bold;
+}
+.scoreboard-modal-dialog .mode-cell {
+  color: #bb9af7;
+}
+.scoreboard-modal-dialog .meta-cell {
+  color: #565f89;
+  font-size: 0.85rem;
+}
+
+/* Special styling for top 3 rows within modal */
+.scoreboard-modal-dialog .top-performer {
+  background: linear-gradient(
+    90deg,
+    rgba(122, 162, 247, 0.1),
+    rgba(187, 154, 247, 0.1)
+  ) !important;
+}
+
+.scoreboard-modal-dialog .champion {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.15),
+    rgba(255, 223, 0, 0.1)
+  ) !important;
+}
+
+/* Empty state styling within modal */
+.scoreboard-modal-dialog .empty-state {
+  color: #565f89;
+  font-style: italic;
+  padding: 2rem;
+}
+
+.scoreboard-modal-dialog .empty-icon {
+  color: #3b4261;
+  opacity: 0.5;
+}
+
+/* Responsive adjustments for modal table */
+@media (max-width: 768px) {
+  .scoreboard-modal-dialog .table-responsive {
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .scoreboard-modal-dialog .score-badge {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+
+  .scoreboard-modal-dialog {
+    width: 95% !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .scoreboard-modal-dialog {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0.5rem auto;
+  }
+}
+
 .modal-content {
   position: relative;
   background-color: #24283b !important;
