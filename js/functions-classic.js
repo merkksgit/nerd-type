@@ -366,6 +366,22 @@ async function initializeGame() {
   // Set initial time from settings
   timeLeft = gameSettings.initialTime;
   bonusTime = gameSettings.bonusTime;
+
+  // Check for pending settings notification at the end
+  setTimeout(() => {
+    const pendingNotification = localStorage.getItem(
+      "pending_settings_notification",
+    );
+    if (pendingNotification) {
+      try {
+        const { message, type } = JSON.parse(pendingNotification);
+        showSettingsNotification(message, type);
+        localStorage.removeItem("pending_settings_notification");
+      } catch (e) {
+        localStorage.removeItem("pending_settings_notification");
+      }
+    }
+  }, 200);
 }
 
 function setupUI() {

@@ -717,8 +717,14 @@ function applySettings() {
     modal.hide();
   }
 
-  // Show success notification
-  showSettingsNotification("Settings applied successfully");
+  // Reload the page to apply settings
+  localStorage.setItem(
+    "pending_settings_notification",
+    JSON.stringify({
+      message: "Settings applied successfully",
+      type: "success",
+    }),
+  );
 
   // Reload the page to apply settings
   location.reload();
@@ -784,17 +790,54 @@ function showSettingsNotification(message, type = "success") {
     notificationContainer.style.right = "10px";
     notificationContainer.style.zIndex = "9999";
     document.body.appendChild(notificationContainer);
+
+    // Add notification styles (matching game-command-notification styles)
+    const style = document.createElement("style");
+    style.textContent = `
+      .settings-notification {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        color: white;
+        max-width: 350px;
+        font-family: 'jetbrains-mono', monospace;
+        animation: fadeInOut 3s forwards;
+        box-shadow: 0 0 10px rgba(31, 35, 53, 1);
+      }
+      .settings-notification.success {
+        background-color: rgba(31, 35, 53, 1);
+        border-left: 4px solid #c3e88d;
+      }
+      .settings-notification.error {
+        background-color: rgba(31, 35, 53, 1);
+        border-left: 4px solid #ff007c;
+      }
+      .settings-notification.info {
+        background-color: rgba(31, 35, 53, 1);
+        border-left: 4px solid #7aa2f7;
+      }
+      @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateX(20px); }
+        10% { opacity: 1; transform: translateX(0); }
+        90% { opacity: 1; transform: translateX(0); }
+        100% { opacity: 0; transform: translateX(20px); }
+      }
+    `;
+    document.head.appendChild(style);
   }
 
-  // Create notification
+  // Create and append the notification
   const notification = document.createElement("div");
-  notification.className = `game-command-notification ${type}`;
-  notification.textContent = message;
+  notification.className = `settings-notification ${type}`;
+  notification.innerHTML = message;
   notificationContainer.appendChild(notification);
 
   // Remove after animation completes
   setTimeout(() => {
     notification.remove();
+    // Remove container if empty
+    if (notificationContainer.children.length === 0) {
+      notificationContainer.remove();
+    }
   }, 3000);
 }
 
