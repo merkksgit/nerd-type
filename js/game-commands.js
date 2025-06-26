@@ -860,7 +860,7 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
 SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
-DATA COLLECTION: <span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "ON" : "OFF"}</span>
+GLOBAL SCOREBOARD: <span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "ENABLED" : "DISABLED"}</span>
 ================================
 `;
     } else {
@@ -878,7 +878,7 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
 SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
 ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
 KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
-DATA COLLECTION: <span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "ON" : "OFF"}</span>
+DATA COLLECTION: <span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "ENABLED" : "DISABLED"}</span>
 ================================
 `;
     }
