@@ -1437,6 +1437,7 @@ function showGameOverModal(message, isSuccess = true) {
       stats.wpm,
       stats.accuracy,
       finalScore,
+      isSuccess,
     );
   }
 
@@ -1666,10 +1667,19 @@ function setupFormEventListeners(gameOverModal) {
 }
 
 // Save results for Classic Mode
-function saveClassicResult(timeLeft, wpm, accuracy, finalScore) {
-  if (timeLeft === 0 && !isZenMode) {
+function saveClassicResult(
+  timeLeft,
+  wpm,
+  accuracy,
+  finalScore,
+  isSuccess = true,
+) {
+  // Only block if this is explicitly a failed game (not a win with 0 time)
+  // Failed games are indicated by isSuccess being false in the game over flow
+  if (!isSuccess && !isZenMode) {
     return;
   }
+
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
   // Get current highest achievements
