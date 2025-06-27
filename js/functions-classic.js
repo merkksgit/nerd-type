@@ -2078,25 +2078,56 @@ function clearResults() {
     let modalContent = "";
     modalBody.innerHTML = '<pre class="terminal-output"></pre>';
 
+    // Initially hide the close button (same as game over modal)
+    const closeBtn = document.getElementById("clrResults");
+    if (closeBtn) {
+      closeBtn.style.visibility = "hidden";
+      closeBtn.style.opacity = "0";
+    }
+
     function typeNextLine() {
       if (currentLine < terminalLines.length) {
         modalContent += terminalLines[currentLine] + "\n";
         modalBody.querySelector(".terminal-output").innerHTML = modalContent;
         currentLine++;
         setTimeout(typeNextLine, 150);
+      } else {
+        // Show the close button immediately after text animation completes
+        if (closeBtn) {
+          closeBtn.style.visibility = "visible";
+          closeBtn.style.opacity = "1";
+          closeBtn.focus();
+        }
       }
     }
 
     modal.show();
-    typeNextLine();
+
+    // Start typing animation after modal is fully shown (same as game over modal)
+    customAlertModal.addEventListener(
+      "shown.bs.modal",
+      function onShown() {
+        typeNextLine();
+        customAlertModal.removeEventListener("shown.bs.modal", onShown);
+      },
+      { once: true },
+    );
 
     // Set up the event listeners for the modal
     setupClearResultsModal();
-    document
-      .getElementById("clrResults")
-      .addEventListener("click", function () {
-        location.reload();
-      });
+
+    // Add event listener for the close button
+    closeBtn.addEventListener("click", function () {
+      location.reload();
+    });
+
+    // Reset button visibility when modal is hidden (same as game over modal)
+    customAlertModal.addEventListener("hidden.bs.modal", () => {
+      if (closeBtn) {
+        closeBtn.style.visibility = "hidden";
+        closeBtn.style.opacity = "0";
+      }
+    });
   }
 }
 

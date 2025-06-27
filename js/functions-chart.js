@@ -1,11 +1,3 @@
-const wordListDisplayNames = {
-  english: "🇬🇧 ",
-  finnish: "🇫🇮 ",
-  swedish: "🇸🇪 ",
-  programming: "🖥️ ",
-  nightmare: "💀 ",
-};
-
 // Toggle functionality for all sections
 function setupToggle(
   buttonId,
@@ -162,6 +154,7 @@ function handleScoreboardKeyPress(event) {
   }
 }
 
+// Updated handleClearResults function for js/functions-chart.js (chart.html page)
 function handleClearResults() {
   localStorage.removeItem("gameResults");
   document.getElementById("previousResults").innerHTML = "";
@@ -205,6 +198,14 @@ function handleClearResults() {
         modalBody.querySelector(".terminal-output").innerHTML = modalContent;
         currentLine++;
         setTimeout(typeNextLine, 150);
+      } else {
+        // Show the close button after text animation completes
+        const clrResultsButton = document.getElementById("clrResults");
+        if (clrResultsButton) {
+          clrResultsButton.style.visibility = "visible";
+          clrResultsButton.style.opacity = "1";
+          clrResultsButton.focus();
+        }
       }
     }
 
@@ -221,10 +222,16 @@ function handleClearResults() {
       );
     };
 
+    // Set up the close button handler
     const clrResultsButton = document.getElementById("clrResults");
     if (clrResultsButton) {
       clrResultsButton.replaceWith(clrResultsButton.cloneNode(true));
       const newClrResultsButton = document.getElementById("clrResults");
+
+      // Hide the button after replacing it
+      newClrResultsButton.style.visibility = "hidden";
+      newClrResultsButton.style.opacity = "0";
+
       newClrResultsButton.addEventListener("click", handleModalClose);
     }
 
@@ -242,22 +249,28 @@ function handleClearResults() {
 
     modal.show();
 
+    // Start typing animation after modal is fully shown (same as game over modal)
     customAlertModal.addEventListener("shown.bs.modal", function onShown() {
       document.addEventListener("keydown", keydownHandler, { capture: true });
-
+      typeNextLine(); // Start animation after modal is shown
       customAlertModal.removeEventListener("shown.bs.modal", onShown);
     });
 
-    // Start typing animation after modal is shown
-    setTimeout(typeNextLine, 300);
-
-    // Clean up event listener when modal is hidden
+    // Clean up event listener when modal is hidden and reset button visibility
     customAlertModal.addEventListener(
       "hidden.bs.modal",
       function cleanupHandler() {
         document.removeEventListener("keydown", keydownHandler, {
           capture: true,
         });
+
+        // Reset button visibility for next time (same as game over modal)
+        const resetButton = document.getElementById("clrResults");
+        if (resetButton) {
+          resetButton.style.visibility = "hidden";
+          resetButton.style.opacity = "0";
+        }
+
         customAlertModal.removeEventListener("hidden.bs.modal", cleanupHandler);
       },
     );
