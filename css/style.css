@@ -1937,7 +1937,7 @@ div#wordToType,
   background-color: #c3e88d;
   color: #1a1b26;
   padding: 4px 12px;
-  border-radius: 12px;
+  border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 600;
   display: inline-block;
@@ -2011,7 +2011,7 @@ div#wordToType,
 
 /* Responsive adjustments for news cards */
 @media (max-width: 768px) {
-  .news-card-header {
+  .news-card-header .news-date {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
@@ -2077,13 +2077,6 @@ div#wordToType,
   content: "]";
   color: #c3e88d;
   margin-left: 4px;
-}
-
-/* Icon version */
-.system-updates-icon {
-  color: #ff9e64;
-  margin-right: 8px;
-  font-size: 1.6rem;
 }
 
 /* Cursor animation */
