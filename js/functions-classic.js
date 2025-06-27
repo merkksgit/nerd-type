@@ -1871,7 +1871,7 @@ function displayPreviousResults() {
     resultsContainer.innerHTML = `
       <div class="text-center py-5 empty-state">
         <i class="fa-solid fa-chart-line empty-icon" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-        <p>No games completed yet.</p>
+        <p>Play some games nerd.</p>
       </div>
     `;
     return;
