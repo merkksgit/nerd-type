@@ -1497,19 +1497,43 @@ function displayGameOverContent(terminalLines) {
 
   modalBody.innerHTML = '<pre class="terminal-output"></pre>';
 
+  // Initially hide the return button by adding a class
+  const restartBtn = document.getElementById("restartGameBtn");
+  if (restartBtn) {
+    restartBtn.style.visibility = "hidden";
+    restartBtn.style.opacity = "0";
+  }
+
   function typeNextLine() {
     if (currentLine < terminalLines.length) {
       modalContent += terminalLines[currentLine] + "\n";
       modalBody.querySelector(".terminal-output").innerHTML = modalContent;
       currentLine++;
       setTimeout(typeNextLine, 150);
+    } else {
+      // Show the return button immediately after text animation completes
+      if (restartBtn) {
+        restartBtn.style.visibility = "visible";
+        restartBtn.style.opacity = "1";
+        restartBtn.focus();
+      }
     }
   }
 
   gameOverModal.show();
-  typeNextLine();
 
-  const restartBtn = document.getElementById("restartGameBtn");
+  // Start typing animation after modal is fully shown
+  document.getElementById("gameOverModal").addEventListener(
+    "shown.bs.modal",
+    function onShown() {
+      typeNextLine();
+      document
+        .getElementById("gameOverModal")
+        .removeEventListener("shown.bs.modal", onShown);
+    },
+    { once: true },
+  );
+
   if (restartBtn) {
     restartBtn.onclick = () => location.reload();
   }
@@ -1530,6 +1554,11 @@ function displayGameOverContent(terminalLines) {
     .getElementById("gameOverModal")
     .addEventListener("hidden.bs.modal", () => {
       document.removeEventListener("keydown", handleKeyPress);
+      // Reset button visibility for next time
+      if (restartBtn) {
+        restartBtn.style.visibility = "hidden";
+        restartBtn.style.opacity = "0";
+      }
     });
 }
 
