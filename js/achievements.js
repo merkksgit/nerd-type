@@ -324,6 +324,49 @@ class AchievementSystem {
         },
       },
 
+      season_1_veteran: {
+        id: "season_1_veteran",
+        name: "Season 1 Veteran",
+        description: "Participated in Season 1 (July 1 - September 30, 2025)",
+        icon: "fa-solid fa-flag-checkered",
+        category: "seasonal",
+        secret: false,
+        check: function (stats, gameData) {
+          // Check if the player has data sharing enabled
+          const dataShareEnabled = localStorage.getItem(
+            "data_collection_enabled",
+          );
+          if (dataShareEnabled === "false") {
+            return false; // Achievement not available if data sharing is disabled
+          }
+
+          // Define Season 1 date range
+          const season1Start = new Date("2025-07-01T00:00:00");
+          const season1End = new Date("2025-09-30T23:59:59");
+
+          // If we have gameData (current game), check if it's during Season 1
+          if (gameData && gameData.timeLeft > 0) {
+            // Only count completed games
+            const currentDate = new Date();
+
+            // Check if current date is within Season 1
+            if (currentDate >= season1Start && currentDate <= season1End) {
+              // Mark that the player played during Season 1
+              if (!stats.playedDuringSeason1) {
+                stats.playedDuringSeason1 = true;
+                stats.season1PlayDate = currentDate.toISOString();
+                // Save the data immediately
+                this.saveData();
+              }
+              return true;
+            }
+          }
+
+          // Check if player has already played during Season 1 (from saved stats)
+          return stats.playedDuringSeason1 === true;
+        },
+      },
+
       completionist: {
         id: "completionist",
         name: "Completionist",
