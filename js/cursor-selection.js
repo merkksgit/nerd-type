@@ -117,7 +117,7 @@ function applyCursorTheme(color) {
         .form-check-label, .cursor-mini-img, .modal-header, .btn-secondary,
         /* Radio buttons and checkboxes */
         input[type="radio"] + label, input[type="checkbox"] + label,
-        .form-check, .form-check-input, .zen-mode-element, .classic-mode-element {
+        .form-check, .form-check-input, .zen-mode-element, .classic-mode-element, .news-card {
           cursor: url("${cursors.pointer}") 6 0, pointer !important;
         }
         
