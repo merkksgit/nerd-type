@@ -237,7 +237,6 @@ div#content {
 /* ==== 4. Links & Common Elements ==== */
 .terms-link,
 .achievement-link,
-#archive-link,
 #info-link,
 #email-link {
   text-decoration: none;
@@ -247,7 +246,6 @@ div#content {
 .terms-link:hover,
 .achievement-link:hover,
 #email-link:hover,
-#archive-link:hover,
 #info-link:hover,
 .custom-link:hover {
   text-decoration: none;
@@ -1932,7 +1930,7 @@ div#wordToType,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1f2335;
+  background-color: #24283b;
 }
 
 .news-date {
@@ -1971,7 +1969,7 @@ div#wordToType,
 /* Card body */
 .news-card-body {
   padding: 16px 20px 20px 20px;
-  background-color: #1f2335;
+  background-color: #24283b;
 }
 
 .news-title {
@@ -1980,14 +1978,14 @@ div#wordToType,
   font-weight: 600;
   margin-bottom: 12px;
   line-height: 1.3;
-  background-color: #1f2335;
+  background-color: #24283b;
 }
 
 .news-content {
   color: #c0caf5;
   line-height: 1.6;
   margin-bottom: 0;
-  background-color: #1f2335;
+  background-color: #24283b;
 }
 
 /* Card footer */
@@ -2098,4 +2096,15 @@ div#wordToType,
   100% {
     opacity: 0;
   }
+}
+
+#archive-link {
+  background-color: #7aa2f7;
+  color: #1a1b26;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+  text-decoration: none;
 }
