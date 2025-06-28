@@ -137,6 +137,12 @@ div#content {
   color: #a9b1d6;
 }
 
+.page-title {
+  color: #ff9e64;
+  font-weight: bold;
+  font-size: 2em;
+}
+
 /* ==== 3. Navigation ==== */
 #mainmenu {
   margin-top: 10px;
