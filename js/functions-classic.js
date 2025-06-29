@@ -1891,6 +1891,35 @@ function saveClassicResult(
   achievementSystem.handleGameCompletion(gameData);
 }
 
+// Save results for Zen Mode
+function saveZenResult(wpm, totalTime, accuracy) {
+  let results = JSON.parse(localStorage.getItem("gameResults")) || [];
+
+  // Create game data object for local storage
+  const gameData = {
+    username: getDisplayUsername(),
+    wpm: wpm,
+    accuracy: accuracy,
+    totalTime: totalTime,
+    date: new Date().toLocaleString("en-GB"),
+    mode: "Zen Mode",
+    wordList: currentLanguage,
+    wordGoal: zenWordGoal,
+    wordsTyped: wordsTyped.length, // Track how many words were actually typed
+  };
+
+  // Save locally
+  results.push(gameData);
+  localStorage.setItem("gameResults", JSON.stringify(results));
+
+  // Update achievements system
+  if (window.achievementsSystem) {
+    window.achievementsSystem.handleGameCompletion(gameData);
+  }
+
+  console.log("Zen result saved:", gameData);
+}
+
 // Helper function to get display username
 function getDisplayUsername() {
   const currentUser = window.getCurrentUser();
