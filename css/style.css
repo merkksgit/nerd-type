@@ -487,7 +487,7 @@ input#userInput {
   border-radius: 4px;
   padding: 8px 12px;
   margin: 0 auto 10px auto;
-  width: 80%;
+  width: 100%;
   height: 38px;
   font-size: 16px;
 }
@@ -559,7 +559,7 @@ div#wordToType {
 
 #nextWord {
   color: #3b4261;
-  font-size: 1.5em;
+  font-size: 1.5em !important;
   margin-top: 20px;
   transition: opacity 0.3s ease;
 }
@@ -1378,7 +1378,7 @@ input[type="text"] {
 
 /* Make Word Display Responsive */
 div#wordToType,
-#nextWord {
+#nextWord:not(.tip-style) {
   font-size: clamp(20px, 4vw, 24px);
   word-wrap: break-word;
   overflow-wrap: break-word;
@@ -1464,7 +1464,7 @@ div#wordToType,
 }
 
 /* tips */
-.tip-style {
+#nextWord.tip-style {
   font-size: 1em !important;
   color: #565f89 !important;
   font-style: normal;
@@ -2106,4 +2106,274 @@ div#wordToType,
   font-weight: 600;
   display: inline-block;
   text-decoration: none;
+}
+
+.terminal-label {
+  color: #7aa2f7;
+  font-family: "jetbrains-mono";
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.terminal-input {
+  background-color: #1f2335;
+  border: 1px solid #3b4261;
+  color: #a9b1d6;
+  font-family: "jetbrains-mono";
+}
+
+.terminal-input:focus {
+  background-color: #24283b;
+  border-color: #7aa2f7;
+  color: #c3e88d;
+  box-shadow: 0 0 0 0.2rem rgba(122, 162, 247, 0.25);
+}
+
+.terminal-input.is-valid {
+  border-color: #9ece6a;
+}
+
+.terminal-input.is-invalid {
+  border-color: #f7768e;
+}
+
+.error-message {
+  color: #f7768e;
+  font-family: "jetbrains-mono";
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.username-status {
+  font-family: "jetbrains-mono";
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.username-status.available {
+  color: #9ece6a;
+}
+
+.username-status.taken {
+  color: #f7768e;
+}
+
+.username-status.checking {
+  color: #7aa2f7;
+}
+
+.btn-check:checked + .btn-outline-primary {
+  background-color: #7aa2f7;
+  border-color: #7aa2f7;
+  color: #24283b;
+}
+
+#customConfirmModal .modal-content,
+#customAlertModal .modal-content {
+  background-color: #24283b !important;
+  border: 2px solid #3b4261 !important;
+  border-radius: 8px !important;
+  color: #c0caf5 !important;
+  font-family: var(--game-font, "jetbrains-mono") !important;
+}
+
+#customConfirmModal .modal-header,
+#customAlertModal .modal-header {
+  background-color: #24283b !important;
+  border-bottom: 2px solid #3b4261 !important;
+  color: #7aa2f7 !important;
+}
+
+#customConfirmModal .modal-title,
+#customAlertModal .modal-title {
+  color: #7aa2f7 !important;
+  font-family: jetbrains-mono;
+  font-weight: bold;
+}
+
+#customConfirmModal .modal-body,
+#customAlertModal .modal-body {
+  background-color: #24283b !important;
+  color: #c0caf5 !important;
+  font-family: var(--game-font, "jetbrains-mono") !important;
+}
+
+#customConfirmModal .modal-footer,
+#customAlertModal .modal-footer {
+  background-color: #24283b !important;
+  border-top: 2px solid #3b4261 !important;
+}
+
+/* Button styling to match site theme */
+#customConfirmModal .btn-primary,
+#customAlertModal .btn-primary {
+  background-color: #7aa2f7 !important;
+  border-color: #7aa2f7 !important;
+  color: #1a1b26 !important;
+  font-family: var(--game-font, "jetbrains-mono") !important;
+  font-weight: bold !important;
+}
+
+#customConfirmModal .btn-primary:hover,
+#customAlertModal .btn-primary:hover {
+  background-color: #9bb5ff !important;
+  border-color: #9bb5ff !important;
+  color: #1a1b26 !important;
+}
+
+#customConfirmModal .btn-secondary {
+  background-color: #565f89 !important;
+  border-color: #565f89 !important;
+  color: #c0caf5 !important;
+  font-family: var(--game-font, "jetbrains-mono") !important;
+  font-weight: bold !important;
+}
+
+#customConfirmModal .btn-secondary:hover {
+  background-color: #6f7bb6 !important;
+  border-color: #6f7bb6 !important;
+  color: #c0caf5 !important;
+}
+
+/* Backdrop to match theme */
+.modal-backdrop {
+  background-color: rgba(26, 27, 38, 0.75) !important;
+}
+
+/* Login Modal Button Styling */
+#loginModal .btn-primary,
+#loginModal .btn-secondary,
+#authSubmitBtn,
+#skipAuthBtn {
+  color: #7aa2f7 !important;
+  background-color: #1f2335 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 4px rgba(122, 162, 247, 0.3) !important;
+  transition: all 0.3s ease !important;
+  padding: 10px 30px !important;
+}
+
+#loginModal .btn-primary:hover,
+#loginModal .btn-secondary:hover,
+#authSubmitBtn:hover,
+#skipAuthBtn:hover {
+  color: #ff9e64 !important;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(122, 162, 247, 0.5) !important;
+  transform: translateY(-2px) !important;
+  background-color: #2a3047 !important;
+}
+
+#loginModal .btn-primary:active,
+#loginModal .btn-secondary:active,
+#authSubmitBtn:active,
+#skipAuthBtn:active {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 2px rgba(122, 162, 247, 0.3) !important;
+  transform: translateY(1px) !important;
+}
+
+/* Login/Register Toggle Buttons */
+#loginModal .btn-outline-primary {
+  border: 2px solid #7aa2f7 !important;
+  color: #7aa2f7 !important;
+  background: transparent !important;
+  text-align: center;
+}
+
+#loginModal .btn-outline-primary:hover {
+  border-color: #7aa2f7 !important;
+}
+
+#loginModal .btn-check:checked + .btn-outline-primary {
+  background-color: #7aa2f7 !important;
+  border-color: #7aa2f7 !important;
+  color: #1a1b26 !important;
+}
+
+/* Placeholders in login modal */
+#loginModal input::placeholder {
+  color: #565f89 !important;
+  opacity: 1 !important;
+}
+
+#registerUsername input::placeholder {
+  color: #565f89 !important;
+  opacity: 1 !important;
+}
+
+/* Password inputs in login modal */
+#loginModal input[type="password"] {
+  letter-spacing: 5px !important;
+}
+
+/* Custom Modal Buttons - Make them match too */
+#customConfirmModal .btn-primary,
+#customAlertModal .btn-primary,
+#confirmOkBtn,
+#alertOkBtn {
+  color: #7aa2f7 !important;
+  background-color: #1f2335 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 4px rgba(122, 162, 247, 0.3) !important;
+  transition: all 0.3s ease !important;
+  padding: 10px 30px !important;
+  font-family: jetbrains-mono !important;
+}
+
+#customConfirmModal .btn-secondary,
+#confirmCancelBtn {
+  color: #7aa2f7 !important;
+  background-color: #1f2335 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 4px rgba(122, 162, 247, 0.3) !important;
+  transition: all 0.3s ease !important;
+  padding: 10px 30px !important;
+  font-family: jetbrains-mono !important;
+}
+
+#customConfirmModal .btn-primary:hover,
+#customAlertModal .btn-primary:hover,
+#customConfirmModal .btn-secondary:hover,
+#confirmOkBtn:hover,
+#alertOkBtn:hover,
+#confirmCancelBtn:hover {
+  color: #ff9e64 !important;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(122, 162, 247, 0.5) !important;
+  transform: translateY(-2px) !important;
+  background-color: #2a3047 !important;
+}
+
+/* Loading spinner colors to match theme */
+#loginModal .spinner-border {
+  color: #7aa2f7 !important;
+}
+
+/* Button group spacing */
+#loginModal .modal-footer {
+  gap: 0.75rem !important;
+  justify-content: center !important;
+}
+
+/* Focus states */
+#loginModal .btn:focus,
+#customConfirmModal .btn:focus,
+#customAlertModal .btn:focus {
+  box-shadow:
+    0 0 0 0.2rem rgba(122, 162, 247, 0.25),
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 4px rgba(122, 162, 247, 0.3) !important;
 }

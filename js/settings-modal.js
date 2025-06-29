@@ -242,6 +242,135 @@ function toggleCustomSettings(isCustom) {
   });
 }
 
+function updateDataCollectionSettingVisibility() {
+  const dataCollectionContainer = document
+    .querySelector("#dataCollectionToggle")
+    .closest(".form-check");
+  const dataCollectionToggle = document.getElementById("dataCollectionToggle");
+  const dataCollectionLabel = dataCollectionContainer?.querySelector("label");
+
+  if (!dataCollectionContainer || !dataCollectionToggle) return;
+
+  // Check if user is authenticated
+  const currentUser = window.getCurrentUser && window.getCurrentUser();
+  const isAuthenticated = currentUser !== null;
+
+  if (isAuthenticated) {
+    // User is logged in - show and enable the setting
+    dataCollectionContainer.style.display = "block";
+    dataCollectionToggle.disabled = false;
+    dataCollectionContainer.style.opacity = "1";
+
+    if (dataCollectionLabel) {
+      dataCollectionLabel.innerHTML = `
+        Share game data for leaderboards
+      `;
+    }
+  } else {
+    dataCollectionContainer.style.opacity = "0.8";
+    dataCollectionToggle.disabled = true;
+    dataCollectionToggle.checked = false; // Force to off since it doesn't apply
+
+    if (dataCollectionLabel) {
+      dataCollectionLabel.innerHTML = `
+        Share game data for leaderboards (requires login)
+      `;
+    }
+  }
+}
+
+// Update the loadSettings function to call this
+function loadSettings() {
+  // ... existing loadSettings code ...
+
+  // Load data collection setting (default is enabled)
+  const dataCollectionEnabled = localStorage.getItem("data_collection_enabled");
+  const dataCollectionToggle = document.getElementById("dataCollectionToggle");
+
+  if (dataCollectionToggle) {
+    dataCollectionToggle.checked =
+      dataCollectionEnabled === null || dataCollectionEnabled === "true";
+  }
+
+  // ADD THIS LINE - Update visibility based on auth status
+  updateDataCollectionSettingVisibility();
+
+  // ... rest of existing loadSettings code ...
+}
+
+// Also update when auth state changes
+function onAuthStateChange() {
+  // Call this whenever user logs in/out
+  if (document.getElementById("settingsModal")?.classList.contains("show")) {
+    // If settings modal is currently open, update the visibility
+    updateDataCollectionSettingVisibility();
+  }
+}
+
+// Listen for auth state changes
+document.addEventListener("DOMContentLoaded", function () {
+  // Update when opening settings
+  const openSettingsBtn = document.getElementById("openSettingsBtn");
+  if (openSettingsBtn) {
+    openSettingsBtn.addEventListener("click", function () {
+      // Small delay to ensure modal is open
+      setTimeout(updateDataCollectionSettingVisibility, 100);
+    });
+  }
+
+  // Update when auth state changes
+  if (window.firebaseModules) {
+    const { onAuthStateChanged } = window.firebaseModules;
+    if (window.auth) {
+      onAuthStateChanged(window.auth, (user) => {
+        // Update data collection setting visibility when auth state changes
+        onAuthStateChange();
+      });
+    }
+  }
+});
+
+// Alternative: Add CSS to style the disabled state
+const disabledSettingCSS = `
+<style>
+.form-check:has(input:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-check:has(input:disabled) label {
+  cursor: not-allowed;
+}
+
+.form-check:has(input:disabled) .text-warning {
+  color: #ffc107 !important;
+  font-size: 0.85rem;
+}
+</style>
+`;
+
+// Add the CSS to the page
+if (!document.querySelector("#disabled-settings-style")) {
+  const styleElement = document.createElement("style");
+  styleElement.id = "disabled-settings-style";
+  styleElement.textContent = `
+    .form-check:has(input:disabled) {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .form-check:has(input:disabled) label {
+      cursor: not-allowed;
+    }
+    
+    .form-check:has(input:disabled) .text-warning {
+      color: #ffc107 !important;
+      font-size: 0.85rem;
+    }
+  `;
+  document.head.appendChild(styleElement);
+}
+
 function setupInputChangeListeners() {
   // Listen for game mode changes
   const modeRadios = document.querySelectorAll('input[name="gameMode"]');

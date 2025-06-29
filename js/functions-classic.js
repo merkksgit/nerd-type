@@ -756,20 +756,25 @@ function isCustomMode() {
 }
 
 function showUsernameModal() {
-  const modal = new bootstrap.Modal(document.getElementById("usernameModal"));
-  document.getElementById("usernameInput").value =
-    playerUsername !== "runner" ? playerUsername : "";
-  isUsernameModalOpen = true;
+  const usernameModal = document.getElementById("usernameModal");
+  if (usernameModal) {
+    try {
+      // Try to get existing modal instance first
+      let modal = bootstrap.Modal.getInstance(usernameModal);
 
-  document.getElementById("usernameModal").addEventListener(
-    "shown.bs.modal",
-    function () {
-      document.getElementById("usernameInput").focus();
-    },
-    { once: true },
-  );
+      // If no instance exists, create a new one
+      if (!modal) {
+        modal = new bootstrap.Modal(usernameModal, {
+          backdrop: "static",
+          keyboard: false,
+        });
+      }
 
-  modal.show();
+      modal.show();
+    } catch (error) {
+      console.error("Error showing username modal:", error);
+    }
+  }
 }
 
 function handleUsernameConfirmation() {
@@ -1736,6 +1741,9 @@ function setupFormEventListeners(gameOverModal) {
 }
 
 // Save results for Classic Mode
+// Updated score submission logic in functions-classic.js
+// Replace the saveClassicResult function with this enhanced version
+
 function saveClassicResult(
   timeLeft,
   wpm,
@@ -1743,8 +1751,7 @@ function saveClassicResult(
   finalScore,
   isSuccess = true,
 ) {
-  // Only block if this is explicitly a failed game (not a win with 0 time)
-  // Failed games are indicated by isSuccess being false in the game over flow
+  // Only block if this is explicitly a failed game
   if (!isSuccess && !isZenMode) {
     return;
   }
@@ -1796,12 +1803,10 @@ function saveClassicResult(
     highestAchievements.accuracyRank = currentAccuracyRank;
   }
 
-  // Use proper mode name (capitalize first letter)
   const modeName =
     gameSettings.currentMode.charAt(0).toUpperCase() +
     gameSettings.currentMode.slice(1);
 
-  // Calculate the difficulty multiplier
   const settingsForCalculation = {
     timeLimit: gameSettings.timeLimit,
     bonusTime: gameSettings.bonusTime,
@@ -1813,9 +1818,9 @@ function saveClassicResult(
     settingsForCalculation,
   );
 
-  // Create game data object
+  // Create game data object for local storage
   const gameData = {
-    username: playerUsername,
+    username: getDisplayUsername(),
     timeLeft,
     wpm,
     accuracy,
@@ -1823,11 +1828,10 @@ function saveClassicResult(
     mode: modeName + " Mode",
     score: finalScore,
     wordList: currentLanguage,
-    // Store the calculated multiplier
     difficultyMultiplier: difficultyMultiplier,
   };
 
-  // Save results and highest achievements
+  // Save locally
   results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
   localStorage.setItem(
@@ -1835,8 +1839,9 @@ function saveClassicResult(
     JSON.stringify(highestAchievements),
   );
 
+  // Prepare Firebase data
   const firebaseGameData = {
-    username: playerUsername || "Anonymous",
+    username: getDisplayUsername(),
     score: finalScore,
     wpm: wpm,
     accuracy: accuracy,
@@ -1847,41 +1852,128 @@ function saveClassicResult(
     difficultyMultiplier: difficultyMultiplier,
   };
 
-  // Save to Firebase (non-blocking)
-  saveScoreToFirebase(firebaseGameData)
-    .then(() => {
-      console.log("Score saved to Firebase successfully");
-    })
-    .catch((error) => {
-      console.error("Error saving to Firebase:", error);
-    });
+  // Add authentication data if user is logged in
+  const currentUser = window.getCurrentUser();
+  if (currentUser) {
+    firebaseGameData.userId = currentUser.uid;
+    firebaseGameData.userEmail = currentUser.email;
+    firebaseGameData.authenticatedScore = true;
+    firebaseGameData.submittedAt = new Date().toISOString();
+  } else {
+    firebaseGameData.authenticatedScore = false;
+    firebaseGameData.guestSubmission = true;
+  }
+
+  // Save to Firebase based on authentication status
+  if (currentUser) {
+    // Authenticated user - save to main scores
+    saveScoreToFirebase(firebaseGameData)
+      .then(() => {
+        console.log("✅ Authenticated score saved to Firebase");
+      })
+      .catch((error) => {
+        console.error("❌ Error saving authenticated score:", error);
+      });
+  } else {
+    // Guest user - check if guest submissions are allowed
+    const allowGuestSubmissions = localStorage.getItem(
+      "allow_guest_submissions",
+    );
+    if (allowGuestSubmissions === "true") {
+      // Save to separate guest scores collection (optional)
+      saveGuestScoreToFirebase(firebaseGameData)
+        .then(() => {
+          console.log("📝 Guest score saved to Firebase");
+        })
+        .catch((error) => {
+          console.error("❌ Error saving guest score:", error);
+        });
+    } else {
+      console.log("🚫 Guest submissions disabled - score saved locally only");
+    }
+  }
 
   // Check for achievements
   achievementSystem.handleGameCompletion(gameData);
 }
 
-// Save results for Zen Mode
-function saveZenResult(wpm, totalTime, accuracy) {
-  let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-
-  // Create a game data object
-  const gameData = {
-    username: playerUsername,
-    wpm: wpm,
-    totalTime,
-    accuracy,
-    date: new Date().toLocaleString("en-GB"),
-    mode: "Zen Mode",
-    wordList: currentLanguage,
-    wordGoal: zenWordGoal,
-    wordsTyped: wordsTyped.length,
-  };
-
-  results.push(gameData);
-  localStorage.setItem("gameResults", JSON.stringify(results));
-
-  achievementSystem.handleGameCompletion(gameData);
+// Helper function to get display username
+function getDisplayUsername() {
+  const currentUser = window.getCurrentUser();
+  if (currentUser) {
+    // Return authenticated username
+    return localStorage.getItem("nerdtype_username") || "User";
+  } else {
+    // Return guest username
+    return localStorage.getItem("nerdtype_username") || "Guest";
+  }
 }
+
+// Optional: Save guest scores to separate collection
+window.saveGuestScoreToFirebase = async function (gameData) {
+  if (!window.firebaseModules || !database) {
+    console.error("❌ Firebase not initialized");
+    return Promise.reject("Firebase not ready");
+  }
+
+  const { ref, push } = window.firebaseModules;
+
+  try {
+    console.log("📝 Saving guest score to Firebase:", gameData);
+
+    const guestScoresRef = ref(database, "guestScores");
+    const result = await push(guestScoresRef, gameData);
+
+    console.log("✅ Guest score saved successfully! Key:", result.key);
+    return result;
+  } catch (error) {
+    console.error("❌ Error saving guest score:", error);
+    throw error;
+  }
+};
+
+// Update the score retrieval functions to handle authentication
+window.getTopScores = async function () {
+  if (!isDataCollectionEnabled()) {
+    console.log("📴 Data collection disabled - returning empty leaderboard");
+    return [];
+  }
+
+  const firebaseModules = window.firebaseModules;
+  if (!firebaseModules || !database) {
+    console.error("Firebase not ready for getTopScores");
+    return [];
+  }
+
+  const { ref, query, orderByChild, limitToLast, get } = firebaseModules;
+
+  try {
+    // Get authenticated scores only for main leaderboard
+    const scoresRef = ref(database, "scores");
+    const topScoresQuery = query(
+      scoresRef,
+      orderByChild("score"),
+      limitToLast(20), // Increase limit for better ranking
+    );
+    const snapshot = await get(topScoresQuery);
+
+    if (snapshot.exists()) {
+      const scores = [];
+      snapshot.forEach((childSnapshot) => {
+        const score = childSnapshot.val();
+        // Only include authenticated scores in main leaderboard
+        if (score.authenticatedScore === true) {
+          scores.push(score);
+        }
+      });
+      return scores.reverse(); // Highest scores first
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching authenticated scores:", error);
+    return [];
+  }
+};
 
 // Display previous results in scoreboard (only show last 20)
 function displayPreviousResults() {

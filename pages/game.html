@@ -78,6 +78,15 @@
         remove,
       } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
+      // Add Firebase Auth imports
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
       // Make Firebase modules available globally
       window.firebaseModules = {
         initializeApp,
@@ -91,13 +100,18 @@
         equalTo,
         set,
         remove,
+        // Add auth modules
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signOut,
       };
 
       // Initialize Firebase using the config file
       if (typeof window.initializeFirebaseApp === "function") {
         window.initializeFirebaseApp(window.firebaseModules);
       } else {
-        // If config file isn't loaded yet, wait for it
         document.addEventListener("DOMContentLoaded", () => {
           if (typeof window.initializeFirebaseApp === "function") {
             window.initializeFirebaseApp(window.firebaseModules);
@@ -106,6 +120,8 @@
       }
     </script>
     <script src="../js/firebase-config.js"></script>
+    <script src="../js/auth-handler.js"></script>
+    <script src="../js/ui-updates.js"></script>
   </head>
   <body class="d-flex flex-column h-100">
     <div class="container-fluid flex-grow-1">
@@ -176,49 +192,241 @@
           </button>
         </div>
       </nav>
-      <!-- Username Modal -->
+      <!-- Login/Register Modal -->
       <div
         class="modal fade"
-        id="usernameModal"
+        id="loginModal"
         data-bs-backdrop="static"
         data-bs-keyboard="false"
         tabindex="-1"
-        aria-labelledby="usernameModalLabel"
+        aria-labelledby="loginModalLabel"
         aria-hidden="true"
       >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header border-bottom-0 text-center">
-              <h5 class="modal-title w-100" id="usernameModalLabel">
+              <h5 class="modal-title w-100" id="loginModalLabel">
                 [MAINFRAME LOGIN SEQUENCE]
               </h5>
             </div>
             <div class="modal-body border-top-0 border-bottom-0">
               <pre class="terminal-output" style="margin-bottom: 20px">
 > INITIALIZING LOGIN SEQUENCE...
-> ENTER CODENAME TO CONTINUE:
-> <span style="color:#ff9e64;">PRIVACY NOTICE:</span> Codename will appear publicly on global leaderboards. Game scores and usernames are stored on secure servers for leaderboard functionality. No personal information is collected.
-$ </pre>
-              <input
-                type="text"
-                id="usernameInput"
-                class="form-control text-center"
-                style="background-color: #1a1b26; color: #c0caf5"
-                maxlength="20"
-                autocomplete="off"
-                spellcheck="false"
-              />
+> SECURE ACCESS REQUIRED...
+> <span style="color:#ff9e64;">PRIVACY NOTICE:</span> Your email is used only for authentication.
+</pre>
+
+              <!-- Login/Register Toggle Buttons -->
+              <div class="btn-group w-100 mb-3" role="group">
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="authMode"
+                  id="loginMode"
+                  checked
+                />
+                <label class="btn btn-outline-primary" for="loginMode"
+                  >LOGIN</label
+                >
+
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="authMode"
+                  id="registerMode"
+                />
+                <label class="btn btn-outline-primary" for="registerMode"
+                  >REGISTER</label
+                >
+              </div>
+
+              <!-- Login Form -->
+              <div id="loginForm">
+                <div class="mb-3">
+                  <label for="loginEmail" class="form-label terminal-label"
+                    >EMAIL:</label
+                  >
+                  <input
+                    type="email"
+                    class="form-control terminal-input"
+                    id="loginEmail"
+                    placeholder="your@email.com"
+                    autocomplete="off"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="loginPassword" class="form-label terminal-label"
+                    >PASSWORD:</label
+                  >
+                  <input
+                    type="password"
+                    class="form-control terminal-input"
+                    id="loginPassword"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+                <div
+                  id="loginError"
+                  class="error-message"
+                  style="display: none"
+                ></div>
+              </div>
+
+              <!-- Register Form -->
+              <div id="registerForm" style="display: none">
+                <div class="mb-3">
+                  <label for="registerEmail" class="form-label terminal-label"
+                    >EMAIL:</label
+                  >
+                  <input
+                    type="email"
+                    class="form-control terminal-input"
+                    id="registerEmail"
+                    placeholder="your@email.com"
+                    autocomplete="off"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label
+                    for="registerUsername"
+                    class="form-label terminal-label"
+                    >USERNAME:</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control terminal-input"
+                    id="registerUsername"
+                    placeholder="Enter username (2-20 characters)"
+                    maxlength="20"
+                    required
+                  />
+                  <div id="usernameAvailability" class="username-status"></div>
+                </div>
+                <div class="mb-3">
+                  <label
+                    for="registerPassword"
+                    class="form-label terminal-label"
+                    >PASSWORD:</label
+                  >
+                  <input
+                    type="password"
+                    class="form-control terminal-input"
+                    id="registerPassword"
+                    placeholder="••••••••"
+                    minlength="6"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="confirmPassword" class="form-label terminal-label"
+                    >CONFIRM PASSWORD:</label
+                  >
+                  <input
+                    type="password"
+                    class="form-control terminal-input"
+                    id="confirmPassword"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+                <div
+                  id="registerError"
+                  class="error-message"
+                  style="display: none"
+                ></div>
+              </div>
+
+              <!-- Loading indicator -->
+              <div id="authLoading" class="text-center" style="display: none">
+                <div class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <span class="ms-2">Processing...</span>
+              </div>
             </div>
+
             <div
               class="modal-footer border-top-0 d-flex justify-content-center"
-              style="background-color: #24283b"
+            >
+              <button id="authSubmitBtn" type="button" class="btn btn-primary">
+                LOGIN
+              </button>
+              <button
+                id="skipAuthBtn"
+                type="button"
+                class="btn btn-secondary ms-2"
+              >
+                CONTINUE AS GUEST
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Username Setup Modal (for authenticated users without username) -->
+      <div
+        class="modal fade"
+        id="usernameSetupModal"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="usernameSetupModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header border-bottom-0 text-center">
+              <h5 class="modal-title w-100" id="usernameSetupModalLabel">
+                [USERNAME CONFIGURATION]
+              </h5>
+            </div>
+            <div class="modal-body border-top-0 border-bottom-0">
+              <pre class="terminal-output" style="margin-bottom: 20px">
+> AUTHENTICATION SUCCESSFUL
+> CONFIGURE YOUR DISPLAY NAME:
+> <span style="color:#ff9e64;">NOTE:</span> Username will appear on global leaderboards
+        </pre>
+
+              <div class="mb-3">
+                <label for="setupUsername" class="form-label terminal-label"
+                  >USERNAME:</label
+                >
+                <input
+                  type="text"
+                  class="form-control terminal-input"
+                  id="setupUsername"
+                  placeholder="Enter unique username"
+                  maxlength="20"
+                  required
+                />
+                <div class="form-text">
+                  2-20 characters. Cannot be changed later.
+                </div>
+                <div
+                  id="setupUsernameAvailability"
+                  class="username-status"
+                ></div>
+              </div>
+
+              <div
+                id="setupError"
+                class="error-message"
+                style="display: none"
+              ></div>
+            </div>
+
+            <div
+              class="modal-footer border-top-0 d-flex justify-content-center"
             >
               <button
-                id="confirmUsername"
+                id="confirmSetupUsername"
                 type="button"
                 class="btn btn-primary"
               >
-                Confirm
+                CONFIRM USERNAME
               </button>
             </div>
           </div>
@@ -343,6 +551,64 @@ $ </pre>
         </div>
       </div>
     </footer>
+
+    <!-- Custom Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="customConfirmModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-dialog-centered"
+        style="transform: translateY(-25%)"
+      >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalTitle">Confirm Action</h5>
+          </div>
+          <div class="modal-body">
+            <p id="confirmModalMessage">Are you sure you want to proceed?</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="confirmCancelBtn"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-primary" id="confirmOkBtn">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div
+      class="modal fade"
+      id="customAlertModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="alertModalTitle">Notice</h5>
+          </div>
+          <div class="modal-body">
+            <p id="alertModalMessage">This is an alert message.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="alertOkBtn">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Game Over Modal -->
     <div
@@ -686,6 +952,7 @@ $ </pre>
                           practice</small
                         >
                       </div>
+                      <br />
                       <div class="form-check form-switch">
                         <input
                           class="form-check-input"
@@ -1255,6 +1522,7 @@ $ </pre>
     <script src="../js/keyboard-nav.js"></script>
     <script src="../js/version.js"></script>
     <script src="../js/cursor-selection.js"></script>
+    <script src="../js/custom-modals.js"></script>
     <script type="module" src="../js/game-commands.js"></script>
     <script>
       // Add event listener for the scoreboard button

@@ -1,6 +1,6 @@
-// firebase-config.js - Firebase v9 configuration and functions
+// firebase-config.js - Enhanced with Firebase Auth
 
-// Firebase configuration
+// Firebase configuration (keep your existing config)
 const firebaseConfig = {
   apiKey: "AIzaSyD40pIb2RoLbGYVE7mpbS5eN4rcsP742gE",
   authDomain: "nerdtype-leaderboard.firebaseapp.com",
@@ -12,20 +12,27 @@ const firebaseConfig = {
   appId: "1:880144823417:web:c567724792c6e37647d0a8",
 };
 
-// This will be set when Firebase initializes
+// Global variables
 let firebaseApp = null;
 let database = null;
+let auth = null;
+let currentUser = null;
 
 function isDataCollectionEnabled() {
   const setting = localStorage.getItem("data_collection_enabled");
-  return setting === null || setting === "true"; // Default to enabled
+  return setting === null || setting === "true";
 }
 
-// Initialize Firebase (called from HTML module)
+// Enhanced Firebase initialization with Auth
 window.initializeFirebaseApp = function (firebaseModules) {
   const {
     initializeApp,
     getDatabase,
+    getAuth,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    signOut,
     ref,
     push,
     query,
@@ -33,16 +40,30 @@ window.initializeFirebaseApp = function (firebaseModules) {
     limitToLast,
     get,
     equalTo,
+    set,
+    remove,
   } = firebaseModules;
 
   try {
     console.log("🔥 Initializing Firebase...");
     firebaseApp = initializeApp(firebaseConfig);
     database = getDatabase(firebaseApp);
+    auth = getAuth(firebaseApp);
+
+    // Make database and auth globally available
+    window.database = database;
+    window.auth = auth;
+
     console.log("✅ Firebase initialized successfully");
 
+    // Set up auth state listener
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      handleAuthStateChange(user);
+    });
+
     // Test connection
-    testConnection(firebaseModules);
+    testConnection({ ref, set, remove });
   } catch (error) {
     console.error("❌ Firebase initialization error:", error);
   }
@@ -67,49 +88,219 @@ async function testConnection(firebaseModules) {
   }
 }
 
-// Save score to Firebase
-window.saveScoreToFirebase = async function (gameData) {
-  if (!isDataCollectionEnabled()) {
-    console.log("📴 Data collection disabled - score not saved to Firebase");
-    return Promise.resolve({ key: "local-only" }); // Return success-like response
-  }
-  // Wait for Firebase modules to be available
-  const firebaseModules = window.firebaseModules;
-  if (!firebaseModules || !database) {
-    console.error("❌ Firebase not initialized or modules not available");
-    return Promise.reject("Firebase not ready");
-  }
+// Handle authentication state changes - FIXED TO RESPECT FONT SETTINGS
+function handleAuthStateChange(user) {
+  const usernameDisplay = document.getElementById("usernameDisplay");
+  const changeUsernameBtn = document.getElementById("changeUsername");
 
-  const { ref, push } = firebaseModules;
+  if (user) {
+    console.log("✅ User logged in:", user.email);
 
-  try {
-    console.log("💾 Saving score to Firebase:", gameData);
+    // Use email username (part before @) as display name
+    const emailUsername = user.email.split("@")[0];
 
-    // Check for reserved username BEFORE saving
-    if (!canUseUsername(gameData.username)) {
-      console.log(
-        `Username "${gameData.username}" is reserved - using Anonymous`,
-      );
-      gameData.username = "Anonymous";
+    // Update displays immediately
+    if (usernameDisplay) {
+      usernameDisplay.textContent = emailUsername;
+      // FIXED: Use current font setting instead of hardcoded font
+      const currentFont =
+        localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+      usernameDisplay.style.fontFamily = currentFont + " !important";
     }
 
-    const scoresRef = ref(database, "scores");
-    const result = await push(scoresRef, gameData);
+    // Store for game use
+    localStorage.setItem("nerdtype_username", emailUsername);
+    window.playerUsername = emailUsername;
 
-    console.log("✅ Score saved successfully! Key:", result.key);
+    // Clear guest mode
+    localStorage.removeItem("nerdtype_guest_mode");
+
+    console.log("🎮 User ready to play as:", emailUsername);
+
+    // FIXED: Apply current font setting for all game elements after login
+    setTimeout(() => {
+      const currentFont =
+        localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+
+      const gameElements = document.querySelectorAll(
+        "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area",
+      );
+      gameElements.forEach((element) => {
+        if (element) {
+          element.style.fontFamily = currentFont + " !important";
+        }
+      });
+
+      // FIXED: Set CSS variable to current font instead of hardcoded jetbrains-mono
+      document.documentElement.style.setProperty("--game-font", currentFont);
+    }, 200);
+  } else {
+    console.log("❌ User logged out");
+
+    // Clear user data
+    localStorage.removeItem("nerdtype_username");
+    window.playerUsername = "";
+
+    // Update displays
+    if (usernameDisplay) {
+      usernameDisplay.textContent = "Login";
+      // FIXED: Use current font setting instead of hardcoded font
+      const currentFont =
+        localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+      usernameDisplay.style.fontFamily = currentFont + " !important";
+    }
+
+    // FIXED: Apply current font setting for all game elements after logout
+    setTimeout(() => {
+      const currentFont =
+        localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+
+      const gameElements = document.querySelectorAll(
+        "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area",
+      );
+      gameElements.forEach((element) => {
+        if (element) {
+          element.style.fontFamily = currentFont + " !important";
+        }
+      });
+
+      // FIXED: Set CSS variable to current font instead of hardcoded jetbrains-mono
+      document.documentElement.style.setProperty("--game-font", currentFont);
+    }, 200);
+
+    // DO NOT automatically show login modal - let user choose when to login
+    console.log("User can click the login button when ready");
+  }
+}
+
+// Load user profile from database
+async function loadUserProfile(uid) {
+  const { ref, get } = window.firebaseModules;
+
+  try {
+    const userRef = ref(database, `users/${uid}`);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      const userData = snapshot.val();
+      return userData;
+    }
+    return null;
+  } catch (error) {
+    console.error("❌ Error loading user profile:", error);
+    return null;
+  }
+}
+
+// Save game score to Firebase for guest users
+window.saveGuestScore = async function (gameData) {
+  if (!isDataCollectionEnabled()) {
+    console.log("📴 Data collection disabled - score not saved to Firebase");
+    return Promise.resolve({ key: "local-only" });
+  }
+
+  const { ref, push } = window.firebaseModules;
+
+  try {
+    console.log("💾 Saving guest score to Firebase:", gameData);
+
+    // Enhanced game data for guest
+    const enhancedGameData = {
+      ...gameData,
+      authenticatedScore: false,
+      guestSubmission: true,
+      submittedAt: new Date().toISOString(),
+    };
+
+    const scoresRef = ref(database, "scores");
+    const result = await push(scoresRef, enhancedGameData);
+
+    console.log("✅ Guest score saved successfully! Key:", result.key);
     return result;
   } catch (error) {
-    console.error("❌ Error saving score:", error);
+    console.error("❌ Error saving guest score:", error);
     throw error;
   }
 };
 
-// Get top 10 scores
+// Save game score to Firebase for authenticated users
+window.saveAuthenticatedScore = async function (gameData) {
+  if (!isDataCollectionEnabled()) {
+    console.log("📴 Data collection disabled - score not saved to Firebase");
+    return Promise.resolve({ key: "local-only" });
+  }
+
+  if (!currentUser) {
+    console.log(
+      "❌ User not authenticated - score not saved to global leaderboard",
+    );
+    return Promise.resolve({ key: "guest-only" });
+  }
+
+  const { ref, push } = window.firebaseModules;
+
+  try {
+    console.log("💾 Saving authenticated score to Firebase:", gameData);
+
+    // Enhanced game data with user ID and email username
+    const emailUsername = currentUser.email.split("@")[0];
+    const enhancedGameData = {
+      ...gameData,
+      username: emailUsername, // Use email username
+      userId: currentUser.uid,
+      userEmail: currentUser.email,
+      authenticatedScore: true,
+      submittedAt: new Date().toISOString(),
+    };
+
+    const scoresRef = ref(database, "scores");
+    const result = await push(scoresRef, enhancedGameData);
+
+    console.log("✅ Authenticated score saved successfully! Key:", result.key);
+    return result;
+  } catch (error) {
+    console.error("❌ Error saving authenticated score:", error);
+    throw error;
+  }
+};
+
+window.saveScoreToFirebase = async function (gameData) {
+  if (!isDataCollectionEnabled()) {
+    console.log("📴 Data collection disabled - score not saved to Firebase");
+    return Promise.resolve({ key: "local-only" });
+  }
+
+  // Check if Firebase is ready
+  if (!window.firebaseModules || !database) {
+    console.error("❌ Firebase not ready, cannot save score");
+    return Promise.reject("Firebase not initialized");
+  }
+
+  try {
+    const currentUser = window.getCurrentUser();
+
+    if (currentUser) {
+      console.log("💾 Saving authenticated score...");
+      // Use the existing saveAuthenticatedScore function
+      return await window.saveAuthenticatedScore(gameData);
+    } else {
+      console.log("💾 Saving guest score...");
+      // Use the existing saveGuestScore function
+      return await window.saveGuestScore(gameData);
+    }
+  } catch (error) {
+    console.error("❌ Error saving score to Firebase:", error);
+    throw error;
+  }
+};
+
+// Update the score retrieval functions to handle authentication
 window.getTopScores = async function () {
   if (!isDataCollectionEnabled()) {
     console.log("📴 Data collection disabled - returning empty leaderboard");
     return [];
   }
+
   const firebaseModules = window.firebaseModules;
   if (!firebaseModules || !database) {
     console.error("Firebase not ready for getTopScores");
@@ -119,151 +310,191 @@ window.getTopScores = async function () {
   const { ref, query, orderByChild, limitToLast, get } = firebaseModules;
 
   try {
+    // Get authenticated scores only for main leaderboard
     const scoresRef = ref(database, "scores");
     const topScoresQuery = query(
       scoresRef,
       orderByChild("score"),
-      limitToLast(10),
+      limitToLast(20), // Increase limit for better ranking
     );
     const snapshot = await get(topScoresQuery);
 
     if (snapshot.exists()) {
       const scores = [];
       snapshot.forEach((childSnapshot) => {
-        scores.push(childSnapshot.val());
+        const score = childSnapshot.val();
+        // Only include authenticated scores in main leaderboard
+        if (score.authenticatedScore === true) {
+          scores.push(score);
+        }
       });
       return scores.reverse(); // Highest scores first
     }
     return [];
   } catch (error) {
-    console.error("Error fetching scores:", error);
+    console.error("Error fetching authenticated scores:", error);
     return [];
   }
 };
 
-// Get top scores for a specific mode
-window.getTopScoresByMode = async function (mode) {
-  // Check if data collection is enabled
-  if (!isDataCollectionEnabled()) {
-    console.log(
-      "📴 Data collection disabled - returning empty leaderboard by mode",
+// ADDED: Authentication functions that were missing
+window.loginUser = async function (email, password) {
+  const { signInWithEmailAndPassword } = window.firebaseModules;
+
+  try {
+    console.log("🔐 Attempting login for:", email);
+
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
     );
-    return [];
-  }
-  const firebaseModules = window.firebaseModules;
-  if (!firebaseModules || !database) {
-    console.error("Firebase not ready for getTopScoresByMode");
-    return [];
-  }
+    const user = userCredential.user;
 
-  const { ref, query, orderByChild, equalTo, get } = firebaseModules;
-
-  try {
-    const scoresRef = ref(database, "scores");
-    const modeQuery = query(scoresRef, orderByChild("mode"), equalTo(mode));
-    const snapshot = await get(modeQuery);
-
-    if (snapshot.exists()) {
-      const scores = [];
-      snapshot.forEach((childSnapshot) => {
-        scores.push(childSnapshot.val());
-      });
-      return scores.sort((a, b) => b.score - a.score).slice(0, 10);
-    }
-    return [];
+    console.log("✅ Login successful:", user.email);
+    return { success: true, user: user };
   } catch (error) {
-    console.error("Error fetching scores by mode:", error);
-    return [];
+    console.error("❌ Login error:", error);
+
+    let errorMessage = "Login failed. Please try again.";
+    if (error.code === "auth/user-not-found") {
+      errorMessage = "No account found with this email.";
+    } else if (error.code === "auth/wrong-password") {
+      errorMessage = "Incorrect password.";
+    } else if (error.code === "auth/invalid-email") {
+      errorMessage = "Please enter a valid email address.";
+    } else if (error.code === "auth/too-many-requests") {
+      errorMessage = "Too many failed attempts. Please try again later.";
+    }
+
+    return { success: false, error: errorMessage };
   }
 };
 
-// Display global high scores (for modal)
-window.displayGlobalHighScores = async function () {
-  const highScoresContainer = document.getElementById("globalHighScores");
-  if (!highScoresContainer) {
-    console.log("globalHighScores container not found");
-    return;
-  }
-
-  if (!isDataCollectionEnabled()) {
-    highScoresContainer.innerHTML =
-      '<li style="color: #565f89; font-style: italic;">Global leaderboards disabled. Enable "Share game data for leaderboards" in Settings to view global scores.</li>';
-    return;
-  }
-
-  highScoresContainer.innerHTML =
-    '<li style="color: #565f89; font-style: italic;">Loading global high scores...</li>';
+window.registerUser = async function (email, password) {
+  const { createUserWithEmailAndPassword } = window.firebaseModules;
 
   try {
-    const topScores = await window.getTopScores();
+    console.log("📝 Attempting registration for:", email);
 
-    highScoresContainer.innerHTML = "";
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    const user = userCredential.user;
 
-    if (topScores.length === 0) {
-      highScoresContainer.innerHTML =
-        '<li style="color: #565f89; font-style: italic;">No global scores yet. Be the first!</li>';
-      return;
+    console.log("✅ Registration successful:", user.email);
+    return { success: true, user: user };
+  } catch (error) {
+    console.error("❌ Registration error:", error);
+
+    let errorMessage = "Registration failed. Please try again.";
+    if (error.code === "auth/email-already-in-use") {
+      errorMessage =
+        "This email is already registered. Try logging in instead.";
+    } else if (error.code === "auth/weak-password") {
+      errorMessage = "Password is too weak. Please use at least 6 characters.";
+    } else if (error.code === "auth/invalid-email") {
+      errorMessage = "Please enter a valid email address.";
     }
 
-    topScores.forEach((score, index) => {
-      const scoreItem = document.createElement("li");
-      const rank = index + 1;
-      const rankEmoji = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3;
-
-      const date = new Date(score.date || score.timestamp).toLocaleDateString(
-        "en-GB",
-      );
-      const wordListName = score.wordList || "";
-      const wordListInfo = wordListName ? ` | ${wordListName}` : "";
-
-      scoreItem.innerHTML = `
-        <span style="color: #7aa2f7; font-weight: bold;">${rankEmoji} #${rank}</span> 
-        <span style="color: #9ece6a;">${score.username || "Anonymous"}</span> | 
-        <span style="color: #ff9e64;">Score: ${score.score || 0}</span> | 
-        <span style="color: #7dcfff;">WPM: ${score.wpm || 0}</span> | 
-        <span style="color: #bb9af7;">Accuracy: ${score.accuracy || "N/A"}</span> | 
-        <span style="color: #565f89;">${date}${wordListInfo}</span>
-      `;
-
-      highScoresContainer.appendChild(scoreItem);
-    });
-  } catch (error) {
-    console.error("Error loading high scores:", error);
-    highScoresContainer.innerHTML =
-      '<li style="color: #f7768e; font-style: italic;">Error loading high scores. Please try again later.</li>';
+    return { success: false, error: errorMessage };
   }
 };
 
-console.log("🔥 Firebase config file loaded");
+// ADDED: This was the missing function causing the logout error
+window.logoutUser = async function () {
+  const { signOut } = window.firebaseModules;
 
-// Reserved usernames list
-const reservedUsernames = ["merkks", "admin", "moderator", "nerdtype"];
+  try {
+    console.log("🚪 Logging out user...");
 
-function isReservedUsername(username) {
-  return reservedUsernames.some(
-    (reserved) => username.toLowerCase() === reserved.toLowerCase(),
+    // Clear local storage first
+    localStorage.removeItem("nerdtype_username");
+    localStorage.removeItem("nerdtype_guest_mode");
+
+    // Clear global variables
+    window.playerUsername = "";
+    currentUser = null;
+
+    // Sign out from Firebase
+    if (auth) {
+      await signOut(auth);
+    }
+
+    console.log("✅ Logout successful");
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Logout error:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Show login modal
+window.showLoginModal = function () {
+  const loginModal = document.getElementById("loginModal");
+  if (loginModal) {
+    const modal = new bootstrap.Modal(loginModal);
+    modal.show();
+  }
+};
+
+// Show username setup modal for authenticated users without username
+function showUsernameSetupModal() {
+  const usernameModal = document.getElementById("usernameModal");
+  if (usernameModal) {
+    const modal = new bootstrap.Modal(usernameModal);
+    modal.show();
+  }
+}
+
+// Get current authenticated user
+window.getCurrentUser = function () {
+  return currentUser;
+};
+
+// Check if user is authenticated
+window.isUserAuthenticated = function () {
+  return currentUser !== null;
+};
+
+// Add font change listener to update fonts when user changes them in settings
+window.addEventListener("fontChanged", function (event) {
+  console.log("🎨 Font changed to:", event.detail.fontFamily);
+
+  // Apply the new font immediately to all elements
+  const gameElements = document.querySelectorAll(
+    "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area, #usernameDisplay",
   );
-}
+  gameElements.forEach((element) => {
+    if (element) {
+      element.style.fontFamily = event.detail.fontFamily + " !important";
+    }
+  });
 
-// Secret admin mode
-let isAdminMode = localStorage.getItem("nerdtype_admin") === "true";
+  // Update CSS variable
+  document.documentElement.style.setProperty(
+    "--game-font",
+    event.detail.fontFamily,
+  );
+});
 
-window.enableAdminMode = function (secretKey) {
-  if (secretKey === "nerdtype2025") {
-    // Your secret password
-    isAdminMode = true;
-    localStorage.setItem("nerdtype_admin", "true");
-    console.log('👑 Admin mode activated - you can now use "merkks"');
-    return true;
-  }
-  return false;
+// Function to reapply current font whenever needed
+window.reapplyCurrentFont = function () {
+  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+
+  const gameElements = document.querySelectorAll(
+    "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area, #usernameDisplay",
+  );
+  gameElements.forEach((element) => {
+    if (element) {
+      element.style.fontFamily = currentFont + " !important";
+    }
+  });
+
+  document.documentElement.style.setProperty("--game-font", currentFont);
+  console.log("🎨 Reapplied font:", currentFont);
 };
 
-function canUseUsername(username) {
-  // Check if trying to use "merkks"
-  if (username.toLowerCase() === "merkks") {
-    return isAdminMode; // Only allow if admin mode is active
-  }
-  // Block other reserved usernames
-  return !isReservedUsername(username);
-}
+console.log("🔥 Firebase config file loaded with authentication");
