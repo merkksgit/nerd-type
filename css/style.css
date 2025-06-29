@@ -34,7 +34,6 @@
 #progressPercentage,
 #resetBtn,
 #startButton,
-#usernameDisplay,
 .game-interface,
 .typing-area {
   font-family: var(--game-font, "jetbrains-mono") !important;
