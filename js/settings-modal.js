@@ -290,29 +290,17 @@ function updateDataCollectionSettingVisibility() {
 
   // Check if user is authenticated
   const currentUser = window.getCurrentUser && window.getCurrentUser();
-  const isAuthenticated = currentUser !== null;
+  const isAuthenticated = currentUser != null;
 
-  if (isAuthenticated) {
-    // User is logged in - show and enable the setting
-    dataCollectionContainer.style.display = "block";
-    dataCollectionToggle.disabled = false;
-    dataCollectionContainer.style.opacity = "1";
+  // Always show the setting as enabled and clickable
+  dataCollectionContainer.style.display = "block";
+  dataCollectionToggle.disabled = false;
+  dataCollectionContainer.style.opacity = "1";
 
-    if (dataCollectionLabel) {
-      dataCollectionLabel.innerHTML = `
-        Share game data for leaderboards
-      `;
-    }
-  } else {
-    dataCollectionContainer.style.opacity = "0.8";
-    dataCollectionToggle.disabled = true;
-    dataCollectionToggle.checked = false;
-
-    if (dataCollectionLabel) {
-      dataCollectionLabel.innerHTML = `
-        Share game data for leaderboards (requires login)
-      `;
-    }
+  if (dataCollectionLabel) {
+    dataCollectionLabel.innerHTML = `
+      Share game data for leaderboards
+    `;
   }
 }
 

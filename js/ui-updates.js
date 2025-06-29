@@ -150,12 +150,10 @@ window.logoutAndRedirect = async function () {
 
     console.log("✅ Successfully logged out");
 
-    // Update displays immediately
+    // Update displays immediately (but DON'T update data collection setting)
     updateUsernameButtonDisplay();
     updateScoreboardDisplay();
 
-    // DO NOT automatically show login modal after logout
-    // Let the user decide when they want to login again
     console.log("User logged out - login available on demand");
   } catch (error) {
     console.error("❌ Logout error:", error);
