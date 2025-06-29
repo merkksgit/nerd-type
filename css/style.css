@@ -1618,6 +1618,26 @@ div#wordToType,
   max-height: 90vh !important;
 }
 
+/* Terminal input field - remove all borders and styling */
+#terminalModal #terminalInput {
+  background-color: #24283b !important;
+  border: none !important;
+  color: #ffffff !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+#terminalModal #terminalInput:focus,
+#terminalModal #terminalInput:active {
+  background-color: #24283b !important;
+  border: none !important;
+  color: #ffffff !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
 /* terminal-modal */
 @media (max-width: 576px) {
   #terminalModal .terminal-container {
@@ -2298,11 +2318,6 @@ div#wordToType,
 
 /* Placeholders in login modal */
 #loginModal input::placeholder {
-  color: #565f89 !important;
-  opacity: 1 !important;
-}
-
-#registerUsername input::placeholder {
   color: #565f89 !important;
   opacity: 1 !important;
 }

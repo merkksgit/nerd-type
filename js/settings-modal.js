@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize the settings modal
   initSettingsModal();
+  setupSettingsModalEvents();
 
   // Add event listener to the settings button
   const settingsButton = document.getElementById("openSettingsBtn");
@@ -11,6 +12,24 @@ document.addEventListener("DOMContentLoaded", function () {
   // Initialize sound settings
   initSoundSettings();
 });
+
+function setupSettingsModalEvents() {
+  const settingsModal = document.getElementById("settingsModal");
+
+  if (settingsModal) {
+    // Load settings when modal is actually shown (this fixes the reset issue)
+    settingsModal.addEventListener("shown.bs.modal", function () {
+      console.log("Settings modal shown, loading current settings...");
+      loadSettings();
+    });
+
+    // Also load when modal is about to be shown for good measure
+    settingsModal.addEventListener("show.bs.modal", function () {
+      console.log("Settings modal about to show, pre-loading settings...");
+      loadSettings();
+    });
+  }
+}
 
 function initSettingsModal() {
   // Get the buttons
@@ -94,7 +113,7 @@ function initSettingsModal() {
 
   loadSettings();
   setupInputChangeListeners();
-  setupRealTimeValidation(); // Add real-time validation
+  setupRealTimeValidation();
 }
 
 const zenModeToggle = document.getElementById("zenModeToggle");
@@ -116,23 +135,29 @@ if (zenModeToggle) {
 }
 
 function openSettingsModal() {
-  // Load current settings before opening
-  loadSettings();
-
-  // Open the modal
+  // Open the modal first
   const settingsModal = new bootstrap.Modal(
     document.getElementById("settingsModal"),
   );
   settingsModal.show();
+
+  // Load settings with a small delay to ensure modal is ready
+  // This is a backup in case the Bootstrap events don't fire
+  setTimeout(() => {
+    loadSettings();
+  }, 100);
 }
 
 function loadSettings() {
+  console.log("Loading settings into modal...");
+
   // Set show spaces toggle
   const showSpacesToggle = document.getElementById("showSpacesToggle");
   if (showSpacesToggle) {
     showSpacesToggle.checked =
       localStorage.getItem("showSpacesAfterWords") === "true";
   }
+
   // Get saved settings or use defaults
   const gameSettings = JSON.parse(localStorage.getItem("terminalSettings")) || {
     timeLimit: 30,
@@ -140,8 +165,10 @@ function loadSettings() {
     initialTime: 10,
     goalPercentage: 100,
     currentMode: "classic",
-    zenWordGoal: 30, // Default zen mode word goal
+    zenWordGoal: 30,
   };
+
+  console.log("Current game settings:", gameSettings);
 
   // Load data collection setting (default is enabled)
   const dataCollectionEnabled = localStorage.getItem("data_collection_enabled");
@@ -151,6 +178,9 @@ function loadSettings() {
     dataCollectionToggle.checked =
       dataCollectionEnabled === null || dataCollectionEnabled === "true";
   }
+
+  // Update data collection visibility based on auth status
+  updateDataCollectionSettingVisibility();
 
   // Load language setting
   const currentLanguage =
@@ -163,9 +193,13 @@ function loadSettings() {
   }
 
   // Set form values
-  document.getElementById("wordsGoal").value = gameSettings.timeLimit;
-  document.getElementById("bonusEnergy").value = gameSettings.bonusTime;
-  document.getElementById("initialEnergy").value = gameSettings.initialTime;
+  const wordsGoalInput = document.getElementById("wordsGoal");
+  const bonusEnergyInput = document.getElementById("bonusEnergy");
+  const initialEnergyInput = document.getElementById("initialEnergy");
+
+  if (wordsGoalInput) wordsGoalInput.value = gameSettings.timeLimit;
+  if (bonusEnergyInput) bonusEnergyInput.value = gameSettings.bonusTime;
+  if (initialEnergyInput) initialEnergyInput.value = gameSettings.initialTime;
 
   // Set Zen Mode toggle
   const zenModeToggle = document.getElementById("zenModeToggle");
@@ -186,6 +220,7 @@ function loadSettings() {
   );
   if (modeRadio) {
     modeRadio.checked = true;
+    console.log("Set mode radio to:", gameSettings.currentMode);
   }
 
   // Load achievement sound setting
@@ -228,6 +263,8 @@ function loadSettings() {
 
   // Clear any validation states when loading settings
   clearAllValidationStates();
+
+  console.log("Settings loaded successfully");
 }
 
 function toggleCustomSettings(isCustom) {
@@ -269,7 +306,7 @@ function updateDataCollectionSettingVisibility() {
   } else {
     dataCollectionContainer.style.opacity = "0.8";
     dataCollectionToggle.disabled = true;
-    dataCollectionToggle.checked = false; // Force to off since it doesn't apply
+    dataCollectionToggle.checked = false;
 
     if (dataCollectionLabel) {
       dataCollectionLabel.innerHTML = `
@@ -277,25 +314,6 @@ function updateDataCollectionSettingVisibility() {
       `;
     }
   }
-}
-
-// Update the loadSettings function to call this
-function loadSettings() {
-  // ... existing loadSettings code ...
-
-  // Load data collection setting (default is enabled)
-  const dataCollectionEnabled = localStorage.getItem("data_collection_enabled");
-  const dataCollectionToggle = document.getElementById("dataCollectionToggle");
-
-  if (dataCollectionToggle) {
-    dataCollectionToggle.checked =
-      dataCollectionEnabled === null || dataCollectionEnabled === "true";
-  }
-
-  // ADD THIS LINE - Update visibility based on auth status
-  updateDataCollectionSettingVisibility();
-
-  // ... rest of existing loadSettings code ...
 }
 
 // Also update when auth state changes
@@ -307,49 +325,7 @@ function onAuthStateChange() {
   }
 }
 
-// Listen for auth state changes
-document.addEventListener("DOMContentLoaded", function () {
-  // Update when opening settings
-  const openSettingsBtn = document.getElementById("openSettingsBtn");
-  if (openSettingsBtn) {
-    openSettingsBtn.addEventListener("click", function () {
-      // Small delay to ensure modal is open
-      setTimeout(updateDataCollectionSettingVisibility, 100);
-    });
-  }
-
-  // Update when auth state changes
-  if (window.firebaseModules) {
-    const { onAuthStateChanged } = window.firebaseModules;
-    if (window.auth) {
-      onAuthStateChanged(window.auth, (user) => {
-        // Update data collection setting visibility when auth state changes
-        onAuthStateChange();
-      });
-    }
-  }
-});
-
-// Alternative: Add CSS to style the disabled state
-const disabledSettingCSS = `
-<style>
-.form-check:has(input:disabled) {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.form-check:has(input:disabled) label {
-  cursor: not-allowed;
-}
-
-.form-check:has(input:disabled) .text-warning {
-  color: #ffc107 !important;
-  font-size: 0.85rem;
-}
-</style>
-`;
-
-// Add the CSS to the page
+// Add CSS to style the disabled state
 if (!document.querySelector("#disabled-settings-style")) {
   const styleElement = document.createElement("style");
   styleElement.id = "disabled-settings-style";
@@ -432,72 +408,85 @@ function loadPresetValues(mode) {
   document.getElementById("initialEnergy").value = preset.initialTime;
 }
 
-function calculateDifficultyMultiplier() {
-  try {
-    // Reference values (classic mode settings)
-    const refTimeLimit = 30;
-    const refBonusTime = 3;
-    const refInitialTime = 10;
-
-    // Get current values
-    const timeLimit = parseFloat(document.getElementById("wordsGoal").value);
-    const bonusTime = parseFloat(document.getElementById("bonusEnergy").value);
-    const initialTime = parseFloat(
-      document.getElementById("initialEnergy").value,
-    );
-
-    // Calculate individual difficulty factors
-    // For timeLimit, MORE words (HIGHER limit) is HARDER
-    const timeLimitFactor = Math.min(3, Math.max(1, timeLimit) / refTimeLimit);
-
-    // For bonus and initial time, LOWER is HARDER
-    const bonusTimeFactor = Math.min(
-      3,
-      refBonusTime / Math.max(0.5, bonusTime),
-    );
-    const initialTimeFactor = Math.min(
-      3,
-      refInitialTime / Math.max(0.5, initialTime),
-    );
-
-    // Weighted calculation (balances the three factors)
-    const weightedMultiplier =
-      (timeLimitFactor * 1.5 +
-        bonusTimeFactor * 1.75 +
-        initialTimeFactor * 1.75) /
-      5;
-
-    // Normalize to a range with Classic at 1.0
-    return Math.max(0.5, Math.min(2.0, weightedMultiplier));
-  } catch (error) {
-    console.error("Error calculating difficulty multiplier:", error);
-    return 1.0;
-  }
-}
-
 function updateDifficultyMultiplier() {
-  // Calculate multiplier
-  const multiplier = calculateDifficultyMultiplier();
+  const wordsGoal = parseInt(document.getElementById("wordsGoal").value) || 30;
+  const bonusEnergy =
+    parseInt(document.getElementById("bonusEnergy").value) || 3;
+  const initialEnergy =
+    parseInt(document.getElementById("initialEnergy").value) || 10;
 
-  // Update display
-  const difficultyValueElement = document.getElementById("difficultyValue");
-  const difficultyBarElement = document.getElementById("difficultyBar");
+  // Calculate a simple difficulty score
+  const baseScore = wordsGoal;
+  const energyFactor =
+    (initialEnergy + bonusEnergy * (wordsGoal / 2)) / wordsGoal;
+  const difficultyScore = baseScore / energyFactor;
 
-  if (difficultyValueElement) {
-    difficultyValueElement.textContent = multiplier.toFixed(2) + "x";
-  }
-
-  if (difficultyBarElement) {
-    // Convert multiplier (0.5 to 2.0) to a percentage (0 to 100)
-    const percentage = ((multiplier - 0.5) / 1.5) * 100;
-    difficultyBarElement.style.width = `${percentage}%`;
-    difficultyBarElement.setAttribute("aria-valuenow", percentage);
+  const difficultyElement = document.getElementById("difficultyMultiplier");
+  if (difficultyElement) {
+    difficultyElement.textContent = difficultyScore.toFixed(1);
   }
 }
 
-// Validation helper functions
+function clearAllValidationStates() {
+  const inputs = document.querySelectorAll("#settingsModal input");
+  inputs.forEach((input) => {
+    input.classList.remove("is-invalid", "is-valid");
+  });
+
+  const errorElements = document.querySelectorAll("[id$='Error']");
+  errorElements.forEach((error) => {
+    error.style.display = "none";
+  });
+}
+
+function setupRealTimeValidation() {
+  const validationRules = {
+    wordsGoal: { min: 1, max: 200, name: "Words Goal" },
+    bonusEnergy: { min: 0, max: 50, name: "Bonus Energy" },
+    initialEnergy: { min: 1, max: 100, name: "Initial Energy" },
+    zenWordGoal: { min: 1, max: 500, name: "Zen Word Goal" },
+  };
+
+  const applyButton = document.getElementById("applySettingsBtn");
+
+  Object.entries(validationRules).forEach(([inputId, rules]) => {
+    const input = document.getElementById(inputId);
+    if (input) {
+      input.addEventListener("input", () => {
+        validateInput(inputId, rules.min, rules.max, rules.name);
+      });
+
+      // Clear validation state on focus (when user starts typing again)
+      input.addEventListener("focus", () => {
+        input.classList.remove("is-invalid", "is-valid");
+        const errorElement = document.getElementById(`${inputId}Error`);
+        if (errorElement) {
+          errorElement.style.display = "none";
+        }
+      });
+    }
+  });
+
+  // Add handlers for language radio buttons
+  const languageRadios = document.querySelectorAll(
+    'input[name="languageMode"]',
+  );
+  languageRadios.forEach((radio) => {
+    radio.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (applyButton) {
+          applyButton.click();
+        }
+      }
+    });
+  });
+}
+
 function validateInput(inputId, min, max, fieldName) {
   const input = document.getElementById(inputId);
+  if (!input) return true; // If input doesn't exist, consider it valid
+
   const value = parseInt(input.value);
   const errorElement =
     document.getElementById(`${inputId}Error`) || createErrorElement(inputId);
@@ -536,65 +525,6 @@ function createErrorElement(inputId) {
   }
 
   return errorElement;
-}
-
-function clearAllValidationStates() {
-  const inputs = ["wordsGoal", "bonusEnergy", "initialEnergy", "zenWordGoal"];
-  inputs.forEach((inputId) => {
-    const input = document.getElementById(inputId);
-    const errorElement = document.getElementById(`${inputId}Error`);
-
-    if (input) {
-      input.classList.remove("is-invalid", "is-valid");
-    }
-    if (errorElement) {
-      errorElement.style.display = "none";
-    }
-  });
-}
-
-function setupRealTimeValidation() {
-  // Add real-time validation listeners
-  const validationRules = {
-    wordsGoal: { min: 1, max: 100, name: "Words Goal" },
-    bonusEnergy: { min: 1, max: 10, name: "Bonus Energy" },
-    initialEnergy: { min: 5, max: 30, name: "Initial Energy" },
-    zenWordGoal: { min: 5, max: 100, name: "Zen Word Goal" },
-  };
-
-  Object.entries(validationRules).forEach(([inputId, rules]) => {
-    const input = document.getElementById(inputId);
-    if (input) {
-      // Validate on blur (when user leaves the field)
-      input.addEventListener("blur", () => {
-        validateInput(inputId, rules.min, rules.max, rules.name);
-      });
-
-      // Clear validation state on focus (when user starts typing again)
-      input.addEventListener("focus", () => {
-        input.classList.remove("is-invalid", "is-valid");
-        const errorElement = document.getElementById(`${inputId}Error`);
-        if (errorElement) {
-          errorElement.style.display = "none";
-        }
-      });
-    }
-  });
-
-  // Add handlers for language radio buttons
-  const languageRadios = document.querySelectorAll(
-    'input[name="languageMode"]',
-  );
-  languageRadios.forEach((radio) => {
-    radio.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        if (applyButton) {
-          applyButton.click();
-        }
-      }
-    });
-  });
 }
 
 function resetSettings() {
@@ -654,160 +584,118 @@ function applySettings() {
   if (dataCollectionToggle) {
     localStorage.setItem(
       "data_collection_enabled",
-      dataCollectionToggle.checked.toString(),
+      dataCollectionToggle.checked,
     );
   }
 
-  // Font selection
-  const selectedFont = document.querySelector(
-    'input[name="fontFamily"]:checked',
+  // Get form values
+  const wordsGoal = parseInt(document.getElementById("wordsGoal").value);
+  const bonusEnergy = parseInt(document.getElementById("bonusEnergy").value);
+  const initialEnergy = parseInt(
+    document.getElementById("initialEnergy").value,
   );
-  if (selectedFont) {
-    saveFontSetting(selectedFont.value);
-  }
+  const zenWordGoal =
+    parseInt(document.getElementById("zenWordGoal").value) || 30;
 
-  // Validate all inputs
+  // Validate all inputs with correct ranges
   let isValid = true;
 
-  // Validate Words Goal
-  if (!validateInput("wordsGoal", 1, 100, "Words Goal")) {
+  if (!validateInput("wordsGoal", 1, 200, "Words Goal")) {
+    isValid = false;
+  }
+  if (!validateInput("bonusEnergy", 0, 50, "Bonus Energy")) {
+    isValid = false;
+  }
+  if (!validateInput("initialEnergy", 1, 100, "Initial Energy")) {
+    isValid = false;
+  }
+  if (!validateInput("zenWordGoal", 1, 500, "Zen Word Goal")) {
     isValid = false;
   }
 
-  // Validate Bonus Energy
-  if (!validateInput("bonusEnergy", 1, 10, "Bonus Energy")) {
-    isValid = false;
-  }
-
-  // Validate Initial Energy
-  if (!validateInput("initialEnergy", 5, 30, "Initial Energy")) {
-    isValid = false;
-  }
-
-  // Validate Zen Word Goal if visible
-  const zenWordGoalElement = document.getElementById("zenWordGoal");
-  const zenModeSettings = document.getElementById("zenModeSettings");
-  if (
-    zenWordGoalElement &&
-    zenModeSettings &&
-    zenModeSettings.style.display !== "none"
-  ) {
-    if (!validateInput("zenWordGoal", 5, 100, "Zen Word Goal")) {
-      isValid = false;
-    }
-  }
-
-  // If validation fails, show error notification and return early
   if (!isValid) {
-    showSettingsNotification(
-      "Please correct the highlighted errors before applying settings",
-      "error",
-    );
-
-    // Focus on the first invalid input
-    const firstInvalidInput = document.querySelector(".is-invalid");
-    if (firstInvalidInput) {
-      firstInvalidInput.focus();
-    }
-
+    showSettingsNotification("Please fix validation errors", "error");
     return;
   }
 
+  // Create settings object
+  const gameSettings = {
+    timeLimit: wordsGoal,
+    bonusTime: bonusEnergy,
+    initialTime: initialEnergy,
+    goalPercentage: 100,
+    currentMode: selectedMode,
+    zenWordGoal: zenWordGoal,
+  };
+
+  // Save settings
+  localStorage.setItem("terminalSettings", JSON.stringify(gameSettings));
+
   // Save language setting
-  const currentLanguage =
-    localStorage.getItem("nerdtype_wordlist") || "english";
-  if (selectedLanguage !== currentLanguage) {
-    localStorage.setItem("nerdtype_wordlist", selectedLanguage);
+  localStorage.setItem("nerdtype_wordlist", selectedLanguage);
 
-    // Dispatch event for language change
-    window.dispatchEvent(
-      new CustomEvent("gameSettingsChanged", {
-        detail: { setting: "language", value: selectedLanguage },
-      }),
-    );
-  }
+  // Get zen mode toggle state
+  const zenModeEnabled = document.getElementById("zenModeToggle").checked;
+  localStorage.setItem("nerdtype_zen_mode", zenModeEnabled);
 
-  // Get values from inputs (now we know they're valid)
-  const timeLimit = parseInt(document.getElementById("wordsGoal").value);
-  const bonusTime = parseInt(document.getElementById("bonusEnergy").value);
-  const initialTime = parseInt(document.getElementById("initialEnergy").value);
+  // Get font setting
+  const selectedFont =
+    document.querySelector('input[name="fontFamily"]:checked')?.value ||
+    "jetbrains-mono";
+  saveFontSetting(selectedFont);
 
-  // Get Zen Mode word goal
-  const zenWordGoal = document.getElementById("zenWordGoal");
-  const zenWordGoalValue = zenWordGoal ? parseInt(zenWordGoal.value) : 30;
-
-  // Get achievement sound toggle state
+  // Get sound settings
   const achievementSoundEnabled = document.getElementById(
     "achievementSoundToggle",
   ).checked;
-
   const keypressSoundEnabled = document.getElementById(
     "keypressSoundToggle",
   ).checked;
 
-  // Get zen mode toggle state
-  const zenModeEnabled = document.getElementById("zenModeToggle").checked;
-
-  // Create settings object
-  const settings = {
-    timeLimit: timeLimit,
-    bonusTime: bonusTime,
-    initialTime: initialTime,
-    goalPercentage: 100, // Keep this for compatibility with existing code
-    currentMode: selectedMode,
-    zenWordGoal: zenWordGoalValue, // Add zen word goal to settings
-  };
-
-  // Save game settings
-  localStorage.setItem("terminalSettings", JSON.stringify(settings));
-
-  // Save zen mode toggle state
-  localStorage.setItem("nerdtype_zen_mode", zenModeEnabled);
-
-  // Save achievement sound setting
   localStorage.setItem("achievement_sound_enabled", achievementSoundEnabled);
-
-  // Save keypress sound setting
   localStorage.setItem("keypress_sound_enabled", keypressSoundEnabled);
 
-  // Update achievement sound globally if possible
-  if (typeof window.achievementSound !== "undefined") {
-    window.achievementSound.muted = !achievementSoundEnabled;
-  }
+  // Get show spaces toggle state
+  const showSpacesEnabled = document.getElementById("showSpacesToggle").checked;
+  localStorage.setItem("showSpacesAfterWords", showSpacesEnabled);
 
-  // Update keypress sound globally if possible
-  if (typeof window.keypressSound !== "undefined") {
-    window.keypressSound.muted = !keypressSoundEnabled;
-  }
+  // Dispatch events to update game settings in the correct order
+  // First update zen mode if needed
+  window.dispatchEvent(
+    new CustomEvent("gameSettingsChanged", {
+      detail: { setting: "zenMode", value: zenModeEnabled },
+    }),
+  );
 
-  // Dispatch events to update game settings
+  // Then update the game mode
   window.dispatchEvent(
     new CustomEvent("gameSettingsChanged", {
       detail: { setting: "currentMode", value: selectedMode },
     }),
   );
 
+  // Update individual settings
   window.dispatchEvent(
     new CustomEvent("gameSettingsChanged", {
-      detail: { setting: "timeLimit", value: timeLimit },
+      detail: { setting: "timeLimit", value: wordsGoal },
     }),
   );
 
   window.dispatchEvent(
     new CustomEvent("gameSettingsChanged", {
-      detail: { setting: "bonusTime", value: bonusTime },
+      detail: { setting: "bonusTime", value: bonusEnergy },
     }),
   );
 
   window.dispatchEvent(
     new CustomEvent("gameSettingsChanged", {
-      detail: { setting: "initialTime", value: initialTime },
+      detail: { setting: "initialTime", value: initialEnergy },
     }),
   );
 
   window.dispatchEvent(
     new CustomEvent("gameSettingsChanged", {
-      detail: { setting: "zenWordGoal", value: zenWordGoalValue },
+      detail: { setting: "zenWordGoal", value: zenWordGoal },
     }),
   );
 
@@ -825,12 +713,6 @@ function applySettings() {
     }),
   );
 
-  // Get show spaces toggle state
-  const showSpacesEnabled = document.getElementById("showSpacesToggle").checked;
-
-  // Save show spaces setting
-  localStorage.setItem("showSpacesAfterWords", showSpacesEnabled);
-
   // Dispatch event for show spaces setting
   window.dispatchEvent(
     new CustomEvent("gameSettingsChanged", {
@@ -846,7 +728,7 @@ function applySettings() {
     modal.hide();
   }
 
-  // Reload the page to apply settings
+  // Store pending notification for after reload
   localStorage.setItem(
     "pending_settings_notification",
     JSON.stringify({
@@ -855,8 +737,13 @@ function applySettings() {
     }),
   );
 
-  // Reload the page to apply settings
-  location.reload();
+  // Show immediate notification, then reload
+  showSettingsNotification("Applying settings...", "info");
+
+  // Reload the page to ensure all settings are properly applied
+  setTimeout(() => {
+    location.reload();
+  }, 500);
 }
 
 function initSoundSettings() {
@@ -884,88 +771,79 @@ function initSoundSettings() {
 
   // Setup global event listener to handle achievement sound initialization
   // This helps when the achievement sound is loaded after this script runs
-  window.addEventListener("achievement_sound_loaded", function (e) {
-    const soundEnabled = localStorage.getItem("achievement_sound_enabled");
-    if (e.detail && e.detail.sound && soundEnabled === "false") {
-      e.detail.sound.muted = true;
+  window.addEventListener("achievement_sound_loaded", function () {
+    if (typeof window.achievementSound !== "undefined") {
+      window.achievementSound.muted = !soundEnabled;
     }
   });
 
-  window.addEventListener("keypress_sound_loaded", function (e) {
-    const soundEnabled = localStorage.getItem("keypress_sound_enabled");
-    if (e.detail && e.detail.sound && soundEnabled === "false") {
-      e.detail.sound.muted = true;
+  window.addEventListener("keypress_sound_loaded", function () {
+    if (typeof window.keypressSound !== "undefined") {
+      window.keypressSound.muted = !keypressSoundEnabledBool;
     }
   });
-
-  // Also handle the achievement system if it's available
-  if (
-    typeof window.achievementSystem !== "undefined" &&
-    typeof window.achievementSystem.setAchievementSoundEnabled === "function"
-  ) {
-    window.achievementSystem.setAchievementSoundEnabled(soundEnabled);
-  }
 }
 
 function showSettingsNotification(message, type = "success") {
-  // Create notification container if it doesn't exist
-  let notificationContainer = document.getElementById("settings-notifications");
+  // Use the same notification system as the game commands
+  let notificationContainer = document.getElementById(
+    "game-command-notifications",
+  );
 
   if (!notificationContainer) {
     notificationContainer = document.createElement("div");
-    notificationContainer.id = "settings-notifications";
+    notificationContainer.id = "game-command-notifications";
     notificationContainer.style.position = "fixed";
     notificationContainer.style.bottom = "10px";
     notificationContainer.style.right = "10px";
     notificationContainer.style.zIndex = "9999";
     document.body.appendChild(notificationContainer);
 
-    // Add notification styles (matching game-command-notification styles)
-    const style = document.createElement("style");
-    style.textContent = `
-      .settings-notification {
-        padding: 10px 15px;
-        margin-bottom: 10px;
-        color: white;
-        max-width: 350px;
-        font-family: 'jetbrains-mono', monospace;
-        animation: fadeInOut 3s forwards;
-        box-shadow: 0 0 10px rgba(31, 35, 53, 1);
-      }
-      .settings-notification.success {
-        background-color: rgba(31, 35, 53, 1);
-        border-left: 4px solid #c3e88d;
-      }
-      .settings-notification.error {
-        background-color: rgba(31, 35, 53, 1);
-        border-left: 4px solid #ff007c;
-      }
-      .settings-notification.info {
-        background-color: rgba(31, 35, 53, 1);
-        border-left: 4px solid #7aa2f7;
-      }
-      @keyframes fadeInOut {
-        0% { opacity: 0; transform: translateX(20px); }
-        10% { opacity: 1; transform: translateX(0); }
-        90% { opacity: 1; transform: translateX(0); }
-        100% { opacity: 0; transform: translateX(20px); }
-      }
-    `;
-    document.head.appendChild(style);
+    if (!document.querySelector("#game-command-notification-styles")) {
+      const style = document.createElement("style");
+      style.id = "game-command-notification-styles";
+      style.textContent = `
+        .game-command-notification {
+          padding: 10px 15px;
+          margin-bottom: 10px;
+          color: white;
+          max-width: 350px;
+          animation: fadeInOut 3s forwards;
+          box-shadow: 0 0 10px rgba(31, 35, 53, 1);
+        }
+        .game-command-notification.success {
+          background-color: rgba(31, 35, 53, 1);
+          border-left: 4px solid #c3e88d;
+        }
+        .game-command-notification.error {
+          background-color: rgba(31, 35, 53, 1);
+          border-left: 4px solid #ff007c;
+        }
+        .game-command-notification.info {
+          background-color: rgba(31, 35, 53, 1);
+          border-left: 4px solid #7aa2f7;
+        }
+        @keyframes fadeInOut {
+          0% { opacity: 0; transform: translateX(20px); }
+          10% { opacity: 1; transform: translateX(0); }
+          90% { opacity: 1; transform: translateX(0); }
+          100% { opacity: 0; transform: translateX(20px); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
   }
 
   // Create and append the notification
   const notification = document.createElement("div");
-  notification.className = `settings-notification ${type}`;
+  notification.className = `game-command-notification ${type}`;
   notification.innerHTML = message;
   notificationContainer.appendChild(notification);
 
   // Remove after animation completes
   setTimeout(() => {
-    notification.remove();
-    // Remove container if empty
-    if (notificationContainer.children.length === 0) {
-      notificationContainer.remove();
+    if (notification && notification.parentNode) {
+      notification.remove();
     }
   }, 3000);
 }

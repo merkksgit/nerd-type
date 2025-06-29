@@ -337,7 +337,6 @@ window.getTopScores = async function () {
   }
 };
 
-// ADDED: Authentication functions that were missing
 window.loginUser = async function (email, password) {
   const { signInWithEmailAndPassword } = window.firebaseModules;
 
@@ -403,7 +402,6 @@ window.registerUser = async function (email, password) {
   }
 };
 
-// ADDED: This was the missing function causing the logout error
 window.logoutUser = async function () {
   const { signOut } = window.firebaseModules;
 
