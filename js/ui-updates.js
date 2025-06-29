@@ -59,10 +59,7 @@ async function handleLoginWithDelayedReload(user) {
 
     // Show success message using available alert method
     if (window.siteModal) {
-      window.siteModal.alert(
-        `Welcome back, ${emailUsername}!`,
-        "[LOGIN SUCCESFUL]",
-      );
+      window.siteModal.alert(`Welcome, ${emailUsername}!`, "[LOGIN SUCCESFUL]");
     } else {
       console.log(`Welcome back, ${emailUsername}!`);
     }

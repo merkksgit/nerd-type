@@ -1668,19 +1668,6 @@ function setupFormEventListeners(gameOverModal) {
     });
   }
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const submitBtn = document.getElementById("submitCustomScore");
-      if (submitBtn) {
-        submitBtn.click();
-      }
-    }
-  };
-
-  document.removeEventListener("keydown", handleKeyPress);
-  document.addEventListener("keydown", handleKeyPress);
-
   const submitBtn = document.getElementById("submitCustomScore");
   if (submitBtn) {
     submitBtn.addEventListener("click", function () {
@@ -1712,7 +1699,7 @@ function setupFormEventListeners(gameOverModal) {
       const time = timeInput.value;
       if (!validateTimeFormat(time)) {
         document.getElementById("timeError").textContent =
-          "Invalid time format. Use mm:ss (e.g. 1:30)";
+          "Invalid time format. Use mm:ss (e.g., 1:30)";
         timeInput.classList.add("is-invalid");
         isValid = false;
       } else {
@@ -1735,9 +1722,6 @@ function setupFormEventListeners(gameOverModal) {
 }
 
 // Save results for Classic Mode
-// Updated score submission logic in functions-classic.js
-// Replace the saveClassicResult function with this enhanced version
-
 function saveClassicResult(
   timeLeft,
   wpm,
