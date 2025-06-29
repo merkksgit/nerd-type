@@ -435,7 +435,7 @@ input#userInput {
 /* Custom input fields - Consistent sizing */
 #customTime,
 #customAccuracy,
-#customWPM {
+#customWpm {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: textfield;
@@ -471,7 +471,7 @@ input#userInput {
 /* Consistent focus styles */
 #customTime:focus,
 #customAccuracy:focus,
-#customWPM:focus,
+#customWpm:focus,
 .modal-body .form-control:focus {
   border-color: #3f4575;
   outline: none;
@@ -2322,6 +2322,37 @@ div#wordToType,
   border-top: none !important;
   justify-content: center !important;
   gap: 0.75rem !important;
+}
+
+body:not(.chart-page) #customAlertModal .modal-header {
+  border-bottom: none !important;
+}
+
+body:not(.chart-page) #customAlertModal .modal-footer {
+  border-top: none !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
+}
+
+/* Override the global modal-dialog positioning for alert modal - only on game.html */
+body:not(.chart-page) #customAlertModal .modal-dialog {
+  margin-top: 0 !important;
+  margin: 1.75rem auto !important;
+}
+
+/* Ensure the transform positioning works - only on game.html */
+body:not(.chart-page) #customAlertModal .modal-dialog.modal-dialog-centered {
+  transform: translateY(-25%) !important;
+}
+
+/* Center the alert message text - only on game.html */
+body:not(.chart-page) #customAlertModal .modal-body {
+  text-align: center !important;
+}
+
+body:not(.chart-page) #customAlertModal #alertModalMessage {
+  text-align: center !important;
+  margin: 0 auto !important;
 }
 
 /* Focus states */

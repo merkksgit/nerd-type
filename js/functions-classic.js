@@ -1603,17 +1603,17 @@ function showCheatModal() {
             <div class="mb-2">
               <label>WPM (0-300):</label>
               <input type="number" id="customWpm" class="form-control bg-dark text-light" min="0" max="300">
-              <div id="wpmError" class="invalid-feedback"></div>
+              <div id="wpmError" style="text-align: center" class="invalid-feedback"></div>
             </div>
             <div class="mb-2">
               <label>Accuracy (0-100%):</label>
               <input type="number" id="customAccuracy" class="form-control bg-dark text-light" min="0" max="100" step="0.1">
-              <div id="accuracyError" class="invalid-feedback"></div>
+              <div id="accuracyError" style="text-align: center" class="invalid-feedback"></div>
             </div>
             <div class="mb-2">
               <label>Time (mm:ss):</label>
               <input type="text" id="customTime" class="form-control bg-dark text-light">
-              <div id="timeError" class="invalid-feedback"></div>
+              <div id="timeError" style="text-align: center" class="invalid-feedback"></div>
             </div>
             <button id="submitCustomScore" class="btn btn-success pt-2">Submit</button>
           </div>

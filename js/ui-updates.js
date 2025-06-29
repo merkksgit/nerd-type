@@ -1,21 +1,117 @@
-// Updated button display logic with better logout and no separate logout button
-// Add this to your main game JavaScript or create a new file: ui-updates.js
+// Complete js/ui-updates.js with proper authentication timing
+// This fixes the issue where reload happens too early
 
 document.addEventListener("DOMContentLoaded", function () {
   // Update the change username button functionality
   updateUsernameButtonDisplay();
 
-  // Listen for authentication state changes
+  // Enhanced authentication state change handler with proper timing
   if (window.firebaseModules) {
     const { onAuthStateChanged } = window.firebaseModules;
     if (window.auth) {
+      let isInitialLoad = true;
+      let authProcessing = false;
+
       onAuthStateChanged(window.auth, (user) => {
-        updateUsernameButtonDisplay();
-        updateScoreboardDisplay();
+        console.log(
+          "🔄 Auth state changed:",
+          user ? "logged in" : "logged out",
+        );
+
+        // Don't reload on initial page load
+        if (isInitialLoad) {
+          isInitialLoad = false;
+          updateUsernameButtonDisplay();
+          updateScoreboardDisplay();
+          return;
+        }
+
+        // Don't trigger reload if we're already processing auth
+        if (authProcessing) {
+          console.log("⏳ Auth processing already in progress, skipping...");
+          return;
+        }
+
+        // Handle login/logout with strategic reload
+        if (user) {
+          handleLoginWithDelayedReload(user);
+        } else {
+          handleLogoutWithDelayedReload();
+        }
       });
     }
   }
 });
+
+// Mark auth as processing and handle login with delayed reload
+async function handleLoginWithDelayedReload(user) {
+  try {
+    window.authProcessing = true;
+    const emailUsername = user.email.split("@")[0];
+
+    console.log("✅ Login successful for:", emailUsername);
+
+    // Update localStorage immediately
+    localStorage.setItem("nerdtype_username", emailUsername);
+
+    // Quick UI update
+    updateUsernameButtonDisplay();
+
+    // Show success message using available alert method
+    if (window.siteModal) {
+      window.siteModal.alert(
+        `Welcome back, ${emailUsername}!`,
+        "[LOGIN SUCCESFUL]",
+      );
+    } else {
+      console.log(`Welcome back, ${emailUsername}!`);
+    }
+
+    // Wait longer to ensure Firebase auth is fully processed
+    setTimeout(() => {
+      console.log("🔄 Reloading page to refresh all game state...");
+      window.location.reload();
+    }, 3000); // Increased delay to 3 seconds
+  } catch (error) {
+    console.error("❌ Error in login handler:", error);
+    window.authProcessing = false;
+  }
+}
+
+// Handle logout with delayed reload
+async function handleLogoutWithDelayedReload() {
+  try {
+    window.authProcessing = true;
+
+    // Clear username from localStorage
+    localStorage.removeItem("nerdtype_username");
+    localStorage.removeItem("nerdtype_guest_mode");
+
+    // Quick UI update
+    updateUsernameButtonDisplay();
+    updateScoreboardDisplay();
+
+    console.log("✅ Logged out successfully");
+
+    // Show logout message
+    if (window.siteModal) {
+      window.siteModal.info(
+        "Logged out successfully. Refreshing...",
+        "Goodbye!",
+        2000,
+      );
+    }
+
+    // Reload after delay
+    setTimeout(() => {
+      console.log("🔄 Reloading page to reset game state...");
+      window.location.reload();
+    }, 2000);
+  } catch (error) {
+    console.error("❌ Error in logout handler:", error);
+    window.authProcessing = false;
+  }
+}
 
 function updateUsernameButtonDisplay() {
   const changeUsernameBtn = document.getElementById("changeUsername");
@@ -95,8 +191,6 @@ function updateUsernameButtonDisplay() {
     changeUsernameBtn.title = "Click to login or register";
   }
 }
-
-// Remove the separate logout button functionality - no longer needed
 
 function updateScoreboardDisplay() {
   // Update scoreboard messages based on auth status
