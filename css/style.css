@@ -1991,6 +1991,10 @@ div#wordToType,
   background-color: #bb9af7;
 }
 
+.news-category.issue {
+  background-color: #ff007c;
+}
+
 /* Card body */
 .news-card-body {
   padding: 16px 20px 20px 20px;
