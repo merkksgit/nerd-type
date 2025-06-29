@@ -108,7 +108,7 @@ class SiteModal {
   async confirmLogout(username) {
     return await this.confirm(
       `Logout from ${username}? This will end your current session.`,
-      "Confirm Logout",
+      "[CONFIRM LOGOUT]",
     );
   }
 

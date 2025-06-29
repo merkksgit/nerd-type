@@ -687,12 +687,6 @@ function initializeEventListeners() {
     });
   }
 
-  // Clear results button
-  const clearResultsBtn = document.getElementById("clearResultsBtn");
-  if (clearResultsBtn) {
-    clearResultsBtn.addEventListener("click", clearResults);
-  }
-
   // Setup username related items
   const changeUsernameBtn = document.getElementById("changeUsername");
   const confirmUsernameBtn = document.getElementById("confirmUsername");
@@ -2131,123 +2125,6 @@ function displayPreviousResults() {
       </td>
     `;
     tableBody.appendChild(infoRow);
-  }
-}
-
-// Clear results and set up modal
-function clearResults() {
-  localStorage.removeItem("gameResults");
-
-  const resultsContainer = document.getElementById("previousResults");
-  if (resultsContainer) {
-    resultsContainer.innerHTML = "";
-  }
-
-  const customAlertModal = document.getElementById("customAlertModal");
-  if (customAlertModal) {
-    const modal = new bootstrap.Modal(customAlertModal);
-    const modalBody = customAlertModal.querySelector(".modal-body");
-    const modalHeader = customAlertModal.querySelector(".modal-title");
-
-    // Set up terminal-style header
-    modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/user.data/]$`;
-
-    const terminalLines = [
-      "> INITIALIZING DELETION SEQUENCE...",
-      "> ACCESSING SCOREBOARD DATABASE...",
-      "> PREPARING DATA PURGE...",
-      "> ================================",
-      "> EXECUTING COMMANDS:",
-      "  └─ rm scoreboard.data",
-      `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
-      "> ================================",
-      "> LOCAL STORAGE CLEARED_",
-      "> PRESS [ENTER] OR [CLOSE] TO CONFIRM",
-      "> END OF TRANSMISSION_",
-    ];
-
-    let currentLine = 0;
-    let modalContent = "";
-    modalBody.innerHTML = '<pre class="terminal-output"></pre>';
-
-    // Initially hide the close button (same as game over modal)
-    const closeBtn = document.getElementById("clrResults");
-    if (closeBtn) {
-      closeBtn.style.visibility = "hidden";
-      closeBtn.style.opacity = "0";
-    }
-
-    function typeNextLine() {
-      if (currentLine < terminalLines.length) {
-        modalContent += terminalLines[currentLine] + "\n";
-        modalBody.querySelector(".terminal-output").innerHTML = modalContent;
-        currentLine++;
-        setTimeout(typeNextLine, 150);
-      } else {
-        // Show the close button immediately after text animation completes
-        if (closeBtn) {
-          closeBtn.style.visibility = "visible";
-          closeBtn.style.opacity = "1";
-          closeBtn.focus();
-        }
-      }
-    }
-
-    modal.show();
-
-    // Start typing animation after modal is fully shown (same as game over modal)
-    customAlertModal.addEventListener(
-      "shown.bs.modal",
-      function onShown() {
-        typeNextLine();
-        customAlertModal.removeEventListener("shown.bs.modal", onShown);
-      },
-      { once: true },
-    );
-
-    // Set up the event listeners for the modal
-    setupClearResultsModal();
-
-    // Add event listener for the close button
-    closeBtn.addEventListener("click", function () {
-      location.reload();
-    });
-
-    // Reset button visibility when modal is hidden (same as game over modal)
-    customAlertModal.addEventListener("hidden.bs.modal", () => {
-      if (closeBtn) {
-        closeBtn.style.visibility = "hidden";
-        closeBtn.style.opacity = "0";
-      }
-    });
-  }
-}
-
-// For the clear results modal, add enter key support
-function setupClearResultsModal() {
-  const customAlertModal = document.getElementById("customAlertModal");
-  const clearResultsButton = document.getElementById("clrResults");
-
-  if (customAlertModal && clearResultsButton) {
-    // Remove previous event listeners if they exist
-    customAlertModal.removeEventListener("keydown", handleClearResultsKeyPress);
-
-    // Add keydown event listener to the modal
-    customAlertModal.addEventListener("keydown", handleClearResultsKeyPress);
-  }
-}
-
-// Handler for enter key in clear results modal
-function handleClearResultsKeyPress(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    event.stopPropagation();
-
-    // Trigger the clear results button
-    const clearResultsButton = document.getElementById("clrResults");
-    if (clearResultsButton) {
-      clearResultsButton.click();
-    }
   }
 }
 

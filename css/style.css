@@ -2191,78 +2191,6 @@ div#wordToType,
   color: #24283b;
 }
 
-#customConfirmModal .modal-content,
-#customAlertModal .modal-content {
-  background-color: #24283b !important;
-  border: 2px solid #3b4261 !important;
-  border-radius: 8px !important;
-  color: #c0caf5 !important;
-  font-family: var(--game-font, "jetbrains-mono") !important;
-}
-
-#customConfirmModal .modal-header,
-#customAlertModal .modal-header {
-  background-color: #24283b !important;
-  border-bottom: 2px solid #3b4261 !important;
-  color: #7aa2f7 !important;
-}
-
-#customConfirmModal .modal-title,
-#customAlertModal .modal-title {
-  color: #7aa2f7 !important;
-  font-family: jetbrains-mono;
-  font-weight: bold;
-}
-
-#customConfirmModal .modal-body,
-#customAlertModal .modal-body {
-  background-color: #24283b !important;
-  color: #c0caf5 !important;
-  font-family: var(--game-font, "jetbrains-mono") !important;
-}
-
-#customConfirmModal .modal-footer,
-#customAlertModal .modal-footer {
-  background-color: #24283b !important;
-  border-top: 2px solid #3b4261 !important;
-}
-
-/* Button styling to match site theme */
-#customConfirmModal .btn-primary,
-#customAlertModal .btn-primary {
-  background-color: #7aa2f7 !important;
-  border-color: #7aa2f7 !important;
-  color: #1a1b26 !important;
-  font-family: var(--game-font, "jetbrains-mono") !important;
-  font-weight: bold !important;
-}
-
-#customConfirmModal .btn-primary:hover,
-#customAlertModal .btn-primary:hover {
-  background-color: #9bb5ff !important;
-  border-color: #9bb5ff !important;
-  color: #1a1b26 !important;
-}
-
-#customConfirmModal .btn-secondary {
-  background-color: #565f89 !important;
-  border-color: #565f89 !important;
-  color: #c0caf5 !important;
-  font-family: var(--game-font, "jetbrains-mono") !important;
-  font-weight: bold !important;
-}
-
-#customConfirmModal .btn-secondary:hover {
-  background-color: #6f7bb6 !important;
-  border-color: #6f7bb6 !important;
-  color: #c0caf5 !important;
-}
-
-/* Backdrop to match theme */
-.modal-backdrop {
-  background-color: rgba(26, 27, 38, 0.75) !important;
-}
-
 /* Login Modal Button Styling */
 #loginModal .btn-primary,
 #loginModal .btn-secondary,
@@ -2384,6 +2312,16 @@ div#wordToType,
 #loginModal .modal-footer {
   gap: 0.75rem !important;
   justify-content: center !important;
+}
+
+#customConfirmModal .modal-header {
+  border-bottom: none !important;
+}
+
+#customConfirmModal .modal-footer {
+  border-top: none !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
 }
 
 /* Focus states */

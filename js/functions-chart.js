@@ -155,10 +155,9 @@ function handleScoreboardKeyPress(event) {
 }
 
 // Updated handleClearResults function for js/functions-chart.js (chart.html page)
+// Updated handleClearResults function for js/functions-chart.js (chart.html page)
 function handleClearResults() {
-  localStorage.removeItem("gameResults");
-  document.getElementById("previousResults").innerHTML = "";
-  displayHighestAchievements();
+  // DON'T clear anything yet - just show the confirmation modal
 
   const customAlertModal = document.getElementById("customAlertModal");
   if (customAlertModal) {
@@ -211,6 +210,11 @@ function handleClearResults() {
 
     // Create a single handler for both Enter key and close button
     const handleModalClose = () => {
+      // MOVE THE ACTUAL CLEARING LOGIC HERE - after user confirms
+      localStorage.removeItem("gameResults");
+      document.getElementById("previousResults").innerHTML = "";
+      displayHighestAchievements();
+
       modal.hide();
       // Wait for modal to fully hide before reloading
       customAlertModal.addEventListener(
@@ -249,7 +253,7 @@ function handleClearResults() {
 
     modal.show();
 
-    // Start typing animation after modal is fully shown (same as game over modal)
+    // Start typing animation after modal is fully shown
     customAlertModal.addEventListener("shown.bs.modal", function onShown() {
       document.addEventListener("keydown", keydownHandler, { capture: true });
       typeNextLine(); // Start animation after modal is shown
@@ -264,7 +268,7 @@ function handleClearResults() {
           capture: true,
         });
 
-        // Reset button visibility for next time (same as game over modal)
+        // Reset button visibility for next time
         const resetButton = document.getElementById("clrResults");
         if (resetButton) {
           resetButton.style.visibility = "hidden";

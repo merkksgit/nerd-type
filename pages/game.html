@@ -570,7 +570,7 @@
           <div class="modal-body">
             <p id="confirmModalMessage">Are you sure you want to proceed?</p>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer justify-content-center">
             <button
               type="button"
               class="btn btn-secondary"
@@ -662,13 +662,6 @@
             class="modal-footer border-top-0 d-flex flex-row justify-content-center"
           >
             <button
-              id="clearResultsBtn"
-              class="btn mb-3"
-              style="min-width: 200px"
-            >
-              Clear Scoreboard
-            </button>
-            <button
               id="scoreboardCloseBtn"
               type="button"
               class="btn mb-3"
@@ -682,45 +675,6 @@
       </div>
     </div>
 
-    <!-- Clear results Alert Modal -->
-    <div
-      class="modal fade"
-      id="customAlertModal"
-      tabindex="-1"
-      aria-labelledby="customAlertModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header border-bottom-0 text-center">
-            <h5 class="modal-title w-100" id="customAlertModalLabel"></h5>
-          </div>
-          <div class="modal-body border-top-0 border-bottom-0">
-            <pre
-              class="terminal-output"
-              style="width: 80%; text-align: left; margin: 0"
-            >
-$ rm -rf scoreboard.data
-> SCOREBOARD PURGED <span style="color: #c3e88d">SUCCESSFULLY</span>
-> LOCAL STORAGE CLEARED_
-$ </pre>
-          </div>
-          <div
-            class="modal-footer border-top-0 d-flex justify-content-center"
-            style="background-color: #24283b"
-          >
-            <button
-              id="clrResults"
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
     <!-- Settings Modal -->
     <div
       class="modal fade"
