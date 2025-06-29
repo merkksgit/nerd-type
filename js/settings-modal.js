@@ -403,15 +403,73 @@ function updateDifficultyMultiplier() {
   const initialEnergy =
     parseInt(document.getElementById("initialEnergy").value) || 10;
 
-  // Calculate a simple difficulty score
-  const baseScore = wordsGoal;
-  const energyFactor =
-    (initialEnergy + bonusEnergy * (wordsGoal / 2)) / wordsGoal;
-  const difficultyScore = baseScore / energyFactor;
+  const settings = {
+    timeLimit: wordsGoal, // wordsGoal maps to timeLimit
+    bonusTime: bonusEnergy, // bonusEnergy maps to bonusTime
+    initialTime: initialEnergy, // initialEnergy maps to initialTime
+  };
 
-  const difficultyElement = document.getElementById("difficultyMultiplier");
+  const difficultyMultiplier = calculateDifficultyMultiplierCorrect(settings);
+
+  // Fix the element ID AND add the "x" suffix
+  const difficultyElement = document.getElementById("difficultyValue");
   if (difficultyElement) {
-    difficultyElement.textContent = difficultyScore.toFixed(1);
+    difficultyElement.textContent = difficultyMultiplier.toFixed(2) + "x";
+  }
+
+  // Also update the progress bar
+  const difficultyBar = document.getElementById("difficultyBar");
+  if (difficultyBar) {
+    // Normalize to 0-100% based on the actual range (0.5 to 2.0)
+    const minDifficulty = 0.5;
+    const maxDifficulty = 2.0;
+    const normalizedScore = Math.min(
+      100,
+      Math.max(
+        0,
+        ((difficultyMultiplier - minDifficulty) /
+          (maxDifficulty - minDifficulty)) *
+          100,
+      ),
+    );
+
+    difficultyBar.style.width = normalizedScore + "%";
+    difficultyBar.setAttribute("aria-valuenow", normalizedScore);
+  }
+}
+
+function calculateDifficultyMultiplierCorrect(settings) {
+  try {
+    const refTimeLimit = 30;
+    const refBonusTime = 3;
+    const refInitialTime = 10;
+
+    // For timeLimit, MORE words (HIGHER limit) is HARDER
+    const timeLimitFactor = Math.min(
+      3,
+      Math.max(1, settings.timeLimit) / refTimeLimit,
+    );
+
+    // For bonus and initial time, LOWER is HARDER
+    const bonusTimeFactor = Math.min(
+      3,
+      refBonusTime / Math.max(0.5, settings.bonusTime),
+    );
+    const initialTimeFactor = Math.min(
+      3,
+      refInitialTime / Math.max(0.5, settings.initialTime),
+    );
+
+    const weightedMultiplier =
+      (timeLimitFactor * 1.5 +
+        bonusTimeFactor * 1.75 +
+        initialTimeFactor * 1.75) /
+      5;
+
+    return Math.max(0.5, Math.min(2.0, weightedMultiplier));
+  } catch (error) {
+    console.error("Error calculating difficulty multiplier:", error);
+    return 1.0;
   }
 }
 
