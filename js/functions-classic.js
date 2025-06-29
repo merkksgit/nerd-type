@@ -1899,7 +1899,7 @@ function getDisplayUsername() {
     return localStorage.getItem("nerdtype_username") || "User";
   } else {
     // Return guest username
-    return localStorage.getItem("nerdtype_username") || "Guest";
+    return localStorage.getItem("nerdtype_username") || "runner";
   }
 }
 
