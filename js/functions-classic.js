@@ -281,7 +281,7 @@ function updateUIForGameMode() {
   // Update game indicator
   if (gameIndicator) {
     if (isZenMode) {
-      gameIndicator.textContent = "Zen Mode";
+      gameIndicator.textContent = "Game Mode: Zen";
     } else {
       // Check current mode from gameSettings
       const settings =
@@ -294,7 +294,7 @@ function updateUIForGameMode() {
       } else {
         const formattedMode =
           currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
-        gameIndicator.textContent = `Classic Mode: ${formattedMode}`;
+        gameIndicator.textContent = `Game Mode: ${formattedMode}`;
       }
     }
     gameIndicator.style.color = isZenMode ? "#c3e88d" : "#ff9e64";
