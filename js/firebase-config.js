@@ -341,7 +341,7 @@ window.loginUser = async function (email, password) {
   const { signInWithEmailAndPassword } = window.firebaseModules;
 
   try {
-    console.log("🔐 Attempting login for:", email);
+    console.log("🔐 Attempting enhanced login for:", email);
 
     const userCredential = await signInWithEmailAndPassword(
       auth,
@@ -350,8 +350,53 @@ window.loginUser = async function (email, password) {
     );
     const user = userCredential.user;
 
-    console.log("✅ Login successful:", user.email);
-    return { success: true, user: user };
+    // Extract username from email (part before @)
+    const emailUsername = user.email.split("@")[0];
+
+    // Check if user exists in database
+    const { ref, get, set } = window.firebaseModules;
+    const userRef = ref(database, `users/${user.uid}`);
+    const userSnapshot = await get(userRef);
+
+    let username = emailUsername;
+
+    if (!userSnapshot.exists()) {
+      // User doesn't exist in database - create entry
+      console.log(
+        "📝 Creating database entry for existing user:",
+        emailUsername,
+      );
+
+      // Check if this username is already taken
+      const usernameCheck = await checkUsernameAvailability(emailUsername);
+
+      if (!usernameCheck.available) {
+        // Email username is taken, need to create a unique one
+        let counter = 1;
+        let uniqueUsername = `${emailUsername}${counter}`;
+
+        while (!(await checkUsernameAvailability(uniqueUsername)).available) {
+          counter++;
+          uniqueUsername = `${emailUsername}${counter}`;
+        }
+
+        username = uniqueUsername;
+        console.log("📝 Email username taken, using:", username);
+      }
+
+      // Reserve the username and create user profile
+      await reserveUsername(username, user.uid, user.email);
+    } else {
+      // User exists in database, get their username
+      const userData = userSnapshot.val();
+      username = userData.username || emailUsername;
+    }
+
+    // Store username locally
+    localStorage.setItem("nerdtype_username", username);
+
+    console.log("✅ Enhanced login successful:", user.email, "as", username);
+    return { success: true, user: user, username: username };
   } catch (error) {
     console.error("❌ Login error:", error);
 
@@ -374,8 +419,28 @@ window.registerUser = async function (email, password) {
   const { createUserWithEmailAndPassword } = window.firebaseModules;
 
   try {
-    console.log("📝 Attempting registration for:", email);
+    console.log("📝 Starting registration for:", email);
 
+    // Get username from the form
+    const usernameInput = document.getElementById("registerUsername");
+    const username = usernameInput
+      ? usernameInput.value.trim()
+      : email.split("@")[0];
+
+    console.log("📝 Using username:", username);
+
+    // Validate username availability
+    const usernameValidation = await validateUsernameComplete(username);
+    if (!usernameValidation.isValid) {
+      console.log("❌ Username validation failed:", usernameValidation.message);
+      return { success: false, error: usernameValidation.message };
+    }
+
+    console.log(
+      "✅ Username validation passed, creating Firebase Auth account...",
+    );
+
+    // Create Firebase Auth account
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -383,8 +448,43 @@ window.registerUser = async function (email, password) {
     );
     const user = userCredential.user;
 
-    console.log("✅ Registration successful:", user.email);
-    return { success: true, user: user };
+    console.log("✅ Firebase Auth account created:", user.email);
+
+    // Reserve the username in database
+    try {
+      console.log("📝 Reserving username in database...");
+      await reserveUsername(username, user.uid, user.email);
+
+      // Store username locally
+      localStorage.setItem("nerdtype_username", username);
+
+      console.log(
+        "✅ Registration completed successfully:",
+        user.email,
+        "as",
+        username,
+      );
+      return { success: true, user: user, username: username };
+    } catch (usernameError) {
+      console.error(
+        "❌ Username reservation failed, cleaning up auth account...",
+        usernameError,
+      );
+
+      // If username reservation fails, clean up the auth account
+      try {
+        await user.delete();
+        console.log("🧹 Auth account cleaned up successfully");
+      } catch (deleteError) {
+        console.error("❌ Failed to clean up auth account:", deleteError);
+      }
+
+      return {
+        success: false,
+        error:
+          "Username became unavailable during registration. Please try again.",
+      };
+    }
   } catch (error) {
     console.error("❌ Registration error:", error);
 
@@ -496,3 +596,295 @@ window.reapplyCurrentFont = function () {
 };
 
 console.log("🔥 Firebase config file loaded with authentication");
+
+const reservedUsernames = [
+  "admin",
+  "moderator",
+  "nerdtype",
+  "runner",
+  "guest",
+  "user",
+  "test",
+];
+
+function isReservedUsername(username) {
+  return reservedUsernames.some(
+    (reserved) => username.toLowerCase() === reserved.toLowerCase(),
+  );
+}
+
+function canUseReservedUsername(username) {
+  const isAdminMode = localStorage.getItem("nerdtype_admin") === "true";
+  if (username.toLowerCase() === "merkks") return isAdminMode;
+  return !isReservedUsername(username);
+}
+
+function validateUsernameFormat(username) {
+  const trimmed = username.trim();
+
+  if (!trimmed) return { isValid: false, message: "Username cannot be empty" };
+  if (trimmed.length < 2 || trimmed.length > 20)
+    return {
+      isValid: false,
+      message: "Username must be between 2-20 characters",
+    };
+  if (!canUseReservedUsername(trimmed))
+    return { isValid: false, message: `"${trimmed}" is a reserved codename` };
+  if (!/^[a-zA-Z0-9 _-]+$/.test(trimmed))
+    return {
+      isValid: false,
+      message:
+        "Username can only contain letters, numbers, spaces, underscores, and hyphens",
+    };
+
+  return { isValid: true };
+}
+
+async function checkUsernameAvailability(username) {
+  if (!window.firebaseModules || !database) {
+    console.warn("Firebase not ready for username check");
+    return { available: true, message: "Unable to verify availability" };
+  }
+
+  const { ref, get } = window.firebaseModules;
+  const trimmed = username.trim();
+
+  console.log("🔍 Checking username availability for:", trimmed);
+
+  try {
+    // Check multiple possible keys since your database might have inconsistent casing
+    const keysToCheck = [
+      trimmed.toLowerCase(), // lowercase version
+      trimmed, // exact case
+      trimmed.toUpperCase(), // uppercase version
+    ];
+
+    for (const key of keysToCheck) {
+      const usernameRef = ref(database, `usernames/${key}`);
+      const usernameSnapshot = await get(usernameRef);
+
+      console.log(`Checking key "${key}":`, usernameSnapshot.exists());
+
+      if (usernameSnapshot.exists()) {
+        const data = usernameSnapshot.val();
+        console.log("Found username data:", data);
+        return { available: false, message: "Username is already taken" };
+      }
+    }
+
+    // Also check the users collection for case-insensitive matches
+    const usersRef = ref(database, "users");
+    const usersSnapshot = await get(usersRef);
+
+    if (usersSnapshot.exists()) {
+      const users = usersSnapshot.val();
+      for (const userId in users) {
+        const userData = users[userId];
+        if (
+          userData.username &&
+          userData.username.toLowerCase() === trimmed.toLowerCase()
+        ) {
+          console.log(
+            "Found matching username in users collection:",
+            userData.username,
+          );
+          return { available: false, message: "Username is already taken" };
+        }
+      }
+    }
+
+    console.log("✅ Username is available:", trimmed);
+    return { available: true, message: "Username is available" };
+  } catch (error) {
+    console.error("❌ Error checking username availability:", error);
+    return { available: false, message: "Error checking availability" };
+  }
+}
+
+// ENHANCED DEBUG FUNCTION - Add this to firebase-config.js
+window.debugUsernameDatabase = async function () {
+  if (!window.firebaseModules || !database) {
+    console.log("Firebase not ready");
+    return;
+  }
+
+  const { ref, get } = window.firebaseModules;
+
+  try {
+    console.log("=== DEBUGGING USERNAME DATABASE ===");
+
+    // Check usernames collection
+    const usernamesRef = ref(database, "usernames");
+    const usernamesSnapshot = await get(usernamesRef);
+
+    console.log("📁 USERNAMES COLLECTION:");
+    if (usernamesSnapshot.exists()) {
+      const usernames = usernamesSnapshot.val();
+      Object.keys(usernames).forEach((key) => {
+        console.log(
+          `  Key: "${key}" -> Username: "${usernames[key].username}"`,
+        );
+      });
+    } else {
+      console.log("  No usernames collection found");
+    }
+
+    // Check users collection
+    const usersRef = ref(database, "users");
+    const usersSnapshot = await get(usersRef);
+
+    console.log("👥 USERS COLLECTION:");
+    if (usersSnapshot.exists()) {
+      const users = usersSnapshot.val();
+      Object.keys(users).forEach((userId) => {
+        const userData = users[userId];
+        if (userData.username) {
+          console.log(
+            `  UserID: ${userId} -> Username: "${userData.username}"`,
+          );
+        }
+      });
+    } else {
+      console.log("  No users collection found");
+    }
+
+    // Test specific usernames
+    console.log("🔍 TESTING SPECIFIC USERNAMES:");
+    const testUsernames = ["test2", "Test2", "TEST2", "merkks", "Merkks"];
+
+    for (const testName of testUsernames) {
+      const result = await checkUsernameAvailability(testName);
+      console.log(
+        `  "${testName}": ${result.available ? "AVAILABLE" : "TAKEN"} - ${result.message}`,
+      );
+    }
+  } catch (error) {
+    console.error("Debug error:", error);
+  }
+};
+
+// IMPROVED RESERVE USERNAME FUNCTION - Replace in firebase-config.js
+async function reserveUsername(username, userId, userEmail) {
+  if (!window.firebaseModules || !database) {
+    throw new Error("Firebase not ready");
+  }
+
+  const { ref, set, remove } = window.firebaseModules;
+  const trimmed = username.trim();
+  const lowercaseKey = trimmed.toLowerCase();
+
+  try {
+    console.log("📝 Reserving username:", trimmed, "with key:", lowercaseKey);
+
+    // First, remove any existing entries with different casing
+    const keysToClean = [trimmed, trimmed.toUpperCase(), trimmed.toLowerCase()];
+    for (const key of keysToClean) {
+      if (key !== lowercaseKey) {
+        try {
+          const cleanupRef = ref(database, `usernames/${key}`);
+          await remove(cleanupRef);
+          console.log("🧹 Cleaned up old key:", key);
+        } catch (cleanupError) {
+          // Ignore cleanup errors
+        }
+      }
+    }
+
+    // Store with lowercase key for consistency
+    const usernameRef = ref(database, `usernames/${lowercaseKey}`);
+    await set(usernameRef, {
+      username: trimmed, // Store the original casing
+      userId: userId,
+      userEmail: userEmail,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Also store in user profile
+    const userRef = ref(database, `users/${userId}`);
+    await set(userRef, {
+      username: trimmed, // Store the original casing
+      email: userEmail,
+      createdAt: new Date().toISOString(),
+      lastActive: new Date().toISOString(),
+    });
+
+    console.log("✅ Username reserved successfully:", trimmed);
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Error reserving username:", error);
+    throw error;
+  }
+}
+
+async function reserveUsername(username, userId, userEmail) {
+  if (!window.firebaseModules || !database) {
+    throw new Error("Firebase not ready");
+  }
+
+  const { ref, set } = window.firebaseModules;
+  const trimmed = username.trim();
+
+  try {
+    // Store in usernames collection for quick lookup
+    const usernameRef = ref(database, `usernames/${trimmed.toLowerCase()}`);
+    await set(usernameRef, {
+      username: trimmed,
+      userId: userId,
+      userEmail: userEmail,
+      createdAt: new Date().toISOString(),
+    });
+
+    // Also store in user profile
+    const userRef = ref(database, `users/${userId}`);
+    await set(userRef, {
+      username: trimmed,
+      email: userEmail,
+      createdAt: new Date().toISOString(),
+      lastActive: new Date().toISOString(),
+    });
+
+    console.log("✅ Username reserved successfully:", trimmed);
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Error reserving username:", error);
+    throw error;
+  }
+}
+
+async function validateUsernameComplete(username) {
+  const formatValidation = validateUsernameFormat(username);
+  if (!formatValidation.isValid) return formatValidation;
+
+  const availabilityCheck = await checkUsernameAvailability(username);
+  if (!availabilityCheck.available) {
+    return { isValid: false, message: availabilityCheck.message };
+  }
+
+  return { isValid: true, message: "Username is valid and available" };
+}
+
+// Fixed real-time checker
+window.checkUsernameAvailabilityRealTime = (function () {
+  let timeoutId;
+  return function (username, callback, delay = 500) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(async () => {
+      if (!username || username.trim().length < 2) {
+        callback(null);
+        return;
+      }
+      try {
+        const formatValidation = validateUsernameFormat(username);
+        if (!formatValidation.isValid) {
+          callback({ available: false, message: formatValidation.message });
+          return;
+        }
+        const result = await checkUsernameAvailability(username);
+        callback(result);
+      } catch (error) {
+        console.error("Real-time username check error:", error);
+        callback({ available: false, message: "Error checking availability" });
+      }
+    }, delay);
+  };
+})();

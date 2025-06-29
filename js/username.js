@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const reservedUsernames = ["merkks", "admin", "moderator", "nerdtype"];
+  const reservedUsernames = ["admin", "moderator", "nerdtype"];
 
   function isReservedUsername(username) {
     return reservedUsernames.some(

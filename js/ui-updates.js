@@ -82,7 +82,7 @@ function updateUsernameButtonDisplay() {
     // Not authenticated and not guest - show with consistent user icon
     changeUsernameBtn.innerHTML = `
       <i class="fa-solid fa-user"></i>
-      <span id="usernameDisplay">Login</span>
+      <span id="usernameDisplay">LOGIN</span>
     `;
 
     // Add click handler to show login

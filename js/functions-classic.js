@@ -42,7 +42,7 @@ let isCommandMode = false;
 let wasPaused = false;
 let commandStartTime = null; // Track when we entered command mode
 
-const reservedUsernames = ["merkks", "admin", "moderator", "nerdtype"];
+const reservedUsernames = ["admin", "moderator", "nerdtype"];
 
 function isReservedUsername(username) {
   return reservedUsernames.some(

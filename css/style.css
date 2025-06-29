@@ -2392,3 +2392,22 @@ div#wordToType,
     0 4px 8px rgba(0, 0, 0, 0.25),
     0 0 4px rgba(122, 162, 247, 0.3) !important;
 }
+
+.username-status {
+  font-size: 0.8em;
+  margin-top: 5px;
+  min-height: 20px;
+  text-align: center;
+}
+
+.username-available {
+  color: #c3e88d;
+}
+
+.username-unavailable {
+  color: #f7768e;
+}
+
+.username-checking {
+  color: #ff9e64;
+}

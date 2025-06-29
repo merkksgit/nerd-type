@@ -77,16 +77,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function validateRegisterForm() {
       const email = document.getElementById("registerEmail").value.trim();
+      const username = document.getElementById("registerUsername").value.trim();
       const password = document.getElementById("registerPassword").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
 
-      if (!email || !password || !confirmPassword) {
+      console.log("🔍 Validating registration form...");
+      console.log("Email:", email);
+      console.log("Username:", username);
+      console.log("Password length:", password.length);
+
+      if (!email || !username || !password || !confirmPassword) {
         showError("registerError", "Please fill in all fields");
         return false;
       }
 
       if (!isValidEmail(email)) {
         showError("registerError", "Please enter a valid email address");
+        return false;
+      }
+
+      // Validate username format
+      if (username.length < 2 || username.length > 20) {
+        showError("registerError", "Username must be between 2-20 characters");
+        return false;
+      }
+
+      // Check for invalid characters in username
+      const validPattern = /^[a-zA-Z0-9 _-]+$/;
+      if (!validPattern.test(username)) {
+        showError(
+          "registerError",
+          "Username can only contain letters, numbers, spaces, underscores, and hyphens",
+        );
         return false;
       }
 
@@ -100,8 +122,62 @@ document.addEventListener("DOMContentLoaded", function () {
         return false;
       }
 
+      console.log("✅ Form validation passed");
       return true;
     }
+
+    function setupUsernameValidation() {
+      const usernameInput = document.getElementById("registerUsername");
+      const statusDiv = document.getElementById("usernameAvailability");
+
+      if (!usernameInput || !statusDiv) {
+        console.log("Username validation elements not found, retrying...");
+        setTimeout(setupUsernameValidation, 500);
+        return;
+      }
+
+      if (!window.checkUsernameAvailabilityRealTime) {
+        console.log("Username validation function not ready, retrying...");
+        setTimeout(setupUsernameValidation, 500);
+        return;
+      }
+
+      console.log("✅ Setting up username validation");
+
+      usernameInput.addEventListener("input", (e) => {
+        const username = e.target.value.trim();
+
+        if (username.length < 2) {
+          statusDiv.innerHTML = "";
+          statusDiv.className = "username-status";
+          return;
+        }
+
+        statusDiv.innerHTML = "⏳ Checking...";
+        statusDiv.className = "username-status username-checking";
+
+        window.checkUsernameAvailabilityRealTime(username, (result) => {
+          if (!result) {
+            statusDiv.innerHTML = "";
+            return;
+          }
+
+          if (result.available) {
+            statusDiv.innerHTML = "✅ " + result.message;
+            statusDiv.className = "username-status username-available";
+          } else {
+            statusDiv.innerHTML = "❌ " + result.message;
+            statusDiv.className = "username-status username-unavailable";
+          }
+        });
+      });
+    }
+
+    // Call this function after everything is loaded
+    document.addEventListener("DOMContentLoaded", function () {
+      // Wait a bit for all scripts to load
+      setTimeout(setupUsernameValidation, 1000);
+    });
 
     function isValidEmail(email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -347,3 +423,38 @@ window.logoutAndRedirect = async function () {
 };
 
 console.log("🔐 Authentication handler loaded successfully");
+
+document.addEventListener("DOMContentLoaded", function () {
+  const usernameInput = document.getElementById("registerUsername");
+  const statusDiv = document.getElementById("usernameAvailability");
+
+  if (usernameInput && statusDiv && window.checkUsernameAvailabilityRealTime) {
+    usernameInput.addEventListener("input", (e) => {
+      const username = e.target.value.trim();
+
+      if (username.length < 2) {
+        statusDiv.innerHTML = "";
+        statusDiv.className = "username-status";
+        return;
+      }
+
+      statusDiv.innerHTML = "⏳ Checking...";
+      statusDiv.className = "username-status username-checking";
+
+      window.checkUsernameAvailabilityRealTime(username, (result) => {
+        if (!result) {
+          statusDiv.innerHTML = "";
+          return;
+        }
+
+        if (result.available) {
+          statusDiv.innerHTML = "✅ " + result.message;
+          statusDiv.className = "username-status username-available";
+        } else {
+          statusDiv.innerHTML = "❌ " + result.message;
+          statusDiv.className = "username-status username-unavailable";
+        }
+      });
+    });
+  }
+});
