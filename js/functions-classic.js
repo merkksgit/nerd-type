@@ -1999,7 +1999,7 @@ function displayPreviousResults() {
     resultsContainer.innerHTML = `
       <div class="text-center py-5 empty-state">
         <i class="fa-solid fa-chart-line empty-icon" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-        <p>Play some games nerd.</p>
+        <p>404: Games not found</p>
       </div>
     `;
     return;

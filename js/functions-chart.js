@@ -30,37 +30,6 @@ function setupToggle(
   }
 }
 
-document
-  .getElementById("viewScoreboardChartBtn")
-  .addEventListener("click", function () {
-    // Update the scoreboard contents before showing
-    displayPreviousResults();
-
-    // Then show the modal
-    const scoreboardModal = new bootstrap.Modal(
-      document.getElementById("scoreboardModal"),
-    );
-    scoreboardModal.show();
-
-    // Setup Enter key handler
-    setupScoreboardModalEnterKey();
-
-    // Clean up when modal is hidden
-    document.getElementById("scoreboardModal").addEventListener(
-      "hidden.bs.modal",
-      function () {
-        const backdrops = document.querySelectorAll(".modal-backdrop");
-        backdrops.forEach((backdrop) => {
-          backdrop.remove();
-        });
-
-        document.body.classList.remove("modal-open");
-        document.body.removeAttribute("style");
-      },
-      { once: true },
-    );
-  });
-
 // Initialize all functionality when DOM is loaded
 document.addEventListener("DOMContentLoaded", function () {
   // Setup toggles for each section with different icons
@@ -103,8 +72,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (clearResultsBtn) {
     clearResultsBtn.addEventListener("click", handleClearResults);
   }
-
-  updateDataCollectionIndicator();
 });
 
 // Calculate the size of localStorage data in KB
@@ -154,7 +121,6 @@ function handleScoreboardKeyPress(event) {
   }
 }
 
-// Updated handleClearResults function for js/functions-chart.js (chart.html page)
 // Updated handleClearResults function for js/functions-chart.js (chart.html page)
 function handleClearResults() {
   // DON'T clear anything yet - just show the confirmation modal
@@ -298,7 +264,7 @@ function displayPreviousResults() {
     resultsContainer.innerHTML = `
       <div class="text-center py-5 empty-state">
         <i class="fa-solid fa-chart-line empty-icon" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-        <p>Play some games nerd.</p>
+        <p>Scoreboard's emptier than your social calendar</p>
       </div>
     `;
     return;

@@ -1479,27 +1479,6 @@
     <script src="../js/custom-modals.js"></script>
     <script type="module" src="../js/game-commands.js"></script>
     <script>
-      // Add event listener for the scoreboard button
-      document
-        .getElementById("global-scores-tab")
-        .addEventListener("shown.bs.tab", function () {
-          if (typeof displayGlobalHighScores === "function") {
-            displayGlobalHighScores();
-          } else {
-            console.error("displayGlobalHighScores function not found");
-          }
-        });
-
-      // Add refresh button functionality
-      document
-        .getElementById("refreshHighScores")
-        .addEventListener("click", function () {
-          if (typeof displayGlobalHighScores === "function") {
-            displayGlobalHighScores();
-          } else {
-            console.error("displayGlobalHighScores function not found");
-          }
-        });
       document
         .getElementById("viewScoreboardBtn")
         .addEventListener("click", function () {
