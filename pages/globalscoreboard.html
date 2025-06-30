@@ -514,7 +514,7 @@
         // Load scores when Firebase is ready - increased timeout
         setTimeout(() => {
           loadGlobalScores();
-        }, 3000); // Increased from 2000 to 3000ms
+        }, 2000);
       });
 
       function setupEventListeners() {
@@ -692,19 +692,35 @@
             }
           }
 
-          const rankIcon = "";
           const rankClass = rank <= 3 ? "rank-cell top-rank" : "rank-cell";
 
           const date = new Date(
             score.date || score.timestamp || score.submittedAt,
           ).toLocaleDateString("en-GB");
 
+          // Add rank icons after username for top 3
+          let rankIcon = "";
+          if (rank === 1) {
+            rankIcon =
+              ' <img src="../images/nt-rank1-medal.png" alt="1st Place" class="username-rank-icon" />';
+          } else if (rank === 2) {
+            rankIcon =
+              ' <img src="../images/nt-rank2-medal.png" alt="2nd Place" class="username-rank-icon" />';
+          } else if (rank === 3) {
+            rankIcon =
+              ' <img src="../images/nt-rank3-medal.png" alt="3rd Place" class="username-rank-icon" />';
+          }
+
           // Check if it's the admin user
           const isAdmin =
             score.username && score.username.toLowerCase() === "merkks";
-          const usernameDisplay = isAdmin
-            ? `<strong class="admin-username">${score.username || "Anonymous"}</strong>`
-            : `<strong class="username-cell">${score.username || "Anonymous"}</strong>`;
+          let usernameDisplay = score.username || "Anonymous";
+
+          if (isAdmin) {
+            usernameDisplay = `<strong class="admin-username">${usernameDisplay}${rankIcon}</strong>`;
+          } else {
+            usernameDisplay = `<strong class="username-cell">${usernameDisplay}${rankIcon}</strong>`;
+          }
 
           row.innerHTML = `
       <td class="text-center ${rankClass}"> ${rank}
