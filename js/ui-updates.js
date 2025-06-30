@@ -54,9 +54,9 @@ async function handleLoginWithDelayedReload(user) {
     // Quick UI update
     updateUsernameButtonDisplay();
 
-    // Show success message using available alert method
+    // Show success message WITHOUT OK button
     if (window.siteModal) {
-      window.siteModal.alert(`Welcome, ${emailUsername}!`, "[LOGIN SUCCESFUL]");
+      showLoginSuccessModal(emailUsername);
     } else {
       console.log(`Welcome back, ${emailUsername}!`);
     }
@@ -72,6 +72,43 @@ async function handleLoginWithDelayedReload(user) {
   }
 }
 
+// Login success modal without OK button
+function showLoginSuccessModal(username) {
+  const alertModal = document.getElementById("customAlertModal");
+  if (!alertModal) return;
+
+  const modal = new bootstrap.Modal(alertModal);
+
+  // Set title and message
+  document.getElementById("alertModalTitle").textContent = "[LOGIN SUCCESSFUL]";
+  document.getElementById("alertModalMessage").textContent =
+    `Welcome, ${username}!`;
+
+  // Hide the OK button for this specific modal
+  const okButton = document.getElementById("alertOkBtn");
+  if (okButton) {
+    okButton.style.display = "none";
+  }
+
+  // Hide the modal footer entirely to remove the button area
+  const modalFooter = alertModal.querySelector(".modal-footer");
+  if (modalFooter) {
+    modalFooter.style.display = "none";
+  }
+
+  // Show the modal
+  modal.show();
+
+  setTimeout(() => {
+    modal.hide();
+    if (okButton) {
+      okButton.style.display = "";
+    }
+    if (modalFooter) {
+      modalFooter.style.display = "";
+    }
+  }, 2000); // Hide after 2 seconds
+}
 // Handle logout with delayed reload
 async function handleLogoutWithDelayedReload() {
   try {

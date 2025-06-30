@@ -809,6 +809,16 @@ score h3 {
   border-top-color: #7aa2f7 !important;
 }
 
+@media (max-width: 768px) {
+  .tooltip {
+    transition: opacity 0.8s ease-out !important;
+  }
+
+  .tooltip.show {
+    opacity: 0 !important;
+  }
+}
+
 /* ==== 9. Modal Styles ==== */
 /* Common Modal Styles */
 
