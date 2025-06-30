@@ -90,15 +90,6 @@ async function handleLogoutWithDelayedReload() {
 
     console.log("✅ Logged out successfully");
 
-    // Show logout message
-    if (window.siteModal) {
-      window.siteModal.info(
-        "Logged out successfully. Refreshing...",
-        "Goodbye!",
-        2000,
-      );
-    }
-
     // Reload after delay
     setTimeout(() => {
       console.log("🔄 Reloading page to reset game state...");
