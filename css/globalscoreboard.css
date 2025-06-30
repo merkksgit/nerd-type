@@ -386,6 +386,7 @@ body {
 /* Admin username styling */
 .admin-username {
   color: #ffd700 !important; /* Gold color */
+  white-space: nowrap;
 }
 
 .admin-username::after {
