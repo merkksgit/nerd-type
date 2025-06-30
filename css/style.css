@@ -743,6 +743,72 @@ score h3 {
   color: #ff9e64;
 }
 
+/* Base tooltip styling to match your site theme */
+.tooltip {
+  --bs-tooltip-zindex: 1080;
+  --bs-tooltip-max-width: 200px;
+  --bs-tooltip-padding-x: 0.75rem;
+  --bs-tooltip-padding-y: 0.5rem;
+  --bs-tooltip-margin: 0;
+  --bs-tooltip-font-size: 0.875rem;
+  --bs-tooltip-opacity: 0.95;
+  --bs-tooltip-border-radius: 4px;
+  opacity: 1 !important;
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* Authenticated user tooltip - logout theme */
+.auth-tooltip {
+  --bs-tooltip-bg: #f7768e;
+  --bs-tooltip-color: #1a1b26;
+  opacity: 1 !important;
+}
+
+.auth-tooltip .tooltip-inner {
+  background-color: #f7768e;
+  color: #1a1b26;
+  font-weight: 500;
+  border: 1px solid rgba(247, 118, 142, 0.5);
+}
+
+.auth-tooltip .tooltip-arrow::before {
+  border-top-color: #f7768e !important;
+}
+
+/* Guest user tooltip - warning/info theme */
+.guest-tooltip {
+  --bs-tooltip-bg: #ff9e64;
+  --bs-tooltip-color: #1a1b26;
+}
+
+.guest-tooltip .tooltip-inner {
+  background-color: #ff9e64;
+  color: #1a1b26;
+  font-weight: 500;
+  border: 1px solid rgba(255, 158, 100, 0.5);
+}
+
+.guest-tooltip .tooltip-arrow::before {
+  border-top-color: #ff9e64 !important;
+}
+
+/* Non-authenticated user tooltip - primary/login theme */
+.login-tooltip {
+  --bs-tooltip-bg: #7aa2f7;
+  --bs-tooltip-color: #1a1b26;
+}
+
+.login-tooltip .tooltip-inner {
+  background-color: #7aa2f7;
+  color: #1a1b26;
+  font-weight: 500;
+  border: 1px solid rgba(122, 162, 247, 0.5);
+}
+
+.login-tooltip .tooltip-arrow::before {
+  border-top-color: #7aa2f7 !important;
+}
+
 /* ==== 9. Modal Styles ==== */
 /* Common Modal Styles */
 

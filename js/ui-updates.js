@@ -126,6 +126,11 @@ function updateUsernameButtonDisplay() {
   const currentUser = window.getCurrentUser();
   const isGuest = localStorage.getItem("nerdtype_guest_mode") === "true";
 
+  // Dispose of existing tooltip if it exists
+  if (changeUsernameBtn._tooltip) {
+    changeUsernameBtn._tooltip.dispose();
+  }
+
   if (currentUser) {
     // User is authenticated - show username with logout icon
     const emailUsername = currentUser.email.split("@")[0];
@@ -155,7 +160,11 @@ function updateUsernameButtonDisplay() {
       }
     };
 
-    changeUsernameBtn.title = "Click to logout";
+    // Set tooltip for authenticated user
+    changeUsernameBtn.setAttribute("data-bs-toggle", "tooltip");
+    changeUsernameBtn.setAttribute("data-bs-placement", "top");
+    changeUsernameBtn.setAttribute("data-bs-custom-class", "auth-tooltip");
+    changeUsernameBtn.setAttribute("title", `Logout from ${emailUsername}`);
   } else if (isGuest) {
     // Guest mode - show with login icon to indicate they can login
     changeUsernameBtn.innerHTML = `
@@ -170,7 +179,11 @@ function updateUsernameButtonDisplay() {
       window.showLoginModal();
     };
 
-    changeUsernameBtn.title = "Click to login for global leaderboards";
+    // Set tooltip for guest user
+    changeUsernameBtn.setAttribute("data-bs-toggle", "tooltip");
+    changeUsernameBtn.setAttribute("data-bs-placement", "top");
+    changeUsernameBtn.setAttribute("data-bs-custom-class", "guest-tooltip");
+    changeUsernameBtn.setAttribute("title", "Click to login or register");
   } else {
     // Not authenticated and not guest - show with login icon
     changeUsernameBtn.innerHTML = `
@@ -185,7 +198,23 @@ function updateUsernameButtonDisplay() {
       window.showLoginModal();
     };
 
-    changeUsernameBtn.title = "Click to login or register";
+    // Set tooltip for non-authenticated user
+    changeUsernameBtn.setAttribute("data-bs-toggle", "tooltip");
+    changeUsernameBtn.setAttribute("data-bs-placement", "top");
+    changeUsernameBtn.setAttribute("data-bs-custom-class", "login-tooltip");
+    changeUsernameBtn.setAttribute("title", "Click to login or register");
+  }
+
+  // Initialize/reinitialize the tooltip with custom template
+  const tooltipTemplate =
+    '<div class="tooltip" role="tooltip"><div class="tooltip-inner"></div></div>';
+  changeUsernameBtn.setAttribute("data-bs-template", tooltipTemplate);
+
+  // Create new tooltip instance
+  if (window.bootstrap && window.bootstrap.Tooltip) {
+    changeUsernameBtn._tooltip = new window.bootstrap.Tooltip(
+      changeUsernameBtn,
+    );
   }
 }
 
