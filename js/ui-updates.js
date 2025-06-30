@@ -65,7 +65,7 @@ async function handleLoginWithDelayedReload(user) {
     setTimeout(() => {
       console.log("🔄 Reloading page to refresh all game state...");
       window.location.reload();
-    }, 3000); // Increased delay to 3 seconds
+    }, 3000);
   } catch (error) {
     console.error("❌ Error in login handler:", error);
     window.authProcessing = false;
@@ -80,7 +80,8 @@ function showLoginSuccessModal(username) {
   const modal = new bootstrap.Modal(alertModal);
 
   // Set title and message
-  document.getElementById("alertModalTitle").textContent = "[LOGIN SUCCESSFUL]";
+  document.getElementById("alertModalTitle").innerHTML =
+    `<img src="../images/logo-text-no-keyboard.png" alt="Success" style="width: 300px; vertical-align: middle;">`;
   document.getElementById("alertModalMessage").textContent =
     `Welcome, ${username}!`;
 
@@ -128,7 +129,7 @@ async function handleLogoutWithDelayedReload() {
     setTimeout(() => {
       console.log("🔄 Reloading page to reset game state...");
       window.location.reload();
-    }, 2000);
+    }, 100);
   } catch (error) {
     console.error("❌ Error in logout handler:", error);
     window.authProcessing = false;
@@ -292,7 +293,7 @@ function updateScoreboardDisplay() {
   });
 }
 
-// Fixed logout function with no loading text - clean and simple
+// Fixed logout function with no loading text
 window.logoutAndRedirect = async function () {
   const currentUser = window.getCurrentUser();
   if (!currentUser) return;
@@ -328,7 +329,7 @@ window.logoutAndRedirect = async function () {
   }
 };
 
-// Account settings placeholder (you can expand this later)
+// Account settings placeholder
 window.showAccountSettings = async function () {
   const currentUser = window.getCurrentUser();
   if (!currentUser) return;

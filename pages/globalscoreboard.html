@@ -182,8 +182,9 @@
                 <i class="fa-solid fa-globe me-3"></i>GLOBAL SCOREBOARD
               </h1>
               <p class="lead page-subtitle mb-5">
-                Compete with nerds from around the world. See where you rank
-                among the fastest typists!
+                NerdType Season 1: July 1 – September 30, 2025.<br />
+                Log in and enable “Share game data for leaderboards” in the
+                settings panel to participate.
               </p>
             </div>
             <!-- Controls -->
@@ -276,7 +277,9 @@
               <div class="card-header">
                 <h3 class="card-title mb-3 mt-3">
                   <i class="fa-solid fa-trophy me-2"></i>
-                  <span id="scoreboardTitle">Top 20 Global Scores</span>
+                  <span id="scoreboardTitle"
+                    >Season 1 Top 20 Global Scores</span
+                  >
                 </h3>
               </div>
               <div class="card-body p-0">
@@ -412,7 +415,7 @@
                     to the NerdType Wall of Fame.
                   </p>
                   <p class="text-secondary mb-3">
-                    <strong class="info-label">Remember:</strong>
+                    <strong class="info-label">Philosophy:</strong>
                     Season of Genesis is about establishing foundations,
                     building community, and celebrating the journey of
                     improvement. Whether you type 30 WPM or 150 WPM, your
@@ -655,8 +658,8 @@
         // Update title
         const title =
           currentMode === "all"
-            ? "Top 20 Global Scores"
-            : `Top 20 ${currentMode} Scores`;
+            ? "Season 1 Top 20 Global Scores"
+            : `Season 1 Top 20 ${currentMode} Scores`;
         const titleElement = document.getElementById("scoreboardTitle");
         if (titleElement) {
           titleElement.textContent = title;
