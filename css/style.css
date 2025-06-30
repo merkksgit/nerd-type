@@ -70,9 +70,9 @@ header {
 }
 
 #header-logo-no-text {
-  width: 60px;
+  width: 40px;
   display: none;
-  margin-left: 5px;
+  margin-left: 12px;
 }
 
 @media screen and (max-width: 768px) {
