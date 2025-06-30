@@ -127,10 +127,10 @@ function updateUsernameButtonDisplay() {
   const isGuest = localStorage.getItem("nerdtype_guest_mode") === "true";
 
   if (currentUser) {
-    // User is authenticated - show username with consistent user icon
+    // User is authenticated - show username with logout icon
     const emailUsername = currentUser.email.split("@")[0];
 
-    // Keep the original button structure with consistent user icon
+    // Use logout icon when user is logged in
     changeUsernameBtn.innerHTML = `
       <i class="fa-solid fa-user"></i>
       <span id="usernameDisplay">${emailUsername}</span>
@@ -157,9 +157,9 @@ function updateUsernameButtonDisplay() {
 
     changeUsernameBtn.title = "Click to logout";
   } else if (isGuest) {
-    // Guest mode - show with consistent user icon
+    // Guest mode - show with login icon to indicate they can login
     changeUsernameBtn.innerHTML = `
-      <i class="fa-solid fa-user"></i>
+      <i class="fa-solid fa-sign-in-alt"></i>
       <span id="usernameDisplay">runner</span>
     `;
 
@@ -172,9 +172,9 @@ function updateUsernameButtonDisplay() {
 
     changeUsernameBtn.title = "Click to login for global leaderboards";
   } else {
-    // Not authenticated and not guest - show with consistent user icon
+    // Not authenticated and not guest - show with login icon
     changeUsernameBtn.innerHTML = `
-      <i class="fa-solid fa-user"></i>
+      <i class="fa-solid fa-sign-in-alt"></i>
       <span id="usernameDisplay">LOGIN</span>
     `;
 
