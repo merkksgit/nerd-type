@@ -488,7 +488,7 @@ function clearAllValidationStates() {
 function setupRealTimeValidation() {
   const validationRules = {
     wordsGoal: { min: 1, max: 200, name: "Words Goal" },
-    bonusEnergy: { min: 0, max: 10, name: "Bonus Energy" },
+    bonusEnergy: { min: 1, max: 10, name: "Bonus Energy" },
     initialEnergy: { min: 4, max: 20, name: "Initial Energy" },
     zenWordGoal: { min: 1, max: 200, name: "Zen Word Goal" },
   };
