@@ -1,6 +1,3 @@
-// Complete js/ui-updates.js with proper authentication timing
-// This fixes the issue where reload happens too early
-
 document.addEventListener("DOMContentLoaded", function () {
   // Update the change username button functionality
   updateUsernameButtonDisplay();
@@ -137,6 +134,10 @@ function updateUsernameButtonDisplay() {
       e.preventDefault();
       e.stopPropagation();
 
+      if (changeUsernameBtn._tooltip) {
+        changeUsernameBtn._tooltip.hide();
+      }
+
       // Use custom modal instead of browser confirm
       if (window.siteModal) {
         const confirmed = await window.siteModal.confirmLogout(emailUsername);
@@ -170,6 +171,10 @@ function updateUsernameButtonDisplay() {
       window.showLoginModal();
     };
 
+    if (changeUsernameBtn._tooltip) {
+      changeUsernameBtn._tooltip.hide();
+    }
+
     // Set tooltip for guest user
     changeUsernameBtn.setAttribute("data-bs-toggle", "tooltip");
     changeUsernameBtn.setAttribute("data-bs-placement", "top");
@@ -188,6 +193,10 @@ function updateUsernameButtonDisplay() {
       e.stopPropagation();
       window.showLoginModal();
     };
+
+    if (changeUsernameBtn._tooltip) {
+      changeUsernameBtn._tooltip.hide();
+    }
 
     // Set tooltip for non-authenticated user
     changeUsernameBtn.setAttribute("data-bs-toggle", "tooltip");
