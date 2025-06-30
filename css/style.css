@@ -1706,6 +1706,13 @@ div#wordToType,
   }
 }
 
+/* Global scoreboard rank icon */
+.top-performer:hover .username-rank-icon,
+.champion:hover .username-rank-icon,
+tr:hover .username-rank-icon {
+  background-color: #292e42;
+}
+
 /* Cursor Settings Styling */
 .cursor-selection-grid {
   display: grid;
