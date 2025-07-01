@@ -1464,7 +1464,7 @@ function showGameOverModal(message, isSuccess = true) {
       `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
       `  └─ FINAL SCORE: <span style='color:#c3e88d'>${finalScore}</span>`,
       "> ================================",
-      `> GLOBAL SCOREBOARD: <span style='color:${leaderboardColor}'>${leaderboardStatus}</span>`,
+      `> GLOBAL LEADERBOARD: <span style='color:${leaderboardColor}'>${leaderboardStatus}</span>`,
       "> ================================",
       `> SPEED TIER: <span style='color:#4fd6be'>${getSpeedTier(stats.wpm)}</span>`,
       `> PRECISION RANK: <span style='color:#4fd6be'>${getAccuracyRank(stats.accuracy)}</span>`,
