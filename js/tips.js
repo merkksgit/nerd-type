@@ -14,7 +14,7 @@ export const tips = [
   "Custom Mode creates your perfect typing challenge",
   "Keep fingers on home row (ASDF JKL;) for optimal typing",
   "Energy only depletes after your first keystroke",
-  "Click the Settings button to switch to Zen Mode",
+  "Switch to Zen Mode from the settings panel",
   "Access game modes and sound options via the Settings button",
   "Tinker with game settings to unlock achievements more easily",
   "Press Enter during game for a quick restart",
