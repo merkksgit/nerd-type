@@ -77,6 +77,10 @@ body {
   color: #7aa2f7;
 } /* Blue */
 
+.username-rank-icon {
+  width: 18px;
+}
+
 /* Username styling */
 .username-cell {
   color: #c3e88d !important;
