@@ -490,8 +490,6 @@ function applyUIHideSettings(hideUI) {
 
   // Define UI elements that can be hidden
   const hidableElements = [
-    "#gameTimer",
-    "#totalTime",
     "#currentGameMode",
     "#accuracy",
     "#wpm",

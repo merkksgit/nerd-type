@@ -2468,8 +2468,6 @@ body:not(.chart-page) #customAlertModal #alertModalMessage {
 }
 
 /* UI hiding CSS */
-body[data-ui-hidden="true"] #gameTimer,
-body[data-ui-hidden="true"] #totalTime,
 body[data-ui-hidden="true"] #currentGameMode,
 body[data-ui-hidden="true"] #accuracy,
 body[data-ui-hidden="true"] #wpm,
