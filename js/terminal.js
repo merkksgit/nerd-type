@@ -687,7 +687,6 @@ mode &lt;type&gt;                    - Set game mode (classic/hard/practice/spee
 rm &lt;filename&gt;                  - Delete file contents
 status                         - Show current game settings
 listmodes                      - List all available game modes
-su &lt;username&gt;                  - Switch user
 cat &lt;filename&gt;                 - Display file contents
 ls                             - List available files
 ls -la                         - List files with detailed information
