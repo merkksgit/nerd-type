@@ -429,11 +429,14 @@ class UIToggle {
   }
 
   saveState() {
-    localStorage.setItem("nerdtype_ui_hidden", this.isHidden.toString());
+    localStorage.setItem(
+      "nerdtype_settingsBtb_hidden",
+      this.isHidden.toString(),
+    );
   }
 
   loadState() {
-    const saved = localStorage.getItem("nerdtype_ui_hidden");
+    const saved = localStorage.getItem("nerdtype_settingsBtn_hidden");
     if (saved === "true") {
       this.isHidden = true;
       this.updateUI();
@@ -460,3 +463,196 @@ const uiToggle = new UIToggle();
 
 // Make it globally accessible if needed
 window.uiToggle = uiToggle;
+
+// Check if we're on the game page
+function isGamePage() {
+  return (
+    window.location.pathname.includes("game.html") ||
+    window.location.pathname.endsWith("/game")
+  );
+}
+
+// Function to toggle UI visibility
+function toggleUIVisibility() {
+  if (!isGamePage()) return;
+
+  const currentState = localStorage.getItem("nerdtype_hide_ui") === "true";
+  const newState = !currentState;
+  localStorage.setItem("nerdtype_hide_ui", newState.toString());
+
+  // Apply the changes immediately
+  applyUIHideSettings(newState);
+}
+
+// Function to apply UI hiding/showing
+function applyUIHideSettings(hideUI) {
+  if (!isGamePage()) return;
+
+  // Define UI elements that can be hidden
+  const hidableElements = [
+    "#gameTimer",
+    "#totalTime",
+    "#currentGameMode",
+    "#accuracy",
+    "#wpm",
+    "#currentWordList",
+    "#versionInfo",
+    ".stats-container",
+    ".game-info",
+    ".footer",
+    ".progress",
+    "#buttons",
+  ];
+
+  // Apply hide/show to each element with !important to override other styles
+  hidableElements.forEach((selector) => {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach((element) => {
+      if (hideUI) {
+        element.style.setProperty("display", "none", "important");
+        element.classList.add("ui-hidden");
+      } else {
+        element.style.removeProperty("display");
+        element.classList.remove("ui-hidden");
+      }
+    });
+  });
+
+  // Special handling for tips (hide tips but keep next word during game)
+  const nextWordElement = document.getElementById("nextWord");
+  if (nextWordElement) {
+    if (hideUI) {
+      // Only hide if it's showing a tip (contains "Tip:" or has tip-style class)
+      if (
+        nextWordElement.classList.contains("tip-style") ||
+        nextWordElement.textContent.includes("Tip:")
+      ) {
+        nextWordElement.style.setProperty("display", "none", "important");
+        nextWordElement.classList.add("ui-hidden-tip");
+      }
+    } else {
+      // Always show when unhiding
+      nextWordElement.style.removeProperty("display");
+      nextWordElement.classList.remove("ui-hidden-tip");
+    }
+  }
+
+  // Special handling for the main game area
+  const gameArea =
+    document.querySelector("#gameArea") ||
+    document.querySelector("main") ||
+    document.querySelector(".container");
+  if (gameArea) {
+    if (hideUI) {
+      gameArea.classList.add("ui-minimal");
+    } else {
+      gameArea.classList.remove("ui-minimal");
+    }
+  }
+
+  // Store the state in a data attribute for CSS targeting
+  document.body.setAttribute("data-ui-hidden", hideUI.toString());
+}
+
+// Function to restore UI state on page load
+function restoreUIHideState() {
+  if (!isGamePage()) return; // Only work on game page
+
+  const hideUIState = localStorage.getItem("nerdtype_hide_ui") === "true";
+
+  // Remove the preload CSS since we're taking over now
+  const preloadStyle = document.getElementById("preload-ui-hide");
+  if (preloadStyle) {
+    preloadStyle.remove();
+  }
+
+  if (hideUIState) {
+    console.log("🎨 Restoring UI hide state...");
+    applyUIHideSettings(true);
+
+    // Also set up an observer to handle dynamic changes to nextWord
+    setupNextWordObserver();
+  } else {
+    // Make sure everything is visible if not hiding
+    document.body.setAttribute("data-ui-hidden", "false");
+  }
+}
+
+// Set up an observer to watch for changes to the nextWord element
+function setupNextWordObserver() {
+  if (!isGamePage()) return; // Only work on game page
+
+  const nextWordElement = document.getElementById("nextWord");
+  if (!nextWordElement) return;
+
+  // Create a mutation observer to watch for content changes
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === "childList" || mutation.type === "characterData") {
+        const hideUIState = localStorage.getItem("nerdtype_hide_ui") === "true";
+        if (hideUIState) {
+          // Check if it's now showing a tip
+          if (
+            nextWordElement.classList.contains("tip-style") ||
+            nextWordElement.textContent.includes("Tip:")
+          ) {
+            nextWordElement.style.setProperty("display", "none", "important");
+            nextWordElement.classList.add("ui-hidden-tip");
+          } else {
+            // It's showing the next word during game, so show it
+            nextWordElement.style.removeProperty("display");
+            nextWordElement.classList.remove("ui-hidden-tip");
+          }
+        }
+      }
+    });
+  });
+
+  // Start observing
+  observer.observe(nextWordElement, {
+    childList: true,
+    characterData: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+}
+
+// Setup the keybind
+function setupUIHideKeybind() {
+  document.addEventListener("keydown", function (event) {
+    // Only work on game page
+    if (!isGamePage()) return;
+
+    // Ctrl+Z to toggle UI (Cmd+Z on Mac)
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z") {
+      // Don't interfere if user is in a text input (except the game input)
+      const activeElement = document.activeElement;
+      const isGameInput = activeElement && activeElement.id === "userInput";
+      const isTextInput =
+        activeElement &&
+        (activeElement.tagName === "TEXTAREA" ||
+          (activeElement.tagName === "INPUT" &&
+            activeElement.type === "text") ||
+          activeElement.contentEditable === "true");
+
+      // Only prevent default browser undo if we're not in a text input, or if we're in the game input
+      if (!isTextInput || isGameInput) {
+        event.preventDefault();
+        toggleUIVisibility();
+      }
+    }
+  });
+}
+
+// Initialize everything - ONLY on game page
+document.addEventListener("DOMContentLoaded", function () {
+  if (!isGamePage()) return; // Exit early if not game page
+
+  setupUIHideKeybind();
+
+  // Restore UI state after a short delay to ensure DOM is ready
+  setTimeout(() => {
+    restoreUIHideState();
+  }, 300);
+});

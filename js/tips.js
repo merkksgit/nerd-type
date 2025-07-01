@@ -21,4 +21,5 @@ export const tips = [
   "Press Ctrl + O to toggle the settings panel",
   "Press Ctrl + I to toggle the local scoreboard",
   "Press Ctrl + U to quickly hide or show the UI buttons",
+  "Press Ctrl + Z to toggle minimal UI mode",
 ];

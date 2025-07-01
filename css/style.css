@@ -2466,3 +2466,82 @@ body:not(.chart-page) #customAlertModal #alertModalMessage {
 .username-checking {
   color: #ff9e64;
 }
+
+/* UI hiding CSS */
+body[data-ui-hidden="true"] #gameTimer,
+body[data-ui-hidden="true"] #totalTime,
+body[data-ui-hidden="true"] #currentGameMode,
+body[data-ui-hidden="true"] #accuracy,
+body[data-ui-hidden="true"] #wpm,
+body[data-ui-hidden="true"] #currentWordList,
+body[data-ui-hidden="true"] #versionInfo,
+body[data-ui-hidden="true"] .stats-container,
+body[data-ui-hidden="true"] .game-info,
+body[data-ui-hidden="true"] .footer,
+body[data-ui-hidden="true"] .progress,
+body[data-ui-hidden="true"] #buttons {
+  display: none !important;
+}
+
+body[data-ui-hidden="true"] #nextWord.tip-style,
+body[data-ui-hidden="true"] #nextWord.ui-hidden-tip {
+  display: none !important;
+}
+
+body[data-ui-hidden="true"] #nextWord:not(.tip-style):not(.ui-hidden-tip) {
+  display: block !important;
+  color: #3b4261 !important;
+}
+
+/* Minimal UI mode styles */
+.ui-minimal {
+  margin-top: 3rem !important;
+  margin-bottom: 3rem !important;
+}
+
+.ui-minimal #userInput {
+  font-size: 1.3em !important;
+  padding: 1.2rem !important;
+}
+
+.ui-minimal #nextWord:not(.tip-style) {
+  font-size: 1.6em !important;
+  margin-bottom: 2.5rem !important;
+  margin-top: 2rem !important;
+}
+
+.ui-minimal #wordToType {
+  font-size: 1.4em !important;
+}
+
+/* Indicator when in minimal mode */
+body[data-ui-hidden="true"]::after {
+  content: "Minimal Mode - Ctrl+Z to toggle";
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background: rgba(31, 35, 53, 0.8);
+  color: #7aa2f7;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.75em;
+  z-index: 1000;
+  opacity: 0.6;
+  pointer-events: none;
+  font-family: "jetbrains-mono", monospace;
+}
+
+@keyframes fadeInThenOut {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  70% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+  }
+}

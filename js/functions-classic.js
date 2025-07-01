@@ -382,6 +382,24 @@ async function initializeGame() {
       }
     }
   }, 200);
+  setTimeout(() => {
+    const pendingNotification = localStorage.getItem(
+      "pending_settings_notification",
+    );
+    if (pendingNotification) {
+      try {
+        const { message, type } = JSON.parse(pendingNotification);
+        showSettingsNotification(message, type);
+        localStorage.removeItem("pending_settings_notification");
+      } catch (e) {
+        localStorage.removeItem("pending_settings_notification");
+      }
+    }
+  }, 200);
+
+  setTimeout(() => {
+    restoreUIHideState();
+  }, 350);
 }
 
 function setupUI() {

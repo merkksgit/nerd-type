@@ -7,6 +7,56 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <meta name="format-detection" content="telephone=no" />
+    <script>
+      // Immediate UI hiding to prevent flash - runs before DOM is ready
+      (function () {
+        const shouldHideUI =
+          localStorage.getItem("nerdtype_hide_ui") === "true";
+
+        if (shouldHideUI) {
+          // Create and inject CSS immediately
+          const style = document.createElement("style");
+          style.id = "preload-ui-hide";
+          style.textContent = `
+      #gameTimer,
+      #totalTime,
+      #currentGameMode,
+      #accuracy,
+      #wpm,
+      #currentWordList,
+      #versionInfo,
+      .stats-container,
+      .game-info,
+      .footer,
+      .progress,
+      #buttons,
+      #nextWord.tip-style,
+      #nextWord[class*="tip"] {
+        display: none !important;
+      }
+      
+      body {
+        --ui-hidden: true;
+      }
+      
+      #gameArea,
+      main,
+      .container {
+        margin-top: 3rem !important;
+        margin-bottom: 3rem !important;
+      }
+      
+      #userInput {
+        font-size: 1.3em !important;
+        padding: 1.2rem !important;
+      }
+    `;
+
+          document.head.appendChild(style);
+          document.documentElement.setAttribute("data-ui-hidden", "true");
+        }
+      })();
+    </script>
     <!-- Google tag (gtag.js) -->
     <script
       async
