@@ -168,9 +168,18 @@
                 "
               />
               <p>
-                Press Enter during a game to start or restart, and Ctrl + Enter
-                to reset the page. You can use number keys 1-6 to quickly
-                navigate between pages.
+                Press <span class="terminal-command">Enter</span>
+                to start or restart game, and
+                <span class="terminal-command">Ctrl + Enter</span>
+                to reset the page. You can use
+                <span class="terminal-command">number keys 1-6</span> to quickly
+                navigate between pages. Toggle scoreboard, settings, and login
+                buttons visibility with
+                <span class="terminal-command">Ctrl + U</span>. Toggle
+                scoreboard with <span class="terminal-command">Ctrl + I</span>,
+                and settings panel with
+                <span class="terminal-command">Ctrl + O</span>. Toggle minimal
+                UI mode with <span class="terminal-command">Ctrl + Z</span>.
               </p>
               <h4>3. How words per minute (WPM) is calculated</h4>
               <hr
@@ -496,6 +505,13 @@
                 (moderate impact), Low (minor impact).
               </p>
               <ol>
+                <li>
+                  <strong>🟢 Low</strong> - The "next-word-to-type" field is
+                  missing when toggling minimal UI on for the first game.
+                  <br /><strong>Workaround:</strong> Reload the page (Ctrl + R)
+                  to restore the field.
+                </li>
+                <br />
                 <li>
                   <strong>🟢 Low</strong> - Terminal input loses focus when
                   alt-tabbing back to the window.<br /><strong
