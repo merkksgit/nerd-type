@@ -430,7 +430,7 @@ class UIToggle {
 
   saveState() {
     localStorage.setItem(
-      "nerdtype_settingsBtb_hidden",
+      "nerdtype_settingsBtn_hidden",
       this.isHidden.toString(),
     );
   }
