@@ -1,3 +1,122 @@
+/* UI Toggle Button */
+.ui-toggle-btn {
+  position: fixed;
+  top: 30px;
+  right: 20px;
+  z-index: 1001;
+  background-color: #24283b;
+  color: #7aa2f7;
+  border: none;
+  border-radius: 4px;
+  padding: 8px;
+  transition: all 0.3s ease;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-toggle-btn:hover {
+  color: #ff9e64;
+  background-color: #2a3047;
+}
+
+.ui-toggle-btn i {
+  margin: 0;
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.ui-toggle-btn.collapsed i {
+  transform: rotate(180deg);
+}
+
+/* Adjust other button positions to make room for toggle */
+.floating-user-btn {
+  right: 70px !important;
+}
+
+.floating-settings-btn {
+  right: 230px !important;
+}
+
+.floating-scoreboard-btn,
+.floating-scoreboard-chart-btn {
+  right: 280px !important;
+}
+
+.floating-scoreboard-chart-btn {
+  right: 150px !important;
+}
+
+/* Hidden state for buttons */
+.floating-buttons-hidden .floating-user-btn,
+.floating-buttons-hidden .floating-settings-btn,
+.floating-buttons-hidden .floating-scoreboard-btn,
+.floating-buttons-hidden .floating-scoreboard-chart-btn {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(20px);
+}
+
+/* Ensure toggle button stays visible and in place */
+.floating-buttons-hidden .ui-toggle-btn {
+  opacity: 1 !important;
+  pointer-events: all !important;
+  transform: none !important;
+}
+
+/* Media query adjustments */
+@media (max-width: 768px) {
+  .ui-toggle-btn {
+    top: 10px;
+    right: 20px;
+  }
+
+  .floating-user-btn {
+    right: 70px !important;
+  }
+
+  .floating-settings-btn {
+    top: 10px;
+    right: 120px !important;
+  }
+
+  .floating-scoreboard-btn,
+  .floating-scoreboard-chart-btn {
+    top: 10px;
+    right: 170px !important;
+  }
+
+  .floating-scoreboard-chart-btn {
+    right: 70px !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .ui-toggle-btn {
+    right: 20px;
+  }
+
+  .floating-user-btn {
+    right: 70px !important;
+  }
+
+  .floating-settings-btn {
+    right: 120px !important;
+  }
+
+  .floating-scoreboard-btn,
+  .floating-scoreboard-chart-btn {
+    right: 170px !important;
+  }
+
+  .floating-scoreboard-chart-btn {
+    right: 70px !important;
+  }
+}
+
 .floating-settings-btn {
   position: fixed;
   top: 30px;

@@ -363,3 +363,100 @@ function addAuthStatusToScoreboard() {
 
   updateScoreboardDisplay();
 }
+
+// UI Toggle functionality
+class UIToggle {
+  constructor() {
+    this.isHidden = false;
+    this.toggleBtn = null;
+    this.init();
+  }
+
+  init() {
+    // Wait for DOM to be ready
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => this.setup());
+    } else {
+      this.setup();
+    }
+  }
+
+  setup() {
+    this.toggleBtn = document.getElementById("uiToggleBtn");
+    if (!this.toggleBtn) {
+      console.warn("UI Toggle button not found");
+      return;
+    }
+
+    // Add click handler
+    this.toggleBtn.addEventListener("click", () => this.toggle());
+
+    // Add keyboard shortcut (Ctrl+U)
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+        this.toggle();
+      }
+    });
+
+    // Load saved state
+    this.loadState();
+  }
+
+  toggle() {
+    this.isHidden = !this.isHidden;
+    this.updateUI();
+    this.saveState();
+  }
+
+  updateUI() {
+    const body = document.body;
+    const toggleIcon = this.toggleBtn?.querySelector("i");
+
+    if (this.isHidden) {
+      body.classList.add("floating-buttons-hidden");
+      this.toggleBtn?.classList.add("collapsed");
+      if (toggleIcon) {
+        toggleIcon.className = "fa-solid fa-chevron-right";
+      }
+    } else {
+      body.classList.remove("floating-buttons-hidden");
+      this.toggleBtn?.classList.remove("collapsed");
+      if (toggleIcon) {
+        toggleIcon.className = "fa-solid fa-chevron-left";
+      }
+    }
+  }
+
+  saveState() {
+    localStorage.setItem("nerdtype_ui_hidden", this.isHidden.toString());
+  }
+
+  loadState() {
+    const saved = localStorage.getItem("nerdtype_ui_hidden");
+    if (saved === "true") {
+      this.isHidden = true;
+      this.updateUI();
+    }
+  }
+
+  // Public method to show UI
+  show() {
+    if (this.isHidden) {
+      this.toggle();
+    }
+  }
+
+  // Public method to hide UI
+  hide() {
+    if (!this.isHidden) {
+      this.toggle();
+    }
+  }
+}
+
+// Initialize UI Toggle when script loads
+const uiToggle = new UIToggle();
+
+// Make it globally accessible if needed
+window.uiToggle = uiToggle;
