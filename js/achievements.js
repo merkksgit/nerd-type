@@ -658,6 +658,8 @@ class AchievementSystem {
     // Check for newly unlocked achievements
     this.checkAchievements(gameData);
 
+    console.log(this.achievementsData.stats.languageWPM);
+
     // Save updated data
     this.saveData();
   }

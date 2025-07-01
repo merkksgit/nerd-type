@@ -1897,9 +1897,7 @@ function saveZenResult(wpm, totalTime, accuracy) {
   localStorage.setItem("gameResults", JSON.stringify(results));
 
   // Update achievements system
-  if (window.achievementsSystem) {
-    window.achievementsSystem.handleGameCompletion(gameData);
-  }
+  achievementSystem.handleGameCompletion(gameData);
 
   console.log("Zen result saved:", gameData);
 }
