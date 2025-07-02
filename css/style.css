@@ -2543,3 +2543,37 @@ body[data-ui-hidden="true"]::after {
     opacity: 0;
   }
 }
+
+.info-section {
+  background-color: #24283b;
+  border: 2px solid #3b4261;
+  border-radius: 1px;
+  text-align: left;
+}
+
+.info-title {
+  color: #7aa2f7;
+  font-weight: bold;
+}
+
+.info-label {
+  color: #c3e88d;
+  font-weight: bold;
+}
+
+/* Info section body text */
+.info-section .text-secondary {
+  color: #c0caf5 !important;
+}
+
+/* Link styling within info section */
+.info-section a {
+  color: #7aa2f7;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.info-section a:hover {
+  color: #9ece6a;
+  text-decoration: underline;
+}
