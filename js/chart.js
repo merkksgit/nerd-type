@@ -1,66 +1,4 @@
-// Chart
-function calculateDifficultyMultiplier(settings) {
-  try {
-    // Reference values (classic mode settings)
-    const refTimeLimit = 30;
-    const refBonusTime = 3;
-    const refInitialTime = 10;
-
-    // Calculate difficulty factors
-    const timeLimitFactor = refTimeLimit / Math.max(1, settings.timeLimit);
-    const bonusTimeFactor = refBonusTime / Math.max(1, settings.bonusTime);
-    const initialTimeFactor =
-      refInitialTime / Math.max(1, settings.initialTime);
-
-    // Combined multiplier
-    const multiplier = Math.pow(
-      timeLimitFactor * bonusTimeFactor * initialTimeFactor,
-      1 / 3,
-    );
-
-    // Normalize to a range of 0.75 - 1.75
-    // Classic mode would get a multiplier of 1.0
-    return 0.75 + multiplier * 0.5;
-  } catch (error) {
-    console.error("Error calculating difficulty multiplier:", error);
-    // Return default multiplier in case of error
-    return 1.0;
-  }
-}
-
-function calculateScore(timeLeft, wpm, accuracy, settings) {
-  try {
-    // Use max of 1 WPM to avoid division by zero
-    const safeWPM = Math.max(1, wpm);
-    const safeAccuracy = parseFloat(accuracy.replace("%", "")) / 100;
-
-    // Calculate difficulty multiplier
-    const difficultyMultiplier = calculateDifficultyMultiplier(settings);
-
-    // Base score calculation: (WPM * 10) * (accuracy^2) * difficultyMultiplier
-    const baseScore = Math.round(
-      safeWPM * 10 * (safeAccuracy * safeAccuracy) * difficultyMultiplier,
-    );
-
-    // Energy bonus: Add a small bonus for remaining energy (timeLeft)
-    // But cap it to prevent it from being the dominant factor
-    const energyBonus = Math.min(timeLeft * 5, baseScore * 0.2); // Cap at 20% of base score
-
-    // Final score (rounded to nearest integer)
-    return Math.round(baseScore + energyBonus);
-  } catch (error) {
-    console.error("Error calculating score:", error);
-    // Fallback to original scoring if an error occurs
-    return timeLeft * 256;
-  }
-}
-
 function enhanceChartVisuals() {
-  Chart.defaults.color = "#7dcfff";
-  Chart.defaults.borderColor = "#3b4261";
-  Chart.defaults.plugins.tooltip.displayColors = false;
-
-  // Tooltip appearance - fonts and colors
   Chart.defaults.font.family = "'jetbrains-mono', monospace";
   Chart.defaults.font.size = 12;
   Chart.defaults.font.weight = "normal";
@@ -80,8 +18,8 @@ function enhanceChartVisuals() {
     family: "'jetbrains-mono', monospace",
     size: 13,
   };
+  Chart.defaults.plugins.tooltip.displayColors = false;
 
-  // Make text colors match data colors
   Chart.defaults.plugins.tooltip.callbacks =
     Chart.defaults.plugins.tooltip.callbacks || {};
   Chart.defaults.plugins.tooltip.callbacks.labelTextColor = function (context) {
@@ -110,8 +48,11 @@ function displayScoreGraph() {
       !result.mode,
   );
 
+  // Show last 15 games
+  const last15Results = classicResults.slice(-15);
+
   // If no classic results, don't display anything
-  if (classicResults.length === 0) {
+  if (last15Results.length === 0) {
     const ctx = document.getElementById("scoreChart").getContext("2d");
     new Chart(ctx, {
       type: "line",
@@ -206,51 +147,7 @@ function displayScoreGraph() {
               color: "#7aa2f7",
               font: {
                 family: "'jetbrains-mono', monospace",
-                size: 12,
-              },
-            },
-          },
-          y1: {
-            display: true,
-            title: {
-              display: true,
-              text: "WPM",
-              color: "#ff9e64",
-              font: {
-                family: "'jetbrains-mono', monospace",
-                size: 12,
-              },
-            },
-            position: "right",
-            ticks: {
-              color: "#ff9e64",
-              font: {
-                family: "'jetbrains-mono', monospace",
-                size: 12,
-              },
-            },
-          },
-          y2: {
-            display: true,
-            title: {
-              display: true,
-              text: "Accuracy %",
-              color: "#bb9af7",
-              font: {
-                family: "'jetbrains-mono', monospace",
-                size: 12,
-              },
-            },
-            position: "right",
-            grid: {
-              display: false,
-              color: "#292e42",
-            },
-            ticks: {
-              color: "#bb9af7",
-              font: {
-                family: "'jetbrains-mono', monospace",
-                size: 12,
+                size: 11,
               },
             },
           },
@@ -260,32 +157,18 @@ function displayScoreGraph() {
     return;
   }
 
-  // Calculate scores and prepare data
-  const dates = classicResults.map((result) => result.date);
-  const scores = classicResults.map((result) => {
-    if (result.score) return result.score;
-
-    const resultSettings = {
-      timeLimit: result.timeLimit || 30,
-      bonusTime: result.bonusTime || 3,
-      initialTime: result.initialTime || 10,
-      goalPercentage: 100,
-      currentMode: result.mode || "classic",
-    };
-
-    return calculateScore(
-      result.timeLeft || 0,
-      result.wpm || 0,
-      result.accuracy || "0%",
-      resultSettings,
-    );
+  // Extract data from last 15 results
+  const dates = last15Results.map((result, index) => {
+    return `Game ${index + 1}`;
   });
 
-  const wpmScores = classicResults.map((result) => result.wpm);
-  const accuracyScores = classicResults.map(
+  const scores = last15Results.map((result) => result.score || 0);
+  const wpmScores = last15Results.map((result) => parseFloat(result.wpm) || 0);
+  const accuracyScores = last15Results.map(
     (result) => parseFloat(result.accuracy) || 0,
   );
 
+  // Calculate averages
   const averageScore = scores.length
     ? scores.reduce((sum, score) => sum + score, 0) / scores.length
     : 0;
@@ -361,13 +244,30 @@ function displayScoreGraph() {
             },
           },
         },
-        // ENHANCED TOOLTIP WITH GAME MODE
         tooltip: {
           callbacks: {
             afterTitle: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
-                const result = classicResults[dataIndex];
+                const result = last15Results[dataIndex];
+                const username = result?.username || "runner";
+                return `User: ${username}`;
+              }
+              return "";
+            },
+            title: function (context) {
+              if (context && context.length > 0) {
+                const dataIndex = context[0].dataIndex;
+                const result = last15Results[dataIndex];
+                const date = result?.date || "Unknown";
+                return date;
+              }
+              return "";
+            },
+            beforeBody: function (context) {
+              if (context && context.length > 0) {
+                const dataIndex = context[0].dataIndex;
+                const result = last15Results[dataIndex];
                 let gameMode = result?.mode || "Classic Mode";
                 // Remove "Mode" from the end if it exists
                 gameMode = gameMode.replace(/ Mode$/, "");
@@ -425,45 +325,49 @@ function displayScoreGraph() {
             color: "#7aa2f7",
             font: {
               family: "'jetbrains-mono', monospace",
-              size: 12,
+              size: 11,
             },
           },
         },
         y1: {
+          type: "linear",
+          display: true,
+          position: "right",
           title: {
             display: true,
             text: "WPM",
             color: "#ff9e64",
           },
-          position: "right",
           grid: {
             display: false,
-            color: "#292e42",
+            drawOnChartArea: false,
           },
           ticks: {
             color: "#ff9e64",
             font: {
               family: "'jetbrains-mono', monospace",
-              size: 12,
+              size: 11,
             },
           },
         },
         y2: {
+          type: "linear",
+          display: true,
+          position: "right",
           title: {
             display: true,
             text: "Accuracy %",
             color: "#bb9af7",
           },
-          position: "right",
           grid: {
             display: false,
-            color: "#292e42",
+            drawOnChartArea: false,
           },
           ticks: {
             color: "#bb9af7",
             font: {
               family: "'jetbrains-mono', monospace",
-              size: 12,
+              size: 11,
             },
           },
         },
@@ -549,8 +453,11 @@ function displayZenModeGraph() {
   // Filter only Zen Mode results
   const zenResults = results.filter((result) => result.mode === "Zen Mode");
 
+  // Show 15 last played games
+  const last15ZenResults = zenResults.slice(-15);
+
   // If no zen results, don't display anything
-  if (zenResults.length === 0) {
+  if (last15ZenResults.length === 0) {
     const ctx = document.getElementById("zenChart").getContext("2d");
     new Chart(ctx, {
       type: "line",
@@ -618,14 +525,19 @@ function displayZenModeGraph() {
           x: {
             display: true,
             title: {
-              display: true,
+              display: false,
+              text: "Zen Mode History",
+              font: {
+                family: "'jetbrains-mono', monospace",
+                size: 14,
+              },
             },
           },
           y: {
             display: true,
             title: {
               display: true,
-              text: "Time (sec.)",
+              text: "Time",
               color: "#c3e88d",
               font: {
                 family: "'jetbrains-mono', monospace",
@@ -640,51 +552,7 @@ function displayZenModeGraph() {
               color: "#c3e88d",
               font: {
                 family: "'jetbrains-mono', monospace",
-                size: 12,
-              },
-            },
-          },
-          y1: {
-            display: true,
-            title: {
-              display: true,
-              text: "WPM",
-              color: "#ff9e64",
-              font: {
-                family: "'jetbrains-mono', monospace",
-                size: 12,
-              },
-            },
-            position: "right",
-            ticks: {
-              color: "#ff9e64",
-              font: {
-                family: "'jetbrains-mono', monospace",
-                size: 12,
-              },
-            },
-          },
-          y2: {
-            display: true,
-            title: {
-              display: true,
-              text: "Accuracy %",
-              color: "#bb9af7",
-              font: {
-                family: "'jetbrains-mono', monospace",
-                size: 12,
-              },
-            },
-            position: "right",
-            grid: {
-              display: false,
-              color: "#292e42",
-            },
-            ticks: {
-              color: "#bb9af7",
-              font: {
-                family: "'jetbrains-mono', monospace",
-                size: 12,
+                size: 11,
               },
             },
           },
@@ -694,20 +562,32 @@ function displayZenModeGraph() {
     return;
   }
 
-  const dates = zenResults.map((result) => result.date);
-  const times = zenResults
-    .map((result) => {
-      if (!result.totalTime) return null;
+  // Extract data from last 15 zen results
+  const dates = last15ZenResults.map((result, index) => {
+    return `Game ${index + 1}`;
+  });
+
+  const times = last15ZenResults.map((result) => {
+    if (!result.totalTime) return 0;
+    // Handle time format "m:ss" and convert to seconds
+    if (
+      typeof result.totalTime === "string" &&
+      result.totalTime.includes(":")
+    ) {
       const [minutes, seconds] = result.totalTime.split(":").map(Number);
       return minutes * 60 + seconds;
-    })
-    .filter((time) => time !== null);
-
-  const wpmScores = zenResults.map((result) => result.wpm);
-  const accuracyScores = zenResults.map(
+    }
+    // If it's already a number, use it directly
+    return parseFloat(result.totalTime) || 0;
+  });
+  const wpmScores = last15ZenResults.map(
+    (result) => parseFloat(result.wpm) || 0,
+  );
+  const accuracyScores = last15ZenResults.map(
     (result) => parseFloat(result.accuracy) || 0,
   );
 
+  // Calculate averages
   const averageTime = times.length
     ? times.reduce((sum, time) => sum + time, 0) / times.length
     : 0;
@@ -783,13 +663,30 @@ function displayZenModeGraph() {
             },
           },
         },
-        // ENHANCED TOOLTIP WITH GAME MODE FOR ZEN MODE
         tooltip: {
           callbacks: {
             afterTitle: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
-                const result = zenResults[dataIndex];
+                const result = last15ZenResults[dataIndex];
+                const username = result?.username || "runner";
+                return `User: ${username}`;
+              }
+              return "";
+            },
+            title: function (context) {
+              if (context && context.length > 0) {
+                const dataIndex = context[0].dataIndex;
+                const result = last15ZenResults[dataIndex];
+                const date = result?.date || "Unknown";
+                return date;
+              }
+              return "";
+            },
+            beforeBody: function (context) {
+              if (context && context.length > 0) {
+                const dataIndex = context[0].dataIndex;
+                const result = last15ZenResults[dataIndex];
                 let gameMode = result?.mode || "Zen Mode";
                 // Remove "Mode" from the end if it exists
                 gameMode = gameMode.replace(/ Mode$/, "");
@@ -857,6 +754,9 @@ function displayZenModeGraph() {
               family: "'jetbrains-mono', monospace",
               size: 12,
             },
+            callback: function (value) {
+              return Math.round(value);
+            },
           },
         },
         y1: {
@@ -879,21 +779,26 @@ function displayZenModeGraph() {
           },
         },
         y2: {
+          type: "linear",
+          display: true,
+          position: "right",
           title: {
             display: true,
             text: "Accuracy %",
             color: "#bb9af7",
           },
-          position: "right",
           grid: {
             display: false,
-            color: "#292e42",
+            drawOnChartArea: false,
           },
           ticks: {
             color: "#bb9af7",
             font: {
               family: "'jetbrains-mono', monospace",
               size: 12,
+            },
+            callback: function (value) {
+              return Math.round(value);
             },
           },
         },
