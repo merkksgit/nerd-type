@@ -165,6 +165,9 @@ function displayScoreGraph() {
                 family: "'jetbrains-mono', monospace",
                 size: 11,
               },
+              callback: function (value) {
+                return Math.round(value);
+              },
             },
           },
           y1: {
@@ -190,6 +193,9 @@ function displayScoreGraph() {
                 family: "'jetbrains-mono', monospace",
                 size: 11,
               },
+              callback: function (value) {
+                return Math.round(value);
+              },
             },
           },
           y2: {
@@ -204,6 +210,9 @@ function displayScoreGraph() {
                 family: "'jetbrains-mono', monospace",
                 size: 12,
               },
+              callback: function (value) {
+                return Math.round(value);
+              },
             },
             grid: {
               display: false,
@@ -214,6 +223,9 @@ function displayScoreGraph() {
               font: {
                 family: "'jetbrains-mono', monospace",
                 size: 11,
+              },
+              callback: function (value) {
+                return Math.round(value);
               },
             },
           },
@@ -408,6 +420,9 @@ function displayScoreGraph() {
               family: "'jetbrains-mono', monospace",
               size: 11,
             },
+            callback: function (value) {
+              return Math.round(value);
+            },
           },
         },
         y1: {
@@ -429,6 +444,9 @@ function displayScoreGraph() {
               family: "'jetbrains-mono', monospace",
               size: 11,
             },
+            callback: function (value) {
+              return Math.round(value);
+            },
           },
         },
         y2: {
@@ -449,6 +467,9 @@ function displayScoreGraph() {
             font: {
               family: "'jetbrains-mono', monospace",
               size: 11,
+            },
+            callback: function (value) {
+              return Math.round(value);
             },
           },
         },
@@ -675,6 +696,9 @@ function displayZenModeGraph() {
                 family: "'jetbrains-mono', monospace",
                 size: 11,
               },
+              callback: function (value) {
+                return Math.round(value);
+              },
             },
           },
           y2: {
@@ -688,6 +712,9 @@ function displayZenModeGraph() {
               font: {
                 family: "'jetbrains-mono', monospace",
                 size: 12,
+              },
+              callback: function (value) {
+                return Math.round(value);
               },
             },
             grid: {
@@ -939,6 +966,9 @@ function displayZenModeGraph() {
             font: {
               family: "'jetbrains-mono', monospace",
               size: 12,
+            },
+            callback: function (value) {
+              return Math.round(value);
             },
           },
         },
