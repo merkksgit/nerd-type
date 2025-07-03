@@ -1,8 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Update the change username button functionality
   updateUsernameButtonDisplay();
 
-  // Enhanced authentication state change handler with proper timing
+  // Authentication state change handler with proper timing
   if (window.firebaseModules) {
     const { onAuthStateChanged } = window.firebaseModules;
     if (window.auth) {
@@ -33,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (user) {
           handleLoginWithDelayedReload(user);
         } else {
-          handleLogoutWithDelayedReload();
+          handleLogout();
         }
       });
     }
@@ -65,7 +64,7 @@ async function handleLoginWithDelayedReload(user) {
     setTimeout(() => {
       console.log("🔄 Reloading page to refresh all game state...");
       window.location.reload();
-    }, 3000);
+    }, 2000);
   } catch (error) {
     console.error("❌ Error in login handler:", error);
     window.authProcessing = false;
@@ -82,8 +81,10 @@ function showLoginSuccessModal(username) {
   // Set title and message
   document.getElementById("alertModalTitle").innerHTML =
     `<img src="../images/logo-text-no-keyboard.png" alt="Success" style="width: 300px; vertical-align: middle;">`;
-  document.getElementById("alertModalMessage").textContent =
-    `Welcome, ${username}!`;
+  document.getElementById("alertModalMessage").innerHTML = `
+        <div class="text-center">
+          <p class="mb-3">Welcome, <span style="color: #ff9e64"<strong>${username}</strong></span>!</p>
+        </div>`;
 
   // Hide the OK button for this specific modal
   const okButton = document.getElementById("alertOkBtn");
@@ -110,10 +111,15 @@ function showLoginSuccessModal(username) {
     }
   }, 2000); // Hide after 2 seconds
 }
-// Handle logout with delayed reload
-async function handleLogoutWithDelayedReload() {
+
+// Handle logout with goodbye message (no reload) - Fixed function name
+async function handleLogout() {
   try {
     window.authProcessing = true;
+
+    // Get username before clearing it
+    const currentUser = window.getCurrentUser();
+    const emailUsername = currentUser ? currentUser.email.split("@")[0] : null;
 
     // Clear username from localStorage
     localStorage.removeItem("nerdtype_username");
@@ -125,11 +131,15 @@ async function handleLogoutWithDelayedReload() {
 
     console.log("✅ Logged out successfully");
 
-    // Reload after delay
+    // Show goodbye message if we have a username and siteModal is available
+    if (emailUsername && window.siteModal) {
+      window.siteModal.showLogoutSuccessModal(emailUsername);
+    }
+
+    // Reset auth processing flag after showing goodbye message
     setTimeout(() => {
-      console.log("🔄 Reloading page to reset game state...");
-      window.location.reload();
-    }, 100);
+      window.authProcessing = false;
+    }, 2000);
   } catch (error) {
     console.error("❌ Error in logout handler:", error);
     window.authProcessing = false;
@@ -293,7 +303,7 @@ function updateScoreboardDisplay() {
   });
 }
 
-// Fixed logout function with no loading text
+// Enhanced logout function with goodbye modal (no reload)
 window.logoutAndRedirect = async function () {
   const currentUser = window.getCurrentUser();
   if (!currentUser) return;
@@ -308,9 +318,14 @@ window.logoutAndRedirect = async function () {
 
     console.log("✅ Successfully logged out");
 
-    // Update displays immediately (but DON'T update data collection setting)
+    // Update displays immediately
     updateUsernameButtonDisplay();
     updateScoreboardDisplay();
+
+    // Show goodbye message
+    if (window.siteModal) {
+      window.siteModal.showLogoutSuccessModal(emailUsername);
+    }
 
     console.log("User logged out - login available on demand");
   } catch (error) {

@@ -408,12 +408,11 @@ class Terminal {
 
   setupEventListeners() {
     const terminalInput = document.getElementById("terminalInput");
-    const username = localStorage.getItem("nerdtype_username") || "runner";
 
     // Set up terminal labels
     document.querySelector(".terminal-prompt").textContent = `$`;
     document.getElementById("terminalModalLabel").textContent =
-      `${username}@nerdtypeterminalv1.0.1`;
+      `nerdtypeterminalv1.0.1`;
 
     // Add both click listeners and focus listener
     const terminalModal = document.getElementById("terminalModal");
