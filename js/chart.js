@@ -1,4 +1,5 @@
 function enhanceChartVisuals() {
+  // Enhanced fonts and colors
   Chart.defaults.font.family = "'jetbrains-mono', monospace";
   Chart.defaults.font.size = 12;
   Chart.defaults.font.weight = "normal";
@@ -20,6 +21,7 @@ function enhanceChartVisuals() {
   };
   Chart.defaults.plugins.tooltip.displayColors = false;
 
+  // Make text colors match data colors
   Chart.defaults.plugins.tooltip.callbacks =
     Chart.defaults.plugins.tooltip.callbacks || {};
   Chart.defaults.plugins.tooltip.callbacks.labelTextColor = function (context) {
@@ -48,7 +50,7 @@ function displayScoreGraph() {
       !result.mode,
   );
 
-  // Show last 15 games
+  // LIMIT TO LAST 15 GAMES
   const last15Results = classicResults.slice(-15);
 
   // If no classic results, don't display anything
@@ -89,6 +91,20 @@ function displayScoreGraph() {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
+          title: {
+            display: true,
+            text: "Last 15 Classic Mode Games",
+            color: "#7dcfff",
+            font: {
+              family: "'jetbrains-mono', monospace",
+              size: 16,
+              weight: "bold",
+            },
+            padding: {
+              top: 10,
+              bottom: 20,
+            },
+          },
           legend: {
             display: true,
             onClick: function (e, legendItem, legend) {
@@ -145,6 +161,56 @@ function displayScoreGraph() {
             },
             ticks: {
               color: "#7aa2f7",
+              font: {
+                family: "'jetbrains-mono', monospace",
+                size: 11,
+              },
+            },
+          },
+          y1: {
+            type: "linear",
+            display: true,
+            position: "right",
+            title: {
+              display: true,
+              text: "WPM",
+              color: "#ff9e64",
+              font: {
+                family: "'jetbrains-mono', monospace",
+                size: 12,
+              },
+            },
+            grid: {
+              display: false,
+              drawOnChartArea: false,
+            },
+            ticks: {
+              color: "#ff9e64",
+              font: {
+                family: "'jetbrains-mono', monospace",
+                size: 11,
+              },
+            },
+          },
+          y2: {
+            type: "linear",
+            display: true,
+            position: "right",
+            title: {
+              display: true,
+              text: "Accuracy %",
+              color: "#bb9af7",
+              font: {
+                family: "'jetbrains-mono', monospace",
+                size: 12,
+              },
+            },
+            grid: {
+              display: false,
+              drawOnChartArea: false,
+            },
+            ticks: {
+              color: "#bb9af7",
               font: {
                 family: "'jetbrains-mono', monospace",
                 size: 11,
@@ -218,6 +284,20 @@ function displayScoreGraph() {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
+        title: {
+          display: true,
+          text: "Last 15 Classic Mode Games",
+          color: "#7dcfff",
+          font: {
+            family: "'jetbrains-mono', monospace",
+            size: 16,
+            weight: "bold",
+          },
+          padding: {
+            top: 10,
+            bottom: 20,
+          },
+        },
         legend: {
           display: true,
           onClick: function (e, legendItem, legend) {
@@ -244,18 +324,19 @@ function displayScoreGraph() {
             },
           },
         },
+        // ENHANCED TOOLTIP WITH USERNAME AND GAME MODE
         tooltip: {
           callbacks: {
-            afterTitle: function (context) {
+            title: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
                 const result = last15Results[dataIndex];
                 const username = result?.username || "runner";
-                return `User: ${username}`;
+                return username;
               }
               return "";
             },
-            title: function (context) {
+            beforeBody: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
                 const result = last15Results[dataIndex];
@@ -264,7 +345,7 @@ function displayScoreGraph() {
               }
               return "";
             },
-            beforeBody: function (context) {
+            afterTitle: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
                 const result = last15Results[dataIndex];
@@ -453,7 +534,7 @@ function displayZenModeGraph() {
   // Filter only Zen Mode results
   const zenResults = results.filter((result) => result.mode === "Zen Mode");
 
-  // Show 15 last played games
+  // LIMIT TO LAST 15 GAMES
   const last15ZenResults = zenResults.slice(-15);
 
   // If no zen results, don't display anything
@@ -494,6 +575,20 @@ function displayZenModeGraph() {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
+          title: {
+            display: true,
+            text: "Last 15 Zen Mode Games",
+            color: "#7dcfff",
+            font: {
+              family: "'jetbrains-mono', monospace",
+              size: 16,
+              weight: "bold",
+            },
+            padding: {
+              top: 10,
+              bottom: 20,
+            },
+          },
           legend: {
             display: true,
             onClick: function (e, legendItem, legend) {
@@ -537,7 +632,7 @@ function displayZenModeGraph() {
             display: true,
             title: {
               display: true,
-              text: "Time",
+              text: "Time (sec.)",
               color: "#c3e88d",
               font: {
                 family: "'jetbrains-mono', monospace",
@@ -553,6 +648,60 @@ function displayZenModeGraph() {
               font: {
                 family: "'jetbrains-mono', monospace",
                 size: 11,
+              },
+              callback: function (value) {
+                return Math.round(value);
+              },
+            },
+          },
+          y1: {
+            title: {
+              display: true,
+              text: "WPM",
+              color: "#ff9e64",
+              font: {
+                family: "'jetbrains-mono', monospace",
+                size: 12,
+              },
+            },
+            position: "right",
+            grid: {
+              display: false,
+              color: "#292e42",
+            },
+            ticks: {
+              color: "#ff9e64",
+              font: {
+                family: "'jetbrains-mono', monospace",
+                size: 11,
+              },
+            },
+          },
+          y2: {
+            type: "linear",
+            display: true,
+            position: "right",
+            title: {
+              display: true,
+              text: "Accuracy %",
+              color: "#bb9af7",
+              font: {
+                family: "'jetbrains-mono', monospace",
+                size: 12,
+              },
+            },
+            grid: {
+              display: false,
+              drawOnChartArea: false,
+            },
+            ticks: {
+              color: "#bb9af7",
+              font: {
+                family: "'jetbrains-mono', monospace",
+                size: 11,
+              },
+              callback: function (value) {
+                return Math.round(value);
               },
             },
           },
@@ -637,6 +786,20 @@ function displayZenModeGraph() {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
+        title: {
+          display: true,
+          text: "Last 15 Zen Mode Games",
+          color: "#7dcfff",
+          font: {
+            family: "'jetbrains-mono', monospace",
+            size: 16,
+            weight: "bold",
+          },
+          padding: {
+            top: 10,
+            bottom: 20,
+          },
+        },
         legend: {
           display: true,
           onClick: function (e, legendItem, legend) {
@@ -663,18 +826,19 @@ function displayZenModeGraph() {
             },
           },
         },
+        // ENHANCED TOOLTIP WITH USERNAME AND GAME MODE FOR ZEN MODE
         tooltip: {
           callbacks: {
-            afterTitle: function (context) {
+            title: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
                 const result = last15ZenResults[dataIndex];
                 const username = result?.username || "runner";
-                return `User: ${username}`;
+                return username;
               }
               return "";
             },
-            title: function (context) {
+            beforeBody: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
                 const result = last15ZenResults[dataIndex];
@@ -683,7 +847,7 @@ function displayZenModeGraph() {
               }
               return "";
             },
-            beforeBody: function (context) {
+            afterTitle: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
                 const result = last15ZenResults[dataIndex];
