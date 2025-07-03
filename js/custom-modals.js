@@ -4,6 +4,22 @@ class SiteModal {
     this.alertModal = document.getElementById("customAlertModal");
   }
 
+  // Time-based greeting helper method
+  getTimeBasedGreeting() {
+    const now = new Date();
+    const hour = now.getHours();
+
+    if (hour >= 5 && hour < 12) {
+      return "Have a great morning";
+    } else if (hour >= 12 && hour < 17) {
+      return "Enjoy your afternoon";
+    } else if (hour >= 17 && hour < 21) {
+      return "Have a great evening";
+    } else {
+      return "Good night";
+    }
+  }
+
   // Logout confirmation with image and goodbye text
   async confirmLogout(username) {
     return new Promise((resolve) => {
@@ -16,7 +32,7 @@ class SiteModal {
       // Set goodbye message with user context
       document.getElementById("confirmModalMessage").innerHTML = `
         <div class="text-center">
-          <p class="mb-3">Are you sure you want to logout, <span style="color: #ff9e64"<strong>${username}</strong></span>?</p>
+          <p class="mb-3">Are you sure you want to logout, <span style="color: #ff9e64"><strong>${username}</strong></span>?</p>
         </div>
       `;
 
@@ -59,31 +75,30 @@ class SiteModal {
 
   // Show logout success message after logout
   showLogoutSuccessModal(username) {
-    const alertModal = document.getElementById("customAlertModal");
-    if (!alertModal) return;
+    const modal = new bootstrap.Modal(this.alertModal);
 
-    const modal = new bootstrap.Modal(alertModal);
-
-    // Set title with image
     document.getElementById("alertModalTitle").innerHTML = `
-      <img src="../images/logo-text-no-keyboard.png" alt="Goodbye" style="width: 300px; vertical-align: middle;">
+      <img src="../images/logo-text-no-keyboard.png" alt="NerdType Logo" style="width: 300px; vertical-align: middle;">
     `;
 
-    // Set goodbye message
+    // Time-based greeting
+    const greeting = this.getTimeBasedGreeting();
+
     document.getElementById("alertModalMessage").innerHTML = `
       <div class="text-center">
-        <p class="mb-2">Goodbye, <span style="color: #ff9e64"<strong>${username}</strong></span>!</p>
-        <p class="mb-0">Thanks for playing NerdType!</p>
+        <p class="mb-3">${greeting}, <span style="color: #ff9e64"><strong>${username}</strong></span>!</p>
+        <p class="mb-2">Thanks for playing NerdType!</p>
       </div>
     `;
 
     // Hide the OK button for this specific modal
     const okButton = document.getElementById("alertOkBtn");
-    const modalFooter = alertModal.querySelector(".modal-footer");
-
     if (okButton) {
       okButton.style.display = "none";
     }
+
+    // Hide the modal footer entirely to remove the button area
+    const modalFooter = this.alertModal.querySelector(".modal-footer");
     if (modalFooter) {
       modalFooter.style.display = "none";
     }
@@ -91,7 +106,6 @@ class SiteModal {
     // Show the modal
     modal.show();
 
-    // Auto-hide after 2 seconds
     setTimeout(() => {
       modal.hide();
       if (okButton) {
@@ -100,52 +114,7 @@ class SiteModal {
       if (modalFooter) {
         modalFooter.style.display = "";
       }
-    }, 2000);
-  }
-
-  // Keep your existing methods...
-  confirm(message, title = "Confirm") {
-    return new Promise((resolve) => {
-      const modal = new bootstrap.Modal(this.confirmModal);
-
-      // Set title and message (regular confirm - no image)
-      document.getElementById("confirmModalTitle").textContent = title;
-      document.getElementById("confirmModalMessage").textContent = message;
-
-      // Handle button clicks
-      const handleConfirm = () => {
-        modal.hide();
-        resolve(true);
-        document
-          .getElementById("confirmOkBtn")
-          .removeEventListener("click", handleConfirm);
-        document
-          .getElementById("confirmCancelBtn")
-          .removeEventListener("click", handleCancel);
-      };
-
-      const handleCancel = () => {
-        modal.hide();
-        resolve(false);
-        document
-          .getElementById("confirmOkBtn")
-          .removeEventListener("click", handleConfirm);
-        document
-          .getElementById("confirmCancelBtn")
-          .removeEventListener("click", handleCancel);
-      };
-
-      // Add event listeners
-      document
-        .getElementById("confirmOkBtn")
-        .addEventListener("click", handleConfirm);
-      document
-        .getElementById("confirmCancelBtn")
-        .addEventListener("click", handleCancel);
-
-      // Show modal
-      modal.show();
-    });
+    }, 3000); // Hide after 3 seconds
   }
 
   // Simple alert dialog
