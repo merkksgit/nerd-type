@@ -991,6 +991,7 @@ Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank ||
               code_apprentice: "Score over 500 points in a single game",
               code_journeyman: "Score over 800 points in a single game",
               code_master: "Score over 1000 points in a single game",
+              system_architect: "Score over 1500 points in single game",
               running_on_fumes: "Complete a game with less than 3 energy left",
               the_admin: "System breached!",
               script_kiddie: "Complete your first game",
@@ -998,7 +999,8 @@ Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank ||
               digital_overlord: "Break 100 WPM",
               bug_eliminator: "Complete a game with 100% accuracy",
               night_owl: "Complete a game between midnight and 5am",
-              polyglot_programmer: "Achieve 50+ WPM in all language modes",
+              polyglot_programmer:
+                "Achieve 50+ WPM in Finnish, English and Swedish",
               completionist: "Unlock all achievements",
               speed_demon: "Complete a Zen Mode game in under 50 seconds",
               spray_and_pray: "Win a game with less than 40% accuracy",

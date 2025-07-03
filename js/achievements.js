@@ -82,6 +82,17 @@ class AchievementSystem {
           (gameData && gameData.score >= 1000) || stats.highestScore >= 1000,
       },
 
+      system_architect: {
+        id: "system_architect",
+        name: "System Architect",
+        description: "Score over 1500 points in a single game",
+        icon: "fa-solid fa-microchip",
+        category: "score",
+        secret: false,
+        check: (stats, gameData) =>
+          (gameData && gameData.score >= 1500) || stats.highestScore >= 1500,
+      },
+
       running_on_fumes: {
         id: "running_on_fumes",
         name: "Running on Fumes",
@@ -302,7 +313,7 @@ class AchievementSystem {
       polyglot_programmer: {
         id: "polyglot_programmer",
         name: "Polyglot Programmer",
-        description: "Achieve 50+ WPM in all language modes",
+        description: "Achieve 50+ WPM in Finnish, English, and Swedish",
         icon: "fa-solid fa-language",
         category: "mastery",
         secret: false,
@@ -317,9 +328,7 @@ class AchievementSystem {
             stats.languageWPM &&
             stats.languageWPM.english >= 50 &&
             stats.languageWPM.finnish >= 50 &&
-            stats.languageWPM.swedish >= 50 &&
-            stats.languageWPM.nightmare >= 50 &&
-            stats.languageWPM.programming >= 50
+            stats.languageWPM.swedish >= 50
           );
         },
       },
