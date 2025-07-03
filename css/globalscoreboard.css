@@ -156,35 +156,8 @@ body {
   border-color: #7aa2f7;
 }
 
-.fa-sync-alt,
-.fa-filter {
-  background-color: #1f2335;
-}
-
-#refreshScoresBtn:hover .fa-sync-alt,
-#modeFilter:hover .fa-filter {
+#refreshScoresBtn:hover .fa-sync-alt {
   background-color: #2a3047;
-}
-
-#modeFilter:focus .fa-filter {
-  background-color: #2a3047;
-}
-
-/* Dropdown styling */
-.dropdown-menu {
-  background-color: #24283b;
-  border: 2px solid #3b4261;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.dropdown-item {
-  color: #c0caf5;
-  transition: all 0.2s ease;
-}
-
-.dropdown-item:hover {
-  background-color: #7aa2f7;
-  color: #1a1b26;
 }
 
 /* Alert styling */
@@ -320,72 +293,6 @@ body {
     rgba(255, 215, 0, 0.15),
     rgba(255, 223, 0, 0.1)
   ) !important;
-}
-
-/* Dropdown styling */
-.dropdown-toggle {
-  color: #7aa2f7 !important;
-  background-color: #1f2335 !important;
-  border: none !important;
-  border-radius: 4px !important;
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.25),
-    0 0 4px rgba(122, 162, 247, 0.3);
-  transition: all 0.3s ease;
-  font-weight: bold;
-  padding: 8px 16px;
-}
-
-.dropdown-toggle:hover {
-  color: #ff9e64 !important;
-  box-shadow:
-    0 6px 12px rgba(0, 0, 0, 0.3),
-    0 0 8px rgba(122, 162, 247, 0.5);
-  transform: translateY(-2px) !important;
-  background-color: #2a3047 !important;
-}
-
-.dropdown-toggle:focus {
-  color: #ff9e64 !important;
-  background-color: #2a3047 !important;
-  box-shadow:
-    0 6px 12px rgba(0, 0, 0, 0.3),
-    0 0 8px rgba(122, 162, 247, 0.5);
-}
-
-.dropdown-toggle::after {
-  border-top-color: currentColor;
-  margin-left: 0.5rem;
-}
-
-.dropdown-menu {
-  background-color: #24283b !important;
-  border: 2px solid #3b4261 !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
-  border-radius: 8px !important;
-  padding: 8px 0;
-  margin-top: 4px;
-  min-width: 180px;
-}
-
-.dropdown-item {
-  color: #c0caf5 !important;
-  padding: 10px 16px !important;
-  transition: all 0.2s ease;
-  border: none;
-  background: none;
-  font-weight: 500;
-}
-
-.dropdown-item:hover,
-.dropdown-item:focus {
-  background-color: #7aa2f7 !important;
-  color: #1a1b26 !important;
-}
-
-.dropdown-item:active {
-  background-color: #9ece6a !important;
-  color: #1a1b26 !important;
 }
 
 /* Admin username styling */

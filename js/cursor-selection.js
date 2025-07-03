@@ -108,7 +108,7 @@ function applyCursorTheme(color) {
         #startButton, #clrResults, #confirmUsername, #game-command-modal-close,
         #confirmMobileWarning, #submitCustomScore, #resetBtn, #clearResultsBtn,
         #scoreboardCloseBtn, #toggleGraph, #toggleAchievements, #toggleScoreboard,
-        #downloadDataBtn, #refreshScoresBtn, #modeFilter, .floating-settings-btn,
+        #downloadDataBtn, #refreshScoresBtn, .floating-settings-btn,
         .floating-scoreboard-btn, .floating-scoreboard-chart-btn, .floating-user-btn,
         .dropdown-item, .dropdown-toggle, #backToTop, #rating1, #rating2, #rating3, #rating4, #rating5,
         /* Settings Modal specific buttons and elements */

@@ -192,51 +192,6 @@
               <button id="refreshScoresBtn" class="btn btn-primary">
                 <i class="fa-solid fa-sync-alt me-2"></i>Refresh
               </button>
-              <div class="dropdown">
-                <button
-                  class="btn btn-outline-primary dropdown-toggle"
-                  type="button"
-                  id="modeFilter"
-                  data-bs-toggle="dropdown"
-                >
-                  <i class="fa-solid fa-filter me-2"></i>All Modes
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" href="#" data-mode="all"
-                      >All Modes</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" data-mode="Classic Mode"
-                      >Classic Mode</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" data-mode="Hard Mode"
-                      >Hard Mode</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" data-mode="Practice Mode"
-                      >Practice Mode</a
-                    >
-                  </li>
-                  <li>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      data-mode="Speedrunner Mode"
-                      >Speedrunner Mode</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" data-mode="Custom Mode"
-                      >Custom Mode</a
-                    >
-                  </li>
-                </ul>
-              </div>
             </div>
 
             <!-- Connection Status -->
@@ -526,23 +481,6 @@
         if (refreshBtn) {
           refreshBtn.addEventListener("click", loadGlobalScores);
         }
-
-        // Mode filter dropdown
-        document.querySelectorAll(".dropdown-item").forEach((item) => {
-          item.addEventListener("click", function (e) {
-            e.preventDefault();
-            const mode = this.dataset.mode;
-            const modeText = this.textContent;
-
-            currentMode = mode;
-            const modeFilter = document.getElementById("modeFilter");
-            if (modeFilter) {
-              modeFilter.innerHTML = `<i class="fa-solid fa-filter me-2"></i>${modeText}`;
-            }
-
-            filterScores();
-          });
-        });
       }
 
       async function loadGlobalScores() {
@@ -645,24 +583,13 @@
       }
 
       function filterScores() {
-        let filteredScores = allScores;
+        // Always show all scores since there's no filter
+        displayScores(allScores);
 
-        if (currentMode !== "all") {
-          filteredScores = allScores.filter(
-            (score) => score.mode === currentMode,
-          );
-        }
-
-        displayScores(filteredScores);
-
-        // Update title
-        const title =
-          currentMode === "all"
-            ? "Season 1  - Top 20 Global Scores"
-            : `Season 1  - Top 20 ${currentMode} Scores`;
+        // Update title to always show all scores
         const titleElement = document.getElementById("scoreboardTitle");
         if (titleElement) {
-          titleElement.textContent = title;
+          titleElement.textContent = "Season 1 - Top 20 Global Scores";
         }
       }
 
