@@ -385,7 +385,7 @@ class AchievementSystem {
       summer_sprint_champion: {
         id: "summer_sprint_champion",
         name: "Summer Sprint Champion",
-        description: "Complete 100 games during Season 1 summer period",
+        description: "Complete 100 games during Season 1",
         icon: "fa-solid fa-sun",
         category: "seasonal",
         secret: false,
