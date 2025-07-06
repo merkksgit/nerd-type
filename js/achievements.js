@@ -38,6 +38,8 @@ class AchievementSystem {
         icon: "fa-solid fa-calendar-day",
         category: "frequency",
         secret: false,
+        progressTarget: 10,
+        getProgress: (stats) => Math.min(stats.gamesPlayedToday || 0, 10),
         check: (stats) => stats.gamesPlayedToday >= 10,
       },
       typing_marathon: {
@@ -47,6 +49,8 @@ class AchievementSystem {
         icon: "fa-solid fa-calendar-check",
         category: "frequency",
         secret: false,
+        progressTarget: 20,
+        getProgress: (stats) => Math.min(stats.gamesPlayedToday || 0, 20),
         check: (stats) => stats.gamesPlayedToday >= 20,
       },
 
@@ -175,6 +179,8 @@ class AchievementSystem {
         icon: "fa-solid fa-compass",
         category: "exploration",
         secret: false,
+        progressTarget: 15,
+        getProgress: (stats) => Math.min(stats.customGamesPlayedToday || 0, 15),
         check: function (stats, gameData) {
           if (!gameData) {
             return stats.customGamesPlayedToday >= 15;
@@ -376,10 +382,62 @@ class AchievementSystem {
         },
       },
 
+      summer_sprint_champion: {
+        id: "summer_sprint_champion",
+        name: "Summer Sprint Champion",
+        description: "Complete 100 games during Season 1 summer period",
+        icon: "fa-solid fa-sun",
+        category: "seasonal",
+        secret: false,
+        progressTarget: 100,
+        getProgress: function (stats) {
+          return stats.season1GamesCompleted || 0;
+        },
+        check: function (stats, gameData) {
+          // Check if the player has data sharing enabled
+          const dataShareEnabled = localStorage.getItem(
+            "data_collection_enabled",
+          );
+          if (dataShareEnabled === "false") {
+            return false; // Achievement not available if data sharing is disabled
+          }
+
+          // Define Season 1 date range
+          const season1Start = new Date("2025-07-01T00:00:00");
+          const season1End = new Date("2025-09-30T23:59:59");
+
+          // If we have gameData (current game), check if it's during Season 1
+          if (gameData && gameData.timeLeft > 0) {
+            // Only count completed games
+            const currentDate = new Date();
+
+            // Check if current date is within Season 1
+            if (currentDate >= season1Start && currentDate <= season1End) {
+              // Initialize counter if not exists
+              if (!stats.season1GamesCompleted) {
+                stats.season1GamesCompleted = 0;
+              }
+
+              // Increment counter
+              stats.season1GamesCompleted++;
+
+              // Save the data immediately
+              this.saveData();
+
+              // Check if target reached
+              return stats.season1GamesCompleted >= 100;
+            }
+          }
+
+          // Check if player has already reached the target
+          return (stats.season1GamesCompleted || 0) >= 100;
+        },
+      },
+
       completionist: {
         id: "completionist",
         name: "Completionist",
-        description: "Unlock all achievements",
+        description: "Unlock all core achievements",
         icon: "fa-solid fa-shield-halved",
         category: "meta",
         secret: false,
@@ -723,9 +781,11 @@ class AchievementSystem {
       !this.achievementsData.unlockedAchievements.completionist
     ) {
       try {
-        // Get all achievement IDs except completionist
+        // Get all achievement IDs except completionist and seasonal achievements
         const allOtherAchievementIds = Object.keys(this.achievements).filter(
-          (id) => id !== "completionist",
+          (id) =>
+            id !== "completionist" &&
+            this.achievements[id].category !== "seasonal",
         );
 
         console.log("Checking completionist achievement:");
@@ -955,6 +1015,57 @@ class AchievementSystem {
       return 0;
     });
 
+    this._renderAchievementsToContainer(container, achievements);
+  }
+
+  // Render core achievements to a container element
+  renderCoreAchievementsToContainer(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // Clear existing content
+    container.innerHTML = "";
+
+    // Get core achievements (all except seasonal), sorted by unlock status
+    const coreAchievements = this.getAllAchievements()
+      .filter((achievement) => achievement.category !== "seasonal")
+      .sort((a, b) => {
+        if (a.unlocked && !b.unlocked) return -1;
+        if (!a.unlocked && b.unlocked) return 1;
+        if (a.unlocked && b.unlocked) {
+          return new Date(b.unlockedAt) - new Date(a.unlockedAt);
+        }
+        return 0;
+      });
+
+    this._renderAchievementsToContainer(container, coreAchievements);
+  }
+
+  // Render seasonal achievements to a container element
+  renderSeasonalAchievementsToContainer(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // Clear existing content
+    container.innerHTML = "";
+
+    // Get seasonal achievements, sorted by unlock status
+    const seasonalAchievements = this.getAllAchievements()
+      .filter((achievement) => achievement.category === "seasonal")
+      .sort((a, b) => {
+        if (a.unlocked && !b.unlocked) return -1;
+        if (!a.unlocked && b.unlocked) return 1;
+        if (a.unlocked && b.unlocked) {
+          return new Date(b.unlockedAt) - new Date(a.unlockedAt);
+        }
+        return 0;
+      });
+
+    this._renderAchievementsToContainer(container, seasonalAchievements);
+  }
+
+  // Private method to render achievements to a container
+  _renderAchievementsToContainer(container, achievements) {
     // Create a row for the achievements
     const row = document.createElement("div");
     row.className = "row";
@@ -1030,7 +1141,7 @@ class AchievementSystem {
         contentDiv.appendChild(unlockDate);
         body.appendChild(contentDiv);
       } else {
-        // For locked achievements, show an icon and "Locked"
+        // For locked achievements, show progress or "Locked"
         const lockedIcon = document.createElement("i");
         lockedIcon.className = "fa-solid fa-lock me-2";
 
@@ -1039,12 +1150,55 @@ class AchievementSystem {
         // For secret achievements, show different text
         if (achievement.secret) {
           lockedText.textContent = "Secret Achievement";
+          body.appendChild(lockedIcon);
+          body.appendChild(lockedText);
         } else {
-          lockedText.textContent = "Locked";
-        }
+          // Check if this achievement has progress tracking
+          if (achievement.progressTarget && achievement.getProgress) {
+            const currentProgress = achievement.getProgress(
+              this.achievementsData.stats,
+            );
+            const progressPercent = Math.min(
+              (currentProgress / achievement.progressTarget) * 100,
+              100,
+            );
 
-        body.appendChild(lockedIcon);
-        body.appendChild(lockedText);
+            // Create progress container
+            const progressContainer = document.createElement("div");
+            progressContainer.style.width = "100%";
+
+            // Progress text
+            const progressText = document.createElement("div");
+            progressText.textContent = `${currentProgress}/${achievement.progressTarget}`;
+            progressText.style.fontSize = "0.85rem";
+            progressText.style.marginBottom = "8px";
+            progressText.style.color = "#c0caf5";
+
+            // Progress bar container
+            const progressBarContainer = document.createElement("div");
+            progressBarContainer.style.width = "100%";
+            progressBarContainer.style.height = "8px";
+            progressBarContainer.style.backgroundColor = "#3b4261";
+            progressBarContainer.style.borderRadius = "4px";
+            progressBarContainer.style.overflow = "hidden";
+
+            // Progress bar fill
+            const progressBarFill = document.createElement("div");
+            progressBarFill.style.width = `${progressPercent}%`;
+            progressBarFill.style.height = "100%";
+            progressBarFill.style.backgroundColor = "#bb9af7";
+            progressBarFill.style.transition = "width 0.3s ease";
+
+            progressBarContainer.appendChild(progressBarFill);
+            progressContainer.appendChild(progressText);
+            progressContainer.appendChild(progressBarContainer);
+            body.appendChild(progressContainer);
+          } else {
+            lockedText.textContent = "Locked";
+            body.appendChild(lockedIcon);
+            body.appendChild(lockedText);
+          }
+        }
       }
 
       card.appendChild(header);

@@ -118,26 +118,50 @@
       <div id="achievements" class="row justify-content-center pt-2 pt-md-5">
         <article class="col-md-12 p-3 flex-column d-flex align-items-center">
           <h1 class="page-title mb-3 achievements-title">
-            <i class="fa-solid fa-trophy"></i> ACHIEVEMENTS
+            <i class="fa-solid fa-trophy"></i> CORE ACHIEVEMENTS
           </h1>
 
           <div id="achievementsContainer" class="text-center w-100">
             <div class="row justify-content-center">
-              <!-- Special Achievements Section -->
+              <!-- Core Achievements Section -->
               <div class="col-12 col-md-8 mb-4">
-                <!-- Container for custom achievements -->
-                <div id="custom-achievements-container" class="mb-4">
-                  <!-- Achievements will be rendered here by the script -->
+                <!-- Container for core achievements -->
+                <div id="core-achievements-container" class="mb-4">
+                  <!-- Core achievements will be rendered here by the script -->
                   <div class="text-center">
                     <i
                       class="fa-solid fa-spinner fa-spin"
                       style="color: #7aa2f7"
                     ></i>
-                    Loading achievements...
+                    Loading core achievements...
+                  </div>
+                </div>
+              </div>
+
+              <!-- Seasonal Achievements Section -->
+              <div class="col-12 col-md-8 mb-4">
+                <h2 class="text-center mb-3" style="color: #bb9af7">
+                  <i class="fa-solid fa-calendar-alt me-2"></i>SEASONAL
+                  ACHIEVEMENTS
+                </h2>
+                <!-- Container for seasonal achievements -->
+                <div id="seasonal-achievements-container" class="mb-4">
+                  <!-- Seasonal achievements will be rendered here by the script -->
+                  <div class="text-center">
+                    <i
+                      class="fa-solid fa-spinner fa-spin"
+                      style="color: #7aa2f7"
+                    ></i>
+                    Loading seasonal achievements...
                   </div>
                 </div>
               </div>
               <div class="col-12 col-md-8 mb-4">
+                <h2 class="text-center mb-3" style="color: #bb9af7">
+                  <i class="fa-solid fa-calendar-alt me-2"></i>SPEED TIER AND
+                  ACCURACY RANK
+                </h2>
+
                 <div class="row">
                   <!-- Speed Tier -->
                   <div class="col-12 col-md-6 pt-3">
@@ -319,9 +343,14 @@
 
       // When DOM is loaded, render achievements
       document.addEventListener("DOMContentLoaded", function () {
-        // Render achievements
-        achievementSystem.renderAchievementsToContainer(
-          "custom-achievements-container",
+        // Render core achievements
+        achievementSystem.renderCoreAchievementsToContainer(
+          "core-achievements-container",
+        );
+
+        // Render seasonal achievements
+        achievementSystem.renderSeasonalAchievementsToContainer(
+          "seasonal-achievements-container",
         );
 
         // Display highest achievements (speed tier and accuracy rank)
