@@ -831,6 +831,20 @@ function initSoundSettings() {
 }
 
 function showSettingsNotification(message, type = "success") {
+  // Prevent duplicate notifications with the same message within 1 second
+  const currentTime = Date.now();
+  const lastNotificationKey = `last_notification_${message.replace(/\s+/g, "_")}`;
+  const lastNotificationTime = localStorage.getItem(lastNotificationKey);
+
+  if (
+    lastNotificationTime &&
+    currentTime - parseInt(lastNotificationTime) < 1000
+  ) {
+    return; // Skip duplicate notification
+  }
+
+  localStorage.setItem(lastNotificationKey, currentTime.toString());
+
   // Use the same notification system as the game commands
   let notificationContainer = document.getElementById(
     "game-command-notifications",

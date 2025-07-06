@@ -373,27 +373,12 @@ async function initializeGame() {
       "pending_settings_notification",
     );
     if (pendingNotification) {
+      // Remove the notification FIRST to prevent duplicate processing
+      localStorage.removeItem("pending_settings_notification");
       try {
         const { message, type } = JSON.parse(pendingNotification);
         showSettingsNotification(message, type);
-        localStorage.removeItem("pending_settings_notification");
-      } catch (e) {
-        localStorage.removeItem("pending_settings_notification");
-      }
-    }
-  }, 200);
-  setTimeout(() => {
-    const pendingNotification = localStorage.getItem(
-      "pending_settings_notification",
-    );
-    if (pendingNotification) {
-      try {
-        const { message, type } = JSON.parse(pendingNotification);
-        showSettingsNotification(message, type);
-        localStorage.removeItem("pending_settings_notification");
-      } catch (e) {
-        localStorage.removeItem("pending_settings_notification");
-      }
+      } catch (e) {}
     }
   }, 200);
 
