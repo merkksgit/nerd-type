@@ -881,7 +881,7 @@ function startGame() {
   gameEnded = false;
   currentWordIndex = 0;
   nextWordIndex = 1;
-  
+
   // Shuffle the words array at game start for variety
   words = words.sort(() => Math.random() - 0.5);
 
@@ -935,7 +935,7 @@ function updateWordDisplay() {
   const wordToTypeElement = document.getElementById("wordToType");
   const nextWordElement = document.getElementById("nextWord");
   const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
-  
+
   if (!wordToTypeElement) return;
 
   // Clear existing content
@@ -946,36 +946,37 @@ function updateWordDisplay() {
   wordContainer.classList.add("word-container");
 
   // Show exactly the word goal amount, but cap at 30
-  const settings = JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
-  const wordGoal = isZenMode ? zenWordGoal : (settings.timeLimit || 30);
+  const settings =
+    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+  const wordGoal = isZenMode ? zenWordGoal : settings.timeLimit || 30;
   const wordsToShow = Math.min(wordGoal, 30); // Exactly the goal, but never more than 30
-  
+
   // Generate word display - only show current and upcoming words for now
   const displayWords = [];
-  
+
   // Add current and upcoming words - always start with currentWordIndex
   for (let i = 0; i < wordsToShow; i++) {
     const wordIndex = (currentWordIndex + i) % words.length;
     const word = words[wordIndex];
     const isCurrentWord = i === 0;
-    
-    displayWords.push({ 
-      index: wordIndex, 
-      word: word, 
-      isCurrentWord: isCurrentWord, 
+
+    displayWords.push({
+      index: wordIndex,
+      word: word,
+      isCurrentWord: isCurrentWord,
       isCompleted: false,
-      displayPosition: i // Track position in display
+      displayPosition: i, // Track position in display
     });
   }
-  
+
   for (let wordIdx = 0; wordIdx < displayWords.length; wordIdx++) {
     const { word, isCurrentWord, isCompleted } = displayWords[wordIdx];
-    
+
     // Create word element
     const wordElement = document.createElement("div");
     wordElement.classList.add("word");
     wordElement.setAttribute("data-word-index", displayWords[wordIdx].index);
-    
+
     // Add word state classes - ensure only one current word
     if (isCompleted) {
       wordElement.classList.add("completed");
@@ -985,14 +986,14 @@ function updateWordDisplay() {
     } else {
       wordElement.classList.add("upcoming");
     }
-    
+
     // Create letter elements
     for (let i = 0; i < word.length; i++) {
       const letterElement = document.createElement("span");
       letterElement.classList.add("letter");
       letterElement.textContent = word[i];
       letterElement.setAttribute("data-letter-index", i);
-      
+
       // Set letter state based on word type
       if (isCompleted) {
         letterElement.classList.add("correct");
@@ -1006,33 +1007,33 @@ function updateWordDisplay() {
       } else {
         letterElement.classList.add("remaining");
       }
-      
+
       wordElement.appendChild(letterElement);
     }
-    
+
     // Add invisible space for word completion (no visual indicator)
     if (showSpace && wordIdx < displayWords.length - 1) {
       const spaceElement = document.createElement("span");
       spaceElement.classList.add("letter", "space");
       spaceElement.innerHTML = "&nbsp;"; // Invisible space
       spaceElement.setAttribute("data-letter-index", word.length);
-      
+
       if (isCurrentWord) {
         spaceElement.classList.add("remaining");
       } else {
         spaceElement.classList.add("remaining");
       }
-      
+
       wordElement.appendChild(spaceElement);
     }
-    
+
     wordContainer.appendChild(wordElement);
   }
 
   wordToTypeElement.appendChild(wordContainer);
-  
+
   // Add click handler to focus the hidden input when clicking on the word display
-  wordToTypeElement.onclick = function() {
+  wordToTypeElement.onclick = function () {
     const userInput = document.getElementById("userInput");
     if (userInput) {
       userInput.focus();
@@ -1048,119 +1049,169 @@ function updateWordDisplay() {
 // Helper function to get current word element
 function getCurrentWordElement() {
   // Simply find the word with the 'current' class - should be the first word in display
-  let currentWord = document.querySelector('.word.current');
-  
+  let currentWord = document.querySelector(".word.current");
+
   // If no current word found, make the first word current
   if (!currentWord) {
-    const firstWord = document.querySelector('.word');
+    const firstWord = document.querySelector(".word");
     if (firstWord) {
       // Remove current class from all words
-      document.querySelectorAll('.word.current').forEach(w => w.classList.remove('current'));
+      document
+        .querySelectorAll(".word.current")
+        .forEach((w) => w.classList.remove("current"));
       // Make first word current
-      firstWord.classList.add('current');
-      firstWord.classList.remove('upcoming', 'completed');
+      firstWord.classList.add("current");
+      firstWord.classList.remove("upcoming", "completed");
       currentWord = firstWord;
     }
   }
-  
+
   return currentWord;
 }
 
 // Helper function to get all letter elements in current word
 function getCurrentWordLetters() {
   const currentWord = getCurrentWordElement();
-  return currentWord ? currentWord.querySelectorAll('.letter') : [];
+  return currentWord ? currentWord.querySelectorAll(".letter") : [];
 }
-
 
 // Command palette functionality
 const availableCommands = [
-  { command: "/setwords", description: "Set number of words to type", example: "/setwords 30" },
-  { command: "/setbonus", description: "Set bonus energy per word", example: "/setbonus 5" },
-  { command: "/setinitial", description: "Set starting energy", example: "/setinitial 15" },
+  {
+    command: "/setwords",
+    description: "Set number of words to type",
+    example: "/setwords 30",
+  },
+  {
+    command: "/setbonus",
+    description: "Set bonus energy per word",
+    example: "/setbonus 5",
+  },
+  {
+    command: "/setinitial",
+    description: "Set starting energy",
+    example: "/setinitial 15",
+  },
   { command: "/mode", description: "Change game mode", example: "/mode hard" },
   { command: "/zen", description: "Toggle Zen mode", example: "/zen" },
-  { command: "/lang", description: "Change language", example: "/lang english" },
-  { command: "/language", description: "Change language (alias)", example: "/language finnish" },
-  { command: "/space", description: "Toggle space after words", example: "/space" },
-  { command: "/spaces", description: "Toggle space after words (alias)", example: "/spaces" },
-  { command: "/sound", description: "Toggle keypress sounds", example: "/sound" },
+  {
+    command: "/lang",
+    description: "Change language",
+    example: "/lang english",
+  },
+  {
+    command: "/language",
+    description: "Change language (alias)",
+    example: "/language finnish",
+  },
+  {
+    command: "/space",
+    description: "Toggle space after words",
+    example: "/space",
+  },
+  {
+    command: "/spaces",
+    description: "Toggle space after words (alias)",
+    example: "/spaces",
+  },
+  {
+    command: "/sound",
+    description: "Toggle keypress sounds",
+    example: "/sound",
+  },
   { command: "/data", description: "Toggle data collection", example: "/data" },
-  { command: "/status", description: "Show current game settings", example: "/status" },
-  { command: "/reset", description: "Reset settings to default", example: "/reset" },
-  { command: "/help", description: "Show all available commands", example: "/help" }
+  {
+    command: "/status",
+    description: "Show current game settings",
+    example: "/status",
+  },
+  {
+    command: "/reset",
+    description: "Reset settings to default",
+    example: "/reset",
+  },
+  {
+    command: "/help",
+    description: "Show all available commands",
+    example: "/help",
+  },
 ];
 
 function showCommandPalette(currentInput = "/") {
   // Remove existing palette
-  const existingPalette = document.querySelector('.command-palette');
+  const existingPalette = document.querySelector(".command-palette");
   if (existingPalette) {
     existingPalette.remove();
   }
 
   // Create command palette
-  const palette = document.createElement('div');
-  palette.classList.add('command-palette');
-  
-  const inputField = document.createElement('input');
-  inputField.classList.add('command-input');
-  inputField.type = 'text';
+  const palette = document.createElement("div");
+  palette.classList.add("command-palette");
+
+  const inputField = document.createElement("input");
+  inputField.classList.add("command-input");
+  inputField.type = "text";
   inputField.value = currentInput;
-  inputField.placeholder = 'Type a command...';
-  
-  const suggestionsContainer = document.createElement('div');
-  suggestionsContainer.classList.add('command-suggestions');
-  
+  inputField.placeholder = "Type a command...";
+
+  const suggestionsContainer = document.createElement("div");
+  suggestionsContainer.classList.add("command-suggestions");
+
   palette.appendChild(inputField);
   palette.appendChild(suggestionsContainer);
   document.body.appendChild(palette);
-  
+
   // Update suggestions
   updateCommandSuggestions(currentInput, suggestionsContainer);
-  
+
   // Focus the input
   inputField.focus();
-  inputField.setSelectionRange(inputField.value.length, inputField.value.length);
-  
+  inputField.setSelectionRange(
+    inputField.value.length,
+    inputField.value.length,
+  );
+
   // Store reference for cleanup
   palette.escHandler = (e) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       e.preventDefault();
       e.stopPropagation();
       hideCommandPalette();
     }
   };
-  document.addEventListener('keydown', palette.escHandler);
-  
+  document.addEventListener("keydown", palette.escHandler);
+
   // Handle input changes
-  inputField.addEventListener('input', (e) => {
+  inputField.addEventListener("input", (e) => {
     updateCommandSuggestions(e.target.value, suggestionsContainer);
     // Update the main game input
-    const mainInput = document.getElementById('userInput');
+    const mainInput = document.getElementById("userInput");
     if (mainInput) {
       mainInput.value = e.target.value;
     }
   });
-  
+
   // Handle keyboard navigation
   let selectedIndex = -1;
-  inputField.addEventListener('keydown', (e) => {
-    const suggestions = suggestionsContainer.querySelectorAll('.command-suggestion');
-    
-    if (e.key === 'ArrowDown') {
+  inputField.addEventListener("keydown", (e) => {
+    const suggestions = suggestionsContainer.querySelectorAll(
+      ".command-suggestion",
+    );
+
+    if (e.key === "ArrowDown") {
       e.preventDefault();
       selectedIndex = Math.min(selectedIndex + 1, suggestions.length - 1);
       updateSelection(suggestions, selectedIndex);
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
       selectedIndex = Math.max(selectedIndex - 1, -1);
       updateSelection(suggestions, selectedIndex);
-    } else if (e.key === 'Enter') {
+    } else if (e.key === "Enter") {
       e.preventDefault();
       if (selectedIndex >= 0 && suggestions[selectedIndex]) {
         const command = suggestions[selectedIndex].dataset.command;
         inputField.value = command + " ";
-        const mainInput = document.getElementById('userInput');
+        const mainInput = document.getElementById("userInput");
         if (mainInput) {
           mainInput.value = command + " ";
         }
@@ -1173,7 +1224,7 @@ function showCommandPalette(currentInput = "/") {
           hideCommandPalette();
         }
       }
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       e.preventDefault();
       e.stopPropagation();
       hideCommandPalette();
@@ -1182,24 +1233,25 @@ function showCommandPalette(currentInput = "/") {
 }
 
 function updateCommandSuggestions(input, container) {
-  container.innerHTML = '';
-  
+  container.innerHTML = "";
+
   // If input is just "/", show all commands
   let filtered;
   if (input.trim() === "/") {
     filtered = availableCommands;
   } else {
-    filtered = availableCommands.filter(cmd => 
-      cmd.command.toLowerCase().includes(input.toLowerCase()) ||
-      cmd.description.toLowerCase().includes(input.toLowerCase())
+    filtered = availableCommands.filter(
+      (cmd) =>
+        cmd.command.toLowerCase().includes(input.toLowerCase()) ||
+        cmd.description.toLowerCase().includes(input.toLowerCase()),
     );
   }
-  
+
   filtered.forEach((cmd, index) => {
-    const suggestion = document.createElement('div');
-    suggestion.classList.add('command-suggestion');
+    const suggestion = document.createElement("div");
+    suggestion.classList.add("command-suggestion");
     suggestion.dataset.command = cmd.command;
-    
+
     suggestion.innerHTML = `
       <div>
         <div class="command-name">${cmd.command}</div>
@@ -1207,26 +1259,26 @@ function updateCommandSuggestions(input, container) {
       </div>
       <div class="command-example">${cmd.example}</div>
     `;
-    
-    suggestion.addEventListener('click', () => {
-      const inputField = document.querySelector('.command-input');
+
+    suggestion.addEventListener("click", () => {
+      const inputField = document.querySelector(".command-input");
       if (inputField) {
         inputField.value = cmd.command + " ";
-        const mainInput = document.getElementById('userInput');
+        const mainInput = document.getElementById("userInput");
         if (mainInput) {
           mainInput.value = cmd.command + " ";
         }
         updateCommandSuggestions(cmd.command + " ", container);
       }
     });
-    
+
     container.appendChild(suggestion);
   });
 }
 
 function updateSelection(suggestions, selectedIndex) {
   suggestions.forEach((suggestion, index) => {
-    suggestion.classList.toggle('selected', index === selectedIndex);
+    suggestion.classList.toggle("selected", index === selectedIndex);
   });
 }
 
@@ -1239,36 +1291,36 @@ function executeCommand(commandText) {
     }
   } else {
     // Fallback: trigger the existing command processing
-    const mainInput = document.getElementById('userInput');
+    const mainInput = document.getElementById("userInput");
     if (mainInput) {
       mainInput.value = commandText;
       // Trigger Enter key event to process the command
-      const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      const enterEvent = new KeyboardEvent("keydown", { key: "Enter" });
       mainInput.dispatchEvent(enterEvent);
     }
   }
 }
 
 function hideCommandPalette() {
-  const palette = document.querySelector('.command-palette');
+  const palette = document.querySelector(".command-palette");
   if (palette) {
     // Remove global ESC handler
     if (palette.escHandler) {
-      document.removeEventListener('keydown', palette.escHandler);
+      document.removeEventListener("keydown", palette.escHandler);
     }
-    
-    palette.classList.add('hide');
+
+    palette.classList.add("hide");
     setTimeout(() => {
       if (palette.parentNode) {
         palette.remove();
       }
     }, 200);
   }
-  
+
   // Clear command mode immediately
   isCommandMode = false;
   commandStartTime = null;
-  
+
   // Resume game timers if they were paused
   if (wasPaused && hasStartedTyping) {
     if (!isZenMode) {
@@ -1285,97 +1337,101 @@ function hideCommandPalette() {
     }
     wasPaused = false;
   }
-  
-  const mainInput = document.getElementById('userInput');
+
+  const mainInput = document.getElementById("userInput");
   if (mainInput) {
-    mainInput.value = '';
+    mainInput.value = "";
     mainInput.focus();
   }
 }
 
 // Check if a word element is on the last visible row
 function isWordOnLastRow(wordElement) {
-  const wordContainer = document.querySelector('.word-container');
+  const wordContainer = document.querySelector(".word-container");
   if (!wordContainer || !wordElement) return false;
-  
+
   const containerHeight = wordContainer.offsetHeight;
   const wordTop = wordElement.offsetTop;
   const wordHeight = wordElement.offsetHeight;
   const lineHeight = parseFloat(getComputedStyle(wordContainer).lineHeight);
-  
+
   // Calculate which row this word is on (0-based)
   const rowNumber = Math.floor(wordTop / lineHeight);
   const maxRows = Math.floor(containerHeight / lineHeight);
-  
+
   // Return true if this is the last row (row 2 for 3-row display)
   return rowNumber >= maxRows - 1;
 }
 
 // Scroll the word display up by removing first row and adding new words
 function scrollWordsDisplay() {
-  const wordContainer = document.querySelector('.word-container');
+  const wordContainer = document.querySelector(".word-container");
   if (!wordContainer) return;
-  
-  const allWords = Array.from(wordContainer.querySelectorAll('.word'));
+
+  const allWords = Array.from(wordContainer.querySelectorAll(".word"));
   if (allWords.length === 0) return;
-  
+
   // Find words on the first row to remove
   const lineHeight = parseFloat(getComputedStyle(wordContainer).lineHeight);
-  const firstRowWords = allWords.filter(word => {
+  const firstRowWords = allWords.filter((word) => {
     const wordTop = word.offsetTop;
     const rowNumber = Math.floor(wordTop / lineHeight);
     return rowNumber === 0;
   });
-  
+
   // Remove first row words
-  firstRowWords.forEach(word => word.remove());
-  
+  firstRowWords.forEach((word) => word.remove());
+
   // Add new words to fill the display
   addNewWordsToDisplay();
-  
+
   // Find and mark the current word as current
-  const currentWordElement = document.querySelector(`[data-word-index="${currentWordIndex}"]`);
+  const currentWordElement = document.querySelector(
+    `[data-word-index="${currentWordIndex}"]`,
+  );
   if (currentWordElement) {
     // Remove current class from all words first
-    document.querySelectorAll('.word.current').forEach(w => w.classList.remove('current'));
-    currentWordElement.classList.remove('upcoming');
-    currentWordElement.classList.add('current');
+    document
+      .querySelectorAll(".word.current")
+      .forEach((w) => w.classList.remove("current"));
+    currentWordElement.classList.remove("upcoming");
+    currentWordElement.classList.add("current");
   }
 }
 
 // Function to add new words to display without clearing existing ones
 function addNewWordsToDisplay() {
-  const wordContainer = document.querySelector('.word-container');
+  const wordContainer = document.querySelector(".word-container");
   if (!wordContainer || !words || words.length === 0) {
     return;
   }
 
   const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
-  
+
   // Calculate how many words to add to maintain 3 rows
-  const existingWords = wordContainer.querySelectorAll('.word').length;
+  const existingWords = wordContainer.querySelectorAll(".word").length;
   const wordsToAdd = Math.max(20 - existingWords, 10); // Ensure we have enough words
-  
+
   // Find the highest word index currently displayed
-  const displayedWords = Array.from(wordContainer.querySelectorAll('.word'));
+  const displayedWords = Array.from(wordContainer.querySelectorAll(".word"));
   let highestIndex = -1;
-  displayedWords.forEach(word => {
-    const index = parseInt(word.getAttribute('data-word-index'));
+  displayedWords.forEach((word) => {
+    const index = parseInt(word.getAttribute("data-word-index"));
     if (index > highestIndex) highestIndex = index;
   });
-  
+
   // Add new words starting from the next index
   for (let i = 1; i <= wordsToAdd; i++) {
     const wordIndex = (highestIndex + i) % words.length;
     const word = words[wordIndex];
-    
+
     if (!word) continue;
-    
+
     // Create word element
     const wordElement = document.createElement("div");
     wordElement.classList.add("word", "upcoming");
     wordElement.setAttribute("data-word-index", wordIndex);
-    
+
     // Create letter elements
     for (let letterIdx = 0; letterIdx < word.length; letterIdx++) {
       const letterElement = document.createElement("span");
@@ -1384,7 +1440,7 @@ function addNewWordsToDisplay() {
       letterElement.setAttribute("data-letter-index", letterIdx);
       wordElement.appendChild(letterElement);
     }
-    
+
     // Add invisible space for word completion (no visual indicator)
     if (showSpace) {
       const spaceElement = document.createElement("span");
@@ -1393,7 +1449,7 @@ function addNewWordsToDisplay() {
       spaceElement.setAttribute("data-letter-index", word.length);
       wordElement.appendChild(spaceElement);
     }
-    
+
     wordContainer.appendChild(wordElement);
   }
 }
@@ -1405,28 +1461,37 @@ function updateLetterStates(userInput) {
   if (!currentWordElement) {
     return;
   }
-  
+
   // Get the word text from the DOM element, not from the words array
-  const currentWord = Array.from(currentWordElement.querySelectorAll('.letter:not(.space)'))
-    .map(letter => letter.textContent).join('');
+  const currentWord = Array.from(
+    currentWordElement.querySelectorAll(".letter:not(.space)"),
+  )
+    .map((letter) => letter.textContent)
+    .join("");
   const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
-  
+
   letters.forEach((letter, index) => {
     // Remove all state classes
-    letter.classList.remove('correct', 'incorrect', 'remaining', 'current', 'extra');
-    
-    if (letter.classList.contains('space')) {
+    letter.classList.remove(
+      "correct",
+      "incorrect",
+      "remaining",
+      "current",
+      "extra",
+    );
+
+    if (letter.classList.contains("space")) {
       // Handle space character (invisible)
       if (index < userInput.length) {
-        if (userInput[index] === ' ') {
-          letter.classList.add('correct');
+        if (userInput[index] === " ") {
+          letter.classList.add("correct");
         } else {
-          letter.classList.add('incorrect');
+          letter.classList.add("incorrect");
         }
       } else if (index === userInput.length) {
-        letter.classList.add('current');
+        letter.classList.add("current");
       } else {
-        letter.classList.add('remaining');
+        letter.classList.add("remaining");
       }
       // Always keep space invisible
       letter.innerHTML = "&nbsp;";
@@ -1434,23 +1499,23 @@ function updateLetterStates(userInput) {
       // Handle regular characters
       if (index < userInput.length) {
         if (userInput[index] === currentWord[index]) {
-          letter.classList.add('correct');
+          letter.classList.add("correct");
         } else {
-          letter.classList.add('incorrect');
+          letter.classList.add("incorrect");
           // Add shake animation for errors
-          letter.classList.add('error-shake');
-          setTimeout(() => letter.classList.remove('error-shake'), 300);
+          letter.classList.add("error-shake");
+          setTimeout(() => letter.classList.remove("error-shake"), 300);
         }
       } else if (index === userInput.length) {
-        letter.classList.add('current');
+        letter.classList.add("current");
       } else {
-        letter.classList.add('remaining');
+        letter.classList.add("remaining");
       }
       // Always show the expected letter, not what was typed
       letter.textContent = currentWord[index];
     }
   });
-  
+
   // No extra character handling needed since we prevent them from being typed
 }
 
@@ -1596,7 +1661,9 @@ function checkInput(e) {
   if (!wordDisplay) return;
 
   // Prevent typing extra characters (except space if enabled)
-  const maxAllowedLength = showSpace ? currentWord.length + 1 : currentWord.length;
+  const maxAllowedLength = showSpace
+    ? currentWord.length + 1
+    : currentWord.length;
   if (userInput.length > maxAllowedLength) {
     // Block extra characters by resetting to the maximum allowed length
     e.target.value = userInput.substring(0, maxAllowedLength);
@@ -1648,7 +1715,7 @@ function checkInput(e) {
   // Check if exiting command mode (no longer starts with /)
   else if (!userInput.startsWith("/") && isCommandMode) {
     isCommandMode = false;
-    
+
     // Hide command palette
     hideCommandPalette();
 
@@ -1732,7 +1799,6 @@ function checkInput(e) {
     }
   }
 
-  // Update letter states using the new MonkeyType-style system
   updateLetterStates(userInput);
 
   // Check if word is complete
@@ -1746,18 +1812,18 @@ function checkInput(e) {
       timeLeft += bonusTime;
     }
     wordsTyped.push(currentWord);
-    
+
     // Mark current word as completed
     const currentWordElement = getCurrentWordElement();
     if (currentWordElement) {
-      currentWordElement.classList.remove('current');
-      currentWordElement.classList.add('completed');
+      currentWordElement.classList.remove("current");
+      currentWordElement.classList.add("completed");
     }
-    
+
     // Move to next word sequentially (words are shuffled at start)
     currentWordIndex++;
     nextWordIndex = currentWordIndex + 1;
-    
+
     // Handle word wrapping around the list
     if (currentWordIndex >= words.length) {
       currentWordIndex = 0;
@@ -1765,9 +1831,11 @@ function checkInput(e) {
       // Shuffle the words array for variety
       words = words.sort(() => Math.random() - 0.5);
     }
-    
+
     // Check if we need to scroll the display
-    const nextWordElement = document.querySelector(`[data-word-index="${currentWordIndex}"]`);
+    const nextWordElement = document.querySelector(
+      `[data-word-index="${currentWordIndex}"]`,
+    );
     if (!nextWordElement) {
       // Next word not visible - we need to scroll or regenerate
       scrollWordsDisplay();
@@ -1775,30 +1843,32 @@ function checkInput(e) {
       // Check if the next word is on the last row - if so, scroll
       if (isWordOnLastRow(nextWordElement)) {
         // Only scroll if we haven't reached the goal yet
-        const settings = JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
-        const wordGoal = isZenMode ? zenWordGoal : (settings.timeLimit || 30);
-        
+        const settings =
+          JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+        const wordGoal = isZenMode ? zenWordGoal : settings.timeLimit || 30;
+
         // If we have fewer than goal words completed + visible, we need more words
-        if (wordsTyped.length < wordGoal - 5) { // Keep some buffer
+        if (wordsTyped.length < wordGoal - 5) {
+          // Keep some buffer
           scrollWordsDisplay();
         } else {
           // Near the end, just move cursor normally
-          nextWordElement.classList.remove('upcoming');
-          nextWordElement.classList.add('current');
+          nextWordElement.classList.remove("upcoming");
+          nextWordElement.classList.add("current");
         }
       } else {
         // Normal progression - just move cursor to next word
-        nextWordElement.classList.remove('upcoming');
-        nextWordElement.classList.add('current');
+        nextWordElement.classList.remove("upcoming");
+        nextWordElement.classList.add("current");
       }
     }
-    
+
     // Clear input
     e.target.value = "";
-    
+
     // Update letter states for the new current word
     updateLetterStates("");
-    
+
     updateProgressBar();
 
     // Check game completion for both modes
@@ -1808,9 +1878,14 @@ function checkInput(e) {
       showGameOverModal(getRandomSuccessMessage(), true);
     } else if (!isZenMode) {
       // For classic mode, also check word goal completion
-      const settings = JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
-      const wordsGoal = parseInt(localStorage.getItem("nerdtype_words_goal") || settings.timeLimit || "30");
-      
+      const settings =
+        JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+      const wordsGoal = parseInt(
+        localStorage.getItem("nerdtype_words_goal") ||
+          settings.timeLimit ||
+          "30",
+      );
+
       if (wordsTyped.length >= wordsGoal) {
         gameEnded = true;
         clearInterval(countDownInterval);
