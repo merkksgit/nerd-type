@@ -945,11 +945,8 @@ function updateWordDisplay() {
   const wordContainer = document.createElement("div");
   wordContainer.classList.add("word-container");
 
-  // Show exactly the word goal amount, but cap at 30
-  const settings =
-    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
-  const wordGoal = isZenMode ? zenWordGoal : settings.timeLimit || 30;
-  const wordsToShow = Math.min(wordGoal, 30); // Exactly the goal, but never more than 30
+  // Always show 30 words in the display regardless of word goal
+  const wordsToShow = 30;
 
   // Generate word display - only show current and upcoming words for now
   const displayWords = [];
@@ -1842,20 +1839,7 @@ function checkInput(e) {
     } else {
       // Check if the next word is on the last row - if so, scroll
       if (isWordOnLastRow(nextWordElement)) {
-        // Only scroll if we haven't reached the goal yet
-        const settings =
-          JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
-        const wordGoal = isZenMode ? zenWordGoal : settings.timeLimit || 30;
-
-        // If we have fewer than goal words completed + visible, we need more words
-        if (wordsTyped.length < wordGoal - 5) {
-          // Keep some buffer
-          scrollWordsDisplay();
-        } else {
-          // Near the end, just move cursor normally
-          nextWordElement.classList.remove("upcoming");
-          nextWordElement.classList.add("current");
-        }
+        scrollWordsDisplay();
       } else {
         // Normal progression - just move cursor to next word
         nextWordElement.classList.remove("upcoming");
