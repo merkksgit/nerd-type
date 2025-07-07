@@ -140,6 +140,7 @@ div#content {
   color: #ff9e64;
   font-weight: bold;
   font-size: 2em;
+  text-align: center;
 }
 
 /* ==== 3. Navigation ==== */
@@ -755,11 +756,11 @@ div#wordToType {
 /* Command palette styling */
 .command-palette {
   position: fixed;
-  top: 30%;
+  top: 20%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgba(31, 35, 53, 0.95);
-  border: 2px solid #7aa2f7;
+  background-color: #1f2335;
+  border: 2px solid #414868;
   border-radius: 8px;
   padding: 1rem;
   z-index: 1000;
@@ -820,6 +821,7 @@ div#wordToType {
   max-height: 300px;
   overflow-y: auto;
   border-radius: 4px;
+  background-color: #1f2335;
 }
 
 .command-suggestion {
@@ -831,11 +833,12 @@ div#wordToType {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.15s ease;
+  background-color: #1f2335;
 }
 
 .command-suggestion:hover,
 .command-suggestion.selected {
-  background-color: rgba(122, 162, 247, 0.25);
+  background-color: #414868;
 }
 
 .command-name {

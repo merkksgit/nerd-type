@@ -1118,6 +1118,11 @@ const availableCommands = [
   },
   { command: "/data", description: "Toggle data collection", example: "/data" },
   {
+    command: "/terminal",
+    description: "Open terminal",
+    example: "/terminal",
+  },
+  {
     command: "/status",
     description: "Show current game settings",
     example: "/status",
@@ -1740,29 +1745,7 @@ function checkInput(e) {
     return;
   }
 
-  // Check for debug command
-  if (userInput.toLowerCase() === "debug") {
-    e.target.value = "";
-    debugDisplay.toggle();
-    location.reload();
-    return;
-  }
 
-  // Check for terminal command (classic mode only)
-  if (userInput.toLowerCase() === "terminal" && !isZenMode) {
-    e.target.value = "";
-    terminal.open();
-    return;
-  }
-
-  // Check for "iddqd" secret code in Zen mode
-  if (isZenMode && userInput.toLowerCase() === "iddqd" && !gameEnded) {
-    gameEnded = true;
-    clearInterval(totalTimeInterval);
-    document.getElementById("userInput").disabled = true;
-    showCheatModal();
-    return;
-  }
 
   // Play keypress sound for actual typing AND backspace
   if (
@@ -2167,96 +2150,6 @@ function displayGameOverContent(terminalLines) {
     });
 }
 
-// Zen Mode: Show special cheat modal for "iddqd" code
-function showCheatModal() {
-  document.getElementById("gameOverModalLabel").textContent =
-    "[root@PENTAGON-CORE:~/godmode.txt]$";
-
-  const terminalLines = [
-    "> INIT BREACH SEQUENCE",
-    "> ESTABLISHING CONNECTION ... 100%",
-    "> BYPASSING FIREWALL ... 100%",
-    "> CRACKING ENCRYPTION ... 100%",
-    "> SUDO PRIVILEGES ESCALATED",
-    "> ROOT ACCESS OBTAINED",
-    "> SECURITY PROTOCOLS BYPASSED",
-    "> SYSTEM COMPROMISED",
-    "> GOD MODE ACTIVATED",
-    "> ENTER CUSTOM SCORE DATA:",
-  ];
-
-  let currentLine = 0;
-  let modalContent = "";
-
-  const gameOverModal = new bootstrap.Modal(
-    document.getElementById("gameOverModal"),
-  );
-  const modalBody = document
-    .getElementById("gameOverModal")
-    .querySelector(".modal-body");
-
-  modalBody.innerHTML = '<pre class="terminal-output"></pre>';
-
-  function typeNextLine() {
-    if (currentLine < terminalLines.length) {
-      modalContent += `<span style='color:#c3e88d'>${terminalLines[currentLine]}</span>\n`;
-      modalBody.querySelector(".terminal-output").innerHTML = `${modalContent}`;
-
-      if (currentLine === terminalLines.length - 1) {
-        modalBody.innerHTML = `
-          <pre class="terminal-output">${modalContent}</pre>
-          <div class="mt-2">
-            <div class="mb-2">
-              <label>WPM (0-300):</label>
-              <input type="number" id="customWpm" class="form-control bg-dark text-light" min="0" max="300">
-              <div id="wpmError" style="text-align: center" class="invalid-feedback"></div>
-            </div>
-            <div class="mb-2">
-              <label>Accuracy (0-100%):</label>
-              <input type="number" id="customAccuracy" class="form-control bg-dark text-light" min="0" max="100" step="0.1">
-              <div id="accuracyError" style="text-align: center" class="invalid-feedback"></div>
-            </div>
-            <div class="mb-2">
-              <label>Time (mm:ss):</label>
-              <input type="text" id="customTime" class="form-control bg-dark text-light">
-              <div id="timeError" style="text-align: center" class="invalid-feedback"></div>
-            </div>
-            <button id="submitCustomScore" class="btn btn-success pt-2">Submit</button>
-          </div>
-        `;
-        setupFormEventListeners(gameOverModal);
-        const wpmInput = document.getElementById("customWpm");
-        if (wpmInput) {
-          wpmInput.focus();
-        }
-      }
-
-      currentLine++;
-      const isLoadingLine = terminalLines[currentLine - 1]?.includes("100%");
-      setTimeout(typeNextLine, isLoadingLine ? 900 : 200);
-    }
-  }
-
-  gameOverModal.show();
-  typeNextLine();
-
-  // Unlock "The Admin" achievement
-  try {
-    if (typeof achievementSystem !== "undefined") {
-      const adminGameData = {
-        adminAccess: true,
-        date: new Date().toLocaleString("en-GB"),
-        mode: "Zen Mode",
-        wordList: currentLanguage,
-        username: playerUsername,
-      };
-
-      achievementSystem.handleGameCompletion(adminGameData);
-    }
-  } catch (error) {
-    console.error("Error unlocking achievement:", error);
-  }
-}
 
 function validateTimeFormat(timeStr) {
   const timeRegex = /^([0-9]{1,2}):([0-5][0-9])$/;

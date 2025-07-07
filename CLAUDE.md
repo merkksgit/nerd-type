@@ -29,7 +29,6 @@ This is a static web application with the following architecture:
   - Tab completion for commands and filenames
   - Command history navigation (arrow keys)
   - File system simulation with virtual files
-  - SSH functionality with easter eggs
   - Settings modification capabilities
 
 ### Game Commands (`js/game-commands.js`)  
@@ -142,7 +141,7 @@ Available during gameplay with `/` prefix:
 
 ## Notable Features
 
-- **Easter Eggs**: SSH connection to admin@10.0.13.37, hidden godmode.txt file
+- **Easter Eggs**: Various hidden features and achievements
 - **Responsive Design**: Mobile-optimized with device-specific adaptations
 - **Accessibility**: Keyboard navigation support
 - **Internationalization**: Multi-language word lists and UI elements

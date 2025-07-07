@@ -7,9 +7,14 @@ import {
   loadWordList,
   availableWordLists,
 } from "./word-list-manager.js";
+import Terminal from "./terminal.js";
+import { DebugDisplay } from "./debug.js";
 
 class GameCommands {
   constructor() {
+    // Initialize terminal and debug instances
+    this.terminal = new Terminal();
+    this.debugDisplay = new DebugDisplay();
     // Load saved settings from localStorage or use defaults
     this.gameSettings = JSON.parse(
       localStorage.getItem("terminalSettings"),
@@ -61,6 +66,8 @@ class GameCommands {
       "/status": this.showStatus.bind(this),
       "/reset": this.resetGame.bind(this),
       "/data": this.toggleDataCollection.bind(this),
+      "/terminal": this.openTerminal.bind(this),
+      "/debug": this.toggleDebug.bind(this),
     };
 
     // Commands that need reload after execution
@@ -506,15 +513,15 @@ class GameCommands {
           box-shadow: 0 0 10px rgba(31, 35, 53, 1);
         }
         .game-command-notification.success {
-          background-color: rgba(31, 35, 53, 1);
+          background-color: #1f2335;
           border-left: 4px solid #c3e88d;
         }
         .game-command-notification.error {
-          background-color: rgba(31, 35, 53, 1);
+          background-color: #1f2335;
           border-left: 4px solid #ff007c;
         }
         .game-command-notification.info {
-          background-color: rgba(31, 35, 53, 1);
+          background-color: #1f2335;
           border-left: 4px solid #7aa2f7;
         }
         @keyframes fadeInOut {
@@ -791,6 +798,8 @@ Available commands:
 /space          - Toggle space after words
 /sound          - Toggle keypress sound
 /data           - Toggle data collection
+/terminal       - Open terminal
+/debug          - Toggle debug display
 /status         - Show current game settings
 /reset          - Reset to default settings
 /help           - Show this help message
@@ -915,14 +924,14 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
       // Create the basic modal structure
       modalContainer.innerHTML = `
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header border-bottom-0 text-center">
+      <div class="modal-content" style="background-color: #24283b; border: 1px solid #414868;">
+        <div class="modal-header border-bottom-0 text-center" style="background-color: #24283b;">
           <h5 class="modal-title w-100" id="game-command-modal-title"></h5>
         </div>
-        <div class="modal-body border-top-0 border-bottom-0">
+        <div class="modal-body border-top-0 border-bottom-0" style="background-color: #24283b;">
           <pre id="game-command-modal-content" class="terminal-output"></pre>
         </div>
-        <div class="modal-footer border-top-0 d-flex justify-content-center" style="background-color: #24283b">
+        <div class="modal-footer border-top-0 d-flex justify-content-center" style="background-color: #24283b;">
           <button id="game-command-modal-close" type="button" class="btn btn-primary">
             Close
           </button>
@@ -940,17 +949,11 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
           );
           if (modal) {
             modal.hide();
-            setTimeout(() => {
-              location.reload();
-            }, 500);
           }
         });
       // Add modal hidden event listener
       modalContainer.addEventListener("hidden.bs.modal", () => {
-        this.showNotification("Reloading game...", "info");
-        setTimeout(() => {
-          location.reload();
-        }, 500);
+        location.reload();
       });
     }
 
@@ -964,6 +967,22 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
       document.getElementById("game-command-modal"),
     );
     modal.show();
+  }
+
+  // Open terminal command
+  openTerminal() {
+    this.showNotification("Opening terminal...", "info");
+    this.terminal.open();
+  }
+
+  // Toggle debug display
+  toggleDebug() {
+    this.showNotification("Toggling debug display...", "info");
+    this.debugDisplay.toggle();
+    // Note: Debug command typically reloads the page
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
   }
 }
 
