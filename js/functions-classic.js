@@ -1684,13 +1684,16 @@ function checkInput(e) {
     }
   }
 
-  // Check if entering command mode (starts with /)
-  if (userInput.startsWith("/") && !isCommandMode) {
+  // Check if "/" was just typed to enter command mode (can be at any position)
+  if (e.inputType === "insertText" && e.data === "/" && !isCommandMode) {
     isCommandMode = true;
     commandStartTime = Date.now(); // Track when command mode started
 
+    // Clear current input and start with "/"
+    e.target.value = "/";
+
     // Show command palette
-    showCommandPalette(userInput);
+    showCommandPalette("/");
 
     // Pause all game timers when entering command mode
     if (!isZenMode) {
@@ -1712,6 +1715,13 @@ function checkInput(e) {
       }
     }
     return; // Exit early to prevent normal word checking
+  }
+
+  // Check if still in command mode (input starts with /)
+  if (userInput.startsWith("/") && isCommandMode) {
+    // Update command palette with current input
+    showCommandPalette(userInput);
+    return; // Stay in command mode
   }
 
   // Check if exiting command mode (no longer starts with /)
