@@ -960,7 +960,6 @@ Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank ||
               code_master: "Score over 1000 points in a single game",
               system_architect: "Score over 1500 points in single game",
               running_on_fumes: "Complete a game with less than 3 energy left",
-              the_admin: "System breached!",
               script_kiddie: "Complete your first game",
               quantum_typist: "Hit 80 WPM",
               digital_overlord: "Break 100 WPM",

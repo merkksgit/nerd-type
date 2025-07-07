@@ -205,15 +205,6 @@ class AchievementSystem {
           return false;
         },
       },
-      the_admin: {
-        id: "the_admin",
-        name: "The Admin",
-        description: "System breached!",
-        icon: "fa-solid fa-user-secret",
-        category: "secret",
-        secret: true,
-        check: (stats, gameData) => gameData && gameData.adminAccess === true,
-      },
       // WPM Achievements
       script_kiddie: {
         id: "script_kiddie",
