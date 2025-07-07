@@ -37,7 +37,6 @@ class Terminal {
     this.historyIndex = -1;
     this.sessionCommandHistory = [];
 
-
     // Preset modes
     this.gameModes = {
       classic: {
@@ -500,14 +499,10 @@ class Terminal {
       "ls",
       "cat",
       "refresh",
-      "ping"
+      "ping",
     ];
 
-    const availableFiles = [
-      "scoreboard.data",
-      "achievements.data",
-      "history"
-    ];
+    const availableFiles = ["scoreboard.data", "achievements.data", "history"];
 
     // Handle mode command completion
     if (currentInput.startsWith("mode ")) {
@@ -837,7 +832,7 @@ help                           - Show this help message`;
         size: String(this.sessionCommandHistory.length * 40),
         date: formatDate(currentDate),
         name: "history",
-      }
+      },
     ];
 
     // Header of the listing
@@ -980,6 +975,9 @@ Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank ||
                 "Win a game with at least 1.5x difficulty multiplier",
               energy_reservoir:
                 "Complete a Hard Mode game with at least 10 energy remaining",
+              season_1_veteran:
+                "Participated in Season 1 (July 1 - September 30, 2025)",
+              summer_sprint_champioin: "Complete 100 games during season 1",
             };
 
             // Format and display each unlocked achievement
@@ -1011,8 +1009,6 @@ Unlocked: ${formattedDate}
           );
         }
         break;
-
-
 
       case "history":
         if (this.sessionCommandHistory.length === 0) {
@@ -1132,8 +1128,6 @@ Unlocked: ${formattedDate}
         this.sessionCommandHistory = [];
         this.printToTerminal("Command history cleared", "command-success");
         break;
-
-
 
       default:
         this.printToTerminal(
