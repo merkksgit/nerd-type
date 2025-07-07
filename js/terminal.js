@@ -964,6 +964,7 @@ Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank ||
               script_kiddie: "Complete your first game",
               quantum_typist: "Hit 80 WPM",
               digital_overlord: "Break 100 WPM",
+              config_commander: "Complete 15 custom mode games in a single day",
               bug_eliminator: "Complete a game with 100% accuracy",
               night_owl: "Complete a game between midnight and 5am",
               polyglot_programmer:
@@ -977,7 +978,7 @@ Accuracy Rank: <span style='color:#ff9e64'>${highestAchievements.accuracyRank ||
                 "Complete a Hard Mode game with at least 10 energy remaining",
               season_1_veteran:
                 "Participated in Season 1 (July 1 - September 30, 2025)",
-              summer_sprint_champioin: "Complete 100 games during season 1",
+              summer_sprint_champion: "Complete 100 games during season 1",
             };
 
             // Format and display each unlocked achievement
