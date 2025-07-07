@@ -154,8 +154,9 @@ function loadSettings() {
   // Set show spaces toggle
   const showSpacesToggle = document.getElementById("showSpacesToggle");
   if (showSpacesToggle) {
+    const spacesAfterWords = localStorage.getItem("showSpacesAfterWords");
     showSpacesToggle.checked =
-      localStorage.getItem("showSpacesAfterWords") === "true";
+      spacesAfterWords === null || spacesAfterWords === "true";
   }
 
   // Get saved settings or use defaults
@@ -229,19 +230,19 @@ function loadSettings() {
   );
   const soundToggle = document.getElementById("achievementSoundToggle");
 
-  // If setting exists, use it (default is enabled/checked if not set)
+  // If setting exists, use it (default is disabled if not set)
   if (soundToggle) {
     soundToggle.checked =
-      achievementSoundEnabled === null || achievementSoundEnabled === "true";
+      achievementSoundEnabled === "true";
   }
 
   const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
   const keypressSoundToggle = document.getElementById("keypressSoundToggle");
 
-  // If setting exists, use it (default is enabled/checked if not set)
+  // If setting exists, use it (default is disabled if not set)
   if (keypressSoundToggle) {
     keypressSoundToggle.checked =
-      keypressSoundEnabled === null || keypressSoundEnabled === "true";
+      keypressSoundEnabled === "true";
   }
 
   // font selection
@@ -586,10 +587,21 @@ function resetSettings() {
     zenWordGoal.value = 30;
   }
 
-  // Reset show spaces to default (off)
+  // Reset show spaces to default (on)
   const showSpacesToggle = document.getElementById("showSpacesToggle");
   if (showSpacesToggle) {
-    showSpacesToggle.checked = false;
+    showSpacesToggle.checked = true;
+  }
+
+  // Reset sound settings to default (off)
+  const achievementSoundToggle = document.getElementById("achievementSoundToggle");
+  if (achievementSoundToggle) {
+    achievementSoundToggle.checked = false;
+  }
+  
+  const keypressSoundToggle = document.getElementById("keypressSoundToggle");
+  if (keypressSoundToggle) {
+    keypressSoundToggle.checked = false;
   }
 
   // Reset language to English
@@ -800,11 +812,11 @@ function initSoundSettings() {
 
   const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
 
-  // Default is enabled if setting doesn't exist
+  // Default is disabled if setting doesn't exist
   const soundEnabled =
-    achievementSoundEnabled === null || achievementSoundEnabled === "true";
+    achievementSoundEnabled === "true";
   const keypressSoundEnabledBool =
-    keypressSoundEnabled === null || keypressSoundEnabled === "true";
+    keypressSoundEnabled === "true";
 
   // If the achievement sound exists, update its muted state
   if (typeof window.achievementSound !== "undefined") {
