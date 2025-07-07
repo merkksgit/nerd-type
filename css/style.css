@@ -412,8 +412,13 @@ input[type="text"] {
   outline: none;
 }
 
-/* try to hide text suggestions */
+/* Hide the input field since we show typing in the word display */
 input#userInput {
+  opacity: 0;
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -591,6 +596,274 @@ div#wordToType {
 
 .remaining {
   color: #737aa2;
+}
+
+/* Word display */
+#wordToType {
+  font-family: "jetbrains-mono";
+  font-size: 2.2em;
+  line-height: 1.8;
+  position: relative;
+  margin: 2rem 0;
+  min-height: 120px;
+  cursor: text;
+  padding: 1rem;
+}
+
+/* Word container for multiple words */
+.word-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3em;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+  max-width: 98%;
+  width: 98%;
+  margin: 0 auto;
+  text-align: left;
+  line-height: 1.6;
+  padding: 0.5rem;
+  max-height: calc(1.6em * 3 + 1em); /* Limit to 3 rows */
+  overflow: hidden;
+}
+
+/* Individual word styling */
+.word {
+  position: relative;
+  white-space: nowrap;
+  margin-right: 0.3em;
+  display: inline-block;
+}
+
+.word.current {
+  position: relative;
+}
+
+.word.completed {
+  opacity: 1;
+}
+
+.word.completed .letter {
+  color: #c3e88d;
+  background-color: transparent;
+}
+
+.word.upcoming {
+  opacity: 0.7;
+}
+
+/* Letter-level styling */
+.letter {
+  position: relative;
+  transition: all 0.1s ease;
+  border-radius: 3px;
+  padding: 0 1px;
+}
+
+.letter.correct {
+  color: #c3e88d;
+  background-color: transparent;
+}
+
+.letter.incorrect {
+  color: #f7768e;
+  background-color: transparent;
+}
+
+.letter.remaining {
+  color: #737aa2;
+  background-color: transparent;
+}
+
+.letter.current {
+  color: #737aa2;
+  background-color: transparent;
+  position: relative;
+}
+
+.letter.current::before {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 1.2em;
+  background-color: #7aa2f7;
+  animation: caretBlink 1s infinite;
+}
+
+/* Caret blinking animation */
+@keyframes caretBlink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Extra character styling for overshoot typing */
+.letter.extra {
+  color: #f7768e;
+  background-color: transparent;
+}
+
+/* Space character styling - invisible */
+.letter.space {
+  background-color: transparent;
+  width: 0.3em;
+  display: inline-block;
+}
+
+.letter.space.correct {
+  background-color: transparent;
+}
+
+.letter.space.incorrect {
+  background-color: transparent;
+}
+
+.letter.space.current {
+  background-color: transparent;
+  animation: none;
+}
+
+/* Visual feedback for word completion - no animation */
+
+/* Typing error shake animation */
+.letter.error-shake {
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+}
+
+/* Command palette styling */
+.command-palette {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(31, 35, 53, 0.95);
+  border: 2px solid #7aa2f7;
+  border-radius: 8px;
+  padding: 1rem;
+  z-index: 1000;
+  width: 700px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  animation: commandPaletteSlideIn 0.2s ease-out;
+}
+
+.command-palette.hide {
+  animation: commandPaletteSlideOut 0.2s ease-in;
+}
+
+@keyframes commandPaletteSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes commandPaletteSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+.command-input {
+  background-color: #1f2335;
+  border: 1px solid #414868;
+  border-radius: 4px;
+  color: #ff9e64;
+  font-family: "jetbrains-mono";
+  font-size: 16px;
+  width: 80%;
+  margin: 0 auto 1rem auto;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  display: block;
+  outline: none;
+}
+
+.command-input:focus {
+  border-color: #7aa2f7;
+  box-shadow: 0 0 0 2px rgba(122, 162, 247, 0.2);
+}
+
+.command-suggestions {
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 4px;
+}
+
+.command-suggestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 4px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.command-suggestion:hover,
+.command-suggestion.selected {
+  background-color: rgba(122, 162, 247, 0.25);
+}
+
+.command-name {
+  color: #ff9e64;
+  font-weight: 600;
+  background-color: transparent !important;
+  background: none !important;
+}
+
+.command-description {
+  color: #c0caf5;
+  font-size: 0.9em;
+  margin-top: 2px;
+  background-color: transparent !important;
+  background: none !important;
+}
+
+.command-example {
+  color: #737aa2;
+  font-size: 0.85em;
+  font-style: italic;
+  background-color: transparent !important;
+  background: none !important;
+}
+
+.command-suggestion * {
+  background-color: transparent !important;
+  background: none !important;
 }
 
 /* Progress Bar */
