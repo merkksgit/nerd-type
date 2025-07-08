@@ -1473,7 +1473,7 @@ function updateLetterStates(userInput) {
   const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
 
   letters.forEach((letter, index) => {
-    // Remove all state classes
+    // Remove all state classes (but keep animation classes)
     letter.classList.remove(
       "correct",
       "incorrect",
@@ -1504,9 +1504,6 @@ function updateLetterStates(userInput) {
           letter.classList.add("correct");
         } else {
           letter.classList.add("incorrect");
-          // Add shake animation for errors
-          letter.classList.add("error-shake");
-          setTimeout(() => letter.classList.remove("error-shake"), 300);
         }
       } else if (index === userInput.length) {
         letter.classList.add("current");
