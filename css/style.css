@@ -558,7 +558,6 @@ div#totalTime {
 
 div#wordToType {
   color: #ff9e64;
-  font-size: 1.5em;
   margin-top: 20px;
 }
 
@@ -646,7 +645,7 @@ div#wordToType {
 }
 
 .word.completed .letter {
-  color: #c3e88d;
+  color: #ffffff;
   background-color: transparent;
 }
 
@@ -663,7 +662,7 @@ div#wordToType {
 }
 
 .letter.correct {
-  color: #c3e88d;
+  color: #ffffff;
   background-color: transparent;
 }
 
