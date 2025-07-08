@@ -2794,6 +2794,13 @@ body[data-ui-hidden="true"] #nextWord:not(.tip-style):not(.ui-hidden-tip) {
   font-size: 1.4em !important;
 }
 
+/* Prevent game area from moving when entering minimal mode */
+body[data-ui-hidden="true"] #game {
+  position: relative;
+  top: 0;
+  margin-top: 8rem !important;
+}
+
 /* Indicator when in minimal mode */
 body[data-ui-hidden="true"]::after {
   content: "Minimal Mode - Ctrl+Z to toggle";
