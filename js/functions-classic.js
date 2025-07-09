@@ -1727,9 +1727,13 @@ function displayModernGameOverContent(data) {
     .getElementById("gameOverModal")
     .querySelector(".modal-body");
 
+  // Determine if we should apply red styling for defeat (non-zen mode only)
+  const isDefeat = data.mode !== 'zen' && !data.isSuccess;
+  const defeatClass = isDefeat ? 'defeat' : '';
+
   // Create modern card layout
   let content = `
-    <div class="game-stats-container">
+    <div class="game-stats-container ${defeatClass}">
       <div class="stat-card">
         <div class="stat-label">WPM</div>
         <div class="stat-value wpm">${data.stats.wpm}</div>
@@ -1772,19 +1776,32 @@ function displayModernGameOverContent(data) {
 
   // Add game settings info
   if (data.gameSettings) {
-    content += `
-      <div class="game-settings-info">
-        <div class="settings-row">
-          <span>Mode: ${data.gameSettings.mode}</span>
-          <span>Words Goal: ${data.gameSettings.wordGoal}</span>
-          <span>Bonus Energy: ${data.gameSettings.bonusEnergy}</span>
+    if (data.mode === 'zen') {
+      // Zen mode - only show relevant settings
+      content += `
+        <div class="game-settings-info">
+          <div class="settings-row">
+            <span>Mode: ${data.gameSettings.mode}</span>
+            <span>Words Goal: ${data.gameSettings.wordGoal}</span>
+          </div>
         </div>
-        <div class="settings-row">
-          <span>Initial Energy: ${data.gameSettings.initialEnergy}</span>
-          <span>Difficulty: ${data.gameSettings.difficultyMultiplier}</span>
+      `;
+    } else {
+      // Classic mode - show all settings
+      content += `
+        <div class="game-settings-info">
+          <div class="settings-row">
+            <span>Mode: ${data.gameSettings.mode}</span>
+            <span>Words Goal: ${data.gameSettings.wordGoal}</span>
+            <span>Bonus Energy: ${data.gameSettings.bonusEnergy}</span>
+          </div>
+          <div class="settings-row">
+            <span>Initial Energy: ${data.gameSettings.initialEnergy}</span>
+            <span>Difficulty: ${data.gameSettings.difficultyMultiplier}</span>
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    }
   }
 
   modalBody.innerHTML = content;

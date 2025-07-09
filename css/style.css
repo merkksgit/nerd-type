@@ -1061,6 +1061,11 @@ div#wordToType {
   color: #7aa2f7;
 }
 
+/* Defeat styling - red color for stat numbers when non-zen mode doesn't end in victory */
+.game-stats-container.defeat .stat-value {
+  color: #f7768e;
+}
+
 .game-over-header {
   text-align: center;
   margin-bottom: 20px;
