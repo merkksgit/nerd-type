@@ -188,13 +188,12 @@ export class DebugDisplay {
       correctKeystrokes,
       wrongKeystrokes,
       totalKeystrokes,
-      isCommandMode,
       effectiveTime,
       timeLeft,
     } = gameData;
 
     // Get current settings
-    const settings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+    const settings = JSON.parse(localStorage.getItem("gameSettings")) || {
       timeLimit: 30,
       bonusTime: 3,
       initialTime: 10,
@@ -290,7 +289,6 @@ export class DebugDisplay {
       Total Keys: ${totalKeystrokes}<br>
       Timer Started: ${gameStartTime ? "Yes" : "No"}<br>
       Typing Started: ${hasStartedTyping ? "Yes" : "No"}<br>
-      Command Mode: ${isCommandMode ? "Yes" : "No"}<br>
       Energy Left: ${timeLeft !== undefined ? timeLeft : "N/A"}<br>
       <br>
       <span style="color: #ff9e64;">Mode: ${settings.currentMode} (Multiplier: ${difficultyMultiplier.toFixed(2)}x)</span><br>

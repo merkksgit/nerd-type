@@ -160,7 +160,7 @@ function loadSettings() {
   }
 
   // Get saved settings or use defaults
-  const gameSettings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+  const gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
     timeLimit: 30,
     bonusTime: 3,
     initialTime: 10,
@@ -687,7 +687,7 @@ function applySettings() {
   };
 
   // Save settings
-  localStorage.setItem("terminalSettings", JSON.stringify(gameSettings));
+  localStorage.setItem("gameSettings", JSON.stringify(gameSettings));
 
   // Save language setting
   localStorage.setItem("nerdtype_wordlist", selectedLanguage);

@@ -7,17 +7,15 @@ import {
   loadWordList,
   availableWordLists,
 } from "./word-list-manager.js";
-import Terminal from "./terminal.js";
 import { DebugDisplay } from "./debug.js";
 
 class GameCommands {
   constructor() {
-    // Initialize terminal and debug instances
-    this.terminal = new Terminal();
+    // Initialize debug instances
     this.debugDisplay = new DebugDisplay();
     // Load saved settings from localStorage or use defaults
     this.gameSettings = JSON.parse(
-      localStorage.getItem("terminalSettings"),
+      localStorage.getItem("gameSettings"),
     ) || {
       timeLimit: 30,
       bonusTime: 3,
@@ -66,7 +64,6 @@ class GameCommands {
       "/status": this.showStatus.bind(this),
       "/reset": this.resetGame.bind(this),
       "/data": this.toggleDataCollection.bind(this),
-      "/terminal": this.openTerminal.bind(this),
       "/debug": this.toggleDebug.bind(this),
     };
 
@@ -156,38 +153,6 @@ class GameCommands {
     const command = parts[0].toLowerCase();
     const args = parts.slice(1);
 
-    // Reset command mode state
-    if (typeof window.isCommandMode !== "undefined") {
-      window.isCommandMode = false;
-
-      // If we were tracking command start time, adjust game start time
-      if (
-        typeof window.commandStartTime !== "undefined" &&
-        window.commandStartTime &&
-        typeof window.gameStartTime !== "undefined" &&
-        window.gameStartTime
-      ) {
-        const commandDuration = Date.now() - window.commandStartTime;
-        window.gameStartTime += commandDuration; // Adjust for command mode duration
-      }
-
-      // Reset command start time
-      if (typeof window.commandStartTime !== "undefined") {
-        window.commandStartTime = null;
-      }
-    }
-
-    // Resume all timers if they were paused and game is active
-    if (
-      typeof window.wasPaused !== "undefined" &&
-      typeof window.hasStartedTyping !== "undefined"
-    ) {
-      if (window.wasPaused && window.hasStartedTyping) {
-        window.countDownInterval = setInterval(window.countDown, 800);
-        window.totalTimeInterval = setInterval(window.totalTimeCount, 1000);
-        window.wasPaused = false;
-      }
-    }
 
     // Check if the command exists
     if (this.commands[command]) {
@@ -381,7 +346,7 @@ class GameCommands {
       // Reset Zen Mode settings
       this.gameSettings.zenWordGoal = 30; // Reset to default zen word goal
       localStorage.setItem(
-        "terminalSettings",
+        "gameSettings",
         JSON.stringify(this.gameSettings),
       );
 
@@ -427,7 +392,7 @@ class GameCommands {
 
       // Save to localStorage
       localStorage.setItem(
-        "terminalSettings",
+        "gameSettings",
         JSON.stringify(this.gameSettings),
       );
 
@@ -566,7 +531,7 @@ class GameCommands {
       // Zen Mode: Update zenWordGoal
       this.gameSettings.zenWordGoal = wordCount;
       localStorage.setItem(
-        "terminalSettings",
+        "gameSettings",
         JSON.stringify(this.gameSettings),
       );
 
@@ -590,7 +555,7 @@ class GameCommands {
       this.gameSettings.currentMode = currentMode;
 
       localStorage.setItem(
-        "terminalSettings",
+        "gameSettings",
         JSON.stringify(this.gameSettings),
       );
 
@@ -636,7 +601,7 @@ class GameCommands {
     const currentMode = this.checkIfCustomMode();
     this.gameSettings.currentMode = currentMode;
 
-    localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
+    localStorage.setItem("gameSettings", JSON.stringify(this.gameSettings));
 
     // Show mode in notification only if it's custom
     const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
@@ -679,7 +644,7 @@ class GameCommands {
     const currentMode = this.checkIfCustomMode();
     this.gameSettings.currentMode = currentMode;
 
-    localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
+    localStorage.setItem("gameSettings", JSON.stringify(this.gameSettings));
 
     // Show mode in notification only if it's custom
     const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
@@ -733,7 +698,7 @@ class GameCommands {
 
     const settings = this.gameModes[mode];
     this.gameSettings = { ...settings, currentMode: mode };
-    localStorage.setItem("terminalSettings", JSON.stringify(this.gameSettings));
+    localStorage.setItem("gameSettings", JSON.stringify(this.gameSettings));
 
     this.showNotification(`Switched to ${mode} mode`, "success");
 
@@ -798,7 +763,6 @@ Available commands:
 /space          - Toggle space after words
 /sound          - Toggle keypress sound
 /data           - Toggle data collection
-/terminal       - Open terminal
 /debug          - Toggle debug display
 /status         - Show current game settings
 /reset          - Reset to default settings
@@ -969,11 +933,6 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
     modal.show();
   }
 
-  // Open terminal command
-  openTerminal() {
-    this.showNotification("Opening terminal...", "info");
-    this.terminal.open();
-  }
 
   // Toggle debug display
   toggleDebug() {

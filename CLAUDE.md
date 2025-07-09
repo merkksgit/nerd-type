@@ -23,14 +23,6 @@ This is a static web application with the following architecture:
   - Game state management through localStorage
   - Real-time energy/timer system with countdown mechanics
 
-### Terminal System (`js/terminal.js`)
-- Advanced terminal interface accessible by typing "terminal" during gameplay
-- Full command system with:
-  - Tab completion for commands and filenames
-  - Command history navigation (arrow keys)
-  - File system simulation with virtual files
-  - Settings modification capabilities
-
 ### Game Commands (`js/game-commands.js`)  
 - In-game slash commands (e.g., `/setwords`, `/mode`, `/help`)
 - Allows players to modify settings without opening menus
@@ -95,16 +87,6 @@ This project has no build system or package.json - it runs directly in browsers:
 - **Zen Mode**: No energy limit, word goal-based completion
 - **Custom Mode**: User-defined parameters
 
-### Terminal Commands
-Key terminal commands available:
-- `help` - Command list
-- `status` - Current game settings  
-- `setwords <n>` - Set word goal
-- `mode <type>` - Change game mode
-- `cat <file>` - View virtual files (scoreboard.data, achievements.data, etc.)
-- `ls` / `ls -la` - List virtual files
-- `rm <file>` - Delete game data (with confirmations)
-
 ### Slash Commands (In-Game)
 Available during gameplay with `/` prefix:
 - `/setwords <n>` - Set word goal
@@ -130,11 +112,11 @@ Available during gameplay with `/` prefix:
 - JavaScript files: kebab-case (e.g., `game-commands.js`)
 - CSS files: kebab-case (e.g., `settings-modal.css`)
 - Image files: kebab-case with descriptive names
-- Virtual terminal files: dot notation (e.g., `scoreboard.data`)
+- Data files: descriptive names for game data storage
 
 ## Key Configuration Files
 
-- Settings stored in localStorage as `terminalSettings`
+- Settings stored in localStorage as `gameSettings`
 - Achievement data in localStorage as `nerdtype_achievements`
 - Game results in localStorage as `gameResults`
 - Username in localStorage as `nerdtype_username`

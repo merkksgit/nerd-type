@@ -507,7 +507,10 @@
                   <div id="keyboardTips"></div>
                 </div>
                 <div id="wordToType">
-                  Press <span class="terminal-command">ENTER</span> to play
+                  <span class="press-enter-text"
+                    >Press <span class="terminal-command">enter</span> to
+                    play</span
+                  >
                 </div>
                 <input
                   type="text"
@@ -671,11 +674,8 @@
       aria-labelledby="gameOverModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-xl">
         <div class="modal-content">
-          <div class="modal-header border-bottom-0 text-center">
-            <h5 class="modal-title w-100" id="gameOverModalLabel">Game Over</h5>
-          </div>
           <div class="modal-body border-top-0 border-bottom-0">
             <span id="totalTimeSpentDisplay">0</span>
           </div>
@@ -683,8 +683,15 @@
             class="modal-footer border-top-0 d-flex justify-content-center"
             style="background-color: #24283b"
           >
-            <button id="restartGameBtn" type="button" class="btn btn-primary">
-              Return
+            <p class="restart-text" style="text-align: center">
+              <span class="terminal-command">enter</span> - return
+            </p>
+            <button
+              class="mobile-reload-btn"
+              onclick="location.reload()"
+              aria-label="Reload game"
+            >
+              <i class="fas fa-redo-alt"></i>
             </button>
           </div>
         </div>
@@ -1523,6 +1530,32 @@
         </div>
       </div>
     </div>
+
+    <!-- Command Palette Modal -->
+    <div
+      class="modal fade"
+      id="commandPaletteModal"
+      tabindex="-1"
+      aria-labelledby="commandPaletteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content command-palette-modal">
+          <div class="modal-body p-0">
+            <div class="command-palette-container">
+              <input
+                type="text"
+                id="commandPaletteInput"
+                class="command-palette-input"
+                placeholder="Type command..."
+                autocomplete="off"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="../js/username.js"></script>
     <script src="../js/settings-modal.js"></script>
     <script src="../js/functions-classic.js" type="module"></script>

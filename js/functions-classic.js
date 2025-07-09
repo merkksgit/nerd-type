@@ -1,7 +1,6 @@
 // Import common dependencies
 import { tips } from "./tips.js";
 import { loadWordList, currentLanguage } from "./word-list-manager.js";
-import Terminal from "./terminal.js";
 import { DebugDisplay } from "./debug.js";
 import achievementSystem from "./achievements.js";
 import "./game-commands.js";
@@ -37,10 +36,6 @@ let goalPercentage = 100;
 let sessionStartTime = null;
 let zenWordGoal = 30;
 
-// Command mode variables
-let isCommandMode = false;
-let wasPaused = false;
-let commandStartTime = null; // Track when we entered command mode
 
 const reservedUsernames = ["admin", "moderator", "nerdtype"];
 
@@ -212,8 +207,6 @@ window.dispatchEvent(
 // Create debug display instance
 const debugDisplay = new DebugDisplay();
 
-// Initialize terminal
-const terminal = new Terminal();
 
 // Define word list display names for the UI
 const wordListDisplayNames = {
@@ -225,7 +218,7 @@ const wordListDisplayNames = {
 };
 
 // Load saved settings or use defaults for Classic Mode
-let gameSettings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+let gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
   timeLimit: 30,
   bonusTime: 3,
   initialTime: 10,
@@ -285,7 +278,7 @@ function updateUIForGameMode() {
     } else {
       // Check current mode from gameSettings
       const settings =
-        JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+        JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
       const currentMode = settings.currentMode || "classic";
 
       // Format the text based on mode
@@ -336,7 +329,7 @@ async function initializeGame() {
   applyFont(currentFont);
 
   // Load saved settings
-  const settings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+  const settings = JSON.parse(localStorage.getItem("gameSettings")) || {
     timeLimit: 30,
     bonusTime: 3,
     initialTime: 10,
@@ -426,12 +419,8 @@ function updateDebugInfo() {
       : "0.0";
   const wrongKeystrokes = totalKeystrokes - correctKeystrokes;
 
-  // Calculate time properly, accounting for command mode
+  // Calculate time properly
   let effectiveTime = gameStartTime ? Date.now() - gameStartTime : 0;
-  if (isCommandMode && commandStartTime) {
-    const commandDuration = Date.now() - commandStartTime;
-    effectiveTime -= commandDuration;
-  }
 
   debugDisplay.updateInfo({
     currentWord: hasStartedTyping ? words[currentWordIndex] : "",
@@ -444,7 +433,6 @@ function updateDebugInfo() {
     correctKeystrokes,
     wrongKeystrokes,
     totalKeystrokes,
-    isCommandMode,
     effectiveTime,
     timeLeft,
   });
@@ -594,7 +582,7 @@ function initializeEventListeners() {
     }
   });
 
-  // Listen for terminal settings changes
+  // Listen for game settings changes
   window.addEventListener("gameSettingsChanged", function (e) {
     const { setting, value } = e.detail;
 
@@ -660,7 +648,7 @@ function initializeEventListeners() {
       }
     }
 
-    localStorage.setItem("terminalSettings", JSON.stringify(gameSettings));
+    localStorage.setItem("gameSettings", JSON.stringify(gameSettings));
 
     // If zenWordGoal was changed, also update the UI
     if (setting === "zenWordGoal") {
@@ -720,14 +708,6 @@ function initializeEventListeners() {
       scoreboardModal.show();
     });
 
-  // Handle terminal close event
-  window.addEventListener("terminalClosed", function () {
-    // Don't restart intervals if we're in command mode
-    if (!isCommandMode && !isZenMode) {
-      countDownInterval = setInterval(countDown, 800);
-      totalTimeInterval = setInterval(totalTimeCount, 1000);
-    }
-  });
 }
 
 // Function to check if current settings create a custom mode
@@ -872,10 +852,6 @@ function startGame() {
       nextWordDiv.removeAttribute("style");
     }
   }
-
-  // Reset command mode
-  isCommandMode = false;
-  wasPaused = false;
 
   // Reset game state and shuffle words at start
   gameEnded = false;
@@ -1072,280 +1048,11 @@ function getCurrentWordLetters() {
   return currentWord ? currentWord.querySelectorAll(".letter") : [];
 }
 
-// Command palette functionality
-const availableCommands = [
-  {
-    command: "/setwords",
-    description: "Set number of words to type",
-    example: "/setwords 30",
-  },
-  {
-    command: "/setbonus",
-    description: "Set bonus energy per word",
-    example: "/setbonus 5",
-  },
-  {
-    command: "/setinitial",
-    description: "Set starting energy",
-    example: "/setinitial 15",
-  },
-  { command: "/mode", description: "Change game mode", example: "/mode hard" },
-  { command: "/zen", description: "Toggle Zen mode", example: "/zen" },
-  {
-    command: "/lang",
-    description: "Change language",
-    example: "/lang english",
-  },
-  {
-    command: "/language",
-    description: "Change language (alias)",
-    example: "/language finnish",
-  },
-  {
-    command: "/space",
-    description: "Toggle space after words",
-    example: "/space",
-  },
-  {
-    command: "/spaces",
-    description: "Toggle space after words (alias)",
-    example: "/spaces",
-  },
-  {
-    command: "/sound",
-    description: "Toggle keypress sounds",
-    example: "/sound",
-  },
-  { command: "/data", description: "Toggle data collection", example: "/data" },
-  {
-    command: "/terminal",
-    description: "Open terminal",
-    example: "/terminal",
-  },
-  {
-    command: "/status",
-    description: "Show current game settings",
-    example: "/status",
-  },
-  {
-    command: "/reset",
-    description: "Reset settings to default",
-    example: "/reset",
-  },
-  {
-    command: "/help",
-    description: "Show all available commands",
-    example: "/help",
-  },
-];
 
-function showCommandPalette(currentInput = "/") {
-  // Remove existing palette
-  const existingPalette = document.querySelector(".command-palette");
-  if (existingPalette) {
-    existingPalette.remove();
-  }
 
-  // Create command palette
-  const palette = document.createElement("div");
-  palette.classList.add("command-palette");
 
-  const inputField = document.createElement("input");
-  inputField.classList.add("command-input");
-  inputField.type = "text";
-  inputField.value = currentInput;
-  inputField.placeholder = "Type a command...";
 
-  const suggestionsContainer = document.createElement("div");
-  suggestionsContainer.classList.add("command-suggestions");
 
-  palette.appendChild(inputField);
-  palette.appendChild(suggestionsContainer);
-  document.body.appendChild(palette);
-
-  // Update suggestions
-  updateCommandSuggestions(currentInput, suggestionsContainer);
-
-  // Focus the input
-  inputField.focus();
-  inputField.setSelectionRange(
-    inputField.value.length,
-    inputField.value.length,
-  );
-
-  // Store reference for cleanup
-  palette.escHandler = (e) => {
-    if (e.key === "Escape") {
-      e.preventDefault();
-      e.stopPropagation();
-      hideCommandPalette();
-    }
-  };
-  document.addEventListener("keydown", palette.escHandler);
-
-  // Handle input changes
-  inputField.addEventListener("input", (e) => {
-    updateCommandSuggestions(e.target.value, suggestionsContainer);
-    // Update the main game input
-    const mainInput = document.getElementById("userInput");
-    if (mainInput) {
-      mainInput.value = e.target.value;
-    }
-  });
-
-  // Handle keyboard navigation
-  let selectedIndex = -1;
-  inputField.addEventListener("keydown", (e) => {
-    const suggestions = suggestionsContainer.querySelectorAll(
-      ".command-suggestion",
-    );
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      selectedIndex = Math.min(selectedIndex + 1, suggestions.length - 1);
-      updateSelection(suggestions, selectedIndex);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      selectedIndex = Math.max(selectedIndex - 1, -1);
-      updateSelection(suggestions, selectedIndex);
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-        const command = suggestions[selectedIndex].dataset.command;
-        inputField.value = command + " ";
-        const mainInput = document.getElementById("userInput");
-        if (mainInput) {
-          mainInput.value = command + " ";
-        }
-        updateCommandSuggestions(command + " ", suggestionsContainer);
-      } else {
-        // Execute the command if it's complete
-        const commandText = inputField.value.trim();
-        if (commandText) {
-          executeCommand(commandText);
-          hideCommandPalette();
-        }
-      }
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      e.stopPropagation();
-      hideCommandPalette();
-    }
-  });
-}
-
-function updateCommandSuggestions(input, container) {
-  container.innerHTML = "";
-
-  // If input is just "/", show all commands
-  let filtered;
-  if (input.trim() === "/") {
-    filtered = availableCommands;
-  } else {
-    filtered = availableCommands.filter(
-      (cmd) =>
-        cmd.command.toLowerCase().includes(input.toLowerCase()) ||
-        cmd.description.toLowerCase().includes(input.toLowerCase()),
-    );
-  }
-
-  filtered.forEach((cmd, index) => {
-    const suggestion = document.createElement("div");
-    suggestion.classList.add("command-suggestion");
-    suggestion.dataset.command = cmd.command;
-
-    suggestion.innerHTML = `
-      <div>
-        <div class="command-name">${cmd.command}</div>
-        <div class="command-description">${cmd.description}</div>
-      </div>
-      <div class="command-example">${cmd.example}</div>
-    `;
-
-    suggestion.addEventListener("click", () => {
-      const inputField = document.querySelector(".command-input");
-      if (inputField) {
-        inputField.value = cmd.command + " ";
-        const mainInput = document.getElementById("userInput");
-        if (mainInput) {
-          mainInput.value = cmd.command + " ";
-        }
-        updateCommandSuggestions(cmd.command + " ", container);
-      }
-    });
-
-    container.appendChild(suggestion);
-  });
-}
-
-function updateSelection(suggestions, selectedIndex) {
-  suggestions.forEach((suggestion, index) => {
-    suggestion.classList.toggle("selected", index === selectedIndex);
-  });
-}
-
-function executeCommand(commandText) {
-  // Import the game commands module to execute the command
-  if (window.gameCommands) {
-    const result = window.gameCommands.processCommand(commandText);
-    if (result && result.requiresReload) {
-      setTimeout(() => location.reload(), 100);
-    }
-  } else {
-    // Fallback: trigger the existing command processing
-    const mainInput = document.getElementById("userInput");
-    if (mainInput) {
-      mainInput.value = commandText;
-      // Trigger Enter key event to process the command
-      const enterEvent = new KeyboardEvent("keydown", { key: "Enter" });
-      mainInput.dispatchEvent(enterEvent);
-    }
-  }
-}
-
-function hideCommandPalette() {
-  const palette = document.querySelector(".command-palette");
-  if (palette) {
-    // Remove global ESC handler
-    if (palette.escHandler) {
-      document.removeEventListener("keydown", palette.escHandler);
-    }
-
-    palette.classList.add("hide");
-    setTimeout(() => {
-      if (palette.parentNode) {
-        palette.remove();
-      }
-    }, 200);
-  }
-
-  // Clear command mode immediately
-  isCommandMode = false;
-  commandStartTime = null;
-
-  // Resume game timers if they were paused
-  if (wasPaused && hasStartedTyping) {
-    if (!isZenMode) {
-      if (!countDownInterval) {
-        countDownInterval = setInterval(countDown, 800);
-      }
-      if (!totalTimeInterval) {
-        totalTimeInterval = setInterval(totalTimeCount, 1000);
-      }
-    } else {
-      if (!totalTimeInterval) {
-        totalTimeInterval = setInterval(updateZenTimer, 1000);
-      }
-    }
-    wasPaused = false;
-  }
-
-  const mainInput = document.getElementById("userInput");
-  if (mainInput) {
-    mainInput.value = "";
-    mainInput.focus();
-  }
-}
 
 // Check if a word element is on the last visible row
 function isWordOnLastRow(wordElement) {
@@ -1556,7 +1263,7 @@ function updateTimer() {
 // Classic Mode: Total time counter
 function totalTimeCount() {
   const settings =
-    JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+    JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
   const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
   if (totalTimeSpent >= goalTime) {
     clearInterval(countDownInterval);
@@ -1627,7 +1334,7 @@ function updateProgressBar() {
   } else {
     // In Classic mode, progress is based on percentage of goal
     const settings =
-      JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+      JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
     const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
     progressPercentage = (totalTimeSpent / goalTime) * 100;
   }
@@ -1653,6 +1360,15 @@ function updateProgressBar() {
 // Input handling for both modes
 function checkInput(e) {
   const userInput = e.target.value;
+  
+  // Check if input starts with "/" for commands
+  if (userInput.startsWith("/")) {
+    // Open command palette and clear the main input
+    showCommandPalette();
+    e.target.value = "";
+    return;
+  }
+  
   const currentWord = words[currentWordIndex];
   const wordDisplay = document.getElementById("wordToType");
   const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
@@ -1681,83 +1397,9 @@ function checkInput(e) {
     }
   }
 
-  // Check if "/" was just typed to enter command mode (can be at any position)
-  if (e.inputType === "insertText" && e.data === "/" && !isCommandMode) {
-    isCommandMode = true;
-    commandStartTime = Date.now(); // Track when command mode started
-
-    // Clear current input and start with "/"
-    e.target.value = "/";
-
-    // Show command palette
-    showCommandPalette("/");
-
-    // Pause all game timers when entering command mode
-    if (!isZenMode) {
-      if (countDownInterval) {
-        clearInterval(countDownInterval);
-        countDownInterval = null;
-        if (totalTimeInterval) {
-          clearInterval(totalTimeInterval);
-          totalTimeInterval = null;
-        }
-        wasPaused = true;
-      }
-    } else {
-      // For Zen mode, pause the time display
-      if (totalTimeInterval) {
-        clearInterval(totalTimeInterval);
-        totalTimeInterval = null;
-        wasPaused = true;
-      }
-    }
-    return; // Exit early to prevent normal word checking
-  }
-
-  // Check if still in command mode (input starts with /)
-  if (userInput.startsWith("/") && isCommandMode) {
-    // Update command palette with current input
-    showCommandPalette(userInput);
-    return; // Stay in command mode
-  }
-
-  // Check if exiting command mode (no longer starts with /)
-  else if (!userInput.startsWith("/") && isCommandMode) {
-    isCommandMode = false;
-
-    // Hide command palette
-    hideCommandPalette();
-
-    // If we tracked command start time, adjust gameStartTime to compensate
-    if (commandStartTime && gameStartTime) {
-      const commandDuration = Date.now() - commandStartTime;
-      gameStartTime += commandDuration; // Adjust game start time by command duration
-    }
-    commandStartTime = null;
-
-    // Resume timers if they were previously running
-    if (wasPaused && hasStartedTyping) {
-      if (!isZenMode) {
-        countDownInterval = setInterval(countDown, 800);
-        totalTimeInterval = setInterval(totalTimeCount, 1000);
-      } else {
-        totalTimeInterval = setInterval(updateZenTimer, 1000);
-      }
-      wasPaused = false;
-    }
-  }
-
-  // Skip normal processing while in command mode
-  if (isCommandMode) {
-    return;
-  }
-
-
-
   // Play keypress sound for actual typing AND backspace
   if (
     hasStartedTyping &&
-    !isCommandMode &&
     ((e.inputType === "insertText" && e.data) ||
       e.inputType === "deleteContentBackward" ||
       e.inputType === "deleteContentForward")
@@ -1853,7 +1495,7 @@ function checkInput(e) {
     } else if (!isZenMode) {
       // For classic mode, also check word goal completion
       const settings =
-        JSON.parse(localStorage.getItem("terminalSettings")) || gameSettings;
+        JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
       const wordsGoal = parseInt(
         localStorage.getItem("nerdtype_words_goal") ||
           settings.timeLimit ||
@@ -1877,11 +1519,6 @@ function calculateWPM() {
   const endTime = Date.now();
   let timeElapsed = (endTime - gameStartTime) / 60000;
 
-  // Adjust for time spent in command mode
-  if (isCommandMode && commandStartTime) {
-    const commandDuration = (endTime - commandStartTime) / 60000;
-    timeElapsed -= commandDuration; // Remove command time from calculation
-  }
 
   // Ensure minimum time to avoid division by zero
   timeElapsed = Math.max(0.08, timeElapsed);
@@ -1950,7 +1587,7 @@ function calculateScore() {
     const accuracy = parseFloat(wpmResult.accuracy.replace("%", "")) / 100;
 
     // Get game settings for difficulty multiplier
-    const settings = JSON.parse(localStorage.getItem("terminalSettings")) || {
+    const settings = JSON.parse(localStorage.getItem("gameSettings")) || {
       timeLimit: 30,
       bonusTime: 3,
       initialTime: 10,
@@ -2001,11 +1638,6 @@ function showGameOverModal(message, isSuccess = true) {
   const stats = calculateWPM();
   const languageName =
     currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
-  const modalLabel = document.getElementById("gameOverModalLabel");
-
-  if (modalLabel) {
-    modalLabel.textContent = `[${playerUsername}@PENTAGON-CORE:~]$`;
-  }
 
   const dataCollectionEnabled = localStorage.getItem("data_collection_enabled");
   const isDataCollectionEnabled =
@@ -2017,25 +1649,25 @@ function showGameOverModal(message, isSuccess = true) {
     // Zen Mode specific game over
     const totalTime = calculateTotalTime();
 
-    const terminalLines = [
-      "> INITIALIZING TERMINAL OUTPUT...",
-      "> ANALYZING PERFORMANCE DATA...",
-      `> MODE: ZEN`,
-      `> WORD SET: ${languageName}`,
-      `> USER: ${playerUsername}`,
-      `> STATUS: ${message}`,
-      "> ================================",
-      "> PERFORMANCE METRICS:",
-      `  └─ WORD GOAL: <span style='color:#c3e88d'>${zenWordGoal}</span> words`,
-      `  └─ SESSION TIME: <span style='color:#c3e88d'>${totalTime}</span>`,
-      `  └─ TYPING SPEED: <span style='color:#ff9e64'>${stats.wpm}</span> WPM`,
-      `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
-      "> ================================",
-      "> PRESS [ENTER] TO RETRY",
-      "> END OF TRANSMISSION_",
-    ];
-
-    displayGameOverContent(terminalLines);
+    displayModernGameOverContent({
+      mode: 'zen',
+      username: playerUsername,
+      status: message,
+      isSuccess: true, // Zen mode is always successful
+      stats: {
+        wpm: stats.wpm,
+        accuracy: stats.accuracy,
+        sessionTime: totalTime,
+        wordGoal: zenWordGoal
+      },
+      gameSettings: {
+        mode: 'Zen',
+        wordGoal: zenWordGoal,
+        bonusEnergy: 'N/A',
+        initialEnergy: 'N/A',
+        difficultyMultiplier: '1.0x'
+      }
+    });
     saveZenResult(stats.wpm, totalTime, stats.accuracy);
   } else {
     // Classic Mode specific game over
@@ -2046,27 +1678,34 @@ function showGameOverModal(message, isSuccess = true) {
       gameSettings.currentMode.charAt(0).toUpperCase() +
       gameSettings.currentMode.slice(1);
 
-    const terminalLines = [
-      "> INITIALIZING TERMINAL OUTPUT...",
-      "> ANALYZING PERFORMANCE DATA...",
-      `> MODE: ${modeName}`,
-      `> WORD SET: ${languageName}`,
-      `> USER: ${playerUsername}`,
-      `> STATUS: ${message}`,
-      "> ================================",
-      "> PERFORMANCE METRICS:",
-      `  └─ ENERGY REMAINING: <span style='color:#c3e88d'>${timeLeft}</span> units`,
-      `  └─ TYPING SPEED: <span style='color:#ff9e64'>${stats.wpm}</span> WPM`,
-      `  └─ ACCURACY: <span style='color:#bb9af7'>${stats.accuracy}</span>`,
-      `  └─ FINAL SCORE: <span style='color:#c3e88d'>${finalScore}</span>`,
-      "> ================================",
-      `> GLOBAL LEADERBOARD: <span style='color:${leaderboardColor}'>${leaderboardStatus}</span>`,
-      "> ================================",
-      `> SPEED TIER: <span style='color:#4fd6be'>${getSpeedTier(stats.wpm)}</span>`,
-      `> PRECISION RANK: <span style='color:#4fd6be'>${getAccuracyRank(stats.accuracy)}</span>`,
-    ];
+    // Calculate difficulty multiplier for display
+    const settingsForCalculation = {
+      timeLimit: gameSettings.timeLimit,
+      bonusTime: gameSettings.bonusTime,
+      initialTime: gameSettings.initialTime,
+      goalPercentage: gameSettings.goalPercentage || 100,
+    };
+    const difficultyMultiplier = calculateDifficultyMultiplier(settingsForCalculation);
 
-    displayGameOverContent(terminalLines);
+    displayModernGameOverContent({
+      mode: 'classic',
+      username: playerUsername,
+      status: message,
+      isSuccess: isSuccess,
+      stats: {
+        wpm: stats.wpm,
+        accuracy: stats.accuracy,
+        energyRemaining: timeLeft,
+        finalScore: finalScore
+      },
+      gameSettings: {
+        mode: modeName,
+        wordGoal: gameSettings.timeLimit,
+        bonusEnergy: gameSettings.bonusTime,
+        initialEnergy: gameSettings.initialTime,
+        difficultyMultiplier: difficultyMultiplier.toFixed(2) + 'x'
+      }
+    });
     saveClassicResult(
       isSuccess ? timeLeft : 0,
       stats.wpm,
@@ -2079,10 +1718,8 @@ function showGameOverModal(message, isSuccess = true) {
   displayPreviousResults();
 }
 
-// Helper function to display game over content
-function displayGameOverContent(terminalLines) {
-  let currentLine = 0;
-  let modalContent = "";
+// Modern game over display with card layout
+function displayModernGameOverContent(data) {
   const gameOverModal = new bootstrap.Modal(
     document.getElementById("gameOverModal"),
   );
@@ -2090,49 +1727,71 @@ function displayGameOverContent(terminalLines) {
     .getElementById("gameOverModal")
     .querySelector(".modal-body");
 
-  modalBody.innerHTML = '<pre class="terminal-output"></pre>';
+  // Create modern card layout
+  let content = `
+    <div class="game-stats-container">
+      <div class="stat-card">
+        <div class="stat-label">WPM</div>
+        <div class="stat-value wpm">${data.stats.wpm}</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-label">Accuracy</div>
+        <div class="stat-value accuracy">${data.stats.accuracy}</div>
+      </div>
+  `;
 
-  // Initially hide the return button by adding a class
-  const restartBtn = document.getElementById("restartGameBtn");
-  if (restartBtn) {
-    restartBtn.style.visibility = "hidden";
-    restartBtn.style.opacity = "0";
+  // Add mode-specific stats
+  if (data.mode === 'zen') {
+    content += `
+      <div class="stat-card">
+        <div class="stat-label">Time</div>
+        <div class="stat-value">${data.stats.sessionTime}</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-label">Words</div>
+        <div class="stat-value">${data.stats.wordGoal}</div>
+      </div>
+    `;
+  } else {
+    content += `
+      <div class="stat-card">
+        <div class="stat-label">Energy</div>
+        <div class="stat-value energy">${data.stats.energyRemaining}</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-label">Score</div>
+        <div class="stat-value score">${data.stats.finalScore}</div>
+      </div>
+    `;
   }
 
-  function typeNextLine() {
-    if (currentLine < terminalLines.length) {
-      modalContent += terminalLines[currentLine] + "\n";
-      modalBody.querySelector(".terminal-output").innerHTML = modalContent;
-      currentLine++;
-      setTimeout(typeNextLine, 150);
-    } else {
-      // Show the return button immediately after text animation completes
-      if (restartBtn) {
-        restartBtn.style.visibility = "visible";
-        restartBtn.style.opacity = "1";
-        restartBtn.focus();
-      }
-    }
+  content += `</div>`;
+
+  // Add game settings info
+  if (data.gameSettings) {
+    content += `
+      <div class="game-settings-info">
+        <div class="settings-row">
+          <span>Mode: ${data.gameSettings.mode}</span>
+          <span>Words Goal: ${data.gameSettings.wordGoal}</span>
+          <span>Bonus Energy: ${data.gameSettings.bonusEnergy}</span>
+        </div>
+        <div class="settings-row">
+          <span>Initial Energy: ${data.gameSettings.initialEnergy}</span>
+          <span>Difficulty: ${data.gameSettings.difficultyMultiplier}</span>
+        </div>
+      </div>
+    `;
   }
+
+  modalBody.innerHTML = content;
 
   gameOverModal.show();
 
-  // Start typing animation after modal is fully shown
-  document.getElementById("gameOverModal").addEventListener(
-    "shown.bs.modal",
-    function onShown() {
-      typeNextLine();
-      document
-        .getElementById("gameOverModal")
-        .removeEventListener("shown.bs.modal", onShown);
-    },
-    { once: true },
-  );
-
-  if (restartBtn) {
-    restartBtn.onclick = () => location.reload();
-  }
-
+  // Handle Enter key to restart
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       location.reload();
@@ -2149,11 +1808,6 @@ function displayGameOverContent(terminalLines) {
     .getElementById("gameOverModal")
     .addEventListener("hidden.bs.modal", () => {
       document.removeEventListener("keydown", handleKeyPress);
-      // Reset button visibility for next time
-      if (restartBtn) {
-        restartBtn.style.visibility = "hidden";
-        restartBtn.style.opacity = "0";
-      }
     });
 }
 
@@ -2165,67 +1819,6 @@ function validateTimeFormat(timeStr) {
   return minutes >= 0 && seconds >= 0 && seconds < 60;
 }
 
-function setupFormEventListeners(gameOverModal) {
-  const restartGameBtn = document.getElementById("restartGameBtn");
-  if (restartGameBtn) {
-    restartGameBtn.addEventListener("click", () => {
-      gameOverModal.hide();
-      location.reload();
-    });
-  }
-
-  const submitBtn = document.getElementById("submitCustomScore");
-  if (submitBtn) {
-    submitBtn.addEventListener("click", function () {
-      let isValid = true;
-
-      const wpmInput = document.getElementById("customWpm");
-      const wpm = parseInt(wpmInput.value);
-      if (isNaN(wpm) || wpm < 0 || wpm > 300) {
-        document.getElementById("wpmError").textContent =
-          "WPM must be between 0 and 300";
-        wpmInput.classList.add("is-invalid");
-        isValid = false;
-      } else {
-        wpmInput.classList.remove("is-invalid");
-      }
-
-      const accuracyInput = document.getElementById("customAccuracy");
-      const accuracy = parseFloat(accuracyInput.value);
-      if (isNaN(accuracy) || accuracy < 0 || accuracy > 100) {
-        document.getElementById("accuracyError").textContent =
-          "Accuracy must be between 0 and 100";
-        accuracyInput.classList.add("is-invalid");
-        isValid = false;
-      } else {
-        accuracyInput.classList.remove("is-invalid");
-      }
-
-      const timeInput = document.getElementById("customTime");
-      const time = timeInput.value;
-      if (!validateTimeFormat(time)) {
-        document.getElementById("timeError").textContent =
-          "Invalid time format. Use mm:ss (e.g., 1:30)";
-        timeInput.classList.add("is-invalid");
-        isValid = false;
-      } else {
-        timeInput.classList.remove("is-invalid");
-      }
-
-      if (isValid) {
-        // Save the custom result to localStorage
-        saveZenResult(wpm, time, accuracy);
-        displayPreviousResults();
-
-        // Close the modal
-        gameOverModal.hide();
-
-        // Redirect to animation page
-        window.location.href = "./animation.html";
-      }
-    });
-  }
-}
 
 // Save results for Classic Mode
 function saveClassicResult(
@@ -2792,3 +2385,86 @@ document.addEventListener("DOMContentLoaded", function () {
       .addEventListener("click", openScoreboardModal);
   }
 });
+
+// Command Palette Functions
+function showCommandPalette() {
+  const modal = new bootstrap.Modal(document.getElementById('commandPaletteModal'));
+  const input = document.getElementById('commandPaletteInput');
+  
+  // Pre-fill with "/" and position cursor after it
+  input.value = '/';
+  
+  modal.show();
+  
+  // Focus the input after modal is shown and position cursor
+  document.getElementById('commandPaletteModal').addEventListener('shown.bs.modal', function () {
+    input.focus();
+    // Move cursor to end (after the "/")
+    input.setSelectionRange(1, 1);
+  });
+}
+
+function hideCommandPalette() {
+  const modal = bootstrap.Modal.getInstance(document.getElementById('commandPaletteModal'));
+  if (modal) {
+    modal.hide();
+  }
+  
+  // Clear the input when hiding
+  const input = document.getElementById('commandPaletteInput');
+  if (input) {
+    input.value = '';
+  }
+}
+
+// Command palette input handling
+document.addEventListener('DOMContentLoaded', function() {
+  const commandInput = document.getElementById('commandPaletteInput');
+  
+  if (commandInput) {
+    commandInput.addEventListener('keydown', function(e) {
+      // Prevent deleting the "/" 
+      if ((e.key === 'Backspace' || e.key === 'Delete') && 
+          e.target.selectionStart <= 1 && e.target.selectionEnd <= 1) {
+        e.preventDefault();
+        return;
+      }
+      
+      if (e.key === 'Enter') {
+        const command = e.target.value.trim();
+        if (command && command.length > 1) { // Must have more than just "/"
+          // Execute the command through game-commands.js
+          executeCommand(command);
+          hideCommandPalette();
+        }
+      } else if (e.key === 'Escape') {
+        hideCommandPalette();
+      }
+    });
+    
+    // Prevent cursor from going before the "/"
+    commandInput.addEventListener('click', function(e) {
+      if (e.target.selectionStart < 1) {
+        e.target.setSelectionRange(1, 1);
+      }
+    });
+    
+    // Ensure "/" stays at the beginning
+    commandInput.addEventListener('input', function(e) {
+      if (!e.target.value.startsWith('/')) {
+        e.target.value = '/' + e.target.value.replace('/', '');
+        e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+      }
+    });
+  }
+});
+
+// Function to execute command (this will call the game-commands system)
+function executeCommand(command) {
+  // Command already has "/" from the input field
+  // Import and use the game commands
+  import('./game-commands.js').then(module => {
+    const gameCommands = module.default;
+    gameCommands.handleCommand(command);
+  });
+}
