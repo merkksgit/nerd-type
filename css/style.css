@@ -19,6 +19,11 @@
   font-family: "bigblueterm-mono";
 }
 
+@font-face {
+  src: url(../font/0xProtoNerdFontMono-Regular.ttf);
+  font-family: "oxproto-mono";
+}
+
 * {
   font-family: "jetbrains-mono";
   background-color: #24283b;

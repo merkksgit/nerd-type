@@ -14,9 +14,7 @@ class GameCommands {
     // Initialize debug instances
     this.debugDisplay = new DebugDisplay();
     // Load saved settings from localStorage or use defaults
-    this.gameSettings = JSON.parse(
-      localStorage.getItem("gameSettings"),
-    ) || {
+    this.gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
       timeLimit: 30,
       bonusTime: 3,
       initialTime: 10,
@@ -153,7 +151,6 @@ class GameCommands {
     const parts = input.trim().split(" ");
     const command = parts[0].toLowerCase();
     const args = parts.slice(1);
-
 
     // Check if the command exists
     if (this.commands[command]) {
@@ -346,10 +343,7 @@ class GameCommands {
     if (isCurrentlyZenMode) {
       // Reset Zen Mode settings
       this.gameSettings.zenWordGoal = 30; // Reset to default zen word goal
-      localStorage.setItem(
-        "gameSettings",
-        JSON.stringify(this.gameSettings),
-      );
+      localStorage.setItem("gameSettings", JSON.stringify(this.gameSettings));
 
       // Reset other Zen-related settings to defaults
       localStorage.setItem("nerdtype_zen_mode", "true"); // Keep in Zen mode but reset settings
@@ -392,10 +386,7 @@ class GameCommands {
       this.gameSettings = { ...classicSettings, currentMode: "classic" };
 
       // Save to localStorage
-      localStorage.setItem(
-        "gameSettings",
-        JSON.stringify(this.gameSettings),
-      );
+      localStorage.setItem("gameSettings", JSON.stringify(this.gameSettings));
 
       // Reset other Classic-related settings
       localStorage.setItem("nerdtype_zen_mode", "false"); // Ensure Zen mode is off
@@ -531,10 +522,7 @@ class GameCommands {
     if (isCurrentlyZenMode) {
       // Zen Mode: Update zenWordGoal
       this.gameSettings.zenWordGoal = wordCount;
-      localStorage.setItem(
-        "gameSettings",
-        JSON.stringify(this.gameSettings),
-      );
+      localStorage.setItem("gameSettings", JSON.stringify(this.gameSettings));
 
       this.showNotification(
         `Zen Mode word goal set to ${wordCount} words`,
@@ -555,10 +543,7 @@ class GameCommands {
       const currentMode = this.checkIfCustomMode();
       this.gameSettings.currentMode = currentMode;
 
-      localStorage.setItem(
-        "gameSettings",
-        JSON.stringify(this.gameSettings),
-      );
+      localStorage.setItem("gameSettings", JSON.stringify(this.gameSettings));
 
       // Show mode in notification only if it's custom
       const modeText = currentMode === "custom" ? " (CUSTOM MODE)" : "";
@@ -818,6 +803,7 @@ Available commands:
       "departure-mono": "Departure Mono",
       "firacode-mono": "FiraCode Mono",
       "bigblueterm-mono": "BigBlueTerm Mono",
+      "oxproto-mono": "0xProto Mono",
     };
 
     const fontDisplayName = fontDisplayNames[currentFont] || currentFont;
@@ -935,7 +921,6 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
     );
     modal.show();
   }
-
 
   // Toggle debug display
   toggleDebug() {
