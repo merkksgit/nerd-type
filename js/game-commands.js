@@ -65,6 +65,7 @@ class GameCommands {
       "/reset": this.resetGame.bind(this),
       "/data": this.toggleDataCollection.bind(this),
       "/debug": this.toggleDebug.bind(this),
+      "/rm": this.removeData.bind(this),
     };
 
     // Commands that need reload after execution
@@ -764,6 +765,8 @@ Available commands:
 /sound          - Toggle keypress sound
 /data           - Toggle data collection
 /debug          - Toggle debug display
+/rm             - Remove data from localStorage
+<span style= "color: #ff9e64">[scoreboard.data, achievements.data]</span>
 /status         - Show current game settings
 /reset          - Reset to default settings
 /help           - Show this help message
@@ -942,6 +945,45 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
     setTimeout(() => {
       location.reload();
     }, 1000);
+  }
+
+  removeData(args) {
+    if (args.length === 0) {
+      this.showNotification(
+        "Usage: /rm <data_type>. Available: scoreboard.data, achievements.data",
+        "info",
+      );
+      return;
+    }
+
+    const dataType = args[0].toLowerCase();
+
+    switch (dataType) {
+      case "scoreboard.data":
+        // Clear scoreboard data from localStorage
+        localStorage.removeItem("gameResults");
+        this.showNotification(
+          "Scoreboard data cleared successfully.",
+          "success",
+        );
+        break;
+
+      case "achievements.data":
+        // Clear achievements data from localStorage
+        localStorage.removeItem("nerdtype_achievements");
+        this.showNotification(
+          "Achievements data cleared successfully.",
+          "success",
+        );
+        break;
+
+      default:
+        this.showNotification(
+          `Unknown data type: ${dataType}. Available: scoreboard.data, achievements.data`,
+          "error",
+        );
+        break;
+    }
   }
 }
 
