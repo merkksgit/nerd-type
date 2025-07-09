@@ -39,7 +39,7 @@ export class DebugDisplay {
     div.style.position = "fixed";
     // change debug window position
     div.style.bottom = "20%";
-    div.style.left = "10%";
+    div.style.left = "2%";
     div.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
     div.style.color = "#00ff00";
     div.style.fontFamily = "monospace";
