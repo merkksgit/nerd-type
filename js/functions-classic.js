@@ -31,6 +31,7 @@ let countDownInterval;
 let totalTimeInterval;
 let bonusTime = 3; // Default, will be updated from settings
 let goalPercentage = 100;
+let isPaused = false; // Game pause state
 
 // Zen mode specific variables
 let sessionStartTime = null;
@@ -1238,8 +1239,8 @@ function flashProgress() {
 
 // Classic Mode: Countdown timer logic
 function countDown() {
-  // Only countdown if the player has started typing
-  if (hasStartedTyping && timeLeft > 0) {
+  // Only countdown if the player has started typing and game is not paused
+  if (hasStartedTyping && timeLeft > 0 && !isPaused) {
     timeLeft--;
     updateTimer();
   } else if (timeLeft <= 0) {
@@ -1262,6 +1263,8 @@ function updateTimer() {
 
 // Classic Mode: Total time counter
 function totalTimeCount() {
+  if (isPaused) return; // Don't count time when paused
+  
   const settings =
     JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
   const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
@@ -1305,7 +1308,7 @@ function calculateTotalTime() {
 
 // Zen Mode: Update the timer display
 function updateZenTimer() {
-  if (gameEnded) return;
+  if (gameEnded || isPaused) return;
 
   // Update the timer display
   const totalTimeElement = document.getElementById("totalTimeValue");
@@ -1361,11 +1364,11 @@ function updateProgressBar() {
 function checkInput(e) {
   const userInput = e.target.value;
   
-  // Check if input starts with "/" for commands
-  if (userInput.startsWith("/")) {
-    // Open command palette and clear the main input
+  // Check if input contains "/" for commands
+  if (userInput.includes("/")) {
+    // Open command palette and remove the "/" character from input
     showCommandPalette();
-    e.target.value = "";
+    e.target.value = userInput.replace("/", "");
     return;
   }
   
@@ -2403,10 +2406,40 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+// Game Pause/Resume Functions
+function pauseGame() {
+  if (isPaused) return;
+  isPaused = true;
+  
+  // Clear intervals to pause timers
+  if (countDownInterval) clearInterval(countDownInterval);
+  if (totalTimeInterval) clearInterval(totalTimeInterval);
+}
+
+function resumeGame() {
+  if (!isPaused) return;
+  isPaused = false;
+  
+  // Restart timers if game is active
+  if (!gameEnded && hasStartedTyping) {
+    if (!isZenMode) {
+      // Classic mode - restart countdown
+      countDownInterval = setInterval(countDown, 800);
+      totalTimeInterval = setInterval(totalTimeCount, 1000);
+    } else {
+      // Zen mode - restart total time counter
+      totalTimeInterval = setInterval(updateZenTimer, 1000);
+    }
+  }
+}
+
 // Command Palette Functions
 function showCommandPalette() {
   const modal = new bootstrap.Modal(document.getElementById('commandPaletteModal'));
   const input = document.getElementById('commandPaletteInput');
+  
+  // Pause the game when command palette opens
+  pauseGame();
   
   // Pre-fill with "/" and position cursor after it
   input.value = '/';
@@ -2418,6 +2451,16 @@ function showCommandPalette() {
     input.focus();
     // Move cursor to end (after the "/")
     input.setSelectionRange(1, 1);
+  });
+  
+  // Return focus to main input and resume game when modal is hidden
+  document.getElementById('commandPaletteModal').addEventListener('hidden.bs.modal', function () {
+    const userInput = document.getElementById('userInput');
+    if (userInput) {
+      userInput.focus();
+    }
+    // Resume the game when command palette closes
+    resumeGame();
   });
 }
 
