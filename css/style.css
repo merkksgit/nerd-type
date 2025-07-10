@@ -153,6 +153,10 @@ div#content {
   margin-top: 10px;
 }
 
+.navbar {
+  margin-top: 1rem;
+}
+
 .navbar .navbar-nav .nav-link {
   color: #565f89;
   font-size: 1em;
@@ -1864,13 +1868,13 @@ score h3 {
   }
   
   #wordToType {
-    font-size: 1.2em !important;
+    font-size: 1.6em !important;
     line-height: 1.4;
     margin: 1rem 0;
   }
   
   #userInput {
-    font-size: 1.1em !important;
+    font-size: 1.3em !important;
     padding: 0.8rem !important;
     margin: 1rem 0;
     width: 100% !important;
@@ -1878,7 +1882,7 @@ score h3 {
   }
   
   #nextWord {
-    font-size: 1em !important;
+    font-size: 1.3em !important;
     margin: 0.5rem 0;
   }
   
@@ -1906,6 +1910,14 @@ div#wordToType,
   hyphens: auto;
   max-width: 100%;
   padding: 0 5px;
+}
+
+/* Mobile-only font size improvements */
+@media (max-width: 768px) {
+  div#wordToType,
+  #nextWord {
+    font-size: clamp(28px, 6vw, 40px) !important;
+  }
 }
 
 /* Progress Bar Improvements */
@@ -1957,15 +1969,22 @@ div#wordToType,
 }
 
 /* Very Small Devices */
-@media (max-width: 360px) {
+@media (max-width: 480px) {
   input[type="text"] {
     font-size: 16px; /* Prevent auto-zoom on iOS */
     margin: 15px auto;
   }
 
-  div#wordToType,
+  div#wordToType {
+    font-size: 1.8em !important;
+  }
+  
   #nextWord {
-    font-size: 24px;
+    font-size: 1.4em !important;
+  }
+  
+  #userInput {
+    font-size: 1.4em !important;
   }
 
   /* Compact buttons for very small screens */
