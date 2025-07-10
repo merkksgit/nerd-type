@@ -637,7 +637,7 @@ function resetSettings() {
   showSettingsNotification("Settings reset to defaults");
 }
 
-function applySettings() {
+async function applySettings() {
   // Clear any previous validation states
   clearAllValidationStates();
 
@@ -809,6 +809,16 @@ function applySettings() {
   );
   if (modal) {
     modal.hide();
+  }
+
+  // Sync settings to Firebase if user is logged in
+  if (window.canSyncSettingsToFirebase && window.canSyncSettingsToFirebase()) {
+    try {
+      await window.syncSettingsToFirebase();
+      console.log("✅ Settings synced to Firebase after applying");
+    } catch (error) {
+      console.error("❌ Failed to sync settings to Firebase:", error);
+    }
   }
 
   // Store pending notification for after reload
@@ -1007,3 +1017,4 @@ function saveFontSetting(fontFamily) {
     }),
   );
 }
+

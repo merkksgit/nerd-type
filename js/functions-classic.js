@@ -224,6 +224,25 @@ let gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
   currentMode: "classic",
 };
 
+// Function to reload game settings from localStorage (used by settings sync)
+window.reloadGameSettings = function() {
+  const newSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
+    timeLimit: 30,
+    bonusTime: 3,
+    initialTime: 10,
+    goalPercentage: 100,
+    currentMode: "classic",
+  };
+  
+  // Update the global gameSettings variable
+  Object.assign(gameSettings, newSettings);
+  
+  // Also update game commands settings if available
+  if (window.gameCommands && window.gameCommands.gameSettings) {
+    Object.assign(window.gameCommands.gameSettings, newSettings);
+  }
+};
+
 // Define preset modes
 const presetModes = {
   classic: {
