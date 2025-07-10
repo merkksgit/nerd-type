@@ -1,7 +1,7 @@
 /* UI Toggle Button */
 .ui-toggle-btn {
   position: fixed;
-  top: 30px;
+  top: 33px;
   right: 20px;
   z-index: 1001;
   background-color: #24283b;
@@ -119,7 +119,7 @@
 
 .floating-settings-btn {
   position: fixed;
-  top: 30px;
+  top: 33px;
   right: 180px;
   z-index: 1000;
   background-color: #24283b;
@@ -139,7 +139,7 @@
 .floating-scoreboard-btn,
 .floating-scoreboard-chart-btn {
   position: fixed;
-  top: 30px;
+  top: 33px;
   right: 230px;
   z-index: 1000;
   background-color: #24283b;
@@ -162,7 +162,7 @@
 
 .floating-user-btn {
   position: fixed;
-  top: 30px;
+  top: 33px;
   right: 20px;
   background-color: #24283b;
   color: #7aa2f7;
