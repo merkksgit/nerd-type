@@ -1973,11 +1973,19 @@ function saveZenResult(wpm, totalTime, accuracy) {
     wordList: currentLanguage,
     wordGoal: zenWordGoal,
     wordsTyped: wordsTyped.length, // Track how many words were actually typed
+    timestamp: Date.now(), // Add timestamp for Firebase compatibility
   };
 
   // Save locally
   results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
+
+  // Save to Firebase user scoreboard for cross-device sync (but NOT global leaderboard)
+  if (window.canSyncScoreboardToFirebase && window.canSyncScoreboardToFirebase()) {
+    window.syncScoreboardToFirebase(gameData).catch((error) => {
+      console.error("❌ Error syncing zen mode scoreboard to Firebase:", error);
+    });
+  }
 
   // Update achievements system
   achievementSystem.handleGameCompletion(gameData);
