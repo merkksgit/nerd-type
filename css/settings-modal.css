@@ -67,7 +67,7 @@
   transform: none !important;
 }
 
-/* Media query adjustments */
+/* Media query adjustments - desktop positioning */
 @media (max-width: 768px) {
   .ui-toggle-btn {
     top: 10px;
@@ -210,20 +210,11 @@
   color: #ff9e64;
 }
 
+/* Mobile positioning - bottom right corner opening leftwards */
 @media (max-width: 768px) {
-  .floating-settings-btn {
-    top: 10px;
-    right: 70px;
-  }
-
-  .floating-scoreboard-btn,
-  .floating-scoreboard-chart-btn {
-    top: 10px;
-    right: 120px;
-  }
-
-  .floating-scoreboard-chart-btn {
-    top: 10px;
+  .ui-toggle-btn {
+    bottom: 20px;
+    top: auto;
     right: 20px;
   }
 
@@ -232,11 +223,31 @@
     min-width: 40px;
     width: 40px;
     height: 40px;
-    top: 10px;
-    right: 20px;
+    bottom: 20px;
+    top: auto;
+    right: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .floating-settings-btn {
+    bottom: 20px;
+    top: auto;
+    right: 120px;
+  }
+
+  .floating-scoreboard-btn,
+  .floating-scoreboard-chart-btn {
+    bottom: 20px;
+    top: auto;
+    right: 170px;
+  }
+
+  .floating-scoreboard-chart-btn {
+    bottom: 20px;
+    top: auto;
+    right: 170px;
   }
 
   .floating-user-btn span {
@@ -250,12 +261,14 @@
 
 @media (max-width: 500px) {
   .floating-scoreboard-chart-btn {
-    top: 10px;
-    right: 20px;
+    bottom: 20px;
+    top: auto;
+    right: 140px;
   }
 
   .floating-user-btn {
-    top: 10px;
+    bottom: 20px;
+    top: auto;
   }
 }
 

@@ -60,25 +60,23 @@
   </head>
   <body class="d-flex flex-column h-100">
     <div class="container-fluid flex-grow-1 d-flex flex-column">
-      <header class="d-flex justify-content-start align-items-center">
-        <a href="../index.html">
-          <img
-            id="header-logo"
-            src="../images/logo-text-no-keyboard.png"
-            alt="NerdType Logo"
-          />
-        </a>
-        <a href="../index.html">
-          <img
-            id="header-logo-no-text"
-            src="../images/mobile-header-logo-v2.png"
-            alt="NerdType Logo"
-          />
-        </a>
-      </header>
       <nav class="navbar navbar-dark navbar-expand">
         <div class="container-fluid">
-          <div class="navbar-collapse justify-content-center" id="mainmenu">
+          <a href="../index.html">
+            <img
+              id="header-logo"
+              src="../images/logo-text-no-keyboard.png"
+              alt="NerdType Logo"
+            />
+          </a>
+          <a href="../index.html">
+            <img
+              id="header-logo-no-text"
+              src="../images/mobile-header-logo-v2.png"
+              alt="NerdType Logo"
+            />
+          </a>
+          <div class="navbar-collapse justify-content-start ms-4" id="mainmenu">
             <ul class="navbar-nav">
               <li class="nav-item">
                 <a class="nav-link" href="../index.html"
@@ -110,11 +108,13 @@
         </div>
       </nav>
       <!-- Achievements Section -->
-      <div id="achievements" class="row justify-content-center pt-2 pt-md-5">
+      <div id="achievements" class="row justify-content-center py-4">
         <article class="col-md-12 p-3 flex-column d-flex align-items-center">
-          <h1 class="page-title mb-3 achievements-title">
-            <i class="fa-solid fa-trophy"></i> CORE ACHIEVEMENTS
-          </h1>
+          <div class="mt-4 mb-4">
+            <h1 class="page-title mb-3 achievements-title">
+              <i class="fa-solid fa-trophy"></i> CORE ACHIEVEMENTS
+            </h1>
+          </div>
 
           <div id="achievementsContainer" class="text-center w-100">
             <div class="row justify-content-center">
@@ -134,7 +134,7 @@
               </div>
 
               <!-- Seasonal Achievements Section -->
-              <div class="col-12 col-md-8 mb-4">
+              <div class="col-12 col-md-8 mb-4 mt-4">
                 <h2 class="text-center mb-3" style="color: #bb9af7">
                   <i class="fa-solid fa-calendar-alt me-2"></i>SEASONAL
                   ACHIEVEMENTS
@@ -151,7 +151,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-md-8 mb-4">
+              <div class="col-12 col-md-8 mb-4 mt-4">
                 <h2 class="text-center mb-3" style="color: #bb9af7">
                   <i class="fa-solid fa-calendar-alt me-2"></i>SPEED TIER AND
                   ACCURACY RANK

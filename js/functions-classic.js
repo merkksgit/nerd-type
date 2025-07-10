@@ -1,5 +1,4 @@
 // Import common dependencies
-import { tips } from "./tips.js";
 import { loadWordList, currentLanguage } from "./word-list-manager.js";
 import { DebugDisplay } from "./debug.js";
 import achievementSystem from "./achievements.js";
@@ -252,7 +251,6 @@ const presetModes = {
 };
 
 // Tips rotation
-let tipsRotationInterval = null;
 
 // Game Mode Utilities
 function isZenModeActive() {
@@ -353,7 +351,6 @@ async function initializeGame() {
 
   // Initialize event listeners and other game elements
   initializeEventListeners();
-  initializeRotatingTips();
   displayPreviousResults();
   setupUsernameValidation();
 
@@ -382,13 +379,6 @@ async function initializeGame() {
 }
 
 function setupUI() {
-  // Set the initial word if words are loaded
-  if (words.length > 0) {
-    const nextWordDiv = document.getElementById("nextWord");
-    const randomTip = tips[Math.floor(Math.random() * tips.length)];
-    nextWordDiv.textContent = randomTip;
-  }
-
   // Update the UI based on current game mode
   updateUIForGameMode();
 }
@@ -442,44 +432,6 @@ function updateDebugInfo() {
 // Set up your update interval
 setInterval(updateDebugInfo, 100);
 
-function initializeRotatingTips() {
-  const nextWordDiv = document.getElementById("nextWord");
-  let tipIndex = Math.floor(Math.random() * tips.length);
-
-  // Apply tip class instead of inline styles
-  function applyTipStyling() {
-    nextWordDiv.classList.add("tip-style");
-  }
-
-  // Initially set up the tip
-  nextWordDiv.textContent = "Tip: " + tips[tipIndex];
-  applyTipStyling();
-
-  // Clear any existing interval
-  if (tipsRotationInterval) {
-    clearInterval(tipsRotationInterval);
-  }
-
-  // Set up interval to change tips every few seconds
-  tipsRotationInterval = setInterval(() => {
-    // Fade out
-    nextWordDiv.classList.add("fade-out");
-
-    // After fade out completes, change tip and fade in
-    setTimeout(() => {
-      // Get next tip (avoid repeating the same tip)
-      let newIndex;
-      do {
-        newIndex = Math.floor(Math.random() * tips.length);
-      } while (newIndex === tipIndex && tips.length > 1);
-
-      tipIndex = newIndex;
-      nextWordDiv.textContent = "Tip: " + tips[tipIndex];
-      applyTipStyling(); // Ensure class is applied
-      nextWordDiv.classList.remove("fade-out");
-    }, 300); // Match this with CSS transition time
-  }, 5000); // Change tip every x seconds
-}
 
 function optimizeForMobile() {
   // Check if we're on a small screen
@@ -840,18 +792,13 @@ function startGame() {
         audio.volume = 0.3;
       });
   });
-  if (tipsRotationInterval) {
-    clearInterval(tipsRotationInterval);
-    tipsRotationInterval = null;
-
-    // Reset the next word element styles to default game styles
-    const nextWordDiv = document.getElementById("nextWord");
-    if (nextWordDiv) {
-      // Remove the tip styling class when starting the game
-      nextWordDiv.classList.remove("tip-style");
-      // Clear any inline styles that might have been applied
-      nextWordDiv.removeAttribute("style");
-    }
+  // Reset the next word element styles to default game styles
+  const nextWordDiv = document.getElementById("nextWord");
+  if (nextWordDiv) {
+    // Remove the tip styling class when starting the game
+    nextWordDiv.classList.remove("tip-style");
+    // Clear any inline styles that might have been applied
+    nextWordDiv.removeAttribute("style");
   }
 
   // Reset game state and shuffle words at start
