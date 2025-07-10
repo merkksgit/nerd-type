@@ -756,6 +756,13 @@ class AchievementSystem {
 
     // Save updated data
     this.saveData();
+
+    // Sync to Firebase if possible (async, don't block game flow)
+    if (this.canSyncToFirebase()) {
+      this.syncAchievementsToFirebase().catch(error => {
+        console.error("❌ Failed to sync achievements to Firebase:", error);
+      });
+    }
   }
 
   // Check for any newly unlocked achievements
@@ -851,6 +858,7 @@ class AchievementSystem {
         console.error("Error checking completionist achievement:", error);
       }
     }
+
 
     // Show notifications for new achievements
     newlyUnlocked.forEach((achievement) => {
@@ -997,22 +1005,40 @@ class AchievementSystem {
   resetAchievements() {
     this.achievementsData = {
       unlockedAchievements: {},
-      stats: {
-        gamesPlayedToday: 0,
-        lastGameDate: null,
-        highestScore: 0,
-        highestWPM: 0,
-        highestAccuracy: 0,
-        languageWPM: {
-          english: 0,
-          finnish: 0,
-          swedish: 0,
-          programming: 0,
-          nightmare: 0,
-        },
-      },
+      stats: this.getDefaultStats(),
       pendingNotifications: [],
     };
+    this.saveData();
+  }
+
+  // Smart reset for logout - preserves guest achievements if returning to guest mode
+  resetToGuestMode() {
+    // Check if there might be legitimate guest achievements to preserve
+    const currentData = JSON.parse(localStorage.getItem("nerdtype_achievements")) || {};
+    
+    // If we have existing guest achievements (from before login), try to restore them
+    const guestBackup = JSON.parse(localStorage.getItem("nerdtype_guest_achievements_backup")) || null;
+    
+    if (guestBackup && guestBackup.unlockedAchievements && Object.keys(guestBackup.unlockedAchievements).length > 0) {
+      // Restore previous guest achievements
+      this.achievementsData = {
+        ...guestBackup,
+        pendingNotifications: [], // Clear any pending notifications
+      };
+      console.log("🔄 Restored previous guest achievements");
+    } else {
+      // No guest backup, reset to fresh state but keep any current achievements that might be from guest play
+      const wasInGuestMode = localStorage.getItem("nerdtype_guest_mode") === "true";
+      if (!wasInGuestMode) {
+        // We're transitioning from logged-in to guest, reset completely
+        this.resetAchievements();
+        console.log("🆕 Started fresh guest session");
+      } else {
+        // Already in guest mode, keep current achievements
+        console.log("🏠 Staying in guest mode, keeping current achievements");
+      }
+    }
+    
     this.saveData();
   }
 
@@ -1022,6 +1048,245 @@ class AchievementSystem {
       "nerdtype_achievements",
       JSON.stringify(this.achievementsData),
     );
+  }
+
+  // Firebase Achievement Sync Methods
+  async syncAchievementsToFirebase() {
+    if (!this.canSyncToFirebase()) {
+      return;
+    }
+
+    try {
+      const currentUser = window.getCurrentUser();
+      if (!currentUser) return;
+
+      const { ref, set } = window.firebaseModules;
+      const userAchievementsRef = ref(window.database, `users/${currentUser.uid}/achievements`);
+
+      // Sync ALL achievements including seasonal ones (seasonal require login to earn, so safe to sync)
+      const syncableAchievements = { ...this.achievementsData.unlockedAchievements };
+
+      // Sync ALL stats including seasonal ones (since seasonal achievements require login)
+      const syncableStats = { ...this.achievementsData.stats };
+
+      const syncData = {
+        unlockedAchievements: syncableAchievements,
+        stats: syncableStats,
+        lastSyncAt: new Date().toISOString(),
+      };
+
+      await set(userAchievementsRef, syncData);
+      console.log("✅ Achievements synced to Firebase");
+    } catch (error) {
+      console.error("❌ Error syncing achievements to Firebase:", error);
+    }
+  }
+
+  async loadAchievementsFromFirebase() {
+    if (!this.canSyncToFirebase()) {
+      return null;
+    }
+
+    try {
+      const currentUser = window.getCurrentUser();
+      if (!currentUser) return null;
+
+      const { ref, get } = window.firebaseModules;
+      const userAchievementsRef = ref(window.database, `users/${currentUser.uid}/achievements`);
+      const snapshot = await get(userAchievementsRef);
+
+      if (snapshot.exists()) {
+        const cloudData = snapshot.val();
+        console.log("📥 Loaded achievements from Firebase:", cloudData);
+        return cloudData;
+      }
+      return null;
+    } catch (error) {
+      console.error("❌ Error loading achievements from Firebase:", error);
+      return null;
+    }
+  }
+
+  canSyncToFirebase() {
+    // Check if user is logged in
+    const currentUser = window.getCurrentUser && window.getCurrentUser();
+    if (!currentUser) return false;
+
+    // Check if data sharing is enabled
+    const dataShareEnabled = localStorage.getItem("data_collection_enabled");
+    if (dataShareEnabled === "false") return false;
+
+    // Check if Firebase is available
+    if (!window.firebaseModules || !window.database) return false;
+
+    return true;
+  }
+
+  getDefaultStats() {
+    return {
+      gamesPlayedToday: 0,
+      lastGameDate: null,
+      highestScore: 0,
+      highestWPM: 0,
+      highestAccuracy: 0,
+      languageWPM: {
+        english: 0,
+        finnish: 0,
+        swedish: 0,
+        programming: 0,
+        nightmare: 0,
+      },
+    };
+  }
+
+  async mergeCloudAndLocalAchievements(wasGuestMode = null, prevUsername = null) {
+    if (!this.canSyncToFirebase()) {
+      console.log("🔒 Cannot sync - using local achievements only");
+      return;
+    }
+
+    try {
+      console.log("🔄 Merging cloud and local achievements...");
+      
+      // Use passed parameters if available, otherwise check localStorage
+      const guestMode = wasGuestMode !== null ? wasGuestMode : (localStorage.getItem("nerdtype_guest_mode") === "true");
+      const localUsername = prevUsername !== null ? prevUsername : localStorage.getItem("nerdtype_username");
+      const currentUser = window.getCurrentUser();
+      const currentUsername = currentUser ? currentUser.email.split("@")[0] : null;
+      
+      
+      // If there are local achievements but they're from guest mode or different user,
+      // don't merge them - start fresh from cloud only
+      const hasLocalAchievements = Object.keys(this.achievementsData.unlockedAchievements).length > 0;
+      const shouldIgnoreLocal = hasLocalAchievements && (
+        guestMode === true || 
+        (localUsername && localUsername !== currentUsername && localUsername === "runner")
+      );
+      
+      if (shouldIgnoreLocal) {
+        console.log("🚫 Ignoring local achievements from guest/different user");
+        
+        // If these are legitimate guest achievements, back them up before clearing
+        if (guestMode === true && hasLocalAchievements) {
+          localStorage.setItem("nerdtype_guest_achievements_backup", JSON.stringify(this.achievementsData));
+          console.log("💾 Backed up guest achievements before login");
+        }
+        
+        // Load only cloud data, ignore local
+        const cloudData = await this.loadAchievementsFromFirebase();
+        if (cloudData) {
+          this.achievementsData.unlockedAchievements = cloudData.unlockedAchievements || {};
+          this.achievementsData.stats = cloudData.stats || this.getDefaultStats();
+          this.saveData();
+          console.log("✅ Loaded achievements from cloud only");
+          this.checkAchievements();
+          return;
+        } else {
+          // No cloud data, reset to fresh state for this user
+          this.resetAchievements();
+          console.log("✅ Started fresh achievement state for new user");
+          return;
+        }
+      }
+      
+      // Load cloud achievements
+      const cloudData = await this.loadAchievementsFromFirebase();
+      if (!cloudData) {
+        console.log("📤 No cloud data found - uploading local achievements");
+        await this.syncAchievementsToFirebase();
+        return;
+      }
+
+      // Merge achievements (keep the earliest unlock date for each achievement)
+      const mergedAchievements = { ...this.achievementsData.unlockedAchievements };
+      
+      Object.entries(cloudData.unlockedAchievements || {}).forEach(([achievementId, cloudUnlock]) => {
+        const localUnlock = mergedAchievements[achievementId];
+        
+        if (!localUnlock) {
+          // Achievement only exists in cloud
+          mergedAchievements[achievementId] = cloudUnlock;
+          console.log(`📥 Restored achievement from cloud: ${achievementId}`);
+        } else if (cloudUnlock.unlockedAt && localUnlock.unlockedAt) {
+          // Both exist - keep the earlier unlock date
+          const cloudDate = new Date(cloudUnlock.unlockedAt);
+          const localDate = new Date(localUnlock.unlockedAt);
+          
+          if (cloudDate < localDate) {
+            mergedAchievements[achievementId] = cloudUnlock;
+            console.log(`📅 Used earlier cloud unlock date for: ${achievementId}`);
+          }
+        }
+      });
+
+      // Merge stats (take the highest values)
+      const mergedStats = { ...this.achievementsData.stats };
+      const cloudStats = cloudData.stats || {};
+      
+      // Merge numeric stats (take highest)
+      ['highestScore', 'highestWPM', 'highestAccuracy'].forEach(stat => {
+        if (cloudStats[stat] && cloudStats[stat] > mergedStats[stat]) {
+          mergedStats[stat] = cloudStats[stat];
+          console.log(`📊 Updated ${stat} from cloud: ${cloudStats[stat]}`);
+        }
+      });
+
+      // Merge language WPM stats (take highest for each language)
+      if (cloudStats.languageWPM) {
+        Object.entries(cloudStats.languageWPM).forEach(([language, wpm]) => {
+          if (wpm > (mergedStats.languageWPM[language] || 0)) {
+            mergedStats.languageWPM[language] = wpm;
+            console.log(`🌐 Updated ${language} WPM from cloud: ${wpm}`);
+          }
+        });
+      }
+
+      // Update local data with merged results
+      this.achievementsData.unlockedAchievements = mergedAchievements;
+      this.achievementsData.stats = mergedStats;
+      
+      // Save locally and sync back to cloud
+      this.saveData();
+      await this.syncAchievementsToFirebase();
+      
+      console.log("✅ Achievement merge completed successfully");
+      
+      // Check for any newly completed achievements after merge
+      this.checkAchievements();
+      
+    } catch (error) {
+      console.error("❌ Error merging achievements:", error);
+    }
+  }
+
+  // Manual sync method for user control or testing
+  async forceSyncToFirebase() {
+    if (!this.canSyncToFirebase()) {
+      console.log("🔒 Cannot sync - user not logged in or data sharing disabled");
+      return { success: false, message: "Sync not available" };
+    }
+
+    try {
+      await this.syncAchievementsToFirebase();
+      return { success: true, message: "Achievements synced successfully" };
+    } catch (error) {
+      console.error("❌ Force sync failed:", error);
+      return { success: false, message: "Sync failed: " + error.message };
+    }
+  }
+
+  // Method to get sync status
+  getSyncStatus() {
+    const canSync = this.canSyncToFirebase();
+    const user = window.getCurrentUser && window.getCurrentUser();
+    
+    return {
+      canSync,
+      isLoggedIn: !!user,
+      dataShareEnabled: localStorage.getItem("data_collection_enabled") !== "false",
+      firebaseReady: !!(window.firebaseModules && window.database),
+      lastSyncAt: this.achievementsData.lastSyncAt || null
+    };
   }
 
   // Render achievements to a container element with tooltips for non-secret achievements
@@ -1248,4 +1513,41 @@ class AchievementSystem {
 
 // Create and export a singleton instance
 const achievementSystem = new AchievementSystem();
+
+// Make it globally available for Firebase integration
+window.achievementSystem = achievementSystem;
+
+// Add method to clear achievements when switching users (seasonal now come from Firebase)
+window.clearAchievementsForUserSwitch = function() {
+  console.log("🧹 Clearing achievements for user switch - all achievements will come from cloud");
+  achievementSystem.resetAchievements();
+};
+
+// Simple method to load achievements from cloud without complex merging
+achievementSystem.loadUserAchievementsFromCloud = async function() {
+  if (!this.canSyncToFirebase()) {
+    console.log("🔒 Cannot load from cloud - staying with empty achievements");
+    return;
+  }
+
+  try {
+    console.log("📥 Loading user achievements from cloud...");
+    const cloudData = await this.loadAchievementsFromFirebase();
+    
+    if (cloudData) {
+      // Load ALL achievements from cloud (including seasonal)
+      this.achievementsData.unlockedAchievements = cloudData.unlockedAchievements || {};
+      this.achievementsData.stats = cloudData.stats || this.getDefaultStats();
+      this.saveData();
+      
+      console.log("✅ Loaded achievements from cloud successfully");
+      this.checkAchievements(); // Check for any newly completed achievements
+    } else {
+      console.log("📭 No cloud achievements found - starting fresh");
+    }
+  } catch (error) {
+    console.error("❌ Error loading achievements from cloud:", error);
+  }
+};
+
 export default achievementSystem;

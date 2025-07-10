@@ -340,6 +340,19 @@ window.getTopScores = async function () {
 window.loginUser = async function (email, password) {
   const { signInWithEmailAndPassword } = window.firebaseModules;
 
+  // CAPTURE GUEST STATE BEFORE ANY AUTH CHANGES
+  const wasGuestMode = localStorage.getItem("nerdtype_guest_mode") === "true";
+  const prevUsername = localStorage.getItem("nerdtype_username");
+  
+  // If we're logging in from guest mode, backup the guest achievements
+  if (wasGuestMode || prevUsername === "runner" || !prevUsername) {
+    const currentAchievements = localStorage.getItem("nerdtype_achievements");
+    if (currentAchievements) {
+      localStorage.setItem("nerdtype_guest_achievements_backup", currentAchievements);
+      console.log("💾 Backed up guest achievements before login");
+    }
+  }
+
   try {
     console.log("🔐 Attempting enhanced login for:", email);
 
@@ -392,8 +405,29 @@ window.loginUser = async function (email, password) {
       username = userData.username || emailUsername;
     }
 
+    
     // Store username locally
     localStorage.setItem("nerdtype_username", username);
+    
+    // Clear guest mode flag since we're now logged in
+    localStorage.removeItem("nerdtype_guest_mode");
+
+    // Simple approach: Clear local achievements on login unless it's the same user
+    const shouldClearAchievements = !prevUsername || prevUsername !== username || wasGuestMode;
+    
+    if (shouldClearAchievements && window.clearAchievementsForUserSwitch) {
+      console.log("🧹 Clearing achievements - different user login");
+      window.clearAchievementsForUserSwitch();
+    }
+
+    // Load user's achievements from cloud after clearing local
+    if (window.achievementSystem && typeof window.achievementSystem.loadUserAchievementsFromCloud === 'function') {
+      setTimeout(() => {
+        window.achievementSystem.loadUserAchievementsFromCloud().catch(error => {
+          console.error("❌ Failed to load achievements after login:", error);
+        });
+      }, 1000); // Small delay to ensure all systems are ready
+    }
 
     console.log("✅ Enhanced login successful:", user.email, "as", username);
     return { success: true, user: user, username: username };
@@ -458,6 +492,15 @@ window.registerUser = async function (email, password) {
       // Store username locally
       localStorage.setItem("nerdtype_username", username);
 
+      // Sync local achievements to cloud for new user
+      if (window.achievementSystem && typeof window.achievementSystem.syncAchievementsToFirebase === 'function') {
+        setTimeout(() => {
+          window.achievementSystem.syncAchievementsToFirebase().catch(error => {
+            console.error("❌ Failed to sync achievements after registration:", error);
+          });
+        }, 1000); // Small delay to ensure all systems are ready
+      }
+
       console.log(
         "✅ Registration completed successfully:",
         user.email,
@@ -511,6 +554,45 @@ window.logoutUser = async function () {
     // Clear local storage first
     localStorage.removeItem("nerdtype_username");
     localStorage.removeItem("nerdtype_guest_mode");
+
+    // Save current user's achievements to cloud before logout (if logged in)
+    if (currentUser && window.achievementSystem && typeof window.achievementSystem.syncAchievementsToFirebase === 'function') {
+      try {
+        await window.achievementSystem.syncAchievementsToFirebase();
+        console.log("💾 Synced achievements before logout");
+      } catch (error) {
+        console.error("❌ Failed to sync achievements before logout:", error);
+      }
+    }
+
+
+    // Reset to guest mode and restore guest achievements
+    localStorage.setItem("nerdtype_guest_mode", "true");
+    localStorage.setItem("nerdtype_username", "runner");
+    
+    // Restore guest achievements if they exist
+    const guestBackup = localStorage.getItem("nerdtype_guest_achievements_backup");
+    if (guestBackup && window.achievementSystem) {
+      try {
+        localStorage.setItem("nerdtype_achievements", guestBackup);
+        // Reload the achievement system with the restored data
+        const backupData = JSON.parse(guestBackup);
+        window.achievementSystem.achievementsData = backupData;
+        console.log("🔄 Restored guest achievements from backup");
+      } catch (error) {
+        console.error("❌ Failed to restore guest achievements:", error);
+        // Fallback to reset
+        if (window.achievementSystem && typeof window.achievementSystem.resetAchievements === 'function') {
+          window.achievementSystem.resetAchievements();
+        }
+      }
+    } else {
+      // No backup, reset to fresh guest state
+      if (window.achievementSystem && typeof window.achievementSystem.resetAchievements === 'function') {
+        window.achievementSystem.resetAchievements();
+        console.log("🆕 Started fresh guest session - no backup found");
+      }
+    }
 
     // Clear global variables
     window.playerUsername = "";
