@@ -2070,8 +2070,10 @@ function displayPreviousResults() {
 
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
-  // Keep all results in localStorage but only display the last 15
-  const displayResults = results.slice(-15).reverse();
+  // Sort results by timestamp (most recent first) and limit to 15
+  // This works for both local storage (chronological) and Firebase data (pre-sorted)
+  const sortedResults = results.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const displayResults = sortedResults.slice(0, 15);
 
   // Clear existing content
   resultsContainer.innerHTML = "";
