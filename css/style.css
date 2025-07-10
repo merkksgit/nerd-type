@@ -1022,10 +1022,10 @@ div#wordToType {
   box-shadow: none !important;
   color: #c0caf5 !important;
   font-family: "jetbrains-mono" !important;
-  font-size: 18px !important;
+  font-size: 22px !important;
   padding: 9px 16px !important;
   border-radius: 4px !important;
-  line-height: 1.1 !important;
+  line-height: 1.5 !important;
   height: auto !important;
   min-height: auto !important;
   margin: 0 !important;
@@ -2639,4 +2639,3 @@ tr:hover .username-rank-icon {
     font-size: 0.9em;
   }
 }
-
