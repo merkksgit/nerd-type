@@ -429,6 +429,15 @@ window.loginUser = async function (email, password) {
       }, 1000); // Small delay to ensure all systems are ready
     }
 
+    // Switch to user-specific scoreboard
+    if (window.switchToUserScoreboard) {
+      setTimeout(() => {
+        window.switchToUserScoreboard().catch(error => {
+          console.error("❌ Failed to switch to user scoreboard after login:", error);
+        });
+      }, 1500); // Slightly later than achievements
+    }
+
     console.log("✅ Enhanced login successful:", user.email, "as", username);
     return { success: true, user: user, username: username };
   } catch (error) {
@@ -499,6 +508,15 @@ window.registerUser = async function (email, password) {
             console.error("❌ Failed to sync achievements after registration:", error);
           });
         }, 1000); // Small delay to ensure all systems are ready
+      }
+
+      // Switch to user scoreboard for new user (will be empty initially)
+      if (window.switchToUserScoreboard) {
+        setTimeout(() => {
+          window.switchToUserScoreboard().catch(error => {
+            console.error("❌ Failed to switch to user scoreboard after registration:", error);
+          });
+        }, 1500); // Slightly later than achievements
       }
 
       console.log(
@@ -594,6 +612,11 @@ window.logoutUser = async function () {
       }
     }
 
+    // Switch back to guest scoreboard
+    if (window.switchToGuestScoreboard) {
+      window.switchToGuestScoreboard();
+    }
+
     // Clear global variables
     window.playerUsername = "";
     currentUser = null;
@@ -675,6 +698,170 @@ window.reapplyCurrentFont = function () {
 
   document.documentElement.style.setProperty("--game-font", currentFont);
   console.log("🎨 Reapplied font:", currentFont);
+};
+
+// Generate or get device ID for scoreboard tracking
+function getDeviceId() {
+  let deviceId = localStorage.getItem('nerdtype_device_id');
+  if (!deviceId) {
+    deviceId = 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    localStorage.setItem('nerdtype_device_id', deviceId);
+  }
+  return deviceId;
+}
+
+// Scoreboard Sync Functions
+window.canSyncScoreboardToFirebase = function() {
+  // Check if user is logged in
+  const currentUser = window.getCurrentUser && window.getCurrentUser();
+  if (!currentUser) return false;
+
+  // Check if data sharing is enabled
+  const dataShareEnabled = localStorage.getItem("data_collection_enabled");
+  if (dataShareEnabled === "false") return false;
+
+  // Check if Firebase is available
+  if (!window.firebaseModules || !window.database) return false;
+
+  return true;
+};
+
+window.syncScoreboardToFirebase = async function(gameData) {
+  if (!window.canSyncScoreboardToFirebase()) {
+    console.log("🔒 Cannot sync scoreboard to Firebase - not logged in or data sharing disabled");
+    return;
+  }
+
+  try {
+    const currentUser = window.getCurrentUser();
+    if (!currentUser) {
+      console.log("❌ No current user for scoreboard sync");
+      return;
+    }
+
+    const { ref, push } = window.firebaseModules;
+    const userScoreboardRef = ref(window.database, `users/${currentUser.uid}/scoreboard`);
+
+    // Add metadata
+    const scoreEntry = {
+      ...gameData,
+      syncedAt: new Date().toISOString(),
+      deviceId: getDeviceId()
+    };
+
+    await push(userScoreboardRef, scoreEntry);
+    console.log("✅ Scoreboard entry synced to Firebase");
+  } catch (error) {
+    console.error("❌ Error syncing scoreboard to Firebase:", error);
+  }
+};
+
+window.loadScoreboardFromFirebase = async function() {
+  if (!window.canSyncScoreboardToFirebase()) {
+    console.log("🔒 Cannot load scoreboard from Firebase - not logged in or data sharing disabled");
+    return [];
+  }
+
+  try {
+    const currentUser = window.getCurrentUser();
+    if (!currentUser) {
+      console.log("❌ No current user for scoreboard load");
+      return [];
+    }
+
+    const { ref, get } = window.firebaseModules;
+    const userScoreboardRef = ref(window.database, `users/${currentUser.uid}/scoreboard`);
+    
+    // Check if scoreboard exists
+    const allSnapshot = await get(userScoreboardRef);
+    
+    if (!allSnapshot.exists()) {
+      console.log("📭 No scoreboard data found in Firebase for this user");
+      return [];
+    }
+    
+    // Get all entries (we'll sort locally to avoid Firebase indexing requirements)
+    const snapshot = await get(userScoreboardRef);
+
+    if (snapshot.exists()) {
+      const cloudScores = [];
+      snapshot.forEach((child) => {
+        cloudScores.push(child.val());
+      });
+      
+      // Sort by timestamp locally (most recent first) and limit to 50
+      cloudScores.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      const limitedScores = cloudScores.slice(0, 50);
+      
+      console.log("📥 Loaded scoreboard from Firebase:", limitedScores.length, "entries");
+      return limitedScores;
+    }
+    
+    console.log("📭 No scoreboard entries found");
+    return [];
+  } catch (error) {
+    console.error("❌ Error loading scoreboard from Firebase:", error);
+    return [];
+  }
+};
+
+window.switchToUserScoreboard = async function() {
+  if (!window.canSyncScoreboardToFirebase()) {
+    console.log("🔒 Cannot sync scoreboard - using local only");
+    return;
+  }
+
+  try {
+    console.log("🔄 Switching to user-specific scoreboard...");
+    
+    // Backup current local scores (guest scores) before switching
+    const localScores = JSON.parse(localStorage.getItem("gameResults")) || [];
+    if (localScores.length > 0) {
+      localStorage.setItem("gameResults_guest_backup", JSON.stringify(localScores));
+      console.log("💾 Backed up guest scores");
+    }
+    
+    // Load user's cloud scores  
+    const cloudScores = await window.loadScoreboardFromFirebase();
+    
+    // Replace local storage with user's cloud scores only
+    localStorage.setItem("gameResults", JSON.stringify(cloudScores));
+    
+    console.log("✅ Switched to user scoreboard:", cloudScores.length, "entries");
+    
+    // Refresh scoreboard display if visible
+    if (typeof window.displayPreviousResults === 'function') {
+      window.displayPreviousResults();
+    }
+    
+  } catch (error) {
+    console.error("❌ Error switching to user scoreboard:", error);
+  }
+};
+
+window.switchToGuestScoreboard = function() {
+  console.log("🔄 Switching to guest scoreboard...");
+  
+  try {
+    // Restore guest scores from backup
+    const guestBackup = localStorage.getItem("gameResults_guest_backup");
+    if (guestBackup) {
+      localStorage.setItem("gameResults", guestBackup);
+      console.log("🔄 Restored guest scoreboard from backup");
+    } else {
+      // No backup, start fresh guest scoreboard
+      localStorage.setItem("gameResults", JSON.stringify([]));
+      console.log("🆕 Started fresh guest scoreboard");
+    }
+    
+    // Refresh scoreboard display if visible
+    if (typeof window.displayPreviousResults === 'function') {
+      window.displayPreviousResults();
+    }
+    
+  } catch (error) {
+    console.error("❌ Error switching to guest scoreboard:", error);
+  }
 };
 
 console.log("🔥 Firebase config file loaded with authentication");

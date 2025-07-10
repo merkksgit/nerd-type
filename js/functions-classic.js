@@ -1858,6 +1858,7 @@ function saveClassicResult(
     wpm,
     accuracy,
     date: new Date().toLocaleString("en-GB"),
+    timestamp: Date.now(), // Add timestamp for sorting and deduplication
     mode: modeName + " Mode",
     score: finalScore,
     wordList: currentLanguage,
@@ -1871,6 +1872,14 @@ function saveClassicResult(
     "highestAchievements",
     JSON.stringify(highestAchievements),
   );
+
+  // Sync to Firebase if user is logged in (async, don't block game flow)
+  // Only user scores sync to cloud - guest scores stay local only
+  if (window.canSyncScoreboardToFirebase && window.canSyncScoreboardToFirebase()) {
+    window.syncScoreboardToFirebase(gameData).catch(error => {
+      console.error("❌ Failed to sync scoreboard to Firebase:", error);
+    });
+  }
 
   // Prepare Firebase data
   const firebaseGameData = {

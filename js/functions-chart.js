@@ -254,8 +254,9 @@ function displayPreviousResults() {
 
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
-  // Keep all results in localStorage but only display the last 15
-  const displayResults = results.slice(-15).reverse();
+  // Sort by timestamp (newest first) and take the first 15
+  results.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const displayResults = results.slice(0, 15);
 
   // Clear existing content
   resultsContainer.innerHTML = "";
