@@ -256,6 +256,13 @@ function loadSettings() {
   applyFont(currentFont);
   updateFontPreview(currentFont);
 
+  // Load minimal UI setting
+  const minimalUIEnabled = localStorage.getItem("nerdtype_hide_ui") === "true";
+  const minimalUIToggle = document.getElementById("minimalUIToggle");
+  if (minimalUIToggle) {
+    minimalUIToggle.checked = minimalUIEnabled;
+  }
+
   // Toggle custom settings based on mode
   toggleCustomSettings(gameSettings.currentMode === "custom");
 
@@ -604,6 +611,12 @@ function resetSettings() {
     keypressSoundToggle.checked = false;
   }
 
+  // Reset minimal UI toggle to default (off)
+  const minimalUIToggle = document.getElementById("minimalUIToggle");
+  if (minimalUIToggle) {
+    minimalUIToggle.checked = false;
+  }
+
   // Reset language to English
   const englishRadio = document.getElementById("langEnglish");
   if (englishRadio) {
@@ -712,6 +725,18 @@ function applySettings() {
 
   localStorage.setItem("achievement_sound_enabled", achievementSoundEnabled);
   localStorage.setItem("keypress_sound_enabled", keypressSoundEnabled);
+
+  // Get minimal UI toggle state
+  const minimalUIToggle = document.getElementById("minimalUIToggle");
+  if (minimalUIToggle) {
+    const minimalUIEnabled = minimalUIToggle.checked;
+    localStorage.setItem("nerdtype_hide_ui", minimalUIEnabled);
+    
+    // Apply the UI changes immediately
+    if (typeof window.applyUIHideSettings === 'function') {
+      window.applyUIHideSettings(minimalUIEnabled);
+    }
+  }
 
   // Get show spaces toggle state
   const showSpacesEnabled = document.getElementById("showSpacesToggle").checked;

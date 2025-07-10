@@ -330,6 +330,30 @@ class AchievementSystem {
         },
       },
 
+      minimal_mind: {
+        id: "minimal_mind",
+        name: "Minimal Mind",
+        description: "Complete a Zen Mode game with minimal UI enabled",
+        icon: "fa-solid fa-eye-slash",
+        category: "gameplay",
+        secret: false,
+        check: function (stats, gameData) {
+          // Check if this is a Zen Mode game
+          if (!gameData || gameData.mode !== "Zen Mode") {
+            return false;
+          }
+
+          // Check if the game was completed successfully
+          if (!gameData.wordsTyped || gameData.wordsTyped < (gameData.wordGoal || 30)) {
+            return false;
+          }
+
+          // Check if minimal UI was enabled during the game
+          const minimalUIEnabled = localStorage.getItem("nerdtype_hide_ui") === "true";
+          return minimalUIEnabled;
+        },
+      },
+
       season_1_veteran: {
         id: "season_1_veteran",
         name: "Season 1 Veteran",

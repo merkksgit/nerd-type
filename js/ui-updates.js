@@ -497,10 +497,21 @@ function toggleUIVisibility() {
 
   // Apply the changes immediately
   applyUIHideSettings(newState);
+  
+  // Update settings panel toggle if it exists
+  updateSettingsPanelToggle(newState);
+}
+
+// Function to update settings panel toggle to match current UI state
+function updateSettingsPanelToggle(hideUI) {
+  const minimalUIToggle = document.getElementById("minimalUIToggle");
+  if (minimalUIToggle) {
+    minimalUIToggle.checked = hideUI;
+  }
 }
 
 // Function to apply UI hiding/showing
-function applyUIHideSettings(hideUI) {
+window.applyUIHideSettings = function applyUIHideSettings(hideUI) {
   if (!isGamePage()) return;
 
   // Define UI elements that can be hidden
