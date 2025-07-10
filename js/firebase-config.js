@@ -343,12 +343,15 @@ window.loginUser = async function (email, password) {
   // CAPTURE GUEST STATE BEFORE ANY AUTH CHANGES
   const wasGuestMode = localStorage.getItem("nerdtype_guest_mode") === "true";
   const prevUsername = localStorage.getItem("nerdtype_username");
-  
+
   // If we're logging in from guest mode, backup the guest achievements
   if (wasGuestMode || prevUsername === "runner" || !prevUsername) {
     const currentAchievements = localStorage.getItem("nerdtype_achievements");
     if (currentAchievements) {
-      localStorage.setItem("nerdtype_guest_achievements_backup", currentAchievements);
+      localStorage.setItem(
+        "nerdtype_guest_achievements_backup",
+        currentAchievements,
+      );
       console.log("💾 Backed up guest achievements before login");
     }
   }
@@ -405,16 +408,16 @@ window.loginUser = async function (email, password) {
       username = userData.username || emailUsername;
     }
 
-    
     // Store username locally
     localStorage.setItem("nerdtype_username", username);
-    
+
     // Clear guest mode flag since we're now logged in
     localStorage.removeItem("nerdtype_guest_mode");
 
     // Simple approach: Clear local achievements on login unless it's the same user
-    const shouldClearAchievements = !prevUsername || prevUsername !== username || wasGuestMode;
-    
+    const shouldClearAchievements =
+      !prevUsername || prevUsername !== username || wasGuestMode;
+
     if (shouldClearAchievements && window.clearAchievementsForUserSwitch) {
       console.log("🧹 Clearing achievements - different user login");
       window.clearAchievementsForUserSwitch();
@@ -431,19 +434,28 @@ window.loginUser = async function (email, password) {
     }
 
     // Load user's achievements from cloud after settings
-    if (window.achievementSystem && typeof window.achievementSystem.loadUserAchievementsFromCloud === 'function') {
+    if (
+      window.achievementSystem &&
+      typeof window.achievementSystem.loadUserAchievementsFromCloud ===
+        "function"
+    ) {
       setTimeout(() => {
-        window.achievementSystem.loadUserAchievementsFromCloud().catch(error => {
-          console.error("❌ Failed to load achievements after login:", error);
-        });
+        window.achievementSystem
+          .loadUserAchievementsFromCloud()
+          .catch((error) => {
+            console.error("❌ Failed to load achievements after login:", error);
+          });
       }, 500); // Smaller delay since settings are already loaded
     }
 
     // Switch to user-specific scoreboard
     if (window.switchToUserScoreboard) {
       setTimeout(() => {
-        window.switchToUserScoreboard().catch(error => {
-          console.error("❌ Failed to switch to user scoreboard after login:", error);
+        window.switchToUserScoreboard().catch((error) => {
+          console.error(
+            "❌ Failed to switch to user scoreboard after login:",
+            error,
+          );
         });
       }, 1000); // After achievements
     }
@@ -512,19 +524,31 @@ window.registerUser = async function (email, password) {
       localStorage.setItem("nerdtype_username", username);
 
       // Sync local achievements to cloud for new user
-      if (window.achievementSystem && typeof window.achievementSystem.syncAchievementsToFirebase === 'function') {
+      if (
+        window.achievementSystem &&
+        typeof window.achievementSystem.syncAchievementsToFirebase ===
+          "function"
+      ) {
         setTimeout(() => {
-          window.achievementSystem.syncAchievementsToFirebase().catch(error => {
-            console.error("❌ Failed to sync achievements after registration:", error);
-          });
+          window.achievementSystem
+            .syncAchievementsToFirebase()
+            .catch((error) => {
+              console.error(
+                "❌ Failed to sync achievements after registration:",
+                error,
+              );
+            });
         }, 1000); // Small delay to ensure all systems are ready
       }
 
       // Switch to user scoreboard for new user (will be empty initially)
       if (window.switchToUserScoreboard) {
         setTimeout(() => {
-          window.switchToUserScoreboard().catch(error => {
-            console.error("❌ Failed to switch to user scoreboard after registration:", error);
+          window.switchToUserScoreboard().catch((error) => {
+            console.error(
+              "❌ Failed to switch to user scoreboard after registration:",
+              error,
+            );
           });
         }, 1500); // Slightly later than achievements
       }
@@ -584,7 +608,11 @@ window.logoutUser = async function () {
     localStorage.removeItem("nerdtype_guest_mode");
 
     // Save current user's achievements to cloud before logout (if logged in)
-    if (currentUser && window.achievementSystem && typeof window.achievementSystem.syncAchievementsToFirebase === 'function') {
+    if (
+      currentUser &&
+      window.achievementSystem &&
+      typeof window.achievementSystem.syncAchievementsToFirebase === "function"
+    ) {
       try {
         await window.achievementSystem.syncAchievementsToFirebase();
         console.log("💾 Synced achievements before logout");
@@ -603,13 +631,14 @@ window.logoutUser = async function () {
       }
     }
 
-
     // Reset to guest mode and restore guest achievements
     localStorage.setItem("nerdtype_guest_mode", "true");
     localStorage.setItem("nerdtype_username", "runner");
-    
+
     // Restore guest achievements if they exist
-    const guestBackup = localStorage.getItem("nerdtype_guest_achievements_backup");
+    const guestBackup = localStorage.getItem(
+      "nerdtype_guest_achievements_backup",
+    );
     if (guestBackup && window.achievementSystem) {
       try {
         localStorage.setItem("nerdtype_achievements", guestBackup);
@@ -620,13 +649,19 @@ window.logoutUser = async function () {
       } catch (error) {
         console.error("❌ Failed to restore guest achievements:", error);
         // Fallback to reset
-        if (window.achievementSystem && typeof window.achievementSystem.resetAchievements === 'function') {
+        if (
+          window.achievementSystem &&
+          typeof window.achievementSystem.resetAchievements === "function"
+        ) {
           window.achievementSystem.resetAchievements();
         }
       }
     } else {
       // No backup, reset to fresh guest state
-      if (window.achievementSystem && typeof window.achievementSystem.resetAchievements === 'function') {
+      if (
+        window.achievementSystem &&
+        typeof window.achievementSystem.resetAchievements === "function"
+      ) {
         window.achievementSystem.resetAchievements();
         console.log("🆕 Started fresh guest session - no backup found");
       }
@@ -722,16 +757,17 @@ window.reapplyCurrentFont = function () {
 
 // Generate or get device ID for scoreboard tracking
 function getDeviceId() {
-  let deviceId = localStorage.getItem('nerdtype_device_id');
+  let deviceId = localStorage.getItem("nerdtype_device_id");
   if (!deviceId) {
-    deviceId = 'device_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-    localStorage.setItem('nerdtype_device_id', deviceId);
+    deviceId =
+      "device_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+    localStorage.setItem("nerdtype_device_id", deviceId);
   }
   return deviceId;
 }
 
 // Scoreboard Sync Functions
-window.canSyncScoreboardToFirebase = function() {
+window.canSyncScoreboardToFirebase = function () {
   // Check if user is logged in
   const currentUser = window.getCurrentUser && window.getCurrentUser();
   if (!currentUser) return false;
@@ -746,9 +782,11 @@ window.canSyncScoreboardToFirebase = function() {
   return true;
 };
 
-window.syncScoreboardToFirebase = async function(gameData) {
+window.syncScoreboardToFirebase = async function (gameData) {
   if (!window.canSyncScoreboardToFirebase()) {
-    console.log("🔒 Cannot sync scoreboard to Firebase - not logged in or data sharing disabled");
+    console.log(
+      "🔒 Cannot sync scoreboard to Firebase - not logged in or data sharing disabled",
+    );
     return;
   }
 
@@ -760,13 +798,16 @@ window.syncScoreboardToFirebase = async function(gameData) {
     }
 
     const { ref, push } = window.firebaseModules;
-    const userScoreboardRef = ref(window.database, `users/${currentUser.uid}/scoreboard`);
+    const userScoreboardRef = ref(
+      window.database,
+      `users/${currentUser.uid}/scoreboard`,
+    );
 
     // Add metadata
     const scoreEntry = {
       ...gameData,
       syncedAt: new Date().toISOString(),
-      deviceId: getDeviceId()
+      deviceId: getDeviceId(),
     };
 
     await push(userScoreboardRef, scoreEntry);
@@ -776,9 +817,11 @@ window.syncScoreboardToFirebase = async function(gameData) {
   }
 };
 
-window.loadScoreboardFromFirebase = async function() {
+window.loadScoreboardFromFirebase = async function () {
   if (!window.canSyncScoreboardToFirebase()) {
-    console.log("🔒 Cannot load scoreboard from Firebase - not logged in or data sharing disabled");
+    console.log(
+      "🔒 Cannot load scoreboard from Firebase - not logged in or data sharing disabled",
+    );
     return [];
   }
 
@@ -790,16 +833,19 @@ window.loadScoreboardFromFirebase = async function() {
     }
 
     const { ref, get } = window.firebaseModules;
-    const userScoreboardRef = ref(window.database, `users/${currentUser.uid}/scoreboard`);
-    
+    const userScoreboardRef = ref(
+      window.database,
+      `users/${currentUser.uid}/scoreboard`,
+    );
+
     // Check if scoreboard exists
     const allSnapshot = await get(userScoreboardRef);
-    
+
     if (!allSnapshot.exists()) {
       console.log("📭 No scoreboard data found in Firebase for this user");
       return [];
     }
-    
+
     // Get all entries (we'll sort locally to avoid Firebase indexing requirements)
     const snapshot = await get(userScoreboardRef);
 
@@ -808,15 +854,19 @@ window.loadScoreboardFromFirebase = async function() {
       snapshot.forEach((child) => {
         cloudScores.push(child.val());
       });
-      
+
       // Sort by timestamp locally (most recent first) and limit to 50
       cloudScores.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
       const limitedScores = cloudScores.slice(0, 50);
-      
-      console.log("📥 Loaded scoreboard from Firebase:", limitedScores.length, "entries");
+
+      console.log(
+        "📥 Loaded scoreboard from Firebase:",
+        limitedScores.length,
+        "entries",
+      );
       return limitedScores;
     }
-    
+
     console.log("📭 No scoreboard entries found");
     return [];
   } catch (error) {
@@ -825,7 +875,7 @@ window.loadScoreboardFromFirebase = async function() {
   }
 };
 
-window.switchToUserScoreboard = async function() {
+window.switchToUserScoreboard = async function () {
   if (!window.canSyncScoreboardToFirebase()) {
     console.log("🔒 Cannot sync scoreboard - using local only");
     return;
@@ -833,35 +883,41 @@ window.switchToUserScoreboard = async function() {
 
   try {
     console.log("🔄 Switching to user-specific scoreboard...");
-    
+
     // Backup current local scores (guest scores) before switching
     const localScores = JSON.parse(localStorage.getItem("gameResults")) || [];
     if (localScores.length > 0) {
-      localStorage.setItem("gameResults_guest_backup", JSON.stringify(localScores));
+      localStorage.setItem(
+        "gameResults_guest_backup",
+        JSON.stringify(localScores),
+      );
       console.log("💾 Backed up guest scores");
     }
-    
-    // Load user's cloud scores  
+
+    // Load user's cloud scores
     const cloudScores = await window.loadScoreboardFromFirebase();
-    
+
     // Replace local storage with user's cloud scores only
     localStorage.setItem("gameResults", JSON.stringify(cloudScores));
-    
-    console.log("✅ Switched to user scoreboard:", cloudScores.length, "entries");
-    
+
+    console.log(
+      "✅ Switched to user scoreboard:",
+      cloudScores.length,
+      "entries",
+    );
+
     // Refresh scoreboard display if visible
-    if (typeof window.displayPreviousResults === 'function') {
+    if (typeof window.displayPreviousResults === "function") {
       window.displayPreviousResults();
     }
-    
   } catch (error) {
     console.error("❌ Error switching to user scoreboard:", error);
   }
 };
 
-window.switchToGuestScoreboard = function() {
+window.switchToGuestScoreboard = function () {
   console.log("🔄 Switching to guest scoreboard...");
-  
+
   try {
     // Restore guest scores from backup
     const guestBackup = localStorage.getItem("gameResults_guest_backup");
@@ -873,19 +929,18 @@ window.switchToGuestScoreboard = function() {
       localStorage.setItem("gameResults", JSON.stringify([]));
       console.log("🆕 Started fresh guest scoreboard");
     }
-    
+
     // Refresh scoreboard display if visible
-    if (typeof window.displayPreviousResults === 'function') {
+    if (typeof window.displayPreviousResults === "function") {
       window.displayPreviousResults();
     }
-    
   } catch (error) {
     console.error("❌ Error switching to guest scoreboard:", error);
   }
 };
 
 // Settings Sync Functions
-window.canSyncSettingsToFirebase = function() {
+window.canSyncSettingsToFirebase = function () {
   // Check if user is logged in
   const currentUser = window.getCurrentUser && window.getCurrentUser();
   if (!currentUser) return false;
@@ -900,9 +955,11 @@ window.canSyncSettingsToFirebase = function() {
   return true;
 };
 
-window.syncSettingsToFirebase = async function() {
+window.syncSettingsToFirebase = async function () {
   if (!window.canSyncSettingsToFirebase()) {
-    console.log("🔒 Cannot sync settings to Firebase - not logged in or data sharing disabled");
+    console.log(
+      "🔒 Cannot sync settings to Firebase - not logged in or data sharing disabled",
+    );
     return;
   }
 
@@ -914,27 +971,34 @@ window.syncSettingsToFirebase = async function() {
     }
 
     const { ref, set } = window.firebaseModules;
-    const userSettingsRef = ref(window.database, `users/${currentUser.uid}/settings`);
+    const userSettingsRef = ref(
+      window.database,
+      `users/${currentUser.uid}/settings`,
+    );
 
     // Collect all game settings from localStorage
     const gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {};
     const settingsToSync = {
       // Core game settings
       gameSettings: gameSettings,
-      
+
       // Individual settings
       wordlist: localStorage.getItem("nerdtype_wordlist") || "english",
       zenMode: localStorage.getItem("nerdtype_zen_mode") === "true",
       font: localStorage.getItem("nerdtype_font") || "jetbrains-mono",
       hideUI: localStorage.getItem("nerdtype_hide_ui") === "true",
-      showSpacesAfterWords: localStorage.getItem("showSpacesAfterWords") !== "false",
-      dataCollectionEnabled: localStorage.getItem("data_collection_enabled") !== "false",
-      achievementSoundEnabled: localStorage.getItem("achievement_sound_enabled") === "true",
-      keypressSoundEnabled: localStorage.getItem("keypress_sound_enabled") === "true",
-      
+      showSpacesAfterWords:
+        localStorage.getItem("showSpacesAfterWords") !== "false",
+      dataCollectionEnabled:
+        localStorage.getItem("data_collection_enabled") !== "false",
+      achievementSoundEnabled:
+        localStorage.getItem("achievement_sound_enabled") === "true",
+      keypressSoundEnabled:
+        localStorage.getItem("keypress_sound_enabled") === "true",
+
       // Metadata
       syncedAt: new Date().toISOString(),
-      deviceId: getDeviceId()
+      deviceId: getDeviceId(),
     };
 
     await set(userSettingsRef, settingsToSync);
@@ -944,9 +1008,11 @@ window.syncSettingsToFirebase = async function() {
   }
 };
 
-window.loadSettingsFromFirebase = async function() {
+window.loadSettingsFromFirebase = async function () {
   if (!window.canSyncSettingsToFirebase()) {
-    console.log("🔒 Cannot load settings from Firebase - not logged in or data sharing disabled");
+    console.log(
+      "🔒 Cannot load settings from Firebase - not logged in or data sharing disabled",
+    );
     return null;
   }
 
@@ -958,15 +1024,18 @@ window.loadSettingsFromFirebase = async function() {
     }
 
     const { ref, get } = window.firebaseModules;
-    const userSettingsRef = ref(window.database, `users/${currentUser.uid}/settings`);
-    
+    const userSettingsRef = ref(
+      window.database,
+      `users/${currentUser.uid}/settings`,
+    );
+
     const snapshot = await get(userSettingsRef);
-    
+
     if (!snapshot.exists()) {
       console.log("📭 No settings data found in Firebase for this user");
       return null;
     }
-    
+
     const cloudSettings = snapshot.val();
     console.log("📥 Loaded settings from Firebase:", cloudSettings);
     return cloudSettings;
@@ -976,7 +1045,7 @@ window.loadSettingsFromFirebase = async function() {
   }
 };
 
-window.applyCloudSettingsToLocal = function(cloudSettings) {
+window.applyCloudSettingsToLocal = function (cloudSettings) {
   if (!cloudSettings) {
     console.log("❌ No cloud settings provided to apply");
     return;
@@ -984,80 +1053,108 @@ window.applyCloudSettingsToLocal = function(cloudSettings) {
 
   try {
     console.log("🔄 Applying cloud settings to local storage...");
-    
+
     // Apply core game settings
-    if (cloudSettings.gameSettings && typeof cloudSettings.gameSettings === 'object') {
-      localStorage.setItem("gameSettings", JSON.stringify(cloudSettings.gameSettings));
+    if (
+      cloudSettings.gameSettings &&
+      typeof cloudSettings.gameSettings === "object"
+    ) {
+      localStorage.setItem(
+        "gameSettings",
+        JSON.stringify(cloudSettings.gameSettings),
+      );
     }
-    
+
     // Apply individual settings
     if (cloudSettings.wordlist) {
       localStorage.setItem("nerdtype_wordlist", cloudSettings.wordlist);
     }
-    
-    if (typeof cloudSettings.zenMode === 'boolean') {
-      localStorage.setItem("nerdtype_zen_mode", cloudSettings.zenMode.toString());
+
+    if (typeof cloudSettings.zenMode === "boolean") {
+      localStorage.setItem(
+        "nerdtype_zen_mode",
+        cloudSettings.zenMode.toString(),
+      );
     }
-    
+
     if (cloudSettings.font) {
       localStorage.setItem("nerdtype_font", cloudSettings.font);
     }
-    
-    if (typeof cloudSettings.hideUI === 'boolean') {
+
+    if (typeof cloudSettings.hideUI === "boolean") {
       localStorage.setItem("nerdtype_hide_ui", cloudSettings.hideUI.toString());
     }
-    
-    if (typeof cloudSettings.showSpacesAfterWords === 'boolean') {
-      localStorage.setItem("showSpacesAfterWords", cloudSettings.showSpacesAfterWords.toString());
+
+    if (typeof cloudSettings.showSpacesAfterWords === "boolean") {
+      localStorage.setItem(
+        "showSpacesAfterWords",
+        cloudSettings.showSpacesAfterWords.toString(),
+      );
     }
-    
-    if (typeof cloudSettings.dataCollectionEnabled === 'boolean') {
-      localStorage.setItem("data_collection_enabled", cloudSettings.dataCollectionEnabled.toString());
+
+    if (typeof cloudSettings.dataCollectionEnabled === "boolean") {
+      localStorage.setItem(
+        "data_collection_enabled",
+        cloudSettings.dataCollectionEnabled.toString(),
+      );
     }
-    
-    if (typeof cloudSettings.achievementSoundEnabled === 'boolean') {
-      localStorage.setItem("achievement_sound_enabled", cloudSettings.achievementSoundEnabled.toString());
+
+    if (typeof cloudSettings.achievementSoundEnabled === "boolean") {
+      localStorage.setItem(
+        "achievement_sound_enabled",
+        cloudSettings.achievementSoundEnabled.toString(),
+      );
     }
-    
-    if (typeof cloudSettings.keypressSoundEnabled === 'boolean') {
-      localStorage.setItem("keypress_sound_enabled", cloudSettings.keypressSoundEnabled.toString());
+
+    if (typeof cloudSettings.keypressSoundEnabled === "boolean") {
+      localStorage.setItem(
+        "keypress_sound_enabled",
+        cloudSettings.keypressSoundEnabled.toString(),
+      );
     }
-    
+
     console.log("✅ Cloud settings applied to local storage successfully");
-    
+
     // Force immediate application of some settings that can be applied without reload
     setTimeout(() => {
       try {
         // Apply font changes immediately
-        if (cloudSettings.font && typeof window.reapplyCurrentFont === 'function') {
+        if (
+          cloudSettings.font &&
+          typeof window.reapplyCurrentFont === "function"
+        ) {
           window.reapplyCurrentFont();
         }
-        
+
         // Apply UI hide settings immediately
-        if (typeof cloudSettings.hideUI === 'boolean' && typeof window.applyUIHideSettings === 'function') {
+        if (
+          typeof cloudSettings.hideUI === "boolean" &&
+          typeof window.applyUIHideSettings === "function"
+        ) {
           window.applyUIHideSettings(cloudSettings.hideUI);
         }
-        
+
         // Force reload of gameSettings variables in all modules
-        if (typeof window.reloadGameSettings === 'function') {
+        if (typeof window.reloadGameSettings === "function") {
           window.reloadGameSettings();
         }
-        
+
         // Dispatch setting change events for immediate UI updates
-        window.dispatchEvent(new CustomEvent("gameSettingsChanged", {
-          detail: { setting: "all", source: "cloud_sync" }
-        }));
+        window.dispatchEvent(
+          new CustomEvent("gameSettingsChanged", {
+            detail: { setting: "all", source: "cloud_sync" },
+          }),
+        );
       } catch (immediateError) {
         console.error("❌ Error applying immediate settings:", immediateError);
       }
     }, 100);
-    
   } catch (error) {
     console.error("❌ Error applying cloud settings:", error);
   }
 };
 
-window.syncSettingsAfterLogin = async function() {
+window.syncSettingsAfterLogin = async function () {
   if (!window.canSyncSettingsToFirebase()) {
     console.log("🔒 Cannot sync settings after login - conditions not met");
     return;
@@ -1065,32 +1162,34 @@ window.syncSettingsAfterLogin = async function() {
 
   try {
     console.log("🔄 Loading user settings after login...");
-    
+
     // Load settings from cloud
     const cloudSettings = await window.loadSettingsFromFirebase();
-    
+
     if (cloudSettings) {
       console.log("📥 Found cloud settings, applying to local storage...");
-      
+
       // Apply cloud settings to local storage
       window.applyCloudSettingsToLocal(cloudSettings);
-      
+
       // Store notification for after reload
       localStorage.setItem(
         "pending_settings_notification",
         JSON.stringify({
-          message: "Settings loaded from your account",
+          message: "Settings synced from cloud",
           type: "success",
-        })
+        }),
       );
-      
+
       // Schedule reload for after login completes
       setTimeout(() => {
         location.reload();
       }, 1500);
     } else {
       // No cloud settings found, sync current local settings to cloud
-      console.log("💾 No cloud settings found, syncing local settings to cloud...");
+      console.log(
+        "💾 No cloud settings found, syncing local settings to cloud...",
+      );
       await window.syncSettingsToFirebase();
       console.log("✅ Current settings uploaded to cloud");
     }
@@ -1102,23 +1201,25 @@ window.syncSettingsAfterLogin = async function() {
 // Debug functions for testing settings sync
 window.debugSettingsSync = {
   // Test the full sync functionality
-  test: async function() {
+  test: async function () {
     console.log("🔧 Testing settings sync functionality...");
-    
+
     if (!window.canSyncSettingsToFirebase()) {
-      console.log("❌ Cannot test - user not logged in or data sharing disabled");
+      console.log(
+        "❌ Cannot test - user not logged in or data sharing disabled",
+      );
       return;
     }
-    
+
     try {
       console.log("📤 Testing sync to Firebase...");
       await window.syncSettingsToFirebase();
       console.log("✅ Sync to Firebase successful");
-      
+
       console.log("📥 Testing load from Firebase...");
       const settings = await window.loadSettingsFromFirebase();
       console.log("✅ Load from Firebase successful:", settings);
-      
+
       console.log("🔧 Settings sync test completed successfully!");
       return { success: true, settings };
     } catch (error) {
@@ -1128,10 +1229,12 @@ window.debugSettingsSync = {
   },
 
   // Force sync current settings to cloud
-  forceSyncUp: async function() {
+  forceSyncUp: async function () {
     console.log("🔧 Force syncing current settings to cloud...");
     if (!window.canSyncSettingsToFirebase()) {
-      console.log("❌ Cannot sync - user not logged in or data sharing disabled");
+      console.log(
+        "❌ Cannot sync - user not logged in or data sharing disabled",
+      );
       return;
     }
     try {
@@ -1143,20 +1246,28 @@ window.debugSettingsSync = {
   },
 
   // Force load settings from cloud and apply them
-  forceSyncDown: async function() {
+  forceSyncDown: async function () {
     console.log("🔧 Force loading settings from cloud...");
     if (!window.canSyncSettingsToFirebase()) {
-      console.log("❌ Cannot load - user not logged in or data sharing disabled");
+      console.log(
+        "❌ Cannot load - user not logged in or data sharing disabled",
+      );
       return;
     }
     try {
       const cloudSettings = await window.loadSettingsFromFirebase();
       if (cloudSettings) {
         window.applyCloudSettingsToLocal(cloudSettings);
-        console.log("✅ Force load from cloud completed - page reload recommended");
-        
+        console.log(
+          "✅ Force load from cloud completed - page reload recommended",
+        );
+
         // Ask user if they want to reload
-        if (confirm("Settings loaded from cloud. Reload page to apply all changes?")) {
+        if (
+          confirm(
+            "Settings loaded from cloud. Reload page to apply all changes?",
+          )
+        ) {
           location.reload();
         }
       } else {
@@ -1168,23 +1279,37 @@ window.debugSettingsSync = {
   },
 
   // Show current local settings
-  showLocal: function() {
+  showLocal: function () {
     console.log("💻 Current local settings:");
-    console.log("  gameSettings:", JSON.parse(localStorage.getItem("gameSettings")));
+    console.log(
+      "  gameSettings:",
+      JSON.parse(localStorage.getItem("gameSettings")),
+    );
     console.log("  wordlist:", localStorage.getItem("nerdtype_wordlist"));
     console.log("  zenMode:", localStorage.getItem("nerdtype_zen_mode"));
     console.log("  font:", localStorage.getItem("nerdtype_font"));
     console.log("  hideUI:", localStorage.getItem("nerdtype_hide_ui"));
     console.log("  showSpaces:", localStorage.getItem("showSpacesAfterWords"));
-    console.log("  dataCollection:", localStorage.getItem("data_collection_enabled"));
-    console.log("  achievementSound:", localStorage.getItem("achievement_sound_enabled"));
-    console.log("  keypressSound:", localStorage.getItem("keypress_sound_enabled"));
+    console.log(
+      "  dataCollection:",
+      localStorage.getItem("data_collection_enabled"),
+    );
+    console.log(
+      "  achievementSound:",
+      localStorage.getItem("achievement_sound_enabled"),
+    );
+    console.log(
+      "  keypressSound:",
+      localStorage.getItem("keypress_sound_enabled"),
+    );
   },
 
   // Show cloud settings
-  showCloud: async function() {
+  showCloud: async function () {
     if (!window.canSyncSettingsToFirebase()) {
-      console.log("❌ Cannot load cloud settings - user not logged in or data sharing disabled");
+      console.log(
+        "❌ Cannot load cloud settings - user not logged in or data sharing disabled",
+      );
       return;
     }
     try {
@@ -1196,30 +1321,34 @@ window.debugSettingsSync = {
   },
 
   // Simulate the login settings sync process for debugging
-  simulateLoginSync: async function() {
+  simulateLoginSync: async function () {
     console.log("🔧 Simulating login settings sync process...");
-    
+
     if (!window.canSyncSettingsToFirebase()) {
-      console.log("❌ Cannot simulate - user not logged in or data sharing disabled");
+      console.log(
+        "❌ Cannot simulate - user not logged in or data sharing disabled",
+      );
       return;
     }
-    
+
     try {
       console.log("1️⃣ Current local settings before sync:");
       this.showLocal();
-      
+
       console.log("2️⃣ Loading settings from cloud...");
       const cloudSettings = await window.loadSettingsFromFirebase();
-      
+
       if (cloudSettings) {
         console.log("3️⃣ Found cloud settings:", cloudSettings);
         console.log("4️⃣ Applying cloud settings to local storage...");
         window.applyCloudSettingsToLocal(cloudSettings);
-        
+
         console.log("5️⃣ Local settings after applying cloud:");
         this.showLocal();
-        
-        console.log("✅ Login sync simulation completed - manually reload page to see all effects");
+
+        console.log(
+          "✅ Login sync simulation completed - manually reload page to see all effects",
+        );
       } else {
         console.log("3️⃣ No cloud settings found");
       }
@@ -1229,25 +1358,30 @@ window.debugSettingsSync = {
   },
 
   // Test just the game settings reload functionality
-  testGameSettingsReload: function() {
+  testGameSettingsReload: function () {
     console.log("🔧 Testing game settings reload...");
-    
+
     // Show current game settings variable
-    if (typeof window.reloadGameSettings === 'function') {
+    if (typeof window.reloadGameSettings === "function") {
       console.log("1️⃣ Current gameSettings variable before reload:");
-      console.log("  (This should show the in-memory variable from functions-classic.js)");
-      
+      console.log(
+        "  (This should show the in-memory variable from functions-classic.js)",
+      );
+
       console.log("2️⃣ Current localStorage gameSettings:");
-      console.log("  ", JSON.parse(localStorage.getItem("gameSettings") || "{}"));
-      
+      console.log(
+        "  ",
+        JSON.parse(localStorage.getItem("gameSettings") || "{}"),
+      );
+
       console.log("3️⃣ Calling reloadGameSettings()...");
       window.reloadGameSettings();
-      
+
       console.log("✅ Game settings reload test completed");
     } else {
       console.log("❌ reloadGameSettings function not available");
     }
-  }
+  },
 };
 
 // Keep the old function name for backwards compatibility
