@@ -356,6 +356,60 @@
     <!-- Scripts -->
     <script type="module">
       import achievementSystem from "../js/achievements.js";
+      
+      // Firebase imports for chart data sync
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        push,
+        query,
+        orderByChild,
+        limitToLast,
+        get,
+        equalTo,
+        set,
+        remove,
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+      // Make Firebase modules available globally
+      window.firebaseModules = {
+        initializeApp,
+        getDatabase,
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signOut,
+        ref,
+        push,
+        query,
+        orderByChild,
+        limitToLast,
+        get,
+        equalTo,
+        set,
+        remove,
+      };
+
+      // Initialize Firebase when modules are loaded
+      if (window.initializeFirebaseApp) {
+        window.initializeFirebaseApp(window.firebaseModules);
+      } else {
+        // Wait for firebase-config.js to load
+        setTimeout(() => {
+          if (window.initializeFirebaseApp) {
+            window.initializeFirebaseApp(window.firebaseModules);
+          }
+        }, 100);
+      }
 
       // When DOM is loaded, render achievements
       document.addEventListener("DOMContentLoaded", function () {
@@ -365,6 +419,7 @@
         );
       });
     </script>
+    <script src="../js/firebase-config.js"></script>
     <script src="../js/keyboard-nav.js"></script>
     <script src="../js/chart.js"></script>
     <script src="../js/functions-chart.js" type="module"></script>

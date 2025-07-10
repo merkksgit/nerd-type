@@ -50,8 +50,9 @@ function displayScoreGraph() {
       !result.mode,
   );
 
-  // LIMIT TO LAST 15 GAMES
-  const last15Results = classicResults.slice(-15);
+  // Sort by timestamp (newest first) and take first 15, then reverse for timeline
+  const sortedResults = classicResults.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const last15Results = sortedResults.slice(0, 15).reverse();
 
   // If no classic results, don't display anything
   if (last15Results.length === 0) {
@@ -555,8 +556,9 @@ function displayZenModeGraph() {
   // Filter only Zen Mode results
   const zenResults = results.filter((result) => result.mode === "Zen Mode");
 
-  // LIMIT TO LAST 15 GAMES
-  const last15ZenResults = zenResults.slice(-15);
+  // Sort by timestamp (newest first) and take first 15, then reverse for timeline
+  const sortedZenResults = zenResults.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const last15ZenResults = sortedZenResults.slice(0, 15).reverse();
 
   // If no zen results, don't display anything
   if (last15ZenResults.length === 0) {
@@ -1072,7 +1074,32 @@ function displayZenModeGraph() {
   });
 }
 
+async function refreshChartsWithLatestData() {
+  try {
+    // Check if user is logged in and can sync from Firebase
+    if (window.canSyncScoreboardToFirebase && window.canSyncScoreboardToFirebase()) {
+      // Load fresh data from Firebase
+      const cloudScores = await window.loadScoreboardFromFirebase();
+      
+      if (cloudScores && cloudScores.length > 0) {
+        // Update localStorage with fresh data
+        localStorage.setItem("gameResults", JSON.stringify(cloudScores));
+      }
+    }
+  } catch (error) {
+    console.error("❌ Failed to refresh chart data:", error);
+  }
+  
+  // Wait a moment for localStorage to be fully updated, then display charts
+  setTimeout(() => {
+    displayScoreGraph();
+    displayZenModeGraph();
+  }, 100);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  displayScoreGraph();
-  displayZenModeGraph();
+  // Small delay to ensure Firebase is initialized
+  setTimeout(() => {
+    refreshChartsWithLatestData();
+  }, 500);
 });
