@@ -639,7 +639,4 @@ export const words = [
   "mango",
   "oliivi",
   "manteli",
-  "saksanpähkinä",
-  "maapähkinä",
 ];
-
