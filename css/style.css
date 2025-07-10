@@ -1856,6 +1856,38 @@ score h3 {
   color: #7aa2f7;
 }
 
+@media (max-width: 768px) {
+  #game {
+    padding: 0 5px;
+    padding-top: 2em;
+    max-width: 100%;
+  }
+  
+  #wordToType {
+    font-size: 1.2em !important;
+    line-height: 1.4;
+    margin: 1rem 0;
+  }
+  
+  #userInput {
+    font-size: 1.1em !important;
+    padding: 0.8rem !important;
+    margin: 1rem 0;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  #nextWord {
+    font-size: 1em !important;
+    margin: 0.5rem 0;
+  }
+  
+  .press-enter-text {
+    font-size: 0.9rem !important;
+    padding: 6px 10px !important;
+  }
+}
+
 /* Improve Input Field Responsiveness */
 input[type="text"] {
   width: 100%;
