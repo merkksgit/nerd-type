@@ -1990,23 +1990,23 @@ score h3 {
 .keyboard-open #gameIndicator,
 .keyboard-open #timer,
 .keyboard-open #totalTime {
-  font-size: 0.7rem;
+  font-size: 0.9rem; /* Increased from 0.7rem */
   margin: 0.1rem auto;
 }
 
 .keyboard-open #wordToType {
-  font-size: 1.1em !important;
+  font-size: 1.5em !important; /* Increased from 1.1em */
   margin: 0.2rem 0;
 }
 
 .keyboard-open #nextWord {
-  font-size: 0.8em !important;
+  font-size: 1.1em !important; /* Increased from 0.8em */
   margin: 0.1rem 0;
 }
 
 .keyboard-open .press-enter-text {
-  font-size: 0.7rem !important;
-  padding: 3px 6px !important;
+  font-size: 0.8rem !important; /* Increased from 0.7rem */
+  padding: 4px 8px !important; /* Increased from 3px 6px */
 }
 
 /* Very compact mode for mobile devices with keyboard */
@@ -2017,28 +2017,28 @@ score h3 {
   }
   
   #gameIndicator {
-    font-size: 0.75rem;
+    font-size: 0.85rem; /* Increased from 0.75rem */
     margin-bottom: 0.2rem;
   }
   
   #timer, #totalTime {
-    font-size: 0.75rem;
+    font-size: 0.85rem; /* Increased from 0.75rem */
     margin: 0.2rem auto;
   }
   
   #wordToType {
-    font-size: 1.2em !important;
+    font-size: 1.4em !important; /* Increased from 1.2em */
     margin: 0.3rem 0;
     min-height: 1.5em;
   }
   
   #nextWord {
-    font-size: 0.9em !important;
+    font-size: 1.0em !important; /* Increased from 0.9em */
     margin: 0.2rem 0;
   }
   
   #progressPercentage {
-    font-size: 0.7rem;
+    font-size: 0.8rem; /* Increased from 0.7rem */
     margin: 0.2rem 0;
   }
   
