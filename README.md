@@ -2,62 +2,166 @@
 
 # NerdType
 
-NerdType is a fast-paced, minimalistic typing game designed to help you improve your typing skills while having fun with language learning. The game challenges you to type programming-related vocabulary as well as basic English, Swedish, and Finnish words before your energy runs out. With each correct word, you restore energy and get closer to hacking the Pentagon!
-
-This project began as a school assignment but has evolved into an ongoing journey of learning and improvement. As I progress in my studies and expand my development skills, I continue to implement new features and refinements. Each update represents not just an improvement to the game, but also reflects my growing expertise in web development.
+A fast-paced, minimalistic typing game built with vanilla web technologies. Challenge yourself with multilingual vocabulary including programming terms, English, Finnish, and Swedish words. Features energy-based gameplay, multiple game modes, achievements system, and global leaderboards.
 
 <!-- vim-markdown-toc GFM -->
 
-* [Play the game](#play-the-game)
-* [Features](#features)
+* [Key Features](#key-features)
+    * [Core Gameplay](#core-gameplay)
+    * [Advanced Features](#advanced-features)
+    * [User Experience](#user-experience)
 * [How to Play](#how-to-play)
 * [Game Modes](#game-modes)
-* [Technologies Used](#technologies-used)
+* [Achievement System](#achievement-system)
+* [Technical Details](#technical-details)
+    * [Architecture](#architecture)
+    * [Project Structure](#project-structure)
+    * [In-Game Commands](#in-game-commands)
+* [Development](#development)
+    * [Quick Start](#quick-start)
+    * [Development Setup](#development-setup)
+    * [Code Conventions](#code-conventions)
+* [Customization](#customization)
+* [Platform Support](#platform-support)
 * [Contact](#contact)
 
 <!-- vim-markdown-toc -->
 
-## Play the game
+## Key Features
 
-- [GitHub pages: Development, v2.2.0](https://www.nerdtypegame.com)
+### Core Gameplay
 
-## Features
+- **Energy-Based System**: Type words correctly to restore energy to stay in the game
+- **Multilingual Support**: Programming terms, English, Finnish, Swedish, and "Nightmare" mode
+- **Multiple Game Modes**: Classic, Hard, Practice, Speedrunner, Zen, and Custom
+- **Real-Time Progress**: Visual progress tracking and WPM calculation
 
-- **Multilingual Vocabulary:** Type programming terms and words from English, Finnish, and Swedish.
-- **Energy-Based Countdown:** Each correct word restores energy, allowing you to stay in the game longer.
-- **Random Word Selection:** Words are selected randomly from a predefined list, offering a unique challenge every time.
-- **Progress Bar:** Visually track your progress in real-time as you hack the Pentagon.
-- **Interactive Terminal:** Access a custom terminal interface by typing 'terminal' during gameplay. Customize game settings like time limits, bonus time, and completion goals through terminal commands.
-- **Command Mode:** Game timer pauses automatically when typing slash commands (/), allowing you to adjust settings mid-game without losing time.
-- **Custom Settings:** Create your own difficulty by modifying game parameters. The game intelligently detects custom configurations and marks them in your scoreboard.
-- **Automatic Saving:** When you finish a game, your results are saved directly in your browser's local storage. This means that your scores will remain available even if you refresh the page or close the browser.
-- **Score Chart:** View your typing performance history with an interactive score chart. The chart displays your scores, accuracy and words per minute (WPM) over time, allowing you to track your progress and identify areas for improvement.
-- **Responsive Design:** Built with Bootstrap for smooth performance on various screen sizes, including mobile devices.
+### Advanced Features
+
+- **Slash Commands**: In-game commands (e.g., `/setwords`, `/mode`, `/help`) for quick settings changes
+- **Achievement System**: Comprehensive tracking with score, speed, gameplay style, and secret achievements
+- **Global Leaderboards**: Optional seasonal competitive system with Firebase integration
+- **Persistent Progress**: All data stored locally in browser with optional cloud sync
+
+### User Experience
+
+- **Responsive Design**: Optimized for desktop and mobile with Bootstrap
+- **Accessibility**: Full keyboard navigation support
+- **Customization**: Extensive settings, custom difficulty modes, and personalization options
+- **No Build Required**: Pure vanilla JavaScript - runs directly in any modern browser
 
 ## How to Play
 
-1. Click the **Start** button or press **Enter** to begin.
-2. Type the displayed word into the input field before your energy runs out.
-3. Every correctly typed word will restore a bit of energy.
-4. The game ends when your energy runs out or when you successfully hack the Pentagon.
-5. Press **Enter** or the **Reset** button to start a new game.
-6. Enter the command mode with "/" to access quick settings (try "/help" to see all commands).
+1. **Start**: Click Start or press Enter to begin
+2. **Type**: Enter the displayed word before your energy depletes
+3. **Progress**: Each correct word restores energy and advances your hack
+4. **Commands**: Use `/` prefix during gameplay for quick settings (try `/help`)
+5. **Win**: Complete your word goal or survive until energy runs out
 
 ## Game Modes
 
-- **Classic Mode:** Standard gameplay with balanced settings.
-- **Hard Mode:** More challenging with tighter time constraints.
-- **Practice Mode:** Extended time limits for learning.
-- **Speedrunner Mode:** Fast-paced mode.
-- **Custom Mode:** Your own personalized settings for a unique challenge.
-- **Zen Mode:** Relaxed game mode with no energy limit.
+| Mode            | Description                                             |
+| --------------- | ------------------------------------------------------- |
+| **Classic**     | Balanced gameplay with standard energy mechanics        |
+| **Hard**        | Tighter time constraints for experienced players        |
+| **Practice**    | Extended time limits perfect for learning               |
+| **Speedrunner** | Fast-paced mode                                         |
+| **Zen**         | Relaxed mode with no energy limit, word goal-based      |
+| **Custom**      | Create your own difficulty with personalized parameters |
 
-## Technologies Used
+## Achievement System
 
-- **HTML**: To structure the game interface.
-- **CSS (Bootstrap)**: For responsive design.
-- **JavaScript**: Handles game logic, such as timers, word checking, and user input.
+- **Score Achievements**: Reach specific point milestones
+- **Speed Achievements**: Hit WPM targets and typing speeds
+- **Gameplay Style**: Unlock rewards for different play patterns
+- **Language Mastery**: Achievements for each supported language
+- **Daily Streaks**: Rewards for consistent daily play
+- **Secret Achievements**: Hidden unlockables to discover
+
+## Technical Details
+
+### Architecture
+
+- **Frontend**: Vanilla HTML5, CSS3, JavaScript ES6+ modules
+- **Styling**: Bootstrap 5 for responsive design + custom CSS
+- **Storage**: Browser localStorage for persistence
+- **Backend**: Static hosting via GitHub Pages (no server required)
+- **Analytics**: Firebase integration for global leaderboards (optional)
+
+### Project Structure
+
+```
+├── index.html               # Landing page
+├── pages/                   # Game pages (game.html, achievements.html, etc.)
+├── js/                      # JavaScript modules
+│   ├── game-commands.js     # Slash command system
+│   ├── achievements.js      # Achievement tracking
+│   ├── word-list-manager.js # Language and word management
+│   └── ...
+├── css/                     # Stylesheets
+├── images/                  # Game assets and logos
+├── sounds/                  # Audio files
+└── font/                    # Typography assets
+```
+
+### In-Game Commands
+
+Access with `/` prefix during gameplay:
+
+- `/setwords <n>` - Set word completion goal
+- `/mode <type>` - Switch game mode instantly
+- `/zen` - Toggle Zen mode on/off
+- `/lang <language>` - Change language (eng/fin/sve/prog/nm)
+- `/sound` - Toggle keypress sound effects
+- `/data` - Toggle global leaderboard data collection
+- `/reset` - Reset all settings to defaults
+- `/help` - Show all available commands
+
+## Development
+
+### Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/username/nerd-type.git
+cd nerd-type
+```
+
+### Development Setup
+
+- **No Build System**: Edit files directly, changes are immediate
+- **Testing**: Manual testing in browser (no automated tests currently)
+- **Deployment**: Static files deploy directly to GitHub Pages
+- **Dependencies**: None - pure vanilla web technologies
+
+### Code Conventions
+
+- ES6+ JavaScript modules with class-based architecture
+- Event-driven communication using CustomEvents
+- Kebab-case file naming (`game-commands.js`)
+- Bootstrap classes for responsive components
+- FontAwesome icons for UI elements
+
+## Customization
+
+- **Fonts**: Various monospace fonts optimized for typing
+- **Game Parameters**: Fully customizable difficulty settings
+- **Keyboard Shortcuts**: Comprehensive keyboard navigation support
+
+## Platform Support
+
+- **Desktop**: Full feature support on all modern browsers
+- **Mobile**: Responsive design with touch-optimized interface
+- **Offline**: Works completely offline after initial load
+- **Cross-Device**: Achievement sync available with optional cloud features
 
 ## Contact
 
-For feedback or suggestions, reach out via email: nerdtype-contact@protonmail.com or through the contact page: https://www.nerdtypegame.com/pages/contact.html
+- **Email**: nerdtype-contact@protonmail.com
+- **Feedback**: [Contact Page](https://www.nerdtypegame.com/pages/contact.html)
+- **Website**: [nerdtypegame.com](https://www.nerdtypegame.com)
+
+---
+
+Built with ❤️ using vanilla web technologies. No frameworks, no bloat, just pure typing game fun.
+
