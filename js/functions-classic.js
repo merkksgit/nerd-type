@@ -21,7 +21,7 @@ let correctKeystrokes = 0;
 let gameStartTime = null;
 let gameEnded = false;
 let showSpacesAfterWords =
-  localStorage.getItem("showSpacesAfterWords") === "true";
+  localStorage.getItem("showSpacesAfterWords") !== "false";
 
 // Classic mode specific variables
 let timeLeft = 10; // Default, will be updated from settings
@@ -854,7 +854,7 @@ function startGame() {
 function updateWordDisplay() {
   const wordToTypeElement = document.getElementById("wordToType");
   const nextWordElement = document.getElementById("nextWord");
-  const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
+  const showSpace = localStorage.getItem("showSpacesAfterWords") !== "false";
 
   if (!wordToTypeElement) return;
 
@@ -1053,7 +1053,7 @@ function addNewWordsToDisplay() {
     return;
   }
 
-  const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
+  const showSpace = localStorage.getItem("showSpacesAfterWords") !== "false";
 
   // Calculate how many words to add to maintain 3 rows
   const existingWords = wordContainer.querySelectorAll(".word").length;
@@ -1115,7 +1115,7 @@ function updateLetterStates(userInput) {
   )
     .map((letter) => letter.textContent)
     .join("");
-  const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
+  const showSpace = localStorage.getItem("showSpacesAfterWords") !== "false";
 
   letters.forEach((letter, index) => {
     // Remove all state classes (but keep animation classes)
@@ -1311,7 +1311,7 @@ function checkInput(e) {
 
   const currentWord = words[currentWordIndex];
   const wordDisplay = document.getElementById("wordToType");
-  const showSpace = localStorage.getItem("showSpacesAfterWords") === "true";
+  const showSpace = localStorage.getItem("showSpacesAfterWords") !== "false";
 
   if (!wordDisplay) return;
 

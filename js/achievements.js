@@ -338,6 +338,12 @@ class AchievementSystem {
         category: "seasonal",
         secret: false,
         check: function (stats, gameData) {
+          // Check if the player is logged in
+          const currentUser = window.getCurrentUser && window.getCurrentUser();
+          if (!currentUser) {
+            return false; // Achievement not available if user is not logged in
+          }
+
           // Check if the player has data sharing enabled
           const dataShareEnabled = localStorage.getItem(
             "data_collection_enabled",
@@ -385,6 +391,12 @@ class AchievementSystem {
           return stats.season1GamesCompleted || 0;
         },
         check: function (stats, gameData) {
+          // Check if the player is logged in
+          const currentUser = window.getCurrentUser && window.getCurrentUser();
+          if (!currentUser) {
+            return false; // Achievement not available if user is not logged in
+          }
+
           // Check if the player has data sharing enabled
           const dataShareEnabled = localStorage.getItem(
             "data_collection_enabled",
