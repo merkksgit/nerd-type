@@ -1870,6 +1870,9 @@ function saveClassicResult(
     settingsForCalculation,
   );
 
+  // Calculate actual game duration in seconds
+  const gameDurationSeconds = gameStartTime ? Math.floor((Date.now() - gameStartTime) / 1000) : 0;
+
   // Create game data object for local storage
   const gameData = {
     username: getDisplayUsername(),
@@ -1882,6 +1885,8 @@ function saveClassicResult(
     score: finalScore,
     wordList: currentLanguage,
     difficultyMultiplier: difficultyMultiplier,
+    totalTimeSpent: totalTimeSpent, // Keep original for compatibility
+    gameDurationSeconds: gameDurationSeconds, // Real duration for achievements
   };
 
   // Save locally
