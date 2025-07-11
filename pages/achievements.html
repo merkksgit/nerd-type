@@ -112,7 +112,7 @@
         <article class="col-md-12 p-3 flex-column d-flex align-items-center">
           <div class="mt-4 mb-4">
             <h1 class="page-title mb-3 achievements-title">
-              <i class="fa-solid fa-trophy"></i> CORE ACHIEVEMENTS
+              <i class="fa-solid fa-trophy"></i> CORE ACHIEVEMENTS <span id="core-achievement-counter" style="color: #7aa2f7;"></span>
             </h1>
           </div>
 
@@ -137,7 +137,7 @@
               <div class="col-12 col-md-8 mb-4 mt-4">
                 <h2 class="text-center mb-3" style="color: #bb9af7">
                   <i class="fa-solid fa-calendar-alt me-2"></i>SEASONAL
-                  ACHIEVEMENTS
+                  ACHIEVEMENTS <span id="seasonal-achievement-counter" style="color: #7aa2f7;"></span>
                 </h2>
                 <!-- Container for seasonal achievements -->
                 <div id="seasonal-achievements-container" class="mb-4">
@@ -149,119 +149,6 @@
                     ></i>
                     Loading seasonal achievements...
                   </div>
-                </div>
-              </div>
-              <div class="col-12 col-md-8 mb-4 mt-4">
-                <h2 class="text-center mb-3" style="color: #bb9af7">
-                  <i class="fa-solid fa-calendar-alt me-2"></i>SPEED TIER AND
-                  ACCURACY RANK
-                </h2>
-
-                <div class="row">
-                  <!-- Speed Tier -->
-                  <div class="col-12 col-md-6 pt-3">
-                    <div class="card achievement-card">
-                      <div class="card-header achievement-header">
-                        <i
-                          class="fa-solid fa-gauge-high"
-                          style="color: #bb9af7"
-                        ></i>
-                        Speed Tier
-                      </div>
-                      <div class="card-body text-center">
-                        <h3 id="highestSpeedTier" class="achievement-tier">
-                          -
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Accuracy Rank -->
-                  <div class="col-12 col-md-6 pt-3">
-                    <div class="card achievement-card">
-                      <div class="card-header achievement-header">
-                        <i
-                          class="fa-solid fa-crosshairs"
-                          style="color: #bb9af7"
-                        ></i>
-                        Accuracy Rank
-                      </div>
-                      <div class="card-body text-center">
-                        <h3 id="highestAccuracyRank" class="achievement-tier">
-                          -
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- Achievement Table -->
-              <div class="col-12 col-lg-10 col-xl-8">
-                <div class="achievements-container mb-4">
-                  <table
-                    id="achievements-table"
-                    class="table table-dark table-bordered w-100 mx-auto table-sm"
-                    style="font-size: 0.85rem; text-align: left"
-                  >
-                    <thead>
-                      <tr>
-                        <th>Achievement Type</th>
-                        <th>Tier</th>
-                        <th>Requirement</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td rowspan="5">Speed Tier</td>
-                        <td>QUANTUM SPEED</td>
-                        <td>100+ WPM</td>
-                      </tr>
-                      <tr>
-                        <td>NEURAL MASTER</td>
-                        <td>80-99 WPM</td>
-                      </tr>
-                      <tr>
-                        <td>CYBER ADEPT</td>
-                        <td>60-79 WPM</td>
-                      </tr>
-                      <tr>
-                        <td>DIGITAL RUNNER</td>
-                        <td>40-59 WPM</td>
-                      </tr>
-                      <tr>
-                        <td>INITIATING</td>
-                        <td>Below 40 WPM</td>
-                      </tr>
-                      <tr>
-                        <td rowspan="7">Accuracy Rank</td>
-                        <td>PERFECT SYNC</td>
-                        <td>98-100% Accuracy</td>
-                      </tr>
-                      <tr>
-                        <td>NEURAL MASTER</td>
-                        <td>95-97.9% Accuracy</td>
-                      </tr>
-                      <tr>
-                        <td>CYBER EFFICIENT</td>
-                        <td>90-94.9% Accuracy</td>
-                      </tr>
-                      <tr>
-                        <td>DIGITAL PRECISE</td>
-                        <td>85-89.9% Accuracy</td>
-                      </tr>
-                      <tr>
-                        <td>SYSTEM UNSTABLE</td>
-                        <td>75-84.9% Accuracy</td>
-                      </tr>
-                      <tr>
-                        <td>NEURAL INTERFERENCE</td>
-                        <td>60-74.9% Accuracy</td>
-                      </tr>
-                      <tr>
-                        <td>SYSTEM FAILURE</td>
-                        <td>Below 60% Accuracy</td>
-                      </tr>
-                    </tbody>
-                  </table>
                 </div>
               </div>
             </div>
@@ -358,63 +245,8 @@
           "seasonal-achievements-container",
         );
 
-        // Display highest achievements (speed tier and accuracy rank)
-        displayHighestAchievements();
       });
 
-      // Define the displayHighestAchievements function directly in this file
-      function displayHighestAchievements() {
-        const highestAchievements = JSON.parse(
-          localStorage.getItem("highestAchievements"),
-        ) || {
-          speedTier: "",
-          accuracyRank: "",
-        };
-
-        const speedTierElement = document.getElementById("highestSpeedTier");
-        const accuracyRankElement = document.getElementById(
-          "highestAccuracyRank",
-        );
-
-        if (speedTierElement) {
-          speedTierElement.textContent = highestAchievements.speedTier || "-";
-          speedTierElement.className = "achievement-tier";
-          if (highestAchievements.speedTier) {
-            speedTierElement.classList.add(
-              getAchievementColor(highestAchievements.speedTier),
-            );
-          }
-        }
-
-        if (accuracyRankElement) {
-          accuracyRankElement.textContent =
-            highestAchievements.accuracyRank || "-";
-          accuracyRankElement.className = "achievement-tier";
-          if (highestAchievements.accuracyRank) {
-            accuracyRankElement.classList.add(
-              getAchievementColor(highestAchievements.accuracyRank),
-            );
-          }
-        }
-      }
-
-      // Add the helper function for achievement colors
-      function getAchievementColor(achievement) {
-        const colorMap = {
-          "QUANTUM SPEED": "achievement-quantum-speed",
-          "NEURAL MASTER": "achievement-neural-master",
-          "CYBER ADEPT": "achievement-cyber-adept",
-          "DIGITAL RUNNER": "achievement-digital-runner",
-          INITIATING: "achievement-initiating",
-          "PERFECT SYNC": "achievement-perfect-sync",
-          "CYBER EFFICIENT": "achievement-cyber-efficient",
-          "DIGITAL PRECISE": "achievement-digital-precise",
-          "SYSTEM UNSTABLE": "achievement-system-unstable",
-          "NEURAL INTERFERENCE": "achievement-neural-interference",
-          "SYSTEM FAILURE": "achievement-system-failure",
-        };
-        return colorMap[achievement] || "text-secondary";
-      }
     </script>
     <script src="../js/keyboard-nav.js"></script>
     <script src="../js/chart.js"></script>

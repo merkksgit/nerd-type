@@ -1328,6 +1328,14 @@ class AchievementSystem {
       });
 
     this._renderAchievementsToContainer(container, coreAchievements);
+    
+    // Update core achievement counter
+    const earnedCount = coreAchievements.filter(a => a.unlocked).length;
+    const totalCount = coreAchievements.length;
+    const counterElement = document.getElementById('core-achievement-counter');
+    if (counterElement) {
+      counterElement.textContent = `(${earnedCount}/${totalCount})`;
+    }
   }
 
   // Render seasonal achievements to a container element
@@ -1351,6 +1359,14 @@ class AchievementSystem {
       });
 
     this._renderAchievementsToContainer(container, seasonalAchievements);
+    
+    // Update seasonal achievement counter
+    const earnedCount = seasonalAchievements.filter(a => a.unlocked).length;
+    const totalCount = seasonalAchievements.length;
+    const counterElement = document.getElementById('seasonal-achievement-counter');
+    if (counterElement) {
+      counterElement.textContent = `(${earnedCount}/${totalCount})`;
+    }
   }
 
   // Private method to render achievements to a container

@@ -65,7 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Display initial data
   displayPreviousResults();
-  displayHighestAchievements();
 
 });
 
@@ -277,52 +276,14 @@ function displayPreviousResults() {
   }
 }
 function displayHighestAchievements() {
-  const highestAchievements = JSON.parse(
-    localStorage.getItem("highestAchievements"),
-  ) || {
-    speedTier: "",
-    accuracyRank: "",
-  };
-
-  const speedTierElement = document.getElementById("highestSpeedTier");
-  const accuracyRankElement = document.getElementById("highestAccuracyRank");
-
-  if (speedTierElement) {
-    speedTierElement.textContent = highestAchievements.speedTier || "-";
-    speedTierElement.className = "";
-    if (highestAchievements.speedTier) {
-      speedTierElement.classList.add(
-        getAchievementColor(highestAchievements.speedTier),
-      );
-    }
-  }
-
-  if (accuracyRankElement) {
-    accuracyRankElement.textContent = highestAchievements.accuracyRank || "-";
-    accuracyRankElement.className = "";
-    if (highestAchievements.accuracyRank) {
-      accuracyRankElement.classList.add(
-        getAchievementColor(highestAchievements.accuracyRank),
-      );
-    }
-  }
+  // Speed tier and accuracy rank sections have been removed
+  // This function is kept for compatibility but does nothing
 }
 
 function getAchievementColor(achievement) {
-  const colorMap = {
-    "QUANTUM SPEED": "achievement-quantum-speed",
-    "NEURAL MASTER": "achievement-neural-master",
-    "CYBER ADEPT": "achievement-cyber-adept",
-    "DIGITAL RUNNER": "achievement-digital-runner",
-    INITIATING: "achievement-initiating",
-    "PERFECT SYNC": "achievement-perfect-sync",
-    "CYBER EFFICIENT": "achievement-cyber-efficient",
-    "DIGITAL PRECISE": "achievement-digital-precise",
-    "SYSTEM UNSTABLE": "achievement-system-unstable",
-    "NEURAL INTERFERENCE": "achievement-neural-interference",
-    "SYSTEM FAILURE": "achievement-system-failure",
-  };
-  return colorMap[achievement] || "text-secondary";
+  // Speed tier and accuracy rank color mapping removed
+  // Function kept for compatibility
+  return "text-secondary";
 }
 
 // Export the functions so they can be imported in other files
