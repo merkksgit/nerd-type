@@ -347,7 +347,7 @@ class GameCommands {
 
       // Reset other Zen-related settings to defaults
       localStorage.setItem("nerdtype_zen_mode", "true"); // Keep in Zen mode but reset settings
-      localStorage.setItem("showSpacesAfterWords", "false"); // Reset to default
+      localStorage.setItem("showSpacesAfterWords", "true"); // Reset to default
       localStorage.setItem("achievement_sound_enabled", "true"); // Reset to default
       localStorage.setItem("keypress_sound_enabled", "true"); // Reset to default
 
@@ -365,7 +365,7 @@ class GameCommands {
 
       window.dispatchEvent(
         new CustomEvent("gameSettingsChanged", {
-          detail: { setting: "showSpacesAfterWords", value: false },
+          detail: { setting: "showSpacesAfterWords", value: true },
         }),
       );
 
@@ -390,7 +390,7 @@ class GameCommands {
 
       // Reset other Classic-related settings
       localStorage.setItem("nerdtype_zen_mode", "false"); // Ensure Zen mode is off
-      localStorage.setItem("showSpacesAfterWords", "false"); // Reset to default
+      localStorage.setItem("showSpacesAfterWords", "true"); // Reset to default
       localStorage.setItem("achievement_sound_enabled", "true"); // Reset to default
       localStorage.setItem("keypress_sound_enabled", "true"); // Reset to default
 
@@ -422,7 +422,7 @@ class GameCommands {
       // Reset other settings
       window.dispatchEvent(
         new CustomEvent("gameSettingsChanged", {
-          detail: { setting: "showSpacesAfterWords", value: false },
+          detail: { setting: "showSpacesAfterWords", value: true },
         }),
       );
 
