@@ -1659,6 +1659,17 @@ score h3 {
   background-color: #c3e88d;
 }
 
+.version-number {
+  background-color: #7dcfff;
+  color: #1a1b26;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .news-category.announcement {
   background-color: #bb9af7;
 }
