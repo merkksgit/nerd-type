@@ -5,6 +5,11 @@
 }
 
 @font-face {
+  src: url(../font/JetBrainsMonoNLNerdFont-Light.ttf);
+  font-family: "jetbrains-light";
+}
+
+@font-face {
   src: url(../font/DepartureMonoNerdFontMono-Regular.otf);
   font-family: "departure-mono";
 }
