@@ -197,7 +197,7 @@ class GameCommands {
 
     // Show notification
     this.showNotification(
-      `Data collection ${newState ? "enabled" : "disabled"}. ${newState ? "Scores will be saved to global leaderboards." : "All data stays local on your device."}`,
+      `Data collection ${newState ? "enabled" : "disabled"}. ${newState ? "Scores will be saved to global leaderboards." : "Scores will not be saved to global leaderboards."}`,
       "success",
     );
   }
