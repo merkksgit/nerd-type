@@ -31,7 +31,7 @@ A fast-paced, minimalistic typing game built with vanilla web technologies. Chal
 
 ### Core Gameplay
 
-- **Energy-Based System**: Type words correctly to restore energy to stay in the game
+- **Energy-Based System**: Type words correctly to restore energy and stay in the game
 - **Multilingual Support**: Programming terms, English, Finnish, Swedish, and "Nightmare" mode
 - **Multiple Game Modes**: Classic, Hard, Practice, Speedrunner, Zen, and Custom
 - **Real-Time Progress**: Visual progress tracking and WPM calculation
