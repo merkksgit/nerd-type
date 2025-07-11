@@ -41,7 +41,7 @@ A fast-paced, minimalistic typing game built with vanilla web technologies. Chal
 - **Slash Commands**: In-game commands (e.g., `/setwords`, `/mode`, `/help`) for quick settings changes
 - **Achievement System**: Comprehensive tracking with score, speed, gameplay style, and secret achievements
 - **Global Leaderboards**: Optional seasonal competitive system with Firebase integration
-- **Persistent Progress**: All data stored locally in browser with optional cloud sync
+- **Persistent Progress**: All data stored locally in browser with cloud sync for logged-in users
 
 ### User Experience
 
@@ -86,7 +86,7 @@ A fast-paced, minimalistic typing game built with vanilla web technologies. Chal
 - **Styling**: Bootstrap 5 for responsive design + custom CSS
 - **Storage**: Browser localStorage for persistence
 - **Backend**: Static hosting via GitHub Pages (no server required)
-- **Analytics**: Firebase integration for global leaderboards (optional)
+- **Analytics**: Firebase integration for global leaderboards and user data sync
 
 ### Project Structure
 
@@ -113,7 +113,7 @@ Access with `/` prefix during gameplay:
 - `/zen` - Toggle Zen mode on/off
 - `/lang <language>` - Change language (eng/fin/sve/prog/nm)
 - `/sound` - Toggle keypress sound effects
-- `/data` - Toggle global leaderboard data collection
+- `/data` - Toggle sharing scores to global leaderboards
 - `/reset` - Reset all settings to defaults
 - `/help` - Show all available commands
 

@@ -1112,13 +1112,10 @@ class AchievementSystem {
     const currentUser = window.getCurrentUser && window.getCurrentUser();
     if (!currentUser) return false;
 
-    // Check if data sharing is enabled
-    const dataShareEnabled = localStorage.getItem("data_collection_enabled");
-    if (dataShareEnabled === "false") return false;
-
     // Check if Firebase is available
     if (!window.firebaseModules || !window.database) return false;
 
+    // Always allow achievements sync if user is logged in (personal data)
     return true;
   }
 

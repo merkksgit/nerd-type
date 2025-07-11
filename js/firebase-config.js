@@ -23,6 +23,23 @@ function isDataCollectionEnabled() {
   return setting === null || setting === "true";
 }
 
+// New function to check if user data should be saved (always true when logged in)
+function shouldSaveUserData() {
+  const currentUser = window.getCurrentUser && window.getCurrentUser();
+  // Always save user data if logged in, regardless of leaderboard toggle
+  return currentUser !== null;
+}
+
+// Function to check if data should be shared to global leaderboards
+function shouldShareToLeaderboard() {
+  const currentUser = window.getCurrentUser && window.getCurrentUser();
+  const setting = localStorage.getItem("data_collection_enabled");
+  const isDataCollectionEnabled = setting === null || setting === "true";
+  
+  // Only share to leaderboard if user is logged in AND has enabled data sharing
+  return currentUser !== null && isDataCollectionEnabled;
+}
+
 // Enhanced Firebase initialization with Auth
 window.initializeFirebaseApp = function (firebaseModules) {
   const {
@@ -225,22 +242,17 @@ window.saveGuestScore = async function (gameData) {
 
 // Save game score to Firebase for authenticated users
 window.saveAuthenticatedScore = async function (gameData) {
-  if (!isDataCollectionEnabled()) {
-    console.log("📴 Data collection disabled - score not saved to Firebase");
-    return Promise.resolve({ key: "local-only" });
-  }
-
   if (!currentUser) {
     console.log(
-      "❌ User not authenticated - score not saved to global leaderboard",
+      "❌ User not authenticated - score not saved to Firebase",
     );
     return Promise.resolve({ key: "guest-only" });
   }
 
-  const { ref, push } = window.firebaseModules;
+  const { ref, push, set } = window.firebaseModules;
 
   try {
-    console.log("💾 Saving authenticated score to Firebase:", gameData);
+    console.log("💾 Saving authenticated user data to Firebase:", gameData);
 
     // Enhanced game data with user ID and email username
     const emailUsername = currentUser.email.split("@")[0];
@@ -253,11 +265,21 @@ window.saveAuthenticatedScore = async function (gameData) {
       submittedAt: new Date().toISOString(),
     };
 
-    const scoresRef = ref(database, "scores");
-    const result = await push(scoresRef, enhancedGameData);
+    // Always save to user's personal data
+    const userScoreRef = ref(database, `users/${currentUser.uid}/scores`);
+    const userResult = await push(userScoreRef, enhancedGameData);
+    console.log("✅ User data saved to personal collection! Key:", userResult.key);
 
-    console.log("✅ Authenticated score saved successfully! Key:", result.key);
-    return result;
+    // Only save to global leaderboard if data sharing is enabled
+    if (shouldShareToLeaderboard()) {
+      const globalScoresRef = ref(database, "scores");
+      const globalResult = await push(globalScoresRef, enhancedGameData);
+      console.log("✅ Score shared to global leaderboard! Key:", globalResult.key);
+      return globalResult;
+    } else {
+      console.log("📴 Global leaderboard sharing disabled - data saved privately only");
+      return userResult;
+    }
   } catch (error) {
     console.error("❌ Error saving authenticated score:", error);
     throw error;
@@ -265,11 +287,6 @@ window.saveAuthenticatedScore = async function (gameData) {
 };
 
 window.saveScoreToFirebase = async function (gameData) {
-  if (!isDataCollectionEnabled()) {
-    console.log("📴 Data collection disabled - score not saved to Firebase");
-    return Promise.resolve({ key: "local-only" });
-  }
-
   // Check if Firebase is ready
   if (!window.firebaseModules || !database) {
     console.error("❌ Firebase not ready, cannot save score");
@@ -280,10 +297,15 @@ window.saveScoreToFirebase = async function (gameData) {
     const currentUser = window.getCurrentUser();
 
     if (currentUser) {
-      console.log("💾 Saving authenticated score...");
-      // Use the existing saveAuthenticatedScore function
+      console.log("💾 Saving authenticated user data...");
+      // Use the updated saveAuthenticatedScore function
       return await window.saveAuthenticatedScore(gameData);
     } else {
+      // Guest users only save if data collection is enabled
+      if (!isDataCollectionEnabled()) {
+        console.log("📴 Data collection disabled - guest score not saved to Firebase");
+        return Promise.resolve({ key: "local-only" });
+      }
       console.log("💾 Saving guest score...");
       // Use the existing saveGuestScore function
       return await window.saveGuestScore(gameData);
@@ -296,11 +318,7 @@ window.saveScoreToFirebase = async function (gameData) {
 
 // Update the score retrieval functions to handle authentication
 window.getTopScores = async function () {
-  if (!isDataCollectionEnabled()) {
-    console.log("📴 Data collection disabled - returning empty leaderboard");
-    return [];
-  }
-
+  // Always show leaderboard data if available, regardless of user's personal setting
   const firebaseModules = window.firebaseModules;
   if (!firebaseModules || !database) {
     console.error("Firebase not ready for getTopScores");
@@ -772,13 +790,10 @@ window.canSyncScoreboardToFirebase = function () {
   const currentUser = window.getCurrentUser && window.getCurrentUser();
   if (!currentUser) return false;
 
-  // Check if data sharing is enabled
-  const dataShareEnabled = localStorage.getItem("data_collection_enabled");
-  if (dataShareEnabled === "false") return false;
-
   // Check if Firebase is available
   if (!window.firebaseModules || !window.database) return false;
 
+  // Always allow scoreboard sync if user is logged in (personal data)
   return true;
 };
 
@@ -945,13 +960,10 @@ window.canSyncSettingsToFirebase = function () {
   const currentUser = window.getCurrentUser && window.getCurrentUser();
   if (!currentUser) return false;
 
-  // Check if data sharing is enabled
-  const dataShareEnabled = localStorage.getItem("data_collection_enabled");
-  if (dataShareEnabled === "false") return false;
-
   // Check if Firebase is available
   if (!window.firebaseModules || !window.database) return false;
 
+  // Always allow settings sync if user is logged in (personal data)
   return true;
 };
 

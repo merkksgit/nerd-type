@@ -306,9 +306,15 @@ function updateDataCollectionSettingVisibility() {
   dataCollectionContainer.style.opacity = "1";
 
   if (dataCollectionLabel) {
-    dataCollectionLabel.innerHTML = `
-      Share game data for leaderboards
-    `;
+    if (isAuthenticated) {
+      dataCollectionLabel.innerHTML = `
+        Share scores to global leaderboards
+      `;
+    } else {
+      dataCollectionLabel.innerHTML = `
+        Share scores to global leaderboards (login required)
+      `;
+    }
   }
 }
 
