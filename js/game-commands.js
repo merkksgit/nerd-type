@@ -752,7 +752,6 @@ class GameCommands {
 <span style='color:#bb9af7'>/space</span>          - Toggle space after words
 <span style='color:#bb9af7'>/sound</span>          - Toggle keypress sound
 <span style='color:#bb9af7'>/data</span>           - Toggle data collection
-<span style='color:#bb9af7'>/debug</span>          - Toggle debug display
 <span style='color:#bb9af7'>/rm</span>             - Remove data from localStorage
                   <span style='color:#ff9e64'>[scoreboard.data, achievements.data]</span>
 <span style='color:#bb9af7'>/status</span>         - Show current game settings
