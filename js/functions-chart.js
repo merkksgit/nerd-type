@@ -399,7 +399,7 @@ function displayPreviousResults() {
     const storageSize = calculateLocalStorageSize();
     const infoRow = document.createElement("tr");
     infoRow.innerHTML = `
-      <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 2px solid #3b4261;">
+      <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
         Showing last 15 of ${results.length} total games | Storage used: ${storageSize} KB
       </td>
     `;

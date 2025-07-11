@@ -225,7 +225,7 @@ let gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
 };
 
 // Function to reload game settings from localStorage (used by settings sync)
-window.reloadGameSettings = function() {
+window.reloadGameSettings = function () {
   const newSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
     timeLimit: 30,
     bonusTime: 3,
@@ -233,10 +233,10 @@ window.reloadGameSettings = function() {
     goalPercentage: 100,
     currentMode: "classic",
   };
-  
+
   // Update the global gameSettings variable
   Object.assign(gameSettings, newSettings);
-  
+
   // Also update game commands settings if available
   if (window.gameCommands && window.gameCommands.gameSettings) {
     Object.assign(window.gameCommands.gameSettings, newSettings);
@@ -1894,8 +1894,11 @@ function saveClassicResult(
 
   // Sync to Firebase if user is logged in (async, don't block game flow)
   // Only user scores sync to cloud - guest scores stay local only
-  if (window.canSyncScoreboardToFirebase && window.canSyncScoreboardToFirebase()) {
-    window.syncScoreboardToFirebase(gameData).catch(error => {
+  if (
+    window.canSyncScoreboardToFirebase &&
+    window.canSyncScoreboardToFirebase()
+  ) {
+    window.syncScoreboardToFirebase(gameData).catch((error) => {
       console.error("❌ Failed to sync scoreboard to Firebase:", error);
     });
   }
@@ -1981,7 +1984,10 @@ function saveZenResult(wpm, totalTime, accuracy) {
   localStorage.setItem("gameResults", JSON.stringify(results));
 
   // Save to Firebase user scoreboard for cross-device sync (but NOT global leaderboard)
-  if (window.canSyncScoreboardToFirebase && window.canSyncScoreboardToFirebase()) {
+  if (
+    window.canSyncScoreboardToFirebase &&
+    window.canSyncScoreboardToFirebase()
+  ) {
     window.syncScoreboardToFirebase(gameData).catch((error) => {
       console.error("❌ Error syncing zen mode scoreboard to Firebase:", error);
     });
@@ -2080,7 +2086,9 @@ function displayPreviousResults() {
 
   // Sort results by timestamp (most recent first) and limit to 15
   // This works for both local storage (chronological) and Firebase data (pre-sorted)
-  const sortedResults = results.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const sortedResults = results.sort(
+    (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
+  );
   const displayResults = sortedResults.slice(0, 15);
 
   // Clear existing content
@@ -2224,7 +2232,7 @@ function displayPreviousResults() {
     const storageSize = calculateLocalStorageSize();
     const infoRow = document.createElement("tr");
     infoRow.innerHTML = `
-      <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 2px solid #3b4261;">
+      <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
         Showing last 15 of ${results.length} total games | Storage used: ${storageSize} KB
       </td>
     `;
