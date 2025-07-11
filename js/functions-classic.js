@@ -1221,6 +1221,9 @@ function updateTimer() {
 function totalTimeCount() {
   if (isPaused) return; // Don't count time when paused
 
+  // Check time-based achievements during gameplay
+  checkTimeBasedAchievements();
+
   const settings =
     JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
   const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
@@ -1228,6 +1231,35 @@ function totalTimeCount() {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(getRandomSuccessMessage(), true);
+  }
+}
+
+// Check time-based achievements during gameplay
+function checkTimeBasedAchievements() {
+  // Only check if achievement system is available and game has started
+  if (!window.achievementSystem || !gameStartTime || !hasStartedTyping) return;
+
+  // Calculate current game duration in seconds
+  const currentDurationSeconds = Math.floor((Date.now() - gameStartTime) / 1000);
+
+  // Check for "Let him cook!" achievement (2+ minutes in non-zen mode)
+  if (!isZenMode && currentDurationSeconds >= 120) {
+    // Check if achievement is not already unlocked
+    if (!window.achievementSystem.achievementsData.unlockedAchievements.let_him_cook) {
+      // Create fake game data for the achievement check
+      const liveGameData = {
+        mode: "Classic Mode", // Ensure it's not Zen Mode
+        timeLeft: timeLeft > 0 ? timeLeft : 1, // Achievement requires game to be won, fake it as still active
+        gameDurationSeconds: currentDurationSeconds,
+      };
+
+      // Manually unlock the achievement since we're checking during gameplay
+      window.achievementSystem.achievementsData.unlockedAchievements.let_him_cook = {
+        unlockedAt: new Date().toISOString(),
+      };
+      window.achievementSystem.saveData();
+      window.achievementSystem.showNotification(window.achievementSystem.achievements.let_him_cook);
+    }
   }
 }
 
@@ -1274,6 +1306,9 @@ function updateZenTimer() {
 
   // Update progress bar
   updateProgressBar();
+
+  // Check time-based achievements during gameplay
+  checkTimeBasedAchievements();
 
   if (isZenMode && wordsTyped.length >= zenWordGoal) {
     gameEnded = true;
