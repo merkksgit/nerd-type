@@ -160,8 +160,3 @@ cd nerd-type
 - **Email**: nerdtype-contact@protonmail.com
 - **Feedback**: [Contact Page](https://www.nerdtypegame.com/pages/contact.html)
 - **Website**: [nerdtypegame.com](https://www.nerdtypegame.com)
-
----
-
-Built with ❤️ using vanilla web technologies. No frameworks, no bloat, just pure typing game fun.
-
