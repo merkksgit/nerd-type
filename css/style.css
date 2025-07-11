@@ -248,7 +248,6 @@ div h2 {
 #confirmMobileWarning,
 #submitCustomScore,
 #resetBtn,
-#clearResultsBtn,
 #scoreboardCloseBtn,
 #toggleGraph,
 #toggleAchievements,
@@ -291,13 +290,8 @@ div h2 {
 }
 
 #restartGameBtn,
-#clearResultsBtn,
 #scoreboardCloseBtn {
   padding: 10px 30px;
-}
-
-#clearResultsBtn {
-  margin-right: 1em;
 }
 
 #toggleGraph,
@@ -308,26 +302,28 @@ div h2 {
 
 /* Common button hover effects */
 #returnToGameBtn:hover,
-#downloadDataBtn:hover,
 #restartGameBtn:hover,
 #clrResults:hover,
 #openTerminalBtn:hover,
-#clearResultsBtn:hover,
-#startButton:hover,
 #game-command-modal-close:hover,
 #confirmUsername:hover,
 #back-to-game .btn:hover,
 #confirmMobileWarning:hover,
 #submitCustomScore:hover,
 #closeScoreboardBtn:hover,
-#scoreboardCloseBtn:hover,
-#resetBtn:hover,
 #toggleGraph:hover,
 #toggleAchievements:hover,
 #toggleScoreboard:hover,
-#buttons #downloadDataBtn:hover,
 #viewScoreboardBtn:hover,
 #viewScoreboardChartBtn:hover {
+  color: #ff9e64;
+}
+
+/* Main action buttons with enhanced hover effects */
+#startButton:hover,
+#resetBtn:hover,
+#scoreboardCloseBtn:hover,
+#buttons #downloadDataBtn:hover {
   color: #ff9e64;
   box-shadow:
     0 6px 12px rgba(0, 0, 0, 0.3),
@@ -339,7 +335,11 @@ div h2 {
 #toggleGraph:active,
 #toggleAchievements:active,
 #viewScoreboardBtn:active,
-#viewScoreboardChartBtn:active {
+#viewScoreboardChartBtn:active,
+#startButton:active,
+#resetBtn:active,
+#scoreboardCloseBtn:active,
+#buttons #downloadDataBtn:active {
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.2),
     0 0 2px rgba(122, 162, 247, 0.3);
@@ -2119,9 +2119,6 @@ tr:hover .username-rank-icon {
     margin: 0 5px;
   }
 
-  #clearResultsBtn {
-    margin-right: 0;
-  }
 }
 
 /* Game Over Modal Return Buttons */

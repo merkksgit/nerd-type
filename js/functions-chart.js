@@ -67,11 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
   displayPreviousResults();
   displayHighestAchievements();
 
-  // Setup clear results button with new animation
-  const clearResultsBtn = document.getElementById("clearResultsBtn");
-  if (clearResultsBtn) {
-    clearResultsBtn.addEventListener("click", handleClearResults);
-  }
 });
 
 // Calculate the size of localStorage data in KB
@@ -121,131 +116,6 @@ function handleScoreboardKeyPress(event) {
   }
 }
 
-// Updated handleClearResults function for js/functions-chart.js (chart.html page)
-function handleClearResults() {
-  // DON'T clear anything yet - just show the confirmation modal
-
-  const customAlertModal = document.getElementById("customAlertModal");
-  if (customAlertModal) {
-    const modal = new bootstrap.Modal(customAlertModal);
-    const modalBody = customAlertModal.querySelector(".modal-body");
-    const modalHeader = customAlertModal.querySelector(".modal-title");
-
-    // Get username from localStorage or use default
-    const playerUsername =
-      localStorage.getItem("nerdtype_username") || "runner";
-
-    // Set up terminal-style header
-    modalHeader.textContent = `[${playerUsername}@PENTAGON-CORE:/user.data/]$`;
-
-    const terminalLines = [
-      "> INITIALIZING DELETION SEQUENCE...",
-      "> ACCESSING SCOREBOARD DATABASE...",
-      "> PREPARING DATA PURGE...",
-      "> ================================",
-      "> EXECUTING COMMANDS:",
-      "  └─ rm scoreboard.data",
-      `  └─ PURGE STATUS: <span style='color:#c3e88d'>SUCCESSFUL</span>`,
-      "> ================================",
-      "> LOCAL STORAGE CLEARED_",
-      "> PRESS [ENTER] OR [CLOSE] TO CONFIRM",
-      "> END OF TRANSMISSION_",
-    ];
-
-    let currentLine = 0;
-    let modalContent = "";
-
-    modalBody.innerHTML = '<pre class="terminal-output"></pre>';
-
-    function typeNextLine() {
-      if (currentLine < terminalLines.length) {
-        modalContent += terminalLines[currentLine] + "\n";
-        modalBody.querySelector(".terminal-output").innerHTML = modalContent;
-        currentLine++;
-        setTimeout(typeNextLine, 150);
-      } else {
-        // Show the close button after text animation completes
-        const clrResultsButton = document.getElementById("clrResults");
-        if (clrResultsButton) {
-          clrResultsButton.style.visibility = "visible";
-          clrResultsButton.style.opacity = "1";
-          clrResultsButton.focus();
-        }
-      }
-    }
-
-    // Create a single handler for both Enter key and close button
-    const handleModalClose = () => {
-      // MOVE THE ACTUAL CLEARING LOGIC HERE - after user confirms
-      localStorage.removeItem("gameResults");
-      document.getElementById("previousResults").innerHTML = "";
-      displayHighestAchievements();
-
-      modal.hide();
-      // Wait for modal to fully hide before reloading
-      customAlertModal.addEventListener(
-        "hidden.bs.modal",
-        function () {
-          location.reload();
-        },
-        { once: true },
-      );
-    };
-
-    // Set up the close button handler
-    const clrResultsButton = document.getElementById("clrResults");
-    if (clrResultsButton) {
-      clrResultsButton.replaceWith(clrResultsButton.cloneNode(true));
-      const newClrResultsButton = document.getElementById("clrResults");
-
-      // Hide the button after replacing it
-      newClrResultsButton.style.visibility = "hidden";
-      newClrResultsButton.style.opacity = "0";
-
-      newClrResultsButton.addEventListener("click", handleModalClose);
-    }
-
-    // Set up Enter key handler for this specific modal
-    const keydownHandler = (event) => {
-      if (
-        event.key === "Enter" &&
-        customAlertModal.classList.contains("show")
-      ) {
-        event.preventDefault();
-        event.stopPropagation();
-        handleModalClose();
-      }
-    };
-
-    modal.show();
-
-    // Start typing animation after modal is fully shown
-    customAlertModal.addEventListener("shown.bs.modal", function onShown() {
-      document.addEventListener("keydown", keydownHandler, { capture: true });
-      typeNextLine(); // Start animation after modal is shown
-      customAlertModal.removeEventListener("shown.bs.modal", onShown);
-    });
-
-    // Clean up event listener when modal is hidden and reset button visibility
-    customAlertModal.addEventListener(
-      "hidden.bs.modal",
-      function cleanupHandler() {
-        document.removeEventListener("keydown", keydownHandler, {
-          capture: true,
-        });
-
-        // Reset button visibility for next time
-        const resetButton = document.getElementById("clrResults");
-        if (resetButton) {
-          resetButton.style.visibility = "hidden";
-          resetButton.style.opacity = "0";
-        }
-
-        customAlertModal.removeEventListener("hidden.bs.modal", cleanupHandler);
-      },
-    );
-  }
-}
 
 // Display previous results in scoreboard (only show last 20)
 function displayPreviousResults() {
@@ -461,7 +331,6 @@ export {
   displayHighestAchievements,
   getAchievementColor,
   setupToggle,
-  handleClearResults,
   setupScoreboardModalEnterKey,
   handleScoreboardKeyPress,
 };
