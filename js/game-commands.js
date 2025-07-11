@@ -942,8 +942,9 @@ font=<span style='color:#f7768e'>${currentFont}</span>
 
     switch (dataType) {
       case "scoreboard.data":
-        // Clear scoreboard data from localStorage
+        // Clear scoreboard data from localStorage including backups
         localStorage.removeItem("gameResults");
+        localStorage.removeItem("gameResults_guest_backup");
         this.showNotification(
           "Scoreboard data cleared successfully.",
           "success",
