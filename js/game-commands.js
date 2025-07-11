@@ -735,27 +735,29 @@ class GameCommands {
   }
 
   showHelp() {
-    const helpText = `
-Available commands:
-=============================================
-/setwords       - Set number of words for win
-/setbonus       - Set bonus energy per word
-/setinitial     - Set starting energy
-/mode           - Set game mode
-<span style= "color: #ff9e64">[classic, hard, practice, speedrunner]</span>
-/zen            - Toggle Zen Mode on/off
-/lang           - Switch language
-<span style= "color: #ff9e64">[finnish, english, swedish, programming, nightmare]</span>
-/space          - Toggle space after words
-/sound          - Toggle keypress sound
-/data           - Toggle data collection
-/debug          - Toggle debug display
-/rm             - Remove data from localStorage
-<span style= "color: #ff9e64">[scoreboard.data, achievements.data]</span>
-/status         - Show current game settings
-/reset          - Reset to default settings
-/help           - Show this help message
-=============================================
+    // Get the current username
+    const playerUsername =
+      localStorage.getItem("nerdtype_username") || "runner";
+
+    const helpText = `<span style='color:#7dcfff'>[${playerUsername}@PENTAGON-CORE:~/docs/manual]$</span> cat commands.txt
+
+<span style='color:#bb9af7'>/setwords</span>       - Set number of words for win
+<span style='color:#bb9af7'>/setbonus</span>       - Set bonus energy per word
+<span style='color:#bb9af7'>/setinitial</span>     - Set starting energy
+<span style='color:#bb9af7'>/mode</span>           - Set game mode
+                  <span style='color:#ff9e64'>[classic, hard, practice, speedrunner]</span>
+<span style='color:#bb9af7'>/zen</span>            - Toggle Zen Mode on/off
+<span style='color:#bb9af7'>/lang</span>           - Switch language
+                  <span style='color:#ff9e64'>[finnish, english, swedish, programming, nightmare]</span>
+<span style='color:#bb9af7'>/space</span>          - Toggle space after words
+<span style='color:#bb9af7'>/sound</span>          - Toggle keypress sound
+<span style='color:#bb9af7'>/data</span>           - Toggle data collection
+<span style='color:#bb9af7'>/debug</span>          - Toggle debug display
+<span style='color:#bb9af7'>/rm</span>             - Remove data from localStorage
+                  <span style='color:#ff9e64'>[scoreboard.data, achievements.data]</span>
+<span style='color:#bb9af7'>/status</span>         - Show current game settings
+<span style='color:#bb9af7'>/reset</span>          - Reset to default settings
+<span style='color:#bb9af7'>/help</span>           - Show this help message
 `;
     this.showInfoModal("Game Commands Help", helpText);
   }
@@ -767,6 +769,10 @@ Available commands:
       this.showNotification("Error: Could not load game settings", "error");
       return;
     }
+
+    // Get the current username
+    const playerUsername =
+      localStorage.getItem("nerdtype_username") || "runner";
 
     // Get the current Zen Mode state from localStorage
     const isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
@@ -811,37 +817,33 @@ Available commands:
     let statusText;
 
     if (isZenMode) {
-      // Zen Mode status
-      statusText = `
-CURRENT GAME SETTINGS:
-================================
-ZEN MODE: <span style='color:#c3e88d'>ON</span>
-ZEN WORD GOAL: <span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span> words
-LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
-SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
-ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
-KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
-GLOBAL LEADERBOARD: <span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "ENABLED" : "DISABLED"}</span>
-FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
-================================
+      // Zen Mode status with terminal-style output
+      statusText = `<span style='color:#7dcfff'>[${playerUsername}@PENTAGON-CORE:~/.config]$</span> cat settings.data
+
+zen_mode=<span style='color:#c3e88d'>enabled</span>
+zen_word_goal=<span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span>
+language=<span style='color:#bb9af7'>${currentLanguage.toLowerCase()}</span>
+space_after_words=<span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "enabled" : "disabled"}</span>
+achievement_sound=<span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "enabled" : "disabled"}</span>
+keypress_sound=<span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "enabled" : "disabled"}</span>
+global_leaderboard=<span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "enabled" : "disabled"}</span>
+font=<span style='color:#f7768e'>${currentFont}</span>
 `;
     } else {
-      // Classic Mode status
-      statusText = `
-CURRENT GAME SETTINGS:
-================================
-ZEN MODE: <span style='color:#ff007c'>OFF</span>
-MODE: <span style='color:#ff9e64'>${settings.currentMode?.toUpperCase() || "CLASSIC"}</span>
-WORDS NEEDED: <span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
-BONUS ENERGY: <span style='color:#bb9af7'>${settings.bonusTime || 3}</span> units
-INITIAL ENERGY: <span style='color:#7dcfff'>${settings.initialTime || 10}</span> units
-LANGUAGE: <span style='color:#bb9af7'>${currentLanguage.toUpperCase()}</span>
-SPACE AFTER WORDS: <span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "ON" : "OFF"}</span>
-ACHIEVEMENT SOUND: <span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "ON" : "OFF"}</span>
-KEYPRESS SOUND: <span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "ON" : "OFF"}</span>
-DATA COLLECTION: <span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "ENABLED" : "DISABLED"}</span>
-FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
-================================
+      // Classic Mode status with terminal-style output
+      statusText = `<span style='color:#7dcfff'>[${playerUsername}@PENTAGON-CORE:~/.config]$</span> cat settings.data
+
+zen_mode=<span style='color:#ff007c'>disabled</span>
+game_mode=<span style='color:#ff9e64'>${settings.currentMode?.toLowerCase() || "classic"}</span>
+words_needed=<span style='color:#c3e88d'>${settings.timeLimit || 30}</span>
+bonus_energy=<span style='color:#bb9af7'>${settings.bonusTime || 3}</span>
+initial_energy=<span style='color:#7dcfff'>${settings.initialTime || 10}</span>
+language=<span style='color:#bb9af7'>${currentLanguage.toLowerCase()}</span>
+space_after_words=<span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "enabled" : "disabled"}</span>
+achievement_sound=<span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "enabled" : "disabled"}</span>
+keypress_sound=<span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "enabled" : "disabled"}</span>
+data_collection=<span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "enabled" : "disabled"}</span>
+font=<span style='color:#f7768e'>${currentFont}</span>
 `;
     }
 
@@ -876,13 +878,10 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
       modalContainer.role = "dialog";
       // Create the basic modal structure
       modalContainer.innerHTML = `
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content" style="background-color: #24283b; border: 1px solid #414868;">
-        <div class="modal-header border-bottom-0 text-center" style="background-color: #24283b;">
-          <h5 class="modal-title w-100" id="game-command-modal-title"></h5>
-        </div>
         <div class="modal-body border-top-0 border-bottom-0" style="background-color: #24283b;">
-          <pre id="game-command-modal-content" class="terminal-output"></pre>
+          <pre id="game-command-modal-content" class="terminal-output" style="text-align: left;"></pre>
         </div>
         <div class="modal-footer border-top-0 d-flex justify-content-center" style="background-color: #24283b;">
           <button id="game-command-modal-close" type="button" class="btn btn-primary">
@@ -911,8 +910,6 @@ FONT: <span style='color:#f7768e'>${fontDisplayName}</span>
     }
 
     // Set modal content - use innerHTML instead of textContent
-    document.getElementById("game-command-modal-title").textContent =
-      formattedTitle;
     document.getElementById("game-command-modal-content").innerHTML = content;
 
     // Show the modal

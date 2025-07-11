@@ -323,6 +323,7 @@ div h2 {
 #startButton:hover,
 #resetBtn:hover,
 #scoreboardCloseBtn:hover,
+#game-command-modal-close:hover,
 #buttons #downloadDataBtn:hover {
   color: #ff9e64;
   box-shadow:
@@ -339,6 +340,7 @@ div h2 {
 #startButton:active,
 #resetBtn:active,
 #scoreboardCloseBtn:active,
+#game-command-modal-close:active,
 #buttons #downloadDataBtn:active {
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.2),
