@@ -155,7 +155,7 @@
         <div class="col-md-12 py-4">
           <div class="container-fluid">
             <div class="row">
-              <article class="col-md-8 col-lg-6 mx-auto">
+              <article class="col-md-6 col-lg-6 mx-auto">
                 <div class="mt-4 mb-4">
                   <h4 class="system-updates-title-alt">News</h4>
                 </div>
@@ -468,6 +468,34 @@
                       >News archive</a
                     >
                   </p>
+                </div>
+              </article>
+              <article class="col-md-6 col-lg-6 mx-auto">
+                <div class="mt-4 mb-4">
+                  <h4 class="system-updates-title-alt">Patch Notes</h4>
+                </div>
+                <div class="news-container">
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">10/07/25</span>
+                      <span class="news-category update">v2.2.1</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">
+                        Separate Leaderboard Sharing from User Data Saving
+                      </h5>
+                      <p class="news-content">
+                        Enhanced data handling for logged-in users. User data is now always saved to Firebase when logged in, while the leaderboard toggle only controls public visibility.
+                      </p>
+                      <ul class="news-content" style="margin-top: 10px; padding-left: 20px;">
+                        <li>Always save user data to Firebase when logged in</li>
+                        <li>Toggle only controls global leaderboard visibility</li>
+                        <li>Updated UI text to clarify toggle purpose</li>
+                        <li>Modified Firebase save logic to separate personal vs public data</li>
+                        <li>Prevents data loss for users who disable leaderboard sharing</li>
+                      </ul>
+                    </div>
+                  </article>
                 </div>
               </article>
             </div>
