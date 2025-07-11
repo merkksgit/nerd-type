@@ -501,10 +501,10 @@ function clearAllValidationStates() {
 
 function setupRealTimeValidation() {
   const validationRules = {
-    wordsGoal: { min: 1, max: 200, name: "Words Goal" },
+    wordsGoal: { min: 10, max: 200, name: "Words Goal" },
     bonusEnergy: { min: 1, max: 10, name: "Bonus Energy" },
     initialEnergy: { min: 4, max: 20, name: "Initial Energy" },
-    zenWordGoal: { min: 1, max: 200, name: "Zen Word Goal" },
+    zenWordGoal: { min: 10, max: 200, name: "Zen Word Goal" },
   };
 
   const applyButton = document.getElementById("applySettingsBtn");
@@ -677,7 +677,7 @@ async function applySettings() {
   // Validate all inputs with correct ranges
   let isValid = true;
 
-  if (!validateInput("wordsGoal", 1, 200, "Words Goal")) {
+  if (!validateInput("wordsGoal", 10, 200, "Words Goal")) {
     isValid = false;
   }
   if (!validateInput("bonusEnergy", 0, 50, "Bonus Energy")) {
@@ -686,7 +686,7 @@ async function applySettings() {
   if (!validateInput("initialEnergy", 1, 100, "Initial Energy")) {
     isValid = false;
   }
-  if (!validateInput("zenWordGoal", 1, 500, "Zen Word Goal")) {
+  if (!validateInput("zenWordGoal", 10, 200, "Zen Word Goal")) {
     isValid = false;
   }
 

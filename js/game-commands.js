@@ -507,9 +507,9 @@ class GameCommands {
   setWords(args) {
     const wordCount = parseInt(args[0]);
 
-    if (isNaN(wordCount) || wordCount < 1) {
+    if (isNaN(wordCount) || wordCount < 10 || wordCount > 200) {
       this.showNotification(
-        "Error: Please provide a valid number of words",
+        "Error: Please provide a valid number of words (10-200)",
         "error",
       );
       return;
@@ -573,9 +573,9 @@ class GameCommands {
   setBonus(args) {
     const bonus = parseInt(args[0]);
 
-    if (isNaN(bonus) || bonus < 0) {
+    if (isNaN(bonus) || bonus < 1 || bonus > 10) {
       this.showNotification(
-        "Error: Please provide a valid bonus time",
+        "Error: Please provide a valid bonus energy (1-10)",
         "error",
       );
       return;
@@ -616,9 +616,9 @@ class GameCommands {
   setInitial(args) {
     const initial = parseInt(args[0]);
 
-    if (isNaN(initial) || initial < 1) {
+    if (isNaN(initial) || initial < 4 || initial > 20) {
       this.showNotification(
-        "Error: Please provide a valid initial time",
+        "Error: Please provide a valid initial energy (4-20)",
         "error",
       );
       return;
