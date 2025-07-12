@@ -262,7 +262,7 @@
 
 @media (max-width: 500px) {
   .floating-scoreboard-chart-btn {
-    top: 80px;
+    top: 90px;
     bottom: auto;
     right: 170px;
   }

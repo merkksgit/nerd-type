@@ -2170,10 +2170,14 @@ tr:hover .username-rank-icon {
 /* Mobile-only responsive design with keyboard handling */
 @media (max-width: 768px) and (hover: none) and (pointer: coarse) {
   #game {
-    padding: 0 5px;
-    padding-top: 1em;
-    padding-bottom: 3rem;
+    padding: 1rem 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
     max-width: 100%;
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   #gameIndicator {
@@ -2207,31 +2211,49 @@ tr:hover .username-rank-icon {
   }
 
   #progressPercentage {
-    margin: 0.3rem 0;
-    font-size: 0.9rem;
+    margin-top: 2.5rem !important;
+    margin-bottom: 0.3rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    color: #7aa2f7;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 
-  .progress {
-    margin: 0.3rem auto;
-    height: 14px !important;
-    background-color: #1f2335 !important;
-    border: 1px solid #3b4261 !important;
+  .progress.terminal {
+    margin: 1rem auto;
+    height: 22px !important;
+    width: 85%;
+    max-width: 450px;
   }
 
-  .progress .progress-bar {
-    background-color: #7aa2f7 !important;
+  /* Keep the desktop animation and styling intact for mobile */
+  .progress.terminal .progress-bar::before {
+    animation: moveSegments 1s linear infinite;
   }
 
   #buttons {
-    margin-top: 1rem;
-    margin-bottom: 2rem;
-    gap: 8px;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    gap: 16px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   #buttons button {
-    min-width: 90px;
-    padding: 8px 16px;
-    font-size: 0.9rem;
+    min-width: 120px;
+    min-height: 44px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    touch-action: manipulation;
+  }
+
+  #buttons button:active {
+    transform: none;
+    box-shadow: none;
   }
 
   .press-enter-text {
@@ -2250,8 +2272,24 @@ tr:hover .username-rank-icon {
 
 /* Keyboard open detection and ultra-compact mode */
 .keyboard-open #game {
-  min-height: calc(var(--vh, 1vh) * 60);
+  min-height: calc(var(--vh, 1vh) * 50);
   justify-content: flex-start;
+  padding-top: 0.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.keyboard-open .footer {
+  display: none; /* Hide footer when keyboard is open */
+}
+
+.keyboard-open #buttons {
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.keyboard-open .progress.terminal {
+  margin: 0.5rem auto;
+  height: 18px !important;
 }
 
 .keyboard-open #gameIndicator,
@@ -2290,7 +2328,7 @@ tr:hover .username-rank-icon {
   }
 
   #progressPercentage {
-    margin: 0.2rem 0;
+    margin: 0.2rem auto;
   }
 
   .progress {
@@ -2608,6 +2646,36 @@ tr:hover .username-rank-icon {
 }
 
 /* Very small mobile devices */
+/* Mobile footer optimization */
+@media (max-width: 768px) {
+  .footer {
+    padding: 0.75rem 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+
+  .footer .row > div {
+    gap: 0.5rem !important;
+  }
+
+  .footer .d-flex.gap-4 {
+    margin-top: 0.5rem !important;
+  }
+
+  .footer-text {
+    font-size: 0.75rem !important;
+    text-align: center;
+  }
+
+  .footer .bi {
+    font-size: 0.9rem;
+  }
+
+  /* Hide version info on mobile to save space */
+  #versionInfo {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   input[type="text"] {
     font-size: 16px;
@@ -2628,11 +2696,6 @@ tr:hover .username-rank-icon {
 
   #userInput {
     font-size: 1.4em !important;
-  }
-
-  #buttons button {
-    min-width: 100px;
-    padding: 8px 12px;
   }
 
   .modal-dialog {
