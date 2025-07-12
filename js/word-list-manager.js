@@ -31,7 +31,7 @@ const wordListIcons = {
 };
 
 // Default language (you can set this based on the current page)
-let currentLanguage = localStorage.getItem("nerdtype_wordlist") || "finnish";
+let currentLanguage = localStorage.getItem("nerdtype_wordlist") || "english";
 
 // Function to dynamically import word lists
 async function loadWordList(language) {

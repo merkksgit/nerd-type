@@ -205,7 +205,7 @@ class GameCommands {
   toggleKeypressSound(args) {
     // Get current state
     const currentState =
-      localStorage.getItem("keypress_sound_enabled") === "false" ? false : true; // Default is true
+      localStorage.getItem("keypress_sound_enabled") === "true"; // Default is false
 
     // Determine new state
     let newState;
@@ -349,7 +349,7 @@ class GameCommands {
       localStorage.setItem("nerdtype_zen_mode", "true"); // Keep in Zen mode but reset settings
       localStorage.setItem("showSpacesAfterWords", "true"); // Reset to default
       localStorage.setItem("achievement_sound_enabled", "true"); // Reset to default
-      localStorage.setItem("keypress_sound_enabled", "true"); // Reset to default
+      localStorage.setItem("keypress_sound_enabled", "false"); // Reset to default
 
       this.showNotification(
         "Resetting Zen Mode to default settings...",
@@ -392,7 +392,7 @@ class GameCommands {
       localStorage.setItem("nerdtype_zen_mode", "false"); // Ensure Zen mode is off
       localStorage.setItem("showSpacesAfterWords", "true"); // Reset to default
       localStorage.setItem("achievement_sound_enabled", "true"); // Reset to default
-      localStorage.setItem("keypress_sound_enabled", "true"); // Reset to default
+      localStorage.setItem("keypress_sound_enabled", "false"); // Reset to default
 
       this.showNotification("Resetting game to default settings...", "info");
 
@@ -800,11 +800,12 @@ class GameCommands {
 
     // Get current font selection
     const currentFont =
-      localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+      localStorage.getItem("nerdtype_font") || "jetbrains-light";
 
     // Convert font name to display format
     const fontDisplayNames = {
       "jetbrains-mono": "JetBrains Mono",
+      "jetbrains-light": "JetBrains Mono Light",
       "departure-mono": "Departure Mono",
       "firacode-mono": "FiraCode Mono",
       "bigblueterm-mono": "BigBlueTerm Mono",

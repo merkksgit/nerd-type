@@ -163,7 +163,7 @@ window.keypressSound = keypressAudioPool[0];
 
 // Check the keypress sound setting on initialization
 const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
-if (keypressSoundEnabled === "false") {
+if (keypressSoundEnabled !== "true") {
   keypressAudioPool.forEach((audio) => (audio.muted = true));
 }
 
@@ -176,7 +176,7 @@ window.dispatchEvent(
 
 function playKeypressSound() {
   const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
-  if (keypressSoundEnabled !== "false" && hasStartedTyping) {
+  if (keypressSoundEnabled === "true" && hasStartedTyping) {
     const audio = keypressAudioPool[currentAudioIndex];
     audio.currentTime = 0;
     audio.play().catch((e) => console.log("Keypress sound play prevented:", e));
@@ -341,7 +341,7 @@ async function initializeGame() {
   // Load the Zen Mode state
   isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
   // Font selection
-  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-light";
   applyFont(currentFont);
 
   // Load saved settings

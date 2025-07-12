@@ -121,7 +121,7 @@ function handleAuthStateChange(user) {
       usernameDisplay.textContent = emailUsername;
       // FIXED: Use current font setting instead of hardcoded font
       const currentFont =
-        localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+        localStorage.getItem("nerdtype_font") || "jetbrains-light";
       usernameDisplay.style.fontFamily = currentFont + " !important";
     }
 
@@ -137,7 +137,7 @@ function handleAuthStateChange(user) {
     // FIXED: Apply current font setting for all game elements after login
     setTimeout(() => {
       const currentFont =
-        localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+        localStorage.getItem("nerdtype_font") || "jetbrains-light";
 
       const gameElements = document.querySelectorAll(
         "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area",
@@ -163,14 +163,14 @@ function handleAuthStateChange(user) {
       usernameDisplay.textContent = "Login";
       // FIXED: Use current font setting instead of hardcoded font
       const currentFont =
-        localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+        localStorage.getItem("nerdtype_font") || "jetbrains-light";
       usernameDisplay.style.fontFamily = currentFont + " !important";
     }
 
     // FIXED: Apply current font setting for all game elements after logout
     setTimeout(() => {
       const currentFont =
-        localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+        localStorage.getItem("nerdtype_font") || "jetbrains-light";
 
       const gameElements = document.querySelectorAll(
         "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area",
@@ -758,7 +758,7 @@ window.addEventListener("fontChanged", function (event) {
 
 // Function to reapply current font whenever needed
 window.reapplyCurrentFont = function () {
-  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-light";
 
   const gameElements = document.querySelectorAll(
     "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area, #usernameDisplay",
@@ -997,7 +997,7 @@ window.syncSettingsToFirebase = async function () {
       // Individual settings
       wordlist: localStorage.getItem("nerdtype_wordlist") || "english",
       zenMode: localStorage.getItem("nerdtype_zen_mode") === "true",
-      font: localStorage.getItem("nerdtype_font") || "jetbrains-mono",
+      font: localStorage.getItem("nerdtype_font") || "jetbrains-light",
       hideUI: localStorage.getItem("nerdtype_hide_ui") === "true",
       showSpacesAfterWords:
         localStorage.getItem("showSpacesAfterWords") !== "false",

@@ -246,7 +246,7 @@ function loadSettings() {
   }
 
   // font selection
-  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-light";
   const fontRadio = document.querySelector(
     `input[name="fontFamily"][value="${currentFont}"]`,
   );
@@ -718,7 +718,7 @@ async function applySettings() {
   // Get font setting
   const selectedFont =
     document.querySelector('input[name="fontFamily"]:checked')?.value ||
-    "jetbrains-mono";
+    "jetbrains-light";
   saveFontSetting(selectedFont);
 
   // Get sound settings
@@ -963,7 +963,7 @@ function showSettingsNotification(message, type = "success") {
 
 // Font management functions
 function initFontSettings() {
-  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-mono";
+  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-light";
   applyFont(currentFont);
 
   const fontRadio = document.querySelector(
