@@ -80,7 +80,7 @@ header {
 }
 
 #header-logo-no-text {
-  width: 40px;
+  width: 45px;
   display: none;
   margin-left: 12px;
 }
@@ -2120,7 +2120,6 @@ tr:hover .username-rank-icon {
   .navbar-nav .nav-item {
     margin: 0 5px;
   }
-
 }
 
 /* Game Over Modal Return Buttons */
