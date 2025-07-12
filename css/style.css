@@ -540,7 +540,7 @@ input#userInput {
   margin: 0 auto;
   padding: 0 10px;
   box-sizing: border-box;
-  padding-top: 5em;
+  padding-top: 2em;
   text-align: center;
   color: #7aa2f7;
 }
@@ -2173,14 +2173,14 @@ tr:hover .username-rank-icon {
   .game-page .col-md-12.pt-5 {
     padding-top: 1rem !important;
   }
-  
+
   .game-page .row.pt-5 {
-    padding-top: 0.5rem !important;
+    padding-top: 1rem !important;
   }
 
   #game {
     padding: 0.75rem;
-    max-width: 90%;
+    max-width: 100%;
     margin: 0 auto;
     min-height: auto;
     display: flex;
@@ -2283,7 +2283,7 @@ tr:hover .username-rank-icon {
   min-height: calc(var(--vh, 1vh) * 50);
   justify-content: flex-start;
   padding-top: 0.25rem;
-  padding-bottom: 0.5rem;
+  padding-bottom: 3rem; /* Increased bottom padding when keyboard is open */
 }
 
 .keyboard-open .footer {
