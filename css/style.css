@@ -1786,6 +1786,76 @@ score h3 {
   text-decoration: none;
 }
 
+/* ====== TAB NAVIGATION STYLING ====== */
+.tab-navigation {
+  display: flex;
+  background-color: #24283b;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.tab-btn {
+  background-color: transparent;
+  border: none;
+  color: #7982a9;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: "jetbrains-mono";
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-btn:hover {
+  color: #ff9e64;
+  transform: translateY(-1px);
+}
+
+.tab-btn.active {
+  background-color: #7aa2f7;
+  color: #1f2335;
+  box-shadow: 0 2px 8px rgba(122, 162, 247, 0.2);
+}
+
+.tab-btn.active:hover {
+  background-color: #7aa2f7;
+  color: #1f2335;
+}
+
+.tab-btn i {
+  font-size: 0.85rem;
+  background-color: inherit;
+}
+
+/* ====== TAB CONTENT STYLING ====== */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ====== 13. CURSOR SETTINGS STYLING ====== */
 .cursor-selection-grid {
   display: grid;
