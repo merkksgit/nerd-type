@@ -2384,6 +2384,16 @@ tr:hover .username-rank-icon {
   /* Keep original font size and padding */
 }
 
+/* Hide navbar and logo when mobile keyboard is open */
+.keyboard-open .navbar {
+  display: none !important;
+}
+
+.keyboard-open #header-logo,
+.keyboard-open #header-logo-no-text {
+  display: none !important;
+}
+
 /* Very compact mode for mobile devices with keyboard */
 @media (max-width: 768px) and (max-height: 500px) and (hover: none) and (pointer: coarse) {
   #game {
