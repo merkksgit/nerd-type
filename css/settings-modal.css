@@ -213,10 +213,9 @@
 /* Mobile positioning - top right corner under navbar */
 @media (max-width: 768px) {
   .ui-toggle-btn {
-    top: 90px;
+    top: 70px;
     bottom: auto;
     right: 20px;
-    background-color: #1f2335;
   }
 
   .floating-user-btn {
@@ -224,7 +223,7 @@
     min-width: 40px;
     width: 40px;
     height: 40px;
-    top: 90px;
+    top: 70px;
     bottom: auto;
     right: 70px;
     display: flex;
@@ -233,20 +232,20 @@
   }
 
   .floating-settings-btn {
-    top: 90px;
+    top: 70px;
     bottom: auto;
     right: 120px;
   }
 
   .floating-scoreboard-btn,
   .floating-scoreboard-chart-btn {
-    top: 90px;
+    top: 70px;
     bottom: auto;
     right: 170px;
   }
 
   .floating-scoreboard-chart-btn {
-    top: 80px;
+    top: 70px;
     bottom: auto;
     right: 170px;
   }
@@ -262,13 +261,13 @@
 
 @media (max-width: 500px) {
   .floating-scoreboard-chart-btn {
-    top: 90px;
+    top: 70px;
     bottom: auto;
     right: 170px;
   }
 
   .floating-user-btn {
-    top: 90px;
+    top: 70px;
     bottom: auto;
   }
 }
