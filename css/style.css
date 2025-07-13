@@ -2267,6 +2267,13 @@ tr:hover .username-rank-icon {
 
 /* ====== 18. RESPONSIVE DESIGN - CONSOLIDATED MEDIA QUERIES ====== */
 
+/* hide hover effects on mobile */
+@media (hover: hover) and (pointer: fine) {
+  button:hover {
+    background-color: #1f2335;
+  }
+}
+
 /* Mobile Header Logo Toggle */
 @media screen and (max-width: 768px) {
   #header-logo-no-text {
