@@ -2448,8 +2448,9 @@ tr:hover .username-rank-icon {
   padding-bottom: 3rem; /* Increased bottom padding when keyboard is open */
 }
 
-.keyboard-open .footer {
-  display: none; /* Hide footer when keyboard is open */
+.keyboard-open .footer,
+.keyboard-open #currentGameMode {
+  display: none;
 }
 
 .keyboard-open #buttons {
