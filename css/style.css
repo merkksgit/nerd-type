@@ -2268,8 +2268,12 @@ tr:hover .username-rank-icon {
 /* ====== 18. RESPONSIVE DESIGN - CONSOLIDATED MEDIA QUERIES ====== */
 
 @media (hover: none) and (pointer: coarse) {
-  #startButton:hover {
-    background-color: #1f2335;
+  #startButton:hover,
+  #resetBtn:hover {
+    color: inherit;
+    box-shadow: none;
+    transform: none;
+    background-color: inherit;
   }
 }
 
