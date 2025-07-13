@@ -2268,8 +2268,10 @@ tr:hover .username-rank-icon {
 /* ====== 18. RESPONSIVE DESIGN - CONSOLIDATED MEDIA QUERIES ====== */
 
 /* hide hover effects on mobile */
-@media (hover: hover) and (pointer: fine) {
-  button:hover {
+@media (hover: none) and (pointer: coarse) {
+  button:hover,
+  button:active,
+  button:focus {
     background-color: #1f2335;
   }
 }
