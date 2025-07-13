@@ -869,7 +869,8 @@ class AchievementSystem {
 
         console.log("All others unlocked?", allOthersUnlocked);
 
-        const isCurrentlyUnlocked = this.achievementsData.unlockedAchievements.completionist;
+        const isCurrentlyUnlocked =
+          this.achievementsData.unlockedAchievements.completionist;
 
         if (allOthersUnlocked && allOtherAchievementIds.length > 0) {
           // Should be unlocked
@@ -886,7 +887,9 @@ class AchievementSystem {
         } else if (isCurrentlyUnlocked) {
           // Should NOT be unlocked but currently is - revoke it
           delete this.achievementsData.unlockedAchievements.completionist;
-          console.log("🔄 Completionist achievement revoked due to new achievements being added");
+          console.log(
+            "🔄 Completionist achievement revoked due to new achievements being added",
+          );
         }
       } catch (error) {
         console.error("Error checking completionist achievement:", error);
@@ -1409,7 +1412,7 @@ class AchievementSystem {
     const totalCount = coreAchievements.length;
     const counterElement = document.getElementById("core-achievement-counter");
     if (counterElement) {
-      counterElement.textContent = `(${earnedCount}/${totalCount})`;
+      counterElement.textContent = `[${earnedCount}/${totalCount}]`;
     }
   }
 
@@ -1442,7 +1445,7 @@ class AchievementSystem {
       "seasonal-achievement-counter",
     );
     if (counterElement) {
-      counterElement.textContent = `(${earnedCount}/${totalCount})`;
+      counterElement.textContent = `[${earnedCount}/${totalCount}]`;
     }
   }
 
