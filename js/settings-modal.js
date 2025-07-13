@@ -159,6 +159,13 @@ function loadSettings() {
       spacesAfterWords === null || spacesAfterWords === "true";
   }
 
+  // Set hide precision multiplier toggle
+  const hidePrecisionMultiplierToggle = document.getElementById("hidePrecisionMultiplierToggle");
+  if (hidePrecisionMultiplierToggle) {
+    const hidePrecisionUI = localStorage.getItem("hide_precision_multiplier_ui");
+    hidePrecisionMultiplierToggle.checked = hidePrecisionUI === "true";
+  }
+
   // Get saved settings or use defaults
   const gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
     timeLimit: 30,
@@ -606,6 +613,12 @@ function resetSettings() {
     showSpacesToggle.checked = true;
   }
 
+  // Reset hide precision multiplier to default (off - show multiplier)
+  const hidePrecisionMultiplierToggle = document.getElementById("hidePrecisionMultiplierToggle");
+  if (hidePrecisionMultiplierToggle) {
+    hidePrecisionMultiplierToggle.checked = false;
+  }
+
   // Reset sound settings to default (off)
   const achievementSoundToggle = document.getElementById("achievementSoundToggle");
   if (achievementSoundToggle) {
@@ -747,6 +760,10 @@ async function applySettings() {
   // Get show spaces toggle state
   const showSpacesEnabled = document.getElementById("showSpacesToggle").checked;
   localStorage.setItem("showSpacesAfterWords", showSpacesEnabled);
+
+  // Get hide precision multiplier toggle state
+  const hidePrecisionMultiplierEnabled = document.getElementById("hidePrecisionMultiplierToggle").checked;
+  localStorage.setItem("hide_precision_multiplier_ui", hidePrecisionMultiplierEnabled);
 
   // Dispatch events to update game settings in the correct order
   // First update zen mode if needed

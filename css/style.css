@@ -771,6 +771,67 @@ div#wordToType {
   animation: correctFlash 0.4s ease-out;
 }
 
+/* Simple Precision Multiplier */
+.precision-multiplier-simple {
+  color: #7aa2f7;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(122, 162, 247, 0.5);
+  min-width: 3rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+@keyframes precisionAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes precisionIncrement {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+    color: #9ece6a;
+    text-shadow: 0 0 15px rgba(158, 206, 106, 0.7);
+  }
+  100% {
+    transform: scale(1);
+    color: #7aa2f7;
+    text-shadow: 0 0 8px rgba(122, 162, 247, 0.5);
+  }
+}
+
+@keyframes precisionFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+.precision-multiplier-simple.appear {
+  animation: precisionAppear 0.4s ease-out;
+}
+
+.precision-multiplier-simple.increment {
+  animation: precisionIncrement 0.4s ease-out;
+}
+
+.precision-multiplier-simple.fade-out {
+  animation: precisionFadeOut 0.3s ease-in forwards;
+}
+
 /* Game Buttons Layout */
 #buttons {
   display: flex;
@@ -963,6 +1024,37 @@ div#wordToType {
 /* Defeat styling */
 .game-stats-container.defeat .stat-value {
   color: #f7768e;
+}
+
+/* Score Breakdown Styling */
+.game-stats-container.score-breakdown {
+  margin: 20px 0 40px;
+  gap: 20px;
+}
+
+.game-stats-container.score-breakdown .stat-card {
+  min-width: 160px;
+  padding: 15px;
+  text-align: left;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-stats-container.score-breakdown .stat-label {
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.game-stats-container.score-breakdown .stat-value {
+  font-size: 28px;
+}
+
+.game-stats-container.score-breakdown .stat-value.precision {
+  color: #9ece6a;
+}
+
+.game-stats-container.score-breakdown .stat-value.energy {
+  color: #ff9e64;
 }
 
 .game-over-header {

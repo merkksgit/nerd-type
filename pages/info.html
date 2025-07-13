@@ -330,6 +330,22 @@
                   </ul>
                 </li>
                 <li>
+                  <strong>Precision Bonus:</strong> Additional points for
+                  consecutive perfect words
+                  <ul>
+                    <li>
+                      Tracks words typed without any mistakes (precision streak)
+                    </li>
+                    <li>Bonus starts after 5 consecutive perfect words</li>
+                    <li>
+                      1% of base score per perfect word after the 5th
+                    </li>
+                    <li>Streak resets to 0 when any typing mistake is made</li>
+                    <li>Applied to base score only, not energy bonus</li>
+                    <li>No cap - longer streaks always reward more points</li>
+                  </ul>
+                </li>
+                <li>
                   <strong>Difficulty Multiplier:</strong> A dynamic calculation
                   based on game energy settings
                   <ul>
@@ -364,7 +380,10 @@
                     </li>
                   </ul>
                 </li>
-                <li><strong>Final Score:</strong> Base Score + Energy Bonus</li>
+                <li>
+                  <strong>Final Score:</strong> Base Score + Precision Bonus +
+                  Energy Bonus
+                </li>
               </ol>
               <p>
                 This scoring system ensures that your results are comparable
