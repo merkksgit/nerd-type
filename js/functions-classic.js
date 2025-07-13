@@ -339,7 +339,7 @@ function updateUIForGameMode() {
   if (zenModeSettings && zenModeToggle) {
     zenModeSettings.style.display = zenModeToggle.checked ? "block" : "none";
   }
-  
+
   // Hide precision multiplier in zen mode
   if (isZenMode) {
     hidePrecisionMultiplier();
@@ -351,7 +351,8 @@ async function initializeGame() {
   // Load the Zen Mode state
   isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
   // Font selection
-  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-light";
+  const currentFont =
+    localStorage.getItem("nerdtype_font") || "jetbrains-light";
   applyFont(currentFont);
 
   // Load saved settings
@@ -830,7 +831,7 @@ function startGame() {
   gameEnded = false;
   currentWordIndex = 0;
   nextWordIndex = 1;
-  
+
   // Reset precision multiplier system
   resetPrecisionSystem();
 
@@ -1443,7 +1444,7 @@ function checkInput(e) {
         isCorrectChar = true;
       }
     }
-    
+
     // Update precision streak based on character accuracy
     if (!isCorrectChar) {
       // Mark current word as having mistakes and reset precision streak (except in zen mode)
@@ -1464,19 +1465,19 @@ function checkInput(e) {
     // Only increment precision streak if this word had no mistakes and not in zen mode
     if (!currentWordHasMistakes && !isZenMode) {
       precisionStreak++;
-      
+
       // Update peak streak if current streak is higher
       if (precisionStreak > peakPrecisionStreak) {
         peakPrecisionStreak = precisionStreak;
       }
-      
+
       // Show multiplier starting from 5 perfect words
       if (precisionStreak >= 5) {
         showPrecisionMultiplier();
         animatePrecisionIncrement();
       }
     }
-    
+
     // Reset the word mistake flag for next word
     currentWordHasMistakes = false;
     flashProgress();
@@ -1641,7 +1642,7 @@ function calculateScoreBreakdown() {
 
     // Calculate difficulty multiplier based on game settings
     const difficultyMultiplier = calculateDifficultyMultiplier(settings);
-    
+
     // Calculate precision multiplier bonus based on peak streak
     const precisionMultiplier = calculatePeakPrecisionMultiplier();
 
@@ -1650,11 +1651,15 @@ function calculateScoreBreakdown() {
     );
 
     // Apply precision bonus using the calculated multiplier
-    const precisionBonusScore = Math.round(baseScore * (precisionMultiplier - 1.0));
-    
+    const precisionBonusScore = Math.round(
+      baseScore * (precisionMultiplier - 1.0),
+    );
+
     const energyBonus = Math.round(Math.min(timeLeft * 5, baseScore * 0.2));
 
-    const totalScore = Math.round(baseScore + precisionBonusScore + energyBonus);
+    const totalScore = Math.round(
+      baseScore + precisionBonusScore + energyBonus,
+    );
 
     return {
       baseScore,
@@ -1664,7 +1669,7 @@ function calculateScoreBreakdown() {
       precisionMultiplier,
       difficultyMultiplier,
       wpm,
-      accuracy: accuracy * 100
+      accuracy: accuracy * 100,
     };
   } catch (error) {
     console.error("Error calculating score breakdown:", error);
@@ -1677,7 +1682,7 @@ function calculateScoreBreakdown() {
       precisionMultiplier: 1.0,
       difficultyMultiplier: 1.0,
       wpm: 0,
-      accuracy: 0
+      accuracy: 0,
     };
   }
 }
@@ -1716,62 +1721,64 @@ function showPrecisionMultiplier() {
   if (isZenMode) {
     return;
   }
-  
+
   // Check if precision multiplier UI is hidden by user setting
-  const hidePrecisionUI = localStorage.getItem("hide_precision_multiplier_ui") === "true";
+  const hidePrecisionUI =
+    localStorage.getItem("hide_precision_multiplier_ui") === "true";
   if (hidePrecisionUI) {
     return;
   }
-  
+
   // Check if minimal UI mode is enabled
-  const minimalUIEnabled = localStorage.getItem("minimal_ui_enabled") === "true";
+  const minimalUIEnabled =
+    localStorage.getItem("minimal_ui_enabled") === "true";
   if (minimalUIEnabled) {
     return;
   }
-  
-  const multiplierElement = document.getElementById('precisionMultiplier');
-  
+
+  const multiplierElement = document.getElementById("precisionMultiplier");
+
   if (multiplierElement) {
     multiplierElement.textContent = `${precisionStreak}x`;
-    multiplierElement.style.display = 'inline-block';
-    
+    multiplierElement.style.display = "inline-block";
+
     // Add appear animation for first show
-    multiplierElement.classList.add('appear');
+    multiplierElement.classList.add("appear");
     setTimeout(() => {
-      multiplierElement.classList.remove('appear');
+      multiplierElement.classList.remove("appear");
     }, 400);
   }
 }
 
 function hidePrecisionMultiplier() {
-  const multiplierElement = document.getElementById('precisionMultiplier');
+  const multiplierElement = document.getElementById("precisionMultiplier");
   if (multiplierElement) {
     // Add fade-out animation
-    multiplierElement.classList.add('fade-out');
-    
+    multiplierElement.classList.add("fade-out");
+
     // Hide after animation completes
     setTimeout(() => {
-      multiplierElement.style.display = 'none';
-      multiplierElement.classList.remove('fade-out');
+      multiplierElement.style.display = "none";
+      multiplierElement.classList.remove("fade-out");
     }, 300);
   }
 }
 
 function animatePrecisionIncrement() {
-  const multiplierElement = document.getElementById('precisionMultiplier');
+  const multiplierElement = document.getElementById("precisionMultiplier");
   if (multiplierElement) {
     // Update the text
     multiplierElement.textContent = `${precisionStreak}x`;
-    
+
     // Add increment animation
-    multiplierElement.classList.remove('increment');
+    multiplierElement.classList.remove("increment");
     // Force reflow to reset animation
     multiplierElement.offsetHeight;
-    multiplierElement.classList.add('increment');
-    
+    multiplierElement.classList.add("increment");
+
     // Remove animation class after completion
     setTimeout(() => {
-      multiplierElement.classList.remove('increment');
+      multiplierElement.classList.remove("increment");
     }, 400);
   }
 }
@@ -1781,15 +1788,15 @@ function calculatePrecisionMultiplier() {
   if (isZenMode) {
     return 1.0;
   }
-  
+
   if (precisionStreak < 5) {
     return 1.0; // No bonus for less than 5 perfect words
   }
-  
+
   // Simple system: 1% bonus per perfect word after 5th
   const perfectWordsAboveFive = Math.max(0, precisionStreak - 5);
   const bonusPercentage = perfectWordsAboveFive * 0.01;
-  
+
   // Return as multiplier for display (1.0 + bonus percentage)
   return 1.0 + bonusPercentage;
 }
@@ -1799,15 +1806,15 @@ function calculatePeakPrecisionMultiplier() {
   if (isZenMode) {
     return 1.0;
   }
-  
+
   if (peakPrecisionStreak < 5) {
     return 1.0; // No bonus for less than 5 perfect words
   }
-  
+
   // Simple system: 1% bonus per perfect word after 5th
   const perfectWordsAboveFive = Math.max(0, peakPrecisionStreak - 5);
   const bonusPercentage = perfectWordsAboveFive * 0.01;
-  
+
   // Return as multiplier for display (1.0 + bonus percentage)
   return 1.0 + bonusPercentage;
 }
@@ -1884,8 +1891,10 @@ function showGameOverModal(message, isSuccess = true) {
         wordGoal: gameSettings.timeLimit,
         bonusEnergy: gameSettings.bonusTime,
         initialEnergy: gameSettings.initialTime,
-        difficultyMultiplier: scoreBreakdown.difficultyMultiplier.toFixed(2) + "x",
-        precisionMultiplier: scoreBreakdown.precisionMultiplier.toFixed(2) + "x",
+        difficultyMultiplier:
+          scoreBreakdown.difficultyMultiplier.toFixed(2) + "x",
+        precisionMultiplier:
+          scoreBreakdown.precisionMultiplier.toFixed(2) + "x",
       },
     });
     saveClassicResult(
@@ -1960,7 +1969,7 @@ function displayModernGameOverContent(data) {
   }
 
   content += `</div>`;
-  
+
   // Add score breakdown for classic mode
   if (data.mode === "classic" && data.scoreBreakdown) {
     content += `
@@ -2007,7 +2016,7 @@ function displayModernGameOverContent(data) {
           <div class="settings-row">
             <span>Initial Energy: ${data.gameSettings.initialEnergy}</span>
             <span>Difficulty: ${data.gameSettings.difficultyMultiplier}</span>
-            <span>Streak Bonus: ${data.gameSettings.precisionMultiplier}</span>
+            <span>Precision Multiplier: ${data.gameSettings.precisionMultiplier}</span>
           </div>
         </div>
       `;
