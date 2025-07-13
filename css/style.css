@@ -2271,7 +2271,6 @@ tr:hover .username-rank-icon {
   #startButton:hover,
   #resetBtn:hover {
     color: inherit;
-    box-shadow: none;
     transform: none;
     background-color: #1f2335;
   }
