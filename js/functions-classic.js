@@ -1731,7 +1731,7 @@ function showPrecisionMultiplier() {
 
   // Check if minimal UI mode is enabled
   const minimalUIEnabled =
-    localStorage.getItem("minimal_ui_enabled") === "true";
+    localStorage.getItem("nerdtype_hide_ui") === "true";
   if (minimalUIEnabled) {
     return;
   }
