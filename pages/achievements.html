@@ -43,6 +43,7 @@
       sizes="192x192"
     />
     <link href="../css/style.css" rel="stylesheet" />
+    <link href="../css/settings-modal.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -57,6 +58,65 @@
       src="https://kit.fontawesome.com/fc21fca839.js"
       crossorigin="anonymous"
     ></script>
+    <!-- Firebase -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        push,
+        query,
+        orderByChild,
+        limitToLast,
+        get,
+        equalTo,
+        set,
+        remove,
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+      // Add Firebase Auth imports
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+      // Make Firebase modules available globally
+      window.firebaseModules = {
+        initializeApp,
+        getDatabase,
+        ref,
+        push,
+        query,
+        orderByChild,
+        limitToLast,
+        get,
+        equalTo,
+        set,
+        remove,
+        // Add auth modules
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signOut,
+      };
+
+      // Initialize Firebase using the config file
+      if (typeof window.initializeFirebaseApp === "function") {
+        window.initializeFirebaseApp(window.firebaseModules);
+      } else {
+        document.addEventListener("DOMContentLoaded", () => {
+          if (typeof window.initializeFirebaseApp === "function") {
+            window.initializeFirebaseApp(window.firebaseModules);
+          }
+        });
+      }
+    </script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/auth-handler.js"></script>
   </head>
   <body class="d-flex flex-column h-100">
     <div class="container-fluid flex-grow-1 d-flex flex-column">
@@ -105,6 +165,21 @@
               </li>
             </ul>
           </div>
+          <button id="changeUsername" class="floating-user-btn">
+            <i class="fa-solid fa-user"></i>
+            <span id="usernameDisplay">runner</span>
+          </button>
+          <button id="openSettingsBtn" class="floating-settings-btn ms-2">
+            <i class="fa-solid fa-gear"></i>
+            <span id="settingsDisplay">Settings</span>
+          </button>
+          <button id="viewScoreboardBtn" class="floating-scoreboard-btn ms-2">
+            <i class="fa-solid fa-crown"></i>
+            <span>Scoreboard</span>
+          </button>
+          <button id="uiToggleBtn" class="ui-toggle-btn">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
         </div>
       </nav>
       <!-- Achievements Section -->
@@ -112,7 +187,8 @@
         <article class="col-md-12 p-3 flex-column d-flex align-items-center">
           <div class="mt-4 mb-4">
             <h1 class="page-title mb-3 achievements-title">
-              <i class="fa-solid fa-trophy"></i> CORE ACHIEVEMENTS <span id="core-achievement-counter" style="color: #7aa2f7;"></span>
+              <i class="fa-solid fa-trophy"></i> CORE ACHIEVEMENTS
+              <span id="core-achievement-counter" style="color: #7aa2f7"></span>
             </h1>
           </div>
 
@@ -137,7 +213,11 @@
               <div class="col-12 col-md-8 mb-4 mt-4">
                 <h2 class="text-center mb-3" style="color: #bb9af7">
                   <i class="fa-solid fa-calendar-alt me-2"></i>SEASONAL
-                  ACHIEVEMENTS <span id="seasonal-achievement-counter" style="color: #7aa2f7;"></span>
+                  ACHIEVEMENTS
+                  <span
+                    id="seasonal-achievement-counter"
+                    style="color: #7aa2f7"
+                  ></span>
                 </h2>
                 <!-- Container for seasonal achievements -->
                 <div id="seasonal-achievements-container" class="mb-4">
@@ -156,6 +236,1189 @@
         </article>
       </div>
     </div>
+
+    <!-- Essential Modals for Button Functionality -->
+
+    <!-- Login/Register Modal -->
+    <div
+      class="modal fade"
+      id="loginModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="loginModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 text-center">
+            <h5 class="modal-title w-100" id="loginModalLabel">
+              [MAINFRAME LOGIN SEQUENCE]
+            </h5>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            <pre class="terminal-output" style="margin-bottom: 20px">
+> INITIALIZING LOGIN SEQUENCE...
+> SECURE ACCESS REQUIRED...
+> <span style="color:#ff9e64;">PRIVACY NOTICE:</span> Your email is used only for authentication.
+</pre>
+            <div class="btn-group w-100 mb-3" role="group">
+              <input
+                type="radio"
+                class="btn-check"
+                name="authMode"
+                id="loginMode"
+                checked
+              />
+              <label class="btn btn-outline-primary" for="loginMode"
+                >LOGIN</label
+              >
+              <input
+                type="radio"
+                class="btn-check"
+                name="authMode"
+                id="registerMode"
+              />
+              <label class="btn btn-outline-primary" for="registerMode"
+                >REGISTER</label
+              >
+            </div>
+            <div id="loginForm">
+              <div class="mb-3">
+                <label for="loginEmail" class="form-label terminal-label"
+                  >EMAIL:</label
+                >
+                <input
+                  type="email"
+                  class="form-control terminal-input"
+                  id="loginEmail"
+                  placeholder="your@email.com"
+                  autocomplete="off"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="loginPassword" class="form-label terminal-label"
+                  >PASSWORD:</label
+                >
+                <input
+                  type="password"
+                  class="form-control terminal-input"
+                  id="loginPassword"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+              <div
+                id="loginError"
+                class="error-message"
+                style="display: none"
+              ></div>
+            </div>
+            <div id="registerForm" style="display: none">
+              <div class="mb-3">
+                <label for="registerEmail" class="form-label terminal-label"
+                  >EMAIL:</label
+                >
+                <input
+                  type="email"
+                  class="form-control terminal-input"
+                  id="registerEmail"
+                  placeholder="your@email.com"
+                  autocomplete="off"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="registerUsername" class="form-label terminal-label"
+                  >USERNAME:</label
+                >
+                <input
+                  type="text"
+                  class="form-control terminal-input"
+                  id="registerUsername"
+                  placeholder="Enter username (2-20 characters)"
+                  maxlength="20"
+                  required
+                />
+                <div id="usernameAvailability" class="username-status"></div>
+              </div>
+              <div class="mb-3">
+                <label for="registerPassword" class="form-label terminal-label"
+                  >PASSWORD:</label
+                >
+                <input
+                  type="password"
+                  class="form-control terminal-input"
+                  id="registerPassword"
+                  placeholder="••••••••"
+                  minlength="6"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="confirmPassword" class="form-label terminal-label"
+                  >CONFIRM PASSWORD:</label
+                >
+                <input
+                  type="password"
+                  class="form-control terminal-input"
+                  id="confirmPassword"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+              <div
+                id="registerError"
+                class="error-message"
+                style="display: none"
+              ></div>
+            </div>
+            <div id="authLoading" class="text-center" style="display: none">
+              <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <div class="mt-2">Authenticating...</div>
+            </div>
+          </div>
+          <div class="modal-footer border-top-0 d-flex justify-content-center">
+            <button id="authSubmitBtn" type="button" class="btn btn-primary">
+              LOGIN
+            </button>
+            <button
+              id="skipAuthBtn"
+              type="button"
+              class="btn btn-secondary ms-2"
+            >
+              CONTINUE AS GUEST
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Username Setup Modal -->
+    <div
+      class="modal fade"
+      id="usernameSetupModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="usernameSetupModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 text-center">
+            <h5 class="modal-title w-100" id="usernameSetupModalLabel">
+              [USERNAME CONFIGURATION]
+            </h5>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            <pre class="terminal-output" style="margin-bottom: 20px">
+> AUTHENTICATION SUCCESSFUL
+> CONFIGURE YOUR DISPLAY NAME:
+> <span style="color:#ff9e64;">NOTE:</span> Username will appear on global leaderboards
+            </pre>
+            <div class="mb-3">
+              <label for="setupUsername" class="form-label terminal-label"
+                >USERNAME:</label
+              >
+              <input
+                type="text"
+                class="form-control terminal-input"
+                id="setupUsername"
+                placeholder="Enter unique username"
+                maxlength="20"
+                required
+              />
+              <div class="form-text">
+                2-20 characters. Cannot be changed later.
+              </div>
+              <div id="setupUsernameAvailability" class="username-status"></div>
+            </div>
+            <div
+              id="setupError"
+              class="error-message"
+              style="display: none"
+            ></div>
+          </div>
+          <div class="modal-footer border-top-0 d-flex justify-content-center">
+            <button
+              id="confirmSetupUsername"
+              type="button"
+              class="btn btn-primary"
+            >
+              CONFIRM USERNAME
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scoreboard Modal -->
+    <div
+      class="modal fade"
+      id="scoreboardModal"
+      tabindex="-1"
+      aria-labelledby="scoreboardModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg scoreboard-modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 text-center">
+            <h5
+              class="modal-title w-100 justify-content-center"
+              id="scoreboardModalLabel"
+            >
+              [LOCAL SCOREBOARD]
+            </h5>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            <ul id="previousResults"></ul>
+          </div>
+          <div
+            class="modal-footer border-top-0 d-flex flex-row justify-content-center"
+          >
+            <button
+              id="scoreboardCloseBtn"
+              type="button"
+              class="btn mb-3"
+              data-bs-dismiss="modal"
+              style="min-width: 200px"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div
+      class="modal fade"
+      id="settingsModal"
+      tabindex="-1"
+      aria-labelledby="settingsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 text-center">
+            <h5 class="modal-title w-100" id="settingsModalLabel">
+              [GAME SETTINGS]
+            </h5>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            <div class="container-fluid">
+              <div class="row">
+                <!-- Game Mode Selection -->
+                <div class="col-md-6 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-gamepad me-2"></i>Game Mode
+                    </h5>
+                    <div class="settings-card-body">
+                      <!-- Zen Mode Toggle -->
+                      <div class="form-check form-switch mb-3">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="zenModeToggle"
+                        />
+                        <label class="form-check-label" for="zenModeToggle">
+                          Zen Mode
+                          <small class="d-block text-muted"
+                            >No energy, practice in perfect zen</small
+                          >
+                        </label>
+                      </div>
+
+                      <hr class="classic-mode-setting" />
+
+                      <!-- Classic Mode Options - only visible when Zen Mode is off -->
+                      <div class="classic-mode-setting">
+                        <div class="form-check mb-2">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modeClassic"
+                            value="classic"
+                            checked
+                          />
+                          <label class="form-check-label" for="modeClassic">
+                            Classic Mode
+                            <small class="d-block text-muted"
+                              >Balanced difficulty</small
+                            >
+                          </label>
+                        </div>
+                        <div class="form-check mb-2">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modeHard"
+                            value="hard"
+                          />
+                          <label class="form-check-label" for="modeHard">
+                            Hard Mode
+                            <small class="d-block text-muted"
+                              >Challenging difficulty</small
+                            >
+                          </label>
+                        </div>
+                        <div class="form-check mb-2">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modePractice"
+                            value="practice"
+                          />
+                          <label class="form-check-label" for="modePractice">
+                            Practice Mode
+                            <small class="d-block text-muted"
+                              >Extended time limits</small
+                            >
+                          </label>
+                        </div>
+                        <div class="form-check mb-2">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modeSpeedrunner"
+                            value="speedrunner"
+                          />
+                          <label class="form-check-label" for="modeSpeedrunner">
+                            Speedrunner Mode
+                            <small class="d-block text-muted"
+                              >Fast-paced challenge</small
+                            >
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="gameMode"
+                            id="modeCustom"
+                            value="custom"
+                          />
+                          <label class="form-check-label" for="modeCustom">
+                            Custom Mode
+                            <small class="d-block text-muted"
+                              >Your own settings</small
+                            >
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Custom Settings -->
+                <div class="col-md-6 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-sliders me-2"></i>Custom Settings
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="mb-3 classic-mode-setting">
+                        <label for="wordsGoal" class="form-label"
+                          >Words Goal</label
+                        >
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="wordsGoal"
+                            min="10"
+                            max="200"
+                            value="30"
+                          />
+                          <span class="input-group-text">words</span>
+                        </div>
+                        <small class="text-muted"
+                          >Number of words needed to win (10-200)</small
+                        >
+                      </div>
+
+                      <div class="mb-3 classic-mode-setting">
+                        <label for="bonusEnergy" class="form-label"
+                          >Bonus Energy</label
+                        >
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="bonusEnergy"
+                            min="1"
+                            max="10"
+                            value="3"
+                          />
+                          <span class="input-group-text">units</span>
+                        </div>
+                        <small class="text-muted"
+                          >Energy gained per correct word (1-10)</small
+                        >
+                      </div>
+
+                      <div class="mb-3 classic-mode-setting">
+                        <label for="initialEnergy" class="form-label"
+                          >Initial Energy</label
+                        >
+                        <div class="input-group">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="initialEnergy"
+                            min="4"
+                            max="20"
+                            value="10"
+                          />
+                          <span class="input-group-text">units</span>
+                        </div>
+                        <small class="text-muted"
+                          >Starting energy amount (4-20)</small
+                        >
+                      </div>
+                      <div
+                        id="zenModeSettings"
+                        style="display: none; margin-top: 15px"
+                      >
+                        <div class="mb-3">
+                          <label for="zenWordGoal" class="form-label"
+                            >Word Goal (Zen Mode)</label
+                          >
+                          <div class="input-group">
+                            <input
+                              type="number"
+                              class="form-control"
+                              id="zenWordGoal"
+                              min="10"
+                              max="200"
+                              value="30"
+                            />
+                            <span class="input-group-text">words</span>
+                          </div>
+                          <small class="text-muted"
+                            >Number of words to type (10-200)</small
+                          >
+                        </div>
+                      </div>
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="showSpacesToggle"
+                        />
+                        <label class="form-check-label" for="showSpacesToggle">
+                          Space After Words
+                        </label>
+                        <small class="d-block text-muted"
+                          >Add space after each word for more realistic typing
+                          practice</small
+                        >
+                      </div>
+                      <br />
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="dataCollectionToggle"
+                          checked
+                        />
+                        <label
+                          class="form-check-label"
+                          for="dataCollectionToggle"
+                        >
+                          Share scores to global leaderboards
+                        </label>
+                        <small class="d-block text-muted">
+                          When enabled, scores are shared to public leaderboards
+                          (login required). When disabled and logged in, game
+                          data is still saved to cloud privately.
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mb-4 mx-auto">
+                <div
+                  class="difficulty-indicator mt-2 mb-3 classic-mode-setting"
+                >
+                  <label class="form-label mb-3"
+                    >Difficulty Multiplier:
+                    <span id="difficultyValue">1.00x</span></label
+                  >
+                  <div class="progress settings">
+                    <div
+                      id="difficultyBar"
+                      class="progress-bar difficulty-progress-bar"
+                      role="progressbar"
+                      style="width: 50%"
+                      aria-valuenow="50"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    ></div>
+                  </div>
+                  <small class="text-muted d-block mt-1 pt-2"
+                    >Affects score calculation. Higher difficulty = higher
+                    potential score.</small
+                  >
+                </div>
+              </div>
+
+              <!-- Additional Settings -->
+              <div class="row mt-3">
+                <div class="col-md-6 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-volume-high me-2"></i>Sound Settings
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="achievementSoundToggle"
+                          checked
+                        />
+                        <label
+                          class="form-check-label"
+                          for="achievementSoundToggle"
+                        >
+                          Achievement Sound
+                        </label>
+                        <small class="d-block text-muted"
+                          >Play sound when unlocking achievements</small
+                        >
+                      </div>
+                      <div class="form-check form-switch">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="keypressSoundToggle"
+                          checked
+                        />
+                        <label
+                          class="form-check-label"
+                          for="keypressSoundToggle"
+                        >
+                          Keypress Sound
+                        </label>
+                        <small class="d-block text-muted"
+                          >Play sound when typing during gameplay</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Language Settings Section for Settings Modal -->
+                <div class="col-md-6 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-language me-2"></i>Word Set
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langEnglish"
+                          value="english"
+                          checked
+                        />
+                        <label class="form-check-label" for="langEnglish">
+                          English
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langFinnish"
+                          value="finnish"
+                        />
+                        <label class="form-check-label" for="langFinnish">
+                          Finnish
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langSwedish"
+                          value="swedish"
+                        />
+                        <label class="form-check-label" for="langSwedish">
+                          Swedish
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langProgramming"
+                          value="programming"
+                        />
+                        <label class="form-check-label" for="langProgramming"
+                          >Programming
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="languageMode"
+                          id="langNightmare"
+                          value="nightmare"
+                        />
+                        <label class="form-check-label" for="langNightmare"
+                          >Nightmare
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Font Settings Section -->
+                <div class="col-md-12 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-font me-2"></i>Font Settings
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="fontFamily"
+                          id="fontJetBrains"
+                          value="jetbrains-mono"
+                        />
+                        <label class="form-check-label" for="fontJetBrains">
+                          JetBrains Mono
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="fontFamily"
+                          id="fontJetBrainsLight"
+                          value="jetbrains-light"
+                          checked
+                        />
+                        <label
+                          class="form-check-label"
+                          for="fontJetBrainsLight"
+                        >
+                          JetBrains Mono Light
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="fontFamily"
+                          id="fontDeparture"
+                          value="departure-mono"
+                        />
+                        <label class="form-check-label" for="fontDeparture">
+                          Departure Mono
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="fontFamily"
+                          id="fontFiraCode"
+                          value="firacode-mono"
+                        />
+                        <label class="form-check-label" for="fontFiraCode">
+                          FiraCode Mono
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="fontFamily"
+                          id="fontBigBlueTerm"
+                          value="bigblueterm-mono"
+                        />
+                        <label class="form-check-label" for="fontBigBlueTerm">
+                          BigBlueTerm Mono
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="fontFamily"
+                          id="font0xProto"
+                          value="oxproto-mono"
+                        />
+                        <label class="form-check-label" for="font0xProto">
+                          0xProto Mono
+                        </label>
+                      </div>
+
+                      <div
+                        class="font-preview mt-3"
+                        id="fontPreview"
+                        style="
+                          background-color: #1f2335;
+                          padding: 10px;
+                          border-radius: 4px;
+                          font-size: 16px;
+                        "
+                      >
+                        // TODO: Fix this later 123
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Cursor Appearance Settings -->
+                <div class="col-md-12 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-mouse-pointer me-2"></i>Cursor
+                      Appearance
+                    </h5>
+                    <div class="settings-card-body">
+                      <!-- Cursor Selection -->
+                      <div class="cursor-selection-grid">
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorOrange"
+                            value="orange"
+                            checked
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorOrange"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-orange.png"
+                                alt="Orange arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-orange.png"
+                                alt="Orange pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">Orange</span>
+                          </label>
+                        </div>
+
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorGreen"
+                            value="green"
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorGreen"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-green.png"
+                                alt="Green arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-green.png"
+                                alt="Green pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">Green</span>
+                          </label>
+                        </div>
+
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorPurple"
+                            value="purple"
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorPurple"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-purple.png"
+                                alt="Purple arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-purple.png"
+                                alt="Purple pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">Purple</span>
+                          </label>
+                        </div>
+
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorBlue"
+                            value="blue"
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorBlue"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-blue.png"
+                                alt="Blue arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-blue.png"
+                                alt="Blue pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">Blue</span>
+                          </label>
+                        </div>
+
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorGradient"
+                            value="gradient"
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorGradient"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-gradient-outline.png"
+                                alt="Gradient arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-gradient-outline.png"
+                                alt="Gradient pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">Gradient</span>
+                          </label>
+                        </div>
+
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorOrangeOutline"
+                            value="orange-outline"
+                            checked
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorOrangeOutline"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-orange-outline.png"
+                                alt="Orange outline arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-orange-outline.png"
+                                alt="Orange outline pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">Orange 2</span>
+                          </label>
+                        </div>
+
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorGreenOutline"
+                            value="green-outline"
+                            checked
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorGreenOutline"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-green-outline.png"
+                                alt="Green outline arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-green-outline.png"
+                                alt="Green outline pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">Green 2</span>
+                          </label>
+                        </div>
+
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorPurpleOutline"
+                            value="purple-outline"
+                            checked
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorPurpleOutline"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-purple-outline.png"
+                                alt="Purple outline arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-purple-outline.png"
+                                alt="Purple outline pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">Purple 2</span>
+                          </label>
+                        </div>
+
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorBlueOutline"
+                            value="blue-outline"
+                            checked
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorBlueOutline"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-blue-outline.png"
+                                alt="Blue outline arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-blue-outline.png"
+                                alt="Blue outline pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">Blue 2</span>
+                          </label>
+                        </div>
+
+                        <div class="form-check cursor-option">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="cursorTheme"
+                            id="cursorDefault"
+                            value="default"
+                          />
+                          <label
+                            class="form-check-label cursor-theme-label"
+                            for="cursorDefault"
+                          >
+                            <div class="cursor-theme-preview">
+                              <img
+                                src="../images/nt-arrow-white.png"
+                                alt="Purple arrow"
+                                class="cursor-mini-img"
+                              />
+                              <img
+                                src="../images/nt-pointer-white.png"
+                                alt="Purple pointer"
+                                class="cursor-mini-img"
+                              />
+                            </div>
+                            <span class="cursor-theme-name">System</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- UI Settings Section -->
+                <div class="col-md-12 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-display me-2"></i>UI Settings
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="form-check form-switch mb-3">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="minimalUIToggle"
+                        />
+                        <label class="form-check-label" for="minimalUIToggle">
+                          Minimal UI Mode
+                          <small class="d-block text-muted"
+                            >Hide most UI elements for distraction-free typing
+                            (Ctrl+Z)</small
+                          >
+                        </label>
+                      </div>
+
+                      <div class="form-check form-switch mb-3">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="hidePrecisionMultiplierToggle"
+                        />
+                        <label
+                          class="form-check-label"
+                          for="hidePrecisionMultiplierToggle"
+                        >
+                          Hide Precision Multiplier
+                          <small class="d-block text-muted"
+                            >Hide streak counter during gameplay (scoring still
+                            applies)</small
+                          >
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="modal-footer border-top-0 d-flex justify-content-center"
+            style="background-color: #24283b"
+          >
+            <button id="resetSettingsBtn" type="button" class="btn">
+              Reset
+            </button>
+            <button id="applySettingsBtn" type="button" class="btn">
+              Apply
+            </button>
+            <button
+              id="closeSettingsBtn"
+              type="button"
+              class="btn"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="customConfirmModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-dialog-centered"
+        style="transform: translateY(-25%)"
+      >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalTitle">Confirm Action</h5>
+          </div>
+          <div class="modal-body">
+            <p id="confirmModalMessage">Are you sure you want to proceed?</p>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="confirmCancelBtn"
+            >
+              Cancel
+            </button>
+            <button type="button" class="btn btn-primary" id="confirmOkBtn">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div
+      class="modal fade"
+      id="customAlertModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="alertModalTitle">Notice</h5>
+          </div>
+          <div class="modal-body">
+            <p id="alertModalMessage">This is an alert message.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="alertOkBtn">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer mt-auto p-3">
       <div class="container-fluid">
@@ -244,13 +1507,14 @@
         achievementSystem.renderSeasonalAchievementsToContainer(
           "seasonal-achievements-container",
         );
-
       });
-
     </script>
+    <script src="../js/username.js"></script>
+    <script src="../js/settings-modal.js"></script>
+    <script src="../js/ui-updates.js"></script>
+    <script src="../js/custom-modals.js"></script>
     <script src="../js/keyboard-nav.js"></script>
-    <script src="../js/chart.js"></script>
-    <script src="../js/functions-chart.js" type="module"></script>
+    <script src="../js/functions-classic.js" type="module"></script>
     <script src="../js/version.js"></script>
     <script src="../js/cursor-selection.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

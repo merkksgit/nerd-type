@@ -335,7 +335,6 @@ div h2 {
 
 #toggleGraph:active,
 #toggleAchievements:active,
-#viewScoreboardBtn:active,
 #viewScoreboardChartBtn:active,
 #startButton:active,
 #resetBtn:active,
@@ -2106,7 +2105,10 @@ body[data-ui-hidden="true"] .game-info,
 body[data-ui-hidden="true"] .footer,
 body[data-ui-hidden="true"] .progress,
 body[data-ui-hidden="true"] #buttons,
-body[data-ui-hidden="true"] .navbar {
+body[data-ui-hidden="true"] .navbar-nav {
+  display: none !important;
+}
+body[data-ui-hidden="true"] #header-logo {
   display: none !important;
 }
 
@@ -2127,7 +2129,7 @@ body[data-ui-hidden="true"] .navbar {
 body[data-ui-hidden="true"] #game {
   position: relative;
   top: 0;
-  margin-top: 6.7rem !important;
+  margin-top: 4.1rem !important;
 }
 
 body[data-ui-hidden="true"]::after {
