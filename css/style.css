@@ -2849,11 +2849,6 @@ tr:hover .username-rank-icon {
   .footer .bi {
     font-size: 0.9rem;
   }
-
-  /* Hide version info on mobile to save space */
-  #versionInfo {
-    display: none;
-  }
 }
 
 @media (max-width: 480px) {
