@@ -1369,7 +1369,8 @@ body:not(.chart-page) #customAlertModal .modal-dialog {
   margin: 1.75rem auto !important;
 }
 
-#customAlertModal .modal-dialog.modal-dialog-centered {
+#customAlertModal .modal-dialog.modal-dialog-centered,
+#customConfirmModal .modal-dialog.modal-dialog-centered {
   transform: translateY(-25%) !important;
 }
 
