@@ -2490,6 +2490,7 @@ function displayPreviousResults() {
   const resultsContainer = document.getElementById("previousResults");
   if (!resultsContainer) return;
 
+  // Use localStorage directly but ensure it's up to date after auth changes
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
   // Sort results by timestamp (most recent first) and limit to 15

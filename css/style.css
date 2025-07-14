@@ -252,7 +252,8 @@ div h2 {
 #toggleGraph,
 #toggleAchievements,
 #toggleScoreboard,
-#buttons #downloadDataBtn {
+#buttons #downloadDataBtn,
+#buttons #openDashboardBtn {
   color: #7aa2f7;
   background-color: #1f2335;
   border: none;
@@ -263,20 +264,24 @@ div h2 {
   transition: all 0.3s ease;
 }
 
-#buttons #downloadDataBtn {
+#buttons #downloadDataBtn,
+#buttons #openDashboardBtn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 #buttons #downloadDataBtn i,
-#buttons #downloadDataBtn span {
+#buttons #downloadDataBtn span,
+#buttons #openDashboardBtn i,
+#buttons #openDashboardBtn span {
   background-color: transparent;
 }
 
 /* Button spacing */
 #openTerminalBtn,
 #downloadDataBtn,
+#openDashboardBtn,
 #startButton,
 #clrResults,
 #confirmUsername,
@@ -324,7 +329,8 @@ div h2 {
 #resetBtn:hover,
 #scoreboardCloseBtn:hover,
 #game-command-modal-close:hover,
-#buttons #downloadDataBtn:hover {
+#buttons #downloadDataBtn:hover,
+#buttons #openDashboardBtn:hover {
   color: #ff9e64;
   box-shadow:
     0 6px 12px rgba(0, 0, 0, 0.3),
@@ -338,7 +344,8 @@ div h2 {
 #viewScoreboardChartBtn:active,
 #scoreboardCloseBtn:active,
 #game-command-modal-close:active,
-#buttons #downloadDataBtn:active {
+#buttons #downloadDataBtn:active,
+#buttons #openDashboardBtn:active {
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.2),
     0 0 2px rgba(122, 162, 247, 0.3);

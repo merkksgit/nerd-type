@@ -1113,11 +1113,8 @@ window.switchToGuestScoreboard = function () {
         // Failed to parse, will create fresh scoreboard
       }
       
-      if (!currentScores || currentScores === "null" || currentScores === "undefined" || parsedScores.length === 0) {
-        // Only start fresh if there are truly no scores
-        localStorage.setItem("gameResults", JSON.stringify([]));
-      }
-      // Otherwise preserve existing scores (already in guest mode)
+      // Always start fresh when there's no guest backup - clear any logged-in user data
+      localStorage.setItem("gameResults", JSON.stringify([]));
     }
 
     // Refresh scoreboard display if visible
