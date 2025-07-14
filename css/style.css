@@ -1367,8 +1367,9 @@ body:not(.chart-page) #customAlertModal .modal-dialog {
 }
 
 #customAlertModal .modal-dialog.modal-dialog-centered,
-#customConfirmModal .modal-dialog.modal-dialog-centered {
-  transform: translateY(-25%) !important;
+#customConfirmModal .modal-dialog.modal-dialog-centered,
+#confirmModalMessage .modal-dialog.modal-dialog-centered {
+  transform: translateY(-15%) !important;
 }
 
 body:not(.chart-page) #customAlertModal .modal-body {
