@@ -106,19 +106,28 @@ async function testConnection(firebaseModules) {
 }
 
 // Handle authentication state changes - FIXED TO RESPECT FONT SETTINGS
-function handleAuthStateChange(user) {
+async function handleAuthStateChange(user) {
   const usernameDisplay = document.getElementById("usernameDisplay");
   const changeUsernameBtn = document.getElementById("changeUsername");
 
   if (user) {
     console.log("✅ User logged in:", user.email);
 
-    // Use email username (part before @) as display name
-    const emailUsername = user.email.split("@")[0];
+    // Try to get stored username from database, fallback to email username
+    let username;
+    try {
+      const storedUsername = await getUserStoredUsername(user.uid);
+      username = storedUsername || user.email.split("@")[0];
+    } catch (error) {
+      console.warn("Failed to retrieve stored username, using email fallback:", error);
+      username = user.email.split("@")[0];
+    }
+
+    console.log("📝 Using username:", username);
 
     // Update displays immediately
     if (usernameDisplay) {
-      usernameDisplay.textContent = emailUsername;
+      usernameDisplay.textContent = username;
       // FIXED: Use current font setting instead of hardcoded font
       const currentFont =
         localStorage.getItem("nerdtype_font") || "jetbrains-light";
@@ -126,8 +135,8 @@ function handleAuthStateChange(user) {
     }
 
     // Store for game use
-    localStorage.setItem("nerdtype_username", emailUsername);
-    window.playerUsername = emailUsername;
+    localStorage.setItem("nerdtype_username", username);
+    window.playerUsername = username;
 
     // Clear guest mode
     localStorage.removeItem("nerdtype_guest_mode");
@@ -317,11 +326,11 @@ window.saveAuthenticatedScore = async function (gameData) {
   try {
     console.log("💾 Saving authenticated user data to Firebase:", gameData);
 
-    // Enhanced game data with user ID and email username
-    const emailUsername = currentUser.email.split("@")[0];
+    // Enhanced game data with user ID and stored username
+    const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
     const enhancedGameData = {
       ...gameData,
-      username: emailUsername, // Use email username
+      username: storedUsername, // Use stored username
       userId: currentUser.uid,
       userEmail: currentUser.email,
       authenticatedScore: true,
@@ -1726,6 +1735,34 @@ async function reserveUsername(username, userId, userEmail) {
   }
 }
 
+// Function to retrieve user's stored username from database
+async function getUserStoredUsername(userId) {
+  if (!window.firebaseModules || !database) {
+    console.warn("Firebase not ready, falling back to localStorage");
+    return localStorage.getItem("nerdtype_username") || null;
+  }
+
+  const { ref, get } = window.firebaseModules;
+  
+  try {
+    const userRef = ref(database, `users/${userId}`);
+    const snapshot = await get(userRef);
+    
+    if (snapshot.exists()) {
+      const userData = snapshot.val();
+      return userData.username || null;
+    } else {
+      console.log("No user data found in database");
+      return null;
+    }
+  } catch (error) {
+    console.error("❌ Error retrieving stored username:", error);
+    return null;
+  }
+}
+
+// Make function available globally
+window.getUserStoredUsername = getUserStoredUsername;
 
 async function validateUsernameComplete(username) {
   const formatValidation = validateUsernameFormat(username);

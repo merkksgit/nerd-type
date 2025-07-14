@@ -285,7 +285,10 @@ document.addEventListener("DOMContentLoaded", function () {
           window.playerUsername = "runner";
         }
 
-        loginModalInstance.hide();
+        // Hide modal if it exists
+        if (loginModalInstance) {
+          loginModalInstance.hide();
+        }
         console.log("User chose guest mode as runner");
       });
     }

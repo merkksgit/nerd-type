@@ -43,21 +43,30 @@ document.addEventListener("DOMContentLoaded", function () {
 async function handleLoginWithDelayedReload(user) {
   try {
     window.authProcessing = true;
-    const emailUsername = user.email.split("@")[0];
+    
+    // Try to get stored username from database, fallback to email username
+    let username;
+    try {
+      const storedUsername = await window.getUserStoredUsername(user.uid);
+      username = storedUsername || user.email.split("@")[0];
+    } catch (error) {
+      console.warn("Failed to retrieve stored username, using email fallback:", error);
+      username = user.email.split("@")[0];
+    }
 
-    console.log("✅ Login successful for:", emailUsername);
+    console.log("✅ Login successful for:", username);
 
     // Update localStorage immediately
-    localStorage.setItem("nerdtype_username", emailUsername);
+    localStorage.setItem("nerdtype_username", username);
 
     // Quick UI update
     updateUsernameButtonDisplay();
 
     // Show success message WITHOUT OK button
     if (window.siteModal) {
-      showLoginSuccessModal(emailUsername);
+      showLoginSuccessModal(username);
     } else {
-      console.log(`Welcome back, ${emailUsername}!`);
+      console.log(`Welcome back, ${username}!`);
     }
 
     // Wait longer to ensure Firebase auth is fully processed
@@ -119,7 +128,7 @@ async function handleLogout() {
 
     // Get username before clearing it
     const currentUser = window.getCurrentUser();
-    const emailUsername = currentUser ? currentUser.email.split("@")[0] : null;
+    const storedUsername = localStorage.getItem("nerdtype_username");
 
     // Clear username from localStorage
     localStorage.removeItem("nerdtype_username");
@@ -132,8 +141,8 @@ async function handleLogout() {
     console.log("✅ Logged out successfully");
 
     // Show goodbye message if we have a username and siteModal is available
-    if (emailUsername && window.siteModal) {
-      window.siteModal.showLogoutSuccessModal(emailUsername);
+    if (storedUsername && window.siteModal) {
+      window.siteModal.showLogoutSuccessModal(storedUsername);
     }
 
     // Reset auth processing flag after showing goodbye message
@@ -169,12 +178,12 @@ function updateUsernameButtonDisplay() {
 
   if (currentUser) {
     // User is authenticated - show username with logout icon
-    const emailUsername = currentUser.email.split("@")[0];
+    const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
 
     // Use logout icon when user is logged in
     changeUsernameBtn.innerHTML = `
       <i class="fa-solid fa-user"></i>
-      <span id="usernameDisplay">${emailUsername}</span>
+      <span id="usernameDisplay">${storedUsername}</span>
     `;
 
     // Add click handler for direct logout using custom modal
@@ -188,13 +197,13 @@ function updateUsernameButtonDisplay() {
 
       // Use custom modal instead of browser confirm
       if (window.siteModal) {
-        const confirmed = await window.siteModal.confirmLogout(emailUsername);
+        const confirmed = await window.siteModal.confirmLogout(storedUsername);
         if (confirmed) {
           window.logoutAndRedirect();
         }
       } else {
         // Fallback to browser confirm if custom modal not available
-        if (confirm(`Logout from ${emailUsername}?`)) {
+        if (confirm(`Logout from ${storedUsername}?`)) {
           window.logoutAndRedirect();
         }
       }
@@ -204,7 +213,7 @@ function updateUsernameButtonDisplay() {
     changeUsernameBtn.setAttribute("data-bs-toggle", "tooltip");
     changeUsernameBtn.setAttribute("data-bs-placement", "top");
     changeUsernameBtn.setAttribute("data-bs-custom-class", "auth-tooltip");
-    changeUsernameBtn.setAttribute("title", `Logout from ${emailUsername}`);
+    changeUsernameBtn.setAttribute("title", `Logout from ${storedUsername}`);
   } else if (isGuest) {
     // Guest mode - show with login icon to indicate they can login
     changeUsernameBtn.innerHTML = `
@@ -281,10 +290,10 @@ function updateScoreboardDisplay() {
   const scoreboardMessages = document.querySelectorAll(".auth-message");
   scoreboardMessages.forEach((message) => {
     if (currentUser) {
-      const emailUsername = currentUser.email.split("@")[0];
+      const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
       message.innerHTML = `
         <i class="fa-solid fa-user-check me-2"></i>
-        Logged in as <strong>${emailUsername}</strong> - scores will appear on global leaderboards
+        Logged in as <strong>${storedUsername}</strong> - scores will appear on global leaderboards
       `;
       message.className = "auth-message text-success small";
     } else if (isGuest) {
@@ -308,10 +317,10 @@ window.logoutAndRedirect = async function () {
   const currentUser = window.getCurrentUser();
   if (!currentUser) return;
 
-  const emailUsername = currentUser.email.split("@")[0];
+  const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
 
   try {
-    console.log("🚪 Logging out user:", emailUsername);
+    console.log("🚪 Logging out user:", storedUsername);
 
     // Perform logout immediately without loading state
     await window.logoutUser();
@@ -324,7 +333,7 @@ window.logoutAndRedirect = async function () {
 
     // Show goodbye message
     if (window.siteModal) {
-      window.siteModal.showLogoutSuccessModal(emailUsername);
+      window.siteModal.showLogoutSuccessModal(storedUsername);
     }
 
     console.log("User logged out - login available on demand");
@@ -349,8 +358,8 @@ window.showAccountSettings = async function () {
   const currentUser = window.getCurrentUser();
   if (!currentUser) return;
 
-  const emailUsername = currentUser.email.split("@")[0];
-  const message = `Account: ${emailUsername}\nEmail: ${currentUser.email}\n\nAccount management features coming soon!`;
+  const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
+  const message = `Account: ${storedUsername}\nEmail: ${currentUser.email}\n\nAccount management features coming soon!`;
 
   // Use custom modal if available
   if (window.siteModal) {
