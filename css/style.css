@@ -256,7 +256,7 @@ div h2 {
   color: #7aa2f7;
   background-color: #1f2335;
   border: none;
-  border-radius: 20px;
+  border-radius: 4px;
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.25),
     0 0 4px rgba(122, 162, 247, 0.3);
@@ -1275,7 +1275,7 @@ div#wordToType {
   color: #7aa2f7 !important;
   background-color: #1f2335 !important;
   border: none !important;
-  border-radius: 20px !important;
+  border-radius: 4px !important;
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.25),
     0 0 4px rgba(122, 162, 247, 0.3) !important;
@@ -2284,7 +2284,7 @@ tr:hover .username-rank-icon {
     color: inherit;
     background-color: #1f2335;
     border: none;
-    border-radius: 20px;
+    border-radius: 4px;
     box-shadow:
       0 4px 8px rgba(0, 0, 0, 0.25),
       0 0 4px rgba(122, 162, 247, 0.3);
