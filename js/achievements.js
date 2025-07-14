@@ -1,12 +1,16 @@
 // achievements.js - Handles achievement logic and notifications for NerdType
 // This module manages achievement unlocks, notifications, and storage
 
+// Import storage manager
+import storageManager from './storage-manager.js';
+
 class AchievementSystem {
   constructor() {
     // Load existing achievements from localStorage
-    this.achievementsData = JSON.parse(
-      localStorage.getItem("nerdtype_achievements"),
-    ) || {
+    const existingData = storageManager.getAchievements();
+    
+    // Default structure
+    const defaultData = {
       // Tracks which achievements have been unlocked
       unlockedAchievements: {},
       // Additional data needed for achievement tracking
@@ -27,6 +31,24 @@ class AchievementSystem {
       // Track pending notifications
       pendingNotifications: [],
     };
+
+    // Merge existing data with defaults, ensuring all required properties exist
+    if (existingData && typeof existingData === 'object') {
+      this.achievementsData = {
+        unlockedAchievements: existingData.unlockedAchievements || {},
+        stats: {
+          ...defaultData.stats,
+          ...(existingData.stats || {}),
+          languageWPM: {
+            ...defaultData.stats.languageWPM,
+            ...(existingData.stats?.languageWPM || {})
+          }
+        },
+        pendingNotifications: existingData.pendingNotifications || []
+      };
+    } else {
+      this.achievementsData = defaultData;
+    }
 
     // Define all available achievements
     this.achievements = {
@@ -353,7 +375,7 @@ class AchievementSystem {
 
           // Check if minimal UI was enabled during the game
           const minimalUIEnabled =
-            localStorage.getItem("nerdtype_hide_ui") === "true";
+            storageManager.getItem("nerdtype_hide_ui", "false") === "true";
           return minimalUIEnabled;
         },
       },
@@ -373,10 +395,8 @@ class AchievementSystem {
           }
 
           // Check if the player has data sharing enabled
-          const dataShareEnabled = localStorage.getItem(
-            "data_collection_enabled",
-          );
-          if (dataShareEnabled === "false") {
+          const dataShareEnabled = storageManager.isDataCollectionEnabled();
+          if (!dataShareEnabled) {
             return false; // Achievement not available if data sharing is disabled
           }
 
@@ -426,10 +446,8 @@ class AchievementSystem {
           }
 
           // Check if the player has data sharing enabled
-          const dataShareEnabled = localStorage.getItem(
-            "data_collection_enabled",
-          );
-          if (dataShareEnabled === "false") {
+          const dataShareEnabled = storageManager.isDataCollectionEnabled();
+          if (!dataShareEnabled) {
             return false; // Achievement not available if data sharing is disabled
           }
 
@@ -505,6 +523,9 @@ class AchievementSystem {
 
     // Update stats based on current date
     this.updateDailyStats();
+    
+    // Save the properly structured data to ensure consistency
+    this.saveData();
   }
 
   // Initialize notification system
@@ -1088,10 +1109,7 @@ class AchievementSystem {
 
   // Save achievement data to localStorage
   saveData() {
-    localStorage.setItem(
-      "nerdtype_achievements",
-      JSON.stringify(this.achievementsData),
-    );
+    storageManager.setAchievements(this.achievementsData);
   }
 
   // Firebase Achievement Sync Methods

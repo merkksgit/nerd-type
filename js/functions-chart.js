@@ -1,3 +1,6 @@
+// Import storage manager
+import storageManager from './storage-manager.js';
+
 // Toggle functionality for all sections
 function setupToggle(
   buttonId,
@@ -19,11 +22,11 @@ function setupToggle(
     button.innerHTML = isHidden
       ? `<i class="${showIcon}"></i> ${showText}`
       : `<i class="${hideIcon}"></i> ${hideText}`;
-    localStorage.setItem(storageKey, isHidden);
+    storageManager.setItem(storageKey, isHidden.toString());
   });
 
   // Restore state on page load
-  const isHidden = localStorage.getItem(storageKey) === "true";
+  const isHidden = storageManager.getItem(storageKey, "false") === "true";
   if (isHidden) {
     container.classList.add("hidden");
     button.innerHTML = `<i class="${showIcon}"></i> ${showText}`;
@@ -73,13 +76,13 @@ function calculateLocalStorageSize() {
   let totalSize = 0;
 
   // Get the game results data
-  const gameResults = localStorage.getItem("gameResults");
+  const gameResults = storageManager.getItem("gameResults");
   if (gameResults) {
     totalSize += gameResults.length * 2; // Each character is 2 bytes in JavaScript
   }
 
   // Get achievements data size
-  const achievementsData = localStorage.getItem("nerdtype_achievements");
+  const achievementsData = storageManager.getItem("nerdtype_achievements");
   if (achievementsData) {
     totalSize += achievementsData.length * 2;
   }

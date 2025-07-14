@@ -1,3 +1,6 @@
+// Import storage manager
+import storageManager from './storage-manager.js';
+
 function enhanceChartVisuals() {
   // Enhanced fonts and colors
   Chart.defaults.font.family = "'jetbrains-mono', monospace";
@@ -37,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function displayScoreGraph() {
-  let results = JSON.parse(localStorage.getItem("gameResults")) || [];
+  let results = storageManager.getGameResults();
 
   // Filter only Classic Mode results
   const classicResults = results.filter(
@@ -558,7 +561,7 @@ function displayScoreGraph() {
 }
 
 function displayZenModeGraph() {
-  let results = JSON.parse(localStorage.getItem("gameResults")) || [];
+  let results = storageManager.getGameResults();
 
   // Filter only Zen Mode results
   const zenResults = results.filter((result) => result.mode === "Zen Mode");
@@ -1097,14 +1100,14 @@ window.refreshChartsWithLatestData = async function refreshChartsWithLatestData(
       
       if (cloudData && cloudData.scores && cloudData.scores.length > 0) {
         // Store total count separately before updating localStorage
-        localStorage.setItem("totalGameCount", cloudData.totalCount.toString());
+        storageManager.setTotalGameCount(cloudData.totalCount);
         
         // Update localStorage with fresh data
-        localStorage.setItem("gameResults", JSON.stringify(cloudData.scores));
+        storageManager.setGameResults(cloudData.scores);
       } else if (cloudData && cloudData.length > 0) {
         // Fallback for old format (if function returns array directly)
-        localStorage.setItem("gameResults", JSON.stringify(cloudData));
-        localStorage.setItem("totalGameCount", cloudData.length.toString());
+        storageManager.setGameResults(cloudData);
+        storageManager.setTotalGameCount(cloudData.length);
       }
     } else {
       // User is logged out - ensure we're using guest data

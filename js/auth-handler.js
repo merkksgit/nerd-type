@@ -4,15 +4,33 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("🔐 Auth handler initializing...");
 
+  // Check if we're on a page that should have login functionality
+  const shouldHaveLogin = window.location.pathname.includes('game.html') || 
+                         window.location.pathname.includes('index.html') ||
+                         window.location.pathname === '/';
+
+  if (!shouldHaveLogin) {
+    console.log("🔐 Auth handler skipped - no login modal expected on this page");
+    return;
+  }
+
+  let retryCount = 0;
+  const maxRetries = 10; // Maximum 5 seconds of retrying
+
   // Safety check - wait for elements to be available
   function initializeAuthHandler() {
     // Modal elements
     const loginModal = document.getElementById("loginModal");
 
-    // If modals don't exist, wait and try again
+    // If modals don't exist, wait and try again (with retry limit)
     if (!loginModal) {
-      console.log("⏳ Login modal not found, retrying in 500ms...");
-      setTimeout(initializeAuthHandler, 500);
+      retryCount++;
+      if (retryCount <= maxRetries) {
+        console.log(`⏳ Login modal not found, retrying in 500ms... (${retryCount}/${maxRetries})`);
+        setTimeout(initializeAuthHandler, 500);
+      } else {
+        console.log("⚠️ Login modal not found after maximum retries - auth handler disabled");
+      }
       return;
     }
 

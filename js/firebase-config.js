@@ -18,6 +18,59 @@ let database = null;
 let auth = null;
 let currentUser = null;
 
+// Enhanced error notification system
+function showFirebaseErrorNotification(operation, error) {
+  const errorMessage = getFirebaseErrorMessage(error);
+  
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.className = 'firebase-error-notification';
+  notification.innerHTML = `
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <strong>Firebase Error:</strong> ${operation} - ${errorMessage}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  `;
+  
+  // Add to page
+  document.body.appendChild(notification);
+  
+  // Auto-remove after 5 seconds
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.parentNode.removeChild(notification);
+    }
+  }, 5000);
+}
+
+// Convert Firebase error codes to user-friendly messages
+function getFirebaseErrorMessage(error) {
+  const errorCode = error.code || error.message || 'unknown';
+  
+  switch (errorCode) {
+    case 'auth/network-request-failed':
+      return 'Network connection failed. Please check your internet connection.';
+    case 'auth/too-many-requests':
+      return 'Too many requests. Please try again later.';
+    case 'auth/user-not-found':
+      return 'User account not found.';
+    case 'auth/wrong-password':
+      return 'Incorrect password.';
+    case 'auth/invalid-email':
+      return 'Invalid email address.';
+    case 'auth/email-already-in-use':
+      return 'Email address is already in use.';
+    case 'auth/weak-password':
+      return 'Password is too weak. Please use a stronger password.';
+    case 'permission-denied':
+      return 'Permission denied. Please check your account permissions.';
+    case 'unavailable':
+      return 'Service temporarily unavailable. Please try again later.';
+    default:
+      return 'An unexpected error occurred. Please try again.';
+  }
+}
+
 function isDataCollectionEnabled() {
   const setting = localStorage.getItem("data_collection_enabled");
   return setting === null || setting === "true";
@@ -141,7 +194,7 @@ async function handleAuthStateChange(user) {
     // Clear guest mode
     localStorage.removeItem("nerdtype_guest_mode");
 
-    console.log("🎮 User ready to play as:", emailUsername);
+    console.log("🎮 User ready to play as:", username);
 
     // FIXED: Apply current font setting for all game elements after login
     setTimeout(() => {
@@ -384,7 +437,12 @@ window.saveScoreToFirebase = async function (gameData) {
     }
   } catch (error) {
     console.error("❌ Error saving score to Firebase:", error);
-    throw error;
+    
+    // Show user-friendly error notification
+    showFirebaseErrorNotification("Failed to save score", error);
+    
+    // Don't throw the error - let the game continue
+    return { error: error.message, saved: false };
   }
 };
 
@@ -911,6 +969,8 @@ window.syncScoreboardToFirebase = async function (gameData) {
     console.log("✅ Scoreboard entry synced to Firebase");
   } catch (error) {
     console.error("❌ Error syncing scoreboard to Firebase:", error);
+    showFirebaseErrorNotification("Failed to sync scoreboard", error);
+    // Don't throw - let the game continue
   }
 };
 

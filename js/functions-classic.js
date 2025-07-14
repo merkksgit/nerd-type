@@ -3,12 +3,15 @@ import { loadWordList, currentLanguage } from "./word-list-manager.js";
 import { DebugDisplay } from "./debug.js";
 import achievementSystem from "./achievements.js";
 import "./game-commands.js";
+import { GAME_DEFAULTS, TIMERS, STORAGE_KEYS, LIMITS, RESERVED_USERNAMES } from "./constants.js";
+import storageManager from "./storage-manager.js";
+import domManager from "./dom-manager.js";
 
 // Global variables for game state
 let words = [];
-let playerUsername = localStorage.getItem("nerdtype_username") || "runner";
+let playerUsername = storageManager.getUsername();
 let isUsernameModalOpen = false;
-let isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
+let isZenMode = storageManager.isZenModeEnabled();
 
 // Variables shared between both modes
 let currentWordIndex = 0;
@@ -21,43 +24,85 @@ let correctKeystrokes = 0;
 let gameStartTime = null;
 let gameEnded = false;
 let showSpacesAfterWords =
-  localStorage.getItem("showSpacesAfterWords") !== "false";
+  storageManager.getItem("showSpacesAfterWords", "true") !== "false";
 
 // Classic mode specific variables
 let timeLeft = 10; // Default, will be updated from settings
 let totalTimeSpent = 0;
 let countDownInterval;
 let totalTimeInterval;
-let bonusTime = 3; // Default, will be updated from settings
-let goalPercentage = 100;
+let bonusTime = GAME_DEFAULTS.BONUS_TIME; // Default, will be updated from settings
+let goalPercentage = GAME_DEFAULTS.GOAL_PERCENTAGE;
 let isPaused = false; // Game pause state
 
 // Zen mode specific variables
 let sessionStartTime = null;
-let zenWordGoal = 30;
+let zenWordGoal = GAME_DEFAULTS.ZEN_WORD_GOAL;
 
 // Precision multiplier system variables
 let precisionStreak = 0;
 let peakPrecisionStreak = 0;
 let currentWordHasMistakes = false;
 
-const reservedUsernames = ["admin", "moderator", "nerdtype"];
-
 function isReservedUsername(username) {
-  return reservedUsernames.some(
+  return RESERVED_USERNAMES.some(
     (reserved) => username.toLowerCase() === reserved.toLowerCase(),
   );
 }
 
 function canUseUsername(username) {
   // Check admin mode for "merkks"
-  const isAdminMode = localStorage.getItem("nerdtype_admin") === "true";
+  const isAdminMode = storageManager.getItem("nerdtype_admin", "false") === "true";
 
   if (username.toLowerCase() === "merkks") {
     return isAdminMode;
   }
   // Block other reserved usernames
   return !isReservedUsername(username);
+}
+
+// Font application function
+function applyFont(fontFamily) {
+  document.documentElement.style.setProperty("--game-font", fontFamily);
+
+  const gameElements = document.querySelectorAll(`
+    #userInput, 
+    #nextWord, 
+    #wordToType,
+    #wordToType span,
+    #currentGameMode,
+    #timer,
+    #progressPercentage,
+    #precisionMultiplier,
+    .game-interface,
+    .typing-area
+  `);
+
+  gameElements.forEach((element) => {
+    element.style.fontFamily = fontFamily;
+  });
+}
+
+// UI hide state restoration function
+function restoreUIHideState() {
+  // Check if we're on the game page
+  if (!window.location.pathname.includes('game.html')) return;
+
+  const hideUIState = storageManager.getItem("nerdtype_hide_ui", "false") === "true";
+
+  // Remove the preload CSS since we're taking over now
+  const preloadStyle = document.getElementById("preload-ui-hide");
+  if (preloadStyle) {
+    preloadStyle.remove();
+  }
+
+  if (hideUIState) {
+    console.log("🎨 Restoring UI hide state...");
+    document.body.setAttribute("data-ui-hidden", "true");
+  } else {
+    // Make sure everything is visible if not hiding
+    document.body.setAttribute("data-ui-hidden", "false");
+  }
 }
 
 function showUsernameError(message) {
@@ -143,8 +188,9 @@ const achievementSound = new Audio("../sounds/achievement.mp3");
 window.achievementSound = achievementSound;
 
 // Check the sound setting on initialization
-const achievementSoundEnabled = localStorage.getItem(
+const achievementSoundEnabled = storageManager.getItem(
   "achievement_sound_enabled",
+  "true"
 );
 if (achievementSoundEnabled === "false") {
   achievementSound.muted = true;
@@ -152,7 +198,7 @@ if (achievementSoundEnabled === "false") {
 
 // Create keypress audio pool for better performance
 const keypressAudioPool = [];
-const poolSize = 2; // Create multiple instances
+const poolSize = GAME_DEFAULTS.AUDIO_POOL_SIZE; // Create multiple instances
 let currentAudioIndex = 0;
 
 // Create the audio pool
@@ -167,7 +213,7 @@ for (let i = 0; i < poolSize; i++) {
 window.keypressSound = keypressAudioPool[0];
 
 // Check the keypress sound setting on initialization
-const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
+const keypressSoundEnabled = storageManager.getItem("keypress_sound_enabled", "true");
 if (keypressSoundEnabled !== "true") {
   keypressAudioPool.forEach((audio) => (audio.muted = true));
 }
@@ -180,7 +226,7 @@ window.dispatchEvent(
 );
 
 function playKeypressSound() {
-  const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
+  const keypressSoundEnabled = storageManager.getItem("keypress_sound_enabled", "true");
   if (keypressSoundEnabled === "true" && hasStartedTyping) {
     const audio = keypressAudioPool[currentAudioIndex];
     audio.currentTime = 0;
@@ -211,33 +257,12 @@ window.dispatchEvent(
 // Create debug display instance
 const debugDisplay = new DebugDisplay();
 
-// Define word list display names for the UI
-const wordListDisplayNames = {
-  english: "🇬🇧 ",
-  finnish: "🇫🇮 ",
-  swedish: "🇸🇪 ",
-  programming: "🖥️ ",
-  nightmare: "💀 ",
-};
-
 // Load saved settings or use defaults for Classic Mode
-let gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
-  timeLimit: 30,
-  bonusTime: 3,
-  initialTime: 10,
-  goalPercentage: 100,
-  currentMode: "classic",
-};
+let gameSettings = storageManager.getGameSettings();
 
 // Function to reload game settings from localStorage (used by settings sync)
 window.reloadGameSettings = function () {
-  const newSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
-    timeLimit: 30,
-    bonusTime: 3,
-    initialTime: 10,
-    goalPercentage: 100,
-    currentMode: "classic",
-  };
+  const newSettings = storageManager.getGameSettings();
 
   // Update the global gameSettings variable
   Object.assign(gameSettings, newSettings);
@@ -298,8 +323,7 @@ function updateUIForGameMode() {
       gameIndicator.textContent = "Game Mode: Zen";
     } else {
       // Check current mode from gameSettings
-      const settings =
-        JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
+      const settings = storageManager.getGameSettings();
       const currentMode = settings.currentMode || "classic";
 
       // Format the text based on mode
@@ -348,58 +372,98 @@ function updateUIForGameMode() {
 
 // Load words when the script initializes
 async function initializeGame() {
-  // Load the Zen Mode state
-  isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
-  // Font selection
-  const currentFont =
-    localStorage.getItem("nerdtype_font") || "jetbrains-light";
-  applyFont(currentFont);
+  try {
+    // Initialize DOM manager first
+    domManager.init();
+    
+    // Load the Zen Mode state
+    isZenMode = storageManager.isZenModeEnabled();
 
-  // Load saved settings
-  const settings = JSON.parse(localStorage.getItem("gameSettings")) || {
-    timeLimit: 30,
-    bonusTime: 3,
-    initialTime: 10,
-    goalPercentage: 100,
-    currentMode: "classic",
-    zenWordGoal: 30, // Default zen word goal
-  };
+    // Font selection
+    const currentFont = storageManager.getFont();
+    applyFont(currentFont);
 
-  // Set Zen Mode word goal
-  zenWordGoal = settings.zenWordGoal || 30;
+    // Load saved settings with error handling
+    const settings = storageManager.getGameSettings();
+    
+    // Update the global gameSettings variable
+    gameSettings = settings;
 
-  // Update UI based on mode
-  updateUIForGameMode();
+    // Set Zen Mode word goal
+    zenWordGoal = settings.zenWordGoal || GAME_DEFAULTS.ZEN_WORD_GOAL;
 
-  // Load the selected word list
-  words = await loadWordList(currentLanguage);
+    // Update UI based on mode
+    updateUIForGameMode();
 
-  // After words are loaded, set up the UI
-  setupUI();
+    // Load the selected word list with error handling
+    try {
+      words = await loadWordList(currentLanguage);
+      if (!words || words.length === 0) {
+        throw new Error("Word list is empty or failed to load");
+      }
+    } catch (error) {
+      console.error("Failed to load word list:", error);
+      // Fallback to basic English words
+      words = [
+        "the",
+        "and",
+        "you",
+        "that",
+        "was",
+        "for",
+        "are",
+        "with",
+        "his",
+        "they",
+      ];
+      console.log("Using fallback word list");
+    }
 
-  // Initialize event listeners and other game elements
-  initializeEventListeners();
-  displayPreviousResults();
-  setupUsernameValidation();
+    // After words are loaded, set up the UI
+    setupUI();
 
-  // Set initial time from settings
-  timeLeft = gameSettings.initialTime;
-  bonusTime = gameSettings.bonusTime;
+    // Initialize event listeners and other game elements
+    initializeEventListeners();
+    
+    // Game-specific initialization - only call these on game page
+    if (window.location.pathname.includes('game.html')) {
+      displayPreviousResults();
+    }
+    
+    // Username validation can be on any page that has the input
+    setupUsernameValidation();
+
+    // Set initial time from settings
+    timeLeft = gameSettings.initialTime;
+    bonusTime = gameSettings.bonusTime;
+  } catch (error) {
+    console.error("Critical error during game initialization:", error);
+    // Show user-friendly error message
+    const errorMessage = document.createElement("div");
+    errorMessage.innerHTML = `
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Game Initialization Failed</h4>
+        <p>Something went wrong while loading the game. Please try refreshing the page.</p>
+        <button class="btn btn-primary" onclick="location.reload()">Refresh Page</button>
+      </div>
+    `;
+    document.body.prepend(errorMessage);
+  }
 
   // Check for pending settings notification at the end
   setTimeout(() => {
-    const pendingNotification = localStorage.getItem(
-      "pending_settings_notification",
-    );
+    const pendingNotification = storageManager.getPendingSettingsNotification();
     if (pendingNotification) {
       // Remove the notification FIRST to prevent duplicate processing
-      localStorage.removeItem("pending_settings_notification");
+      storageManager.removePendingSettingsNotification();
       try {
-        const { message, type } = JSON.parse(pendingNotification);
+        const { message, type } = pendingNotification;
         showSettingsNotification(message, type);
-      } catch (e) {}
+      } catch (error) {
+        console.error("Failed to process pending settings notification:", error);
+      }
     }
-  }, 200);
+  }, TIMERS.SETTINGS_NOTIFICATION_DELAY);
 
   setTimeout(() => {
     restoreUIHideState();
@@ -457,8 +521,8 @@ function updateDebugInfo() {
   });
 }
 
-// Set up your update interval
-setInterval(updateDebugInfo, 100);
+// Set up your update interval (store reference for cleanup)
+let debugUpdateInterval = setInterval(updateDebugInfo, TIMERS.DEBUG_UPDATE_INTERVAL);
 
 function optimizeForMobile() {
   // Check if we're on a small screen
@@ -492,6 +556,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function initializeEventListeners() {
+  // Check if we're on the game page - some elements only exist there
+  const isGamePage = window.location.pathname.includes('game.html');
+  
   // Track modal state
   const usernameModal = document.getElementById("usernameModal");
   if (usernameModal) {
@@ -636,26 +703,29 @@ function initializeEventListeners() {
     }
   });
 
-  // Reset button
-  const resetBtn = document.getElementById("resetBtn");
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      location.reload();
-    });
-  }
+  // Game-specific elements (only on game page)
+  if (isGamePage) {
+    // Reset button
+    const resetBtn = document.getElementById("resetBtn");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        location.reload();
+      });
+    }
 
-  // Start button
-  const startButton = document.getElementById("startButton");
-  if (startButton) {
-    startButton.addEventListener("click", startGame);
-  }
+    // Start button
+    const startButton = domManager.get("startButton");
+    if (startButton) {
+      startButton.addEventListener("click", startGame);
+    }
 
-  // User input field
-  const userInput = document.getElementById("userInput");
-  if (userInput) {
-    userInput.addEventListener("input", function (e) {
-      checkInput(e);
-    });
+    // User input field
+    const userInput = domManager.get("userInput");
+    if (userInput) {
+      userInput.addEventListener("input", function (e) {
+        checkInput(e);
+      });
+    }
   }
 
   // Setup username related items
@@ -670,23 +740,27 @@ function initializeEventListeners() {
     confirmUsernameBtn.addEventListener("click", handleUsernameConfirmation);
   }
 
-  if (!localStorage.getItem("nerdtype_username")) {
-    showUsernameModal();
+  // Game-specific initialization
+  if (isGamePage) {
+    if (!localStorage.getItem("nerdtype_username")) {
+      showUsernameModal();
+    }
+
+    // Handle scoreboard view
+    const viewScoreboardBtn = document.getElementById("viewScoreboardBtn");
+    if (viewScoreboardBtn) {
+      viewScoreboardBtn.addEventListener("click", function () {
+        // Update the scoreboard contents before showing
+        displayPreviousResults();
+
+        // Then show the modal
+        const scoreboardModal = new bootstrap.Modal(
+          document.getElementById("scoreboardModal"),
+        );
+        scoreboardModal.show();
+      });
+    }
   }
-
-  // Handle scoreboard view
-  document
-    .getElementById("viewScoreboardBtn")
-    .addEventListener("click", function () {
-      // Update the scoreboard contents before showing
-      displayPreviousResults();
-
-      // Then show the modal
-      const scoreboardModal = new bootstrap.Modal(
-        document.getElementById("scoreboardModal"),
-      );
-      scoreboardModal.show();
-    });
 }
 
 // Function to check if current settings create a custom mode
@@ -865,13 +939,13 @@ function startGame() {
     if (totalTimeInterval) clearInterval(totalTimeInterval);
 
     // Set up timer intervals
-    countDownInterval = setInterval(countDown, 800);
-    totalTimeInterval = setInterval(totalTimeCount, 1000);
+    countDownInterval = setInterval(countDown, TIMERS.COUNTDOWN_INTERVAL);
+    totalTimeInterval = setInterval(totalTimeCount, TIMERS.TOTAL_TIME_INTERVAL);
   }
 
   // Reset game state variables
-  document.getElementById("userInput").value = "";
-  document.getElementById("userInput").focus();
+  domManager.setValue("userInput", "");
+  domManager.focus("userInput");
   gameStartTime = null;
   hasStartedTyping = false;
   wordsTyped = [];
@@ -889,9 +963,9 @@ window.startGame = startGame;
 window.updateWordDisplay = updateWordDisplay;
 
 function updateWordDisplay() {
-  const wordToTypeElement = document.getElementById("wordToType");
-  const nextWordElement = document.getElementById("nextWord");
-  const showSpace = localStorage.getItem("showSpacesAfterWords") !== "false";
+  const wordToTypeElement = domManager.get("wordToType");
+  const nextWordElement = domManager.get("nextWord");
+  const showSpace = storageManager.getItem("showSpacesAfterWords", "true") !== "false";
 
   if (!wordToTypeElement) return;
 
@@ -902,8 +976,8 @@ function updateWordDisplay() {
   const wordContainer = document.createElement("div");
   wordContainer.classList.add("word-container");
 
-  // Always show 30 words in the display regardless of word goal
-  const wordsToShow = 30;
+  // Always show words in the display regardless of word goal
+  const wordsToShow = GAME_DEFAULTS.WORDS_TO_SHOW;
 
   // Generate word display - only show current and upcoming words for now
   const displayWords = [];
@@ -988,13 +1062,13 @@ function updateWordDisplay() {
 
   // Add click handler to focus the hidden input when clicking on the word display
   wordToTypeElement.onclick = function () {
-    const userInput = document.getElementById("userInput");
+    const userInput = domManager.get("userInput");
     if (userInput) {
       userInput.focus();
-      
+
       // Start game on mobile tap (regardless of minimal mode)
       const isMobile = window.innerWidth <= 768;
-      
+
       if (isMobile && gameStartTime === null && !hasStartedTyping) {
         startGame();
       }
@@ -1384,46 +1458,41 @@ function updateProgressBar() {
 }
 
 // Input handling for both modes
-function checkInput(e) {
-  const userInput = e.target.value;
-
-  // Check if input contains "/" for commands
+// Helper function to handle command input
+function handleCommandInput(e, userInput) {
   if (userInput.includes("/")) {
-    // Open command palette and remove the "/" character from input
     showCommandPalette();
     e.target.value = userInput.replace("/", "");
-    return;
+    return true;
   }
+  return false;
+}
 
-  const currentWord = words[currentWordIndex];
-  const wordDisplay = document.getElementById("wordToType");
-  const showSpace = localStorage.getItem("showSpacesAfterWords") !== "false";
-
-  if (!wordDisplay) return;
-
-  // Prevent typing extra characters (except space if enabled)
-  const maxAllowedLength = showSpace
-    ? currentWord.length + 1
-    : currentWord.length;
+// Helper function to validate input length
+function validateInputLength(e, userInput, currentWord, showSpace) {
+  const maxAllowedLength = showSpace ? currentWord.length + 1 : currentWord.length;
   if (userInput.length > maxAllowedLength) {
-    // Block extra characters by resetting to the maximum allowed length
     e.target.value = userInput.substring(0, maxAllowedLength);
-    return;
+    return false;
   }
+  return true;
+}
 
-  // Start timers on first input for both modes
-  if (!hasStartedTyping && e.target.value.length > 0) {
+// Helper function to start game timers
+function startGameTimers() {
+  if (!hasStartedTyping) {
     hasStartedTyping = true;
     gameStartTime = Date.now();
 
     if (isZenMode) {
-      // For Zen mode, start the session timer
       sessionStartTime = new Date();
-      totalTimeInterval = setInterval(updateZenTimer, 1000);
+      totalTimeInterval = setInterval(updateZenTimer, TIMERS.ZEN_TIMER_INTERVAL);
     }
   }
+}
 
-  // Play keypress sound for actual typing AND backspace
+// Helper function to handle keypress sound
+function handleKeypressSound(e) {
   if (
     hasStartedTyping &&
     ((e.inputType === "insertText" && e.data) ||
@@ -1432,33 +1501,16 @@ function checkInput(e) {
   ) {
     playKeypressSound();
   }
+}
 
-  // Update character styling and count keystrokes
-  const chars = wordDisplay.children;
+// Helper function to process character input
+function processCharacterInput(e, userInput, currentWord, showSpace) {
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
 
-    // Check if the last character typed is correct
-    let isCorrectChar = false;
-    if (showSpace && userInput.length > currentWord.length) {
-      // We're typing the space
-      if (userInput[userInput.length - 1] === " ") {
-        correctKeystrokes++;
-        isCorrectChar = true;
-      }
-    } else if (userInput.length <= currentWord.length) {
-      // We're typing the word
-      if (
-        userInput[userInput.length - 1] === currentWord[userInput.length - 1]
-      ) {
-        correctKeystrokes++;
-        isCorrectChar = true;
-      }
-    }
-
-    // Update precision streak based on character accuracy
+    const isCorrectChar = validateCharacterInput(userInput, currentWord, showSpace);
+    
     if (!isCorrectChar) {
-      // Mark current word as having mistakes and reset precision streak (except in zen mode)
       currentWordHasMistakes = true;
       if (!isZenMode) {
         precisionStreak = 0;
@@ -1466,120 +1518,175 @@ function checkInput(e) {
       }
     }
   }
+}
 
-  updateLetterStates(userInput);
+// Helper function to validate character input
+function validateCharacterInput(userInput, currentWord, showSpace) {
+  if (showSpace && userInput.length > currentWord.length) {
+    if (userInput[userInput.length - 1] === " ") {
+      correctKeystrokes++;
+      return true;
+    }
+  } else if (userInput.length <= currentWord.length) {
+    if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
+      correctKeystrokes++;
+      return true;
+    }
+  }
+  return false;
+}
 
-  // Check if word is complete
-  // Determine if this is the last word for either game mode
-  const isLastWord = isZenMode 
-    ? wordsTyped.length + 1 >= zenWordGoal 
+// Helper function to check if word is complete
+function isWordComplete(userInput, currentWord, showSpace) {
+  const isLastWord = isZenMode
+    ? wordsTyped.length + 1 >= zenWordGoal
     : (() => {
-        const settings = JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
+        const settings = storageManager.getGameSettings();
         const wordsGoal = parseInt(
-          localStorage.getItem("nerdtype_words_goal") || 
-          settings.timeLimit || 
-          "30"
+          storageManager.getItem("nerdtype_words_goal") ||
+            settings.timeLimit ||
+            "30",
         );
         return wordsTyped.length + 1 >= wordsGoal;
       })();
+
+  const expectedInput = showSpace && !isLastWord ? currentWord + " " : currentWord;
+  return userInput === expectedInput;
+}
+
+// Helper function to handle word completion
+function handleWordCompletion(e, currentWord, showSpace) {
+  updatePrecisionStreak();
+  updateGameProgress(currentWord, showSpace);
+  moveToNextWord();
+  updateWordDisplayAfterCompletion();
   
-  // For the last word, don't require space; for other words, follow the showSpace setting
-  const expectedInput = (showSpace && !isLastWord) ? currentWord + " " : currentWord;
+  e.target.value = "";
+  updateLetterStates("");
+  updateProgressBar();
+  
+  checkGameCompletion();
+}
 
-  if (userInput === expectedInput) {
-    // Only increment precision streak if this word had no mistakes and not in zen mode
-    if (!currentWordHasMistakes && !isZenMode) {
-      precisionStreak++;
-
-      // Update peak streak if current streak is higher
-      if (precisionStreak > peakPrecisionStreak) {
-        peakPrecisionStreak = precisionStreak;
-      }
-
-      // Show multiplier starting from 5 perfect words
-      if (precisionStreak >= 5) {
-        showPrecisionMultiplier();
-        animatePrecisionIncrement();
-      }
+// Helper function to update precision streak
+function updatePrecisionStreak() {
+  if (!currentWordHasMistakes && !isZenMode) {
+    precisionStreak++;
+    
+    if (precisionStreak > peakPrecisionStreak) {
+      peakPrecisionStreak = precisionStreak;
     }
-
-    // Reset the word mistake flag for next word
-    currentWordHasMistakes = false;
-    flashProgress();
-    totalCharactersTyped += currentWord.length + (showSpace ? 1 : 0);
-    totalTimeSpent += 1;
-    if (!isZenMode) {
-      timeLeft += bonusTime;
+    
+    if (precisionStreak >= 5) {
+      showPrecisionMultiplier();
+      animatePrecisionIncrement();
     }
-    wordsTyped.push(currentWord);
+  }
+  currentWordHasMistakes = false;
+}
 
-    // Mark current word as completed
-    const currentWordElement = getCurrentWordElement();
-    if (currentWordElement) {
-      currentWordElement.classList.remove("current");
-      currentWordElement.classList.add("completed");
-    }
+// Helper function to update game progress
+function updateGameProgress(currentWord, showSpace) {
+  flashProgress();
+  totalCharactersTyped += currentWord.length + (showSpace ? 1 : 0);
+  totalTimeSpent += 1;
+  if (!isZenMode) {
+    timeLeft += bonusTime;
+  }
+  wordsTyped.push(currentWord);
+}
 
-    // Move to next word sequentially (words are shuffled at start)
-    currentWordIndex++;
-    nextWordIndex = currentWordIndex + 1;
+// Helper function to move to next word
+function moveToNextWord() {
+  const currentWordElement = getCurrentWordElement();
+  if (currentWordElement) {
+    currentWordElement.classList.remove("current");
+    currentWordElement.classList.add("completed");
+  }
 
-    // Handle word wrapping around the list
-    if (currentWordIndex >= words.length) {
-      currentWordIndex = 0;
-      nextWordIndex = 1;
-      // Shuffle the words array for variety
-      words = words.sort(() => Math.random() - 0.5);
-    }
+  currentWordIndex++;
+  nextWordIndex = currentWordIndex + 1;
 
-    // Check if we need to scroll the display
-    const nextWordElement = document.querySelector(
-      `[data-word-index="${currentWordIndex}"]`,
-    );
-    if (!nextWordElement) {
-      // Next word not visible - we need to scroll or regenerate
+  if (currentWordIndex >= words.length) {
+    currentWordIndex = 0;
+    nextWordIndex = 1;
+    words = words.sort(() => Math.random() - 0.5);
+  }
+}
+
+// Helper function to update word display after completion
+function updateWordDisplayAfterCompletion() {
+  const nextWordElement = document.querySelector(
+    `[data-word-index="${currentWordIndex}"]`,
+  );
+  if (!nextWordElement) {
+    scrollWordsDisplay();
+  } else {
+    if (isWordOnLastRow(nextWordElement)) {
       scrollWordsDisplay();
     } else {
-      // Check if the next word is on the last row - if so, scroll
-      if (isWordOnLastRow(nextWordElement)) {
-        scrollWordsDisplay();
-      } else {
-        // Normal progression - just move cursor to next word
-        nextWordElement.classList.remove("upcoming");
-        nextWordElement.classList.add("current");
-      }
+      nextWordElement.classList.remove("upcoming");
+      nextWordElement.classList.add("current");
     }
+  }
+}
 
-    // Clear input
-    e.target.value = "";
+// Helper function to check game completion
+function checkGameCompletion() {
+  if (isZenMode && wordsTyped.length >= zenWordGoal) {
+    gameEnded = true;
+    clearInterval(totalTimeInterval);
+    showGameOverModal(getRandomSuccessMessage(), true);
+  } else if (!isZenMode) {
+    const settings = storageManager.getGameSettings();
+    const wordsGoal = parseInt(
+      storageManager.getItem("nerdtype_words_goal") ||
+        settings.timeLimit ||
+        "30",
+    );
 
-    // Update letter states for the new current word
-    updateLetterStates("");
-
-    updateProgressBar();
-
-    // Check game completion for both modes
-    if (isZenMode && wordsTyped.length >= zenWordGoal) {
+    if (wordsTyped.length >= wordsGoal) {
       gameEnded = true;
+      clearInterval(countDownInterval);
       clearInterval(totalTimeInterval);
       showGameOverModal(getRandomSuccessMessage(), true);
-    } else if (!isZenMode) {
-      // For classic mode, also check word goal completion
-      const settings =
-        JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
-      const wordsGoal = parseInt(
-        localStorage.getItem("nerdtype_words_goal") ||
-          settings.timeLimit ||
-          "30",
-      );
-
-      if (wordsTyped.length >= wordsGoal) {
-        gameEnded = true;
-        clearInterval(countDownInterval);
-        clearInterval(totalTimeInterval);
-        showGameOverModal(getRandomSuccessMessage(), true);
-      }
     }
+  }
+}
+
+// Main input handler - now much cleaner and focused
+function checkInput(e) {
+  const userInput = e.target.value;
+
+  // Handle command input
+  if (handleCommandInput(e, userInput)) return;
+
+  const currentWord = words[currentWordIndex];
+  const wordDisplay = domManager.get("wordToType");
+  const showSpace = storageManager.getItem("showSpacesAfterWords", "true") !== "false";
+
+  if (!wordDisplay) return;
+
+  // Validate input length
+  if (!validateInputLength(e, userInput, currentWord, showSpace)) return;
+
+  // Start timers on first input
+  if (e.target.value.length > 0) {
+    startGameTimers();
+  }
+
+  // Handle keypress sound
+  handleKeypressSound(e);
+
+  // Process character input
+  processCharacterInput(e, userInput, currentWord, showSpace);
+
+  // Update letter states
+  updateLetterStates(userInput);
+
+  // Check if word is complete
+  if (isWordComplete(userInput, currentWord, showSpace)) {
+    handleWordCompletion(e, currentWord, showSpace);
   }
 }
 
@@ -1593,7 +1700,7 @@ function calculateWPM() {
   // Ensure minimum time to avoid division by zero
   timeElapsed = Math.max(0.08, timeElapsed);
 
-  const CHARS_PER_WORD = 5;
+  const CHARS_PER_WORD = GAME_DEFAULTS.CHARS_PER_WORD;
 
   const accuracy =
     totalKeystrokes > 0
@@ -1755,8 +1862,7 @@ function showPrecisionMultiplier() {
   }
 
   // Check if minimal UI mode is enabled
-  const minimalUIEnabled =
-    localStorage.getItem("nerdtype_hide_ui") === "true";
+  const minimalUIEnabled = localStorage.getItem("nerdtype_hide_ui") === "true";
   if (minimalUIEnabled) {
     return;
   }
@@ -2178,12 +2284,12 @@ function saveClassicResult(
   // Save locally
   results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
-  
+
   // Update total game count
   const currentTotal = localStorage.getItem("totalGameCount");
   const newTotal = currentTotal ? parseInt(currentTotal) + 1 : results.length;
   localStorage.setItem("totalGameCount", newTotal.toString());
-  
+
   localStorage.setItem(
     "highestAchievements",
     JSON.stringify(highestAchievements),
@@ -2279,7 +2385,7 @@ function saveZenResult(wpm, totalTime, accuracy) {
   // Save locally
   results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
-  
+
   // Update total game count
   const currentTotal = localStorage.getItem("totalGameCount");
   const newTotal = currentTotal ? parseInt(currentTotal) + 1 : results.length;
@@ -2535,8 +2641,10 @@ function displayPreviousResults() {
     const infoRow = document.createElement("tr");
     // Get actual total count from localStorage, fallback to results.length
     const totalGameCount = localStorage.getItem("totalGameCount");
-    const actualTotal = totalGameCount ? parseInt(totalGameCount) : results.length;
-    
+    const actualTotal = totalGameCount
+      ? parseInt(totalGameCount)
+      : results.length;
+
     infoRow.innerHTML = `
       <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
         Showing last 15 of ${actualTotal} total games | Storage used: ${storageSize} KB
@@ -2694,6 +2802,22 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+// Timer cleanup function
+function cleanupAllTimers() {
+  if (countDownInterval) {
+    clearInterval(countDownInterval);
+    countDownInterval = null;
+  }
+  if (totalTimeInterval) {
+    clearInterval(totalTimeInterval);
+    totalTimeInterval = null;
+  }
+  if (debugUpdateInterval) {
+    clearInterval(debugUpdateInterval);
+    debugUpdateInterval = null;
+  }
+}
+
 // Game Pause/Resume Functions
 function pauseGame() {
   if (isPaused) return;
@@ -2712,11 +2836,11 @@ function resumeGame() {
   if (!gameEnded && hasStartedTyping) {
     if (!isZenMode) {
       // Classic mode - restart countdown
-      countDownInterval = setInterval(countDown, 800);
-      totalTimeInterval = setInterval(totalTimeCount, 1000);
+      countDownInterval = setInterval(countDown, TIMERS.COUNTDOWN_INTERVAL);
+      totalTimeInterval = setInterval(totalTimeCount, TIMERS.TOTAL_TIME_INTERVAL);
     } else {
       // Zen mode - restart total time counter
-      totalTimeInterval = setInterval(updateZenTimer, 1000);
+      totalTimeInterval = setInterval(updateZenTimer, TIMERS.ZEN_TIMER_INTERVAL);
     }
   }
 }
@@ -2831,3 +2955,8 @@ function executeCommand(command) {
     gameCommands.handleCommand(command);
   });
 }
+
+// Add cleanup on page unload to prevent memory leaks
+window.addEventListener("beforeunload", function () {
+  cleanupAllTimers();
+});
