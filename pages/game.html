@@ -181,7 +181,7 @@
     <div class="container-fluid flex-grow-1">
       <nav class="navbar navbar-dark navbar-expand">
         <div class="container-fluid">
-          <a href="../index.html">
+          <a href="./game.html">
             <img
               id="header-logo"
               src="../images/logo-text-no-keyboard.png"
@@ -514,7 +514,14 @@
                   style="text-align: center"
                 />
                 <div id="progressPercentage">Progress 0%</div>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <div
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.5rem;
+                  "
+                >
                   <div class="progress terminal">
                     <div
                       id="progressBar"
@@ -526,7 +533,12 @@
                       aria-valuemax="100"
                     ></div>
                   </div>
-                  <span id="precisionMultiplier" class="precision-multiplier-simple" style="display: none;">5x</span>
+                  <span
+                    id="precisionMultiplier"
+                    class="precision-multiplier-simple"
+                    style="display: none"
+                    >5x</span
+                  >
                 </div>
                 <div id="buttons">
                   <button id="resetBtn">Reset</button>
@@ -787,7 +799,6 @@
                           >
                         </label>
                       </div>
-
 
                       <hr class="classic-mode-setting" />
 
@@ -1575,10 +1586,14 @@
                           role="switch"
                           id="hidePrecisionMultiplierToggle"
                         />
-                        <label class="form-check-label" for="hidePrecisionMultiplierToggle">
+                        <label
+                          class="form-check-label"
+                          for="hidePrecisionMultiplierToggle"
+                        >
                           Hide Precision Multiplier
                           <small class="d-block text-muted"
-                            >Hide streak counter during gameplay (scoring still applies)</small
+                            >Hide streak counter during gameplay (scoring still
+                            applies)</small
                           >
                         </label>
                       </div>
