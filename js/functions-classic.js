@@ -992,11 +992,10 @@ function updateWordDisplay() {
     if (userInput) {
       userInput.focus();
       
-      // Start game if in minimal mode on mobile and game hasn't started yet
-      const isMinimalMode = document.body.getAttribute("data-ui-hidden") === "true";
+      // Start game on mobile tap (regardless of minimal mode)
       const isMobile = window.innerWidth <= 768;
       
-      if (isMinimalMode && isMobile && gameStartTime === null && !hasStartedTyping) {
+      if (isMobile && gameStartTime === null && !hasStartedTyping) {
         startGame();
       }
     }

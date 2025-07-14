@@ -1705,7 +1705,7 @@
       // Run on load
       document.addEventListener("DOMContentLoaded", handleMobileViewport);
       
-      // Update press enter text for mobile devices and initialize word display
+      // Update press enter text for mobile devices
       document.addEventListener("DOMContentLoaded", function() {
         const pressEnterText = document.getElementById("pressEnterText");
         const isMobile = window.innerWidth <= 768;
@@ -1723,11 +1723,10 @@
               if (userInput) {
                 userInput.focus();
                 
-                // Start game if in minimal mode on mobile and game hasn't started yet
-                const isMinimalMode = document.body.getAttribute("data-ui-hidden") === "true";
+                // Start game on mobile tap (regardless of minimal mode)
                 const isMobile = window.innerWidth <= 768;
                 
-                if (isMinimalMode && isMobile && typeof window.startGame === "function") {
+                if (isMobile && typeof window.startGame === "function") {
                   window.startGame();
                 }
               }
