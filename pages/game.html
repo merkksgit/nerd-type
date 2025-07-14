@@ -502,7 +502,7 @@
                   Time: <span id="totalTimeValue"></span>
                 </div>
                 <div id="wordToType">
-                  <span class="press-enter-text">Press Enter to play</span>
+                  <span class="press-enter-text" id="pressEnterText">Press Enter to play</span>
                 </div>
                 <input
                   type="text"
@@ -1704,6 +1704,37 @@
 
       // Run on load
       document.addEventListener("DOMContentLoaded", handleMobileViewport);
+      
+      // Update press enter text for mobile devices and initialize word display
+      document.addEventListener("DOMContentLoaded", function() {
+        const pressEnterText = document.getElementById("pressEnterText");
+        const isMobile = window.innerWidth <= 768;
+        
+        if (pressEnterText && isMobile) {
+          pressEnterText.textContent = "Tap to play";
+        }
+        
+        // Add simple click handler for tap-to-start functionality
+        setTimeout(() => {
+          const wordToTypeElement = document.getElementById("wordToType");
+          if (wordToTypeElement && !wordToTypeElement.onclick) {
+            wordToTypeElement.onclick = function() {
+              const userInput = document.getElementById("userInput");
+              if (userInput) {
+                userInput.focus();
+                
+                // Start game if in minimal mode on mobile and game hasn't started yet
+                const isMinimalMode = document.body.getAttribute("data-ui-hidden") === "true";
+                const isMobile = window.innerWidth <= 768;
+                
+                if (isMinimalMode && isMobile && typeof window.startGame === "function") {
+                  window.startGame();
+                }
+              }
+            };
+          }
+        }, 100);
+      });
     </script>
     <script type="module" src="../js/game-commands.js"></script>
     <script>

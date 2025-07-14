@@ -884,6 +884,10 @@ function startGame() {
   updateProgressBar();
 }
 
+// Expose functions to global scope for tap-to-start functionality
+window.startGame = startGame;
+window.updateWordDisplay = updateWordDisplay;
+
 function updateWordDisplay() {
   const wordToTypeElement = document.getElementById("wordToType");
   const nextWordElement = document.getElementById("nextWord");
@@ -987,6 +991,14 @@ function updateWordDisplay() {
     const userInput = document.getElementById("userInput");
     if (userInput) {
       userInput.focus();
+      
+      // Start game if in minimal mode on mobile and game hasn't started yet
+      const isMinimalMode = document.body.getAttribute("data-ui-hidden") === "true";
+      const isMobile = window.innerWidth <= 768;
+      
+      if (isMinimalMode && isMobile && gameStartTime === null && !hasStartedTyping) {
+        startGame();
+      }
     }
   };
 

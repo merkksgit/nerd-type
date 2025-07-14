@@ -2111,7 +2111,8 @@ body[data-ui-hidden="true"] #buttons,
 body[data-ui-hidden="true"] .navbar-nav {
   display: none !important;
 }
-body[data-ui-hidden="true"] #header-logo {
+body[data-ui-hidden="true"] #header-logo,
+body[data-ui-hidden="true"] #header-logo-no-text {
   display: none !important;
 }
 
