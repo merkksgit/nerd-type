@@ -127,7 +127,7 @@ body {
   color: #7aa2f7 !important;
   background-color: #1f2335 !important;
   border: none !important;
-  border-radius: 4px !important;
+  border-radius: 16px !important;
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.25),
     0 0 4px rgba(122, 162, 247, 0.3);
@@ -154,6 +154,11 @@ body {
   background: #7aa2f7;
   color: #1a1b26;
   border-color: #7aa2f7;
+}
+
+#refreshScoresBtn {
+  min-width: 120px !important;
+  margin: 5px !important;
 }
 
 #refreshScoresBtn:hover .fa-sync-alt {
