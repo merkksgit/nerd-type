@@ -1973,7 +1973,7 @@ function displayModernGameOverContent(data) {
   // Add score breakdown for classic mode
   if (data.mode === "classic" && data.scoreBreakdown) {
     content += `
-      <div class="game-stats-container score-breakdown">
+      <div class="game-stats-container score-breakdown ${defeatClass}">
         <div class="stat-card">
           <div class="stat-label">Base Score</div>
           <div class="stat-value">${data.scoreBreakdown.baseScore}</div>

@@ -1021,6 +1021,7 @@ function applyFont(fontFamily) {
     #currentGameMode,
     #timer,
     #progressPercentage,
+    #precisionMultiplier,
     .game-interface,
     .typing-area
   `);

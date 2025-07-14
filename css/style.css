@@ -1023,6 +1023,11 @@ div#wordToType {
   color: #f7768e;
 }
 
+/* Score breakdown defeat styling - make values red after lost game */
+.game-stats-container.score-breakdown.defeat .stat-value {
+  color: #f7768e !important;
+}
+
 /* Score Breakdown Styling */
 .game-stats-container.score-breakdown {
   margin: 20px 0 40px;
@@ -2658,6 +2663,37 @@ tr:hover .username-rank-icon {
 
   #gameOverModal .modal-footer {
     padding: 0.75rem 1rem;
+  }
+
+  /* Hide sections on mobile for cleaner game over modal */
+  @media (max-width: 768px) {
+    #gameOverModal .modal-dialog {
+      margin: 0.5rem;
+    }
+
+    #gameOverModal .modal-body {
+      padding: 0.75rem;
+    }
+
+    .game-stats-container.score-breakdown,
+    .game-settings-info {
+      display: none !important;
+    }
+
+    .mobile-return-text {
+      font-size: 1.2rem !important;
+      padding: 1rem 2rem !important;
+      background-color: #7aa2f7 !important;
+      color: #1a1b26 !important;
+      border-radius: 8px !important;
+      display: inline-block !important;
+      margin: 1rem 0 !important;
+      font-weight: bold !important;
+      min-height: 48px !important;
+      line-height: 1.5 !important;
+      text-align: center !important;
+      min-width: 120px !important;
+    }
   }
 
   .restart-text {

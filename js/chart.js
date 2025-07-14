@@ -54,9 +54,16 @@ function displayScoreGraph() {
   const sortedResults = classicResults.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
   const last15Results = sortedResults.slice(0, 15).reverse();
 
+  // Destroy existing chart if it exists
+  const canvas = document.getElementById("scoreChart");
+  const existingChart = Chart.getChart(canvas);
+  if (existingChart) {
+    existingChart.destroy();
+  }
+
   // If no classic results, don't display anything
   if (last15Results.length === 0) {
-    const ctx = document.getElementById("scoreChart").getContext("2d");
+    const ctx = canvas.getContext("2d");
     new Chart(ctx, {
       type: "line",
       data: {
@@ -560,9 +567,16 @@ function displayZenModeGraph() {
   const sortedZenResults = zenResults.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
   const last15ZenResults = sortedZenResults.slice(0, 15).reverse();
 
+  // Destroy existing chart if it exists
+  const canvas = document.getElementById("zenChart");
+  const existingChart = Chart.getChart(canvas);
+  if (existingChart) {
+    existingChart.destroy();
+  }
+
   // If no zen results, don't display anything
   if (last15ZenResults.length === 0) {
-    const ctx = document.getElementById("zenChart").getContext("2d");
+    const ctx = canvas.getContext("2d");
     new Chart(ctx, {
       type: "line",
       data: {
@@ -1074,7 +1088,7 @@ function displayZenModeGraph() {
   });
 }
 
-async function refreshChartsWithLatestData() {
+window.refreshChartsWithLatestData = async function refreshChartsWithLatestData() {
   try {
     // Check if user is logged in and can sync from Firebase
     if (window.canSyncScoreboardToFirebase && window.canSyncScoreboardToFirebase()) {
@@ -1085,6 +1099,8 @@ async function refreshChartsWithLatestData() {
         // Update localStorage with fresh data
         localStorage.setItem("gameResults", JSON.stringify(cloudScores));
       }
+    } else {
+      // User is logged out - ensure we're using guest data
     }
   } catch (error) {
     console.error("❌ Failed to refresh chart data:", error);

@@ -140,7 +140,7 @@ function handleAuthStateChange(user) {
         localStorage.getItem("nerdtype_font") || "jetbrains-light";
 
       const gameElements = document.querySelectorAll(
-        "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area",
+        "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, #precisionMultiplier, .game-interface, .typing-area",
       );
       gameElements.forEach((element) => {
         if (element) {
@@ -158,6 +158,47 @@ function handleAuthStateChange(user) {
     localStorage.removeItem("nerdtype_username");
     window.playerUsername = "";
 
+    // Refresh achievements on achievements page after logout
+    if (window.location.pathname.includes('achievements.html')) {
+      setTimeout(() => {
+        // Check if achievementSystem is available and refresh achievements
+        if (typeof window.achievementSystem !== 'undefined' || typeof achievementSystem !== 'undefined') {
+          const system = window.achievementSystem || achievementSystem;
+          
+          // Re-render core achievements
+          const coreContainer = document.getElementById('core-achievements-container');
+          if (coreContainer && system.renderCoreAchievementsToContainer) {
+            system.renderCoreAchievementsToContainer('core-achievements-container');
+          }
+          
+          // Re-render seasonal achievements  
+          const seasonalContainer = document.getElementById('seasonal-achievements-container');
+          if (seasonalContainer && system.renderSeasonalAchievementsToContainer) {
+            system.renderSeasonalAchievementsToContainer('seasonal-achievements-container');
+          }
+          
+          console.log("🏆 Refreshed achievements after logout");
+        }
+      }, 300);
+    }
+
+    // Refresh charts on chart page after logout
+    if (window.location.pathname.includes('chart.html')) {
+      setTimeout(() => {
+        // Ensure guest scoreboard is switched first, then refresh charts
+        if (window.switchToGuestScoreboard) {
+          window.switchToGuestScoreboard();
+        }
+        
+        // Give a moment for data to be restored, then refresh charts
+        setTimeout(() => {
+          if (typeof window.refreshChartsWithLatestData === 'function') {
+            window.refreshChartsWithLatestData();
+          }
+        }, 200);
+      }, 300);
+    }
+
     // Update displays
     if (usernameDisplay) {
       usernameDisplay.textContent = "Login";
@@ -173,7 +214,7 @@ function handleAuthStateChange(user) {
         localStorage.getItem("nerdtype_font") || "jetbrains-light";
 
       const gameElements = document.querySelectorAll(
-        "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area",
+        "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, #precisionMultiplier, .game-interface, .typing-area",
       );
       gameElements.forEach((element) => {
         if (element) {
@@ -700,6 +741,16 @@ window.logoutUser = async function () {
     }
 
     console.log("✅ Logout successful");
+    
+    // Refresh charts if on chart page
+    if (window.location.pathname.includes('chart.html')) {
+      setTimeout(() => {
+        if (typeof window.refreshChartsWithLatestData === 'function') {
+          window.refreshChartsWithLatestData();
+        }
+      }, 500); // Give more time for all logout processes to complete
+    }
+    
     return { success: true };
   } catch (error) {
     console.error("❌ Logout error:", error);
@@ -741,7 +792,7 @@ window.addEventListener("fontChanged", function (event) {
 
   // Apply the new font immediately to all elements
   const gameElements = document.querySelectorAll(
-    "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area, #usernameDisplay",
+    "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, #precisionMultiplier, .game-interface, .typing-area, #usernameDisplay",
   );
   gameElements.forEach((element) => {
     if (element) {
@@ -761,7 +812,7 @@ window.reapplyCurrentFont = function () {
   const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-light";
 
   const gameElements = document.querySelectorAll(
-    "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, .game-interface, .typing-area, #usernameDisplay",
+    "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, #precisionMultiplier, .game-interface, .typing-area, #usernameDisplay",
   );
   gameElements.forEach((element) => {
     if (element) {

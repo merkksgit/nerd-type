@@ -1496,6 +1496,9 @@
     <script type="module">
       import achievementSystem from "../js/achievements.js";
 
+      // Make achievementSystem globally available for auth state change refreshes
+      window.achievementSystem = achievementSystem;
+
       // When DOM is loaded, render achievements
       document.addEventListener("DOMContentLoaded", function () {
         // Render core achievements
