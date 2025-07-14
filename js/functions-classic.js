@@ -1459,7 +1459,21 @@ function checkInput(e) {
   updateLetterStates(userInput);
 
   // Check if word is complete
-  const expectedInput = showSpace ? currentWord + " " : currentWord;
+  // Determine if this is the last word for either game mode
+  const isLastWord = isZenMode 
+    ? wordsTyped.length + 1 >= zenWordGoal 
+    : (() => {
+        const settings = JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
+        const wordsGoal = parseInt(
+          localStorage.getItem("nerdtype_words_goal") || 
+          settings.timeLimit || 
+          "30"
+        );
+        return wordsTyped.length + 1 >= wordsGoal;
+      })();
+  
+  // For the last word, don't require space; for other words, follow the showSpace setting
+  const expectedInput = (showSpace && !isLastWord) ? currentWord + " " : currentWord;
 
   if (userInput === expectedInput) {
     // Only increment precision streak if this word had no mistakes and not in zen mode
