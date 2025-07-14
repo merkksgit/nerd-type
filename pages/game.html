@@ -504,9 +504,7 @@
                   Time: <span id="totalTimeValue"></span>
                 </div>
                 <div id="wordToType">
-                  <span class="press-enter-text" id="pressEnterText"
-                    >Press Enter to play</span
-                  >
+                  <!-- Words will be displayed here immediately on page load -->
                 </div>
                 <input
                   type="text"
@@ -1706,30 +1704,34 @@
       // Run on load
       document.addEventListener("DOMContentLoaded", handleMobileViewport);
 
-      // Update press enter text for mobile devices
+      // Mobile tap-to-focus functionality
       document.addEventListener("DOMContentLoaded", function () {
-        const pressEnterText = document.getElementById("pressEnterText");
-        const isMobile = window.innerWidth <= 768;
-
-        if (pressEnterText && isMobile) {
-          pressEnterText.textContent = "Tap to play";
-        }
-
-        // Add simple click handler for tap-to-start functionality
+        // Add simple click handler for tap-to-activate functionality
         setTimeout(() => {
           const wordToTypeElement = document.getElementById("wordToType");
           if (wordToTypeElement && !wordToTypeElement.onclick) {
             wordToTypeElement.onclick = function () {
-              const userInput = document.getElementById("userInput");
-              if (userInput) {
-                userInput.focus();
-
-                // Start game on mobile tap (regardless of minimal mode)
-                const isMobile = window.innerWidth <= 768;
-
-                if (isMobile && typeof window.startGame === "function") {
-                  window.startGame();
+              // Use the same activation function as Enter/Start button
+              if (typeof window.activateGame === "function") {
+                window.activateGame();
+              } else {
+                // Fallback if function not available yet
+                const userInput = document.getElementById("userInput");
+                if (userInput) {
+                  userInput.focus();
                 }
+              }
+            };
+          }
+          
+          // Also add click handler to the input field itself for easier mobile interaction
+          const userInput = document.getElementById("userInput");
+          if (userInput) {
+            userInput.onclick = function() {
+              if (typeof window.activateGame === "function") {
+                window.activateGame();
+              } else {
+                this.focus();
               }
             };
           }

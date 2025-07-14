@@ -473,6 +473,28 @@ async function initializeGame() {
 function setupUI() {
   // Update the UI based on current game mode
   updateUIForGameMode();
+  
+  // Initialize game state variables but don't start timers
+  gameEnded = false;
+  currentWordIndex = 0;
+  nextWordIndex = 1;
+  
+  // Reset precision multiplier system
+  resetPrecisionSystem();
+  
+  // Shuffle the words array for variety
+  words = words.sort(() => Math.random() - 0.5);
+  
+  // Show words immediately on page load
+  updateWordDisplay();
+  
+  // Mark game as inactive initially
+  const gameElement = document.getElementById("game");
+  if (gameElement) {
+    gameElement.classList.add("inactive");
+  }
+  
+  // Don't focus the input field initially - wait for user interaction
 }
 
 // Calculate the size of localStorage data in KB
@@ -620,9 +642,15 @@ function initializeEventListeners() {
       return;
     }
 
-    // Handle game controls
+    // Handle game controls - Enter key focuses input and starts game
     if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
-      startGame();
+      if (hasStartedTyping) {
+        // If game is already active, restart it
+        location.reload();
+      } else {
+        // Activate game and focus input field
+        activateGame();
+      }
     }
     if (event.key === "Enter" && event.ctrlKey) {
       location.reload();
@@ -713,10 +741,12 @@ function initializeEventListeners() {
       });
     }
 
-    // Start button
+    // Start button - activate game and focus input field
     const startButton = domManager.get("startButton");
     if (startButton) {
-      startButton.addEventListener("click", startGame);
+      startButton.addEventListener("click", function() {
+        activateGame();
+      });
     }
 
     // User input field
@@ -961,6 +991,7 @@ function startGame() {
 // Expose functions to global scope for tap-to-start functionality
 window.startGame = startGame;
 window.updateWordDisplay = updateWordDisplay;
+window.activateGame = activateGame;
 
 function updateWordDisplay() {
   const wordToTypeElement = domManager.get("wordToType");
@@ -1491,6 +1522,64 @@ function startGameTimers() {
   }
 }
 
+// Activate the game - remove inactive state and prepare for typing
+function activateGame() {
+  const gameElement = document.getElementById("game");
+  if (gameElement) {
+    gameElement.classList.remove("inactive");
+  }
+  
+  // Focus the input field
+  const userInput = domManager.get("userInput");
+  if (userInput) {
+    userInput.focus();
+  }
+}
+
+// Initialize game state when user starts typing for the first time
+function startGameOnFirstInput() {
+  // Set game as started
+  hasStartedTyping = true;
+  gameStartTime = Date.now();
+  
+  // Initialize timers based on mode
+  if (isZenMode) {
+    // Zen Mode - start zen timer
+    sessionStartTime = new Date();
+    if (document.getElementById("totalTimeValue")) {
+      document.getElementById("totalTimeValue").textContent = "0:00";
+    }
+    
+    // Clear any existing intervals and start zen timer
+    if (countDownInterval) clearInterval(countDownInterval);
+    if (totalTimeInterval) clearInterval(totalTimeInterval);
+    totalTimeInterval = setInterval(updateZenTimer, TIMERS.ZEN_TIMER_INTERVAL);
+  } else {
+    // Classic Mode - initialize timer with settings
+    timeLeft = gameSettings.initialTime;
+    bonusTime = gameSettings.bonusTime;
+    updateTimer();
+    
+    // Clear previous intervals if they exist
+    if (countDownInterval) clearInterval(countDownInterval);
+    if (totalTimeInterval) clearInterval(totalTimeInterval);
+    
+    // Set up timer intervals
+    countDownInterval = setInterval(countDown, TIMERS.COUNTDOWN_INTERVAL);
+    totalTimeInterval = setInterval(totalTimeCount, TIMERS.TOTAL_TIME_INTERVAL);
+  }
+  
+  // Reset game state variables (already set in setupUI but ensure they're reset)
+  wordsTyped = [];
+  totalCharactersTyped = 0;
+  totalKeystrokes = 0;
+  correctKeystrokes = 0;
+  totalTimeSpent = 0;
+  
+  // Reset progress bar
+  updateProgressBar();
+}
+
 // Helper function to handle keypress sound
 function handleKeypressSound(e) {
   if (
@@ -1670,9 +1759,9 @@ function checkInput(e) {
   // Validate input length
   if (!validateInputLength(e, userInput, currentWord, showSpace)) return;
 
-  // Start timers on first input
-  if (e.target.value.length > 0) {
-    startGameTimers();
+  // Start game on first input
+  if (e.target.value.length > 0 && !hasStartedTyping) {
+    startGameOnFirstInput();
   }
 
   // Handle keypress sound

@@ -544,6 +544,40 @@ input#userInput {
   padding-top: 2em;
   text-align: center;
   color: #7aa2f7;
+  position: relative;
+}
+
+/* Game inactive state - dims the game area until user interacts */
+#game.inactive {
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+#game.inactive::after {
+  content: "Press Enter or click Start to begin";
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(36, 40, 59, 0.95);
+  color: #ff9e64;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 500;
+  border: 2px solid #ff9e64;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Mobile-specific instruction text */
+@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+  #game.inactive::after {
+    content: "Tap to start";
+    font-size: 1.2em;
+    padding: 0.8rem 1.5rem;
+  }
 }
 
 #score {
