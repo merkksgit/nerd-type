@@ -7,7 +7,7 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <!-- iOS Safari theme colors -->
-    <meta name="theme-color" content="#1a1b26" />
+    <meta name="theme-color" content="#24283b" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
@@ -504,7 +504,9 @@
                   Time: <span id="totalTimeValue"></span>
                 </div>
                 <div id="wordToType">
-                  <span class="press-enter-text" id="pressEnterText">Press Enter to play</span>
+                  <span class="press-enter-text" id="pressEnterText"
+                    >Press Enter to play</span
+                  >
                 </div>
                 <input
                   type="text"
@@ -1703,28 +1705,28 @@
 
       // Run on load
       document.addEventListener("DOMContentLoaded", handleMobileViewport);
-      
+
       // Update press enter text for mobile devices
-      document.addEventListener("DOMContentLoaded", function() {
+      document.addEventListener("DOMContentLoaded", function () {
         const pressEnterText = document.getElementById("pressEnterText");
         const isMobile = window.innerWidth <= 768;
-        
+
         if (pressEnterText && isMobile) {
           pressEnterText.textContent = "Tap to play";
         }
-        
+
         // Add simple click handler for tap-to-start functionality
         setTimeout(() => {
           const wordToTypeElement = document.getElementById("wordToType");
           if (wordToTypeElement && !wordToTypeElement.onclick) {
-            wordToTypeElement.onclick = function() {
+            wordToTypeElement.onclick = function () {
               const userInput = document.getElementById("userInput");
               if (userInput) {
                 userInput.focus();
-                
+
                 // Start game on mobile tap (regardless of minimal mode)
                 const isMobile = window.innerWidth <= 768;
-                
+
                 if (isMobile && typeof window.startGame === "function") {
                   window.startGame();
                 }
