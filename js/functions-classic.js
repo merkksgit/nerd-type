@@ -2178,6 +2178,12 @@ function saveClassicResult(
   // Save locally
   results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
+  
+  // Update total game count
+  const currentTotal = localStorage.getItem("totalGameCount");
+  const newTotal = currentTotal ? parseInt(currentTotal) + 1 : results.length;
+  localStorage.setItem("totalGameCount", newTotal.toString());
+  
   localStorage.setItem(
     "highestAchievements",
     JSON.stringify(highestAchievements),
@@ -2273,6 +2279,11 @@ function saveZenResult(wpm, totalTime, accuracy) {
   // Save locally
   results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
+  
+  // Update total game count
+  const currentTotal = localStorage.getItem("totalGameCount");
+  const newTotal = currentTotal ? parseInt(currentTotal) + 1 : results.length;
+  localStorage.setItem("totalGameCount", newTotal.toString());
 
   // Save to Firebase user scoreboard for cross-device sync (but NOT global leaderboard)
   if (
@@ -2522,9 +2533,13 @@ function displayPreviousResults() {
   if (results.length > 15) {
     const storageSize = calculateLocalStorageSize();
     const infoRow = document.createElement("tr");
+    // Get actual total count from localStorage, fallback to results.length
+    const totalGameCount = localStorage.getItem("totalGameCount");
+    const actualTotal = totalGameCount ? parseInt(totalGameCount) : results.length;
+    
     infoRow.innerHTML = `
       <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
-        Showing last 15 of ${results.length} total games | Storage used: ${storageSize} KB
+        Showing last 15 of ${actualTotal} total games | Storage used: ${storageSize} KB
       </td>
     `;
     tableBody.appendChild(infoRow);

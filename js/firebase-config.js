@@ -945,14 +945,24 @@ window.loadScoreboardFromFirebase = async function () {
 
       // Sort by timestamp locally (most recent first) and limit to 50
       cloudScores.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      
+      // Store total count before limiting
+      const totalCount = cloudScores.length;
       const limitedScores = cloudScores.slice(0, 50);
 
       console.log(
         "📥 Loaded scoreboard from Firebase:",
         limitedScores.length,
-        "entries",
+        "entries (total:",
+        totalCount,
+        ")",
       );
-      return limitedScores;
+      
+      // Return both the scores and total count
+      return {
+        scores: limitedScores,
+        totalCount: totalCount
+      };
     }
 
     console.log("📭 No scoreboard entries found");
@@ -983,16 +993,29 @@ window.switchToUserScoreboard = async function () {
     }
 
     // Load user's cloud scores
-    const cloudScores = await window.loadScoreboardFromFirebase();
+    const cloudData = await window.loadScoreboardFromFirebase();
 
-    // Replace local storage with user's cloud scores only
-    localStorage.setItem("gameResults", JSON.stringify(cloudScores));
-
-    console.log(
-      "✅ Switched to user scoreboard:",
-      cloudScores.length,
-      "entries",
-    );
+    if (cloudData && cloudData.scores) {
+      // New format with total count
+      localStorage.setItem("totalGameCount", cloudData.totalCount.toString());
+      localStorage.setItem("gameResults", JSON.stringify(cloudData.scores));
+      console.log(
+        "✅ Switched to user scoreboard:",
+        cloudData.scores.length,
+        "entries (total:",
+        cloudData.totalCount,
+        ")",
+      );
+    } else if (cloudData && Array.isArray(cloudData)) {
+      // Fallback for old format
+      localStorage.setItem("gameResults", JSON.stringify(cloudData));
+      localStorage.setItem("totalGameCount", cloudData.length.toString());
+      console.log(
+        "✅ Switched to user scoreboard:",
+        cloudData.length,
+        "entries",
+      );
+    }
 
     // Refresh scoreboard display if visible
     if (typeof window.displayPreviousResults === "function") {

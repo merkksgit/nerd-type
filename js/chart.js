@@ -1093,11 +1093,18 @@ window.refreshChartsWithLatestData = async function refreshChartsWithLatestData(
     // Check if user is logged in and can sync from Firebase
     if (window.canSyncScoreboardToFirebase && window.canSyncScoreboardToFirebase()) {
       // Load fresh data from Firebase
-      const cloudScores = await window.loadScoreboardFromFirebase();
+      const cloudData = await window.loadScoreboardFromFirebase();
       
-      if (cloudScores && cloudScores.length > 0) {
+      if (cloudData && cloudData.scores && cloudData.scores.length > 0) {
+        // Store total count separately before updating localStorage
+        localStorage.setItem("totalGameCount", cloudData.totalCount.toString());
+        
         // Update localStorage with fresh data
-        localStorage.setItem("gameResults", JSON.stringify(cloudScores));
+        localStorage.setItem("gameResults", JSON.stringify(cloudData.scores));
+      } else if (cloudData && cloudData.length > 0) {
+        // Fallback for old format (if function returns array directly)
+        localStorage.setItem("gameResults", JSON.stringify(cloudData));
+        localStorage.setItem("totalGameCount", cloudData.length.toString());
       }
     } else {
       // User is logged out - ensure we're using guest data
