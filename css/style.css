@@ -2691,11 +2691,11 @@ tr:hover .username-rank-icon {
       padding: 1rem 2rem !important;
       background-color: #7aa2f7 !important;
       color: #1a1b26 !important;
-      border-radius: 8px !important;
+      border-radius: 28px !important;
       display: inline-block !important;
       margin: 1rem 0 !important;
       font-weight: bold !important;
-      min-height: 48px !important;
+      min-height: 38px !important;
       line-height: 1.5 !important;
       text-align: center !important;
       min-width: 120px !important;
