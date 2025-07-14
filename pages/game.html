@@ -1708,9 +1708,37 @@
       document.addEventListener("DOMContentLoaded", function () {
         // Add simple click handler for tap-to-activate functionality
         setTimeout(() => {
+          const gameElement = document.getElementById("game");
           const wordToTypeElement = document.getElementById("wordToType");
+          const userInput = document.getElementById("userInput");
+          
+          // Primary handler: tap anywhere on the game area when inactive
+          if (gameElement) {
+            const handleGameActivation = function(e) {
+              // Only handle taps when game is inactive
+              if (gameElement.classList.contains("inactive")) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof window.activateGame === "function") {
+                  window.activateGame();
+                } else {
+                  // Fallback if function not available yet
+                  gameElement.classList.remove("inactive");
+                  if (userInput) {
+                    userInput.focus();
+                  }
+                }
+              }
+            };
+            
+            // Add both click and touch handlers for better mobile support
+            gameElement.onclick = handleGameActivation;
+            gameElement.ontouchstart = handleGameActivation;
+          }
+          
+          // Secondary handler: word display area
           if (wordToTypeElement && !wordToTypeElement.onclick) {
-            wordToTypeElement.onclick = function () {
+            wordToTypeElement.onclick = function (e) {
               // Use the same activation function as Enter/Start button
               if (typeof window.activateGame === "function") {
                 window.activateGame();
@@ -1724,8 +1752,7 @@
             };
           }
           
-          // Also add click handler to the input field itself for easier mobile interaction
-          const userInput = document.getElementById("userInput");
+          // Tertiary handler: input field itself for easier mobile interaction
           if (userInput) {
             userInput.onclick = function() {
               if (typeof window.activateGame === "function") {
