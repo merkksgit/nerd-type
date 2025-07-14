@@ -152,9 +152,27 @@ function handleAuthStateChange(user) {
       document.documentElement.style.setProperty("--game-font", currentFont);
     }, 200);
   } else {
-    console.log("❌ User logged out");
+    // Check if this is a first-time visitor or someone who was never authenticated
+    const guestMode = localStorage.getItem("nerdtype_guest_mode");
+    const currentUsername = localStorage.getItem("nerdtype_username");
+    
+    if (guestMode !== "true" && !currentUsername) {
+      // First-time visitor - set them up as guest without clearing any existing scores
+      localStorage.setItem("nerdtype_guest_mode", "true");
+      localStorage.setItem("nerdtype_username", "runner");
+      window.playerUsername = "runner";
+      
+      // Update UI if elements exist
+      const usernameDisplay = document.getElementById("usernameDisplay");
+      if (usernameDisplay) {
+        usernameDisplay.textContent = "runner";
+      }
+      
+      // Skip all the logout-related logic for first-time visitors
+      return;
+    }
 
-    // Clear user data
+    // Clear user data (this was an actual logout)
     localStorage.removeItem("nerdtype_username");
     window.playerUsername = "";
 
@@ -182,21 +200,25 @@ function handleAuthStateChange(user) {
       }, 300);
     }
 
-    // Refresh charts on chart page after logout
+    // Refresh charts on chart page after logout (but not for guests visiting first time)
     if (window.location.pathname.includes('chart.html')) {
-      setTimeout(() => {
-        // Ensure guest scoreboard is switched first, then refresh charts
-        if (window.switchToGuestScoreboard) {
-          window.switchToGuestScoreboard();
-        }
-        
-        // Give a moment for data to be restored, then refresh charts
+      // Only refresh if this was an actual logout, not a guest user visiting
+      const wasAlreadyGuest = localStorage.getItem("nerdtype_guest_mode") === "true";
+      if (!wasAlreadyGuest) {
         setTimeout(() => {
-          if (typeof window.refreshChartsWithLatestData === 'function') {
-            window.refreshChartsWithLatestData();
+          // Ensure guest scoreboard is switched first, then refresh charts
+          if (window.switchToGuestScoreboard) {
+            window.switchToGuestScoreboard();
           }
-        }, 200);
-      }, 300);
+          
+          // Give a moment for data to be restored, then refresh charts
+          setTimeout(() => {
+            if (typeof window.refreshChartsWithLatestData === 'function') {
+              window.refreshChartsWithLatestData();
+            }
+          }, 200);
+        }, 300);
+      }
     }
 
     // Update displays
@@ -982,18 +1004,28 @@ window.switchToUserScoreboard = async function () {
 };
 
 window.switchToGuestScoreboard = function () {
-  console.log("🔄 Switching to guest scoreboard...");
-
   try {
     // Restore guest scores from backup
     const guestBackup = localStorage.getItem("gameResults_guest_backup");
     if (guestBackup) {
       localStorage.setItem("gameResults", guestBackup);
-      console.log("🔄 Restored guest scoreboard from backup");
     } else {
-      // No backup, start fresh guest scoreboard
-      localStorage.setItem("gameResults", JSON.stringify([]));
-      console.log("🆕 Started fresh guest scoreboard");
+      // No backup, check if we already have guest scores and preserve them
+      const currentScores = localStorage.getItem("gameResults");
+      
+      // Parse and check if scores exist
+      let parsedScores = [];
+      try {
+        parsedScores = JSON.parse(currentScores || "[]");
+      } catch (e) {
+        // Failed to parse, will create fresh scoreboard
+      }
+      
+      if (!currentScores || currentScores === "null" || currentScores === "undefined" || parsedScores.length === 0) {
+        // Only start fresh if there are truly no scores
+        localStorage.setItem("gameResults", JSON.stringify([]));
+      }
+      // Otherwise preserve existing scores (already in guest mode)
     }
 
     // Refresh scoreboard display if visible
