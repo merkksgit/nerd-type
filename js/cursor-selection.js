@@ -106,7 +106,7 @@ function applyCursorTheme(color) {
         .btn-outline-primary, .btn-success, .btn-contact, .nav-link, .clickable,
         [role="button"], #returnToGameBtn, #restartGameBtn, #openTerminalBtn,
         #startButton, #clrResults, #confirmUsername, #game-command-modal-close,
-        #confirmMobileWarning, #submitCustomScore, #resetBtn,
+        #submitCustomScore, #resetBtn,
         #scoreboardCloseBtn, #toggleGraph, #toggleAchievements, #toggleScoreboard,
         #downloadDataBtn, #refreshScoresBtn, .floating-settings-btn,
         .floating-scoreboard-btn, .floating-scoreboard-chart-btn, .floating-user-btn,
