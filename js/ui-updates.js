@@ -83,7 +83,7 @@ function showLoginSuccessModal(username) {
     `<img src="../images/logo-text-no-keyboard.png" alt="Success" style="width: 300px; vertical-align: middle;">`;
   document.getElementById("alertModalMessage").innerHTML = `
         <div class="text-center">
-          <p class="mb-3">Welcome, <span style="color: #ff9e64"<strong>${username}</strong></span>!</p>
+          <p class="mb-3">Welcome, <span style="color: #ff9e64"><strong>${username}</strong></span>!</p>
         </div>`;
 
   // Hide the OK button for this specific modal
@@ -497,7 +497,7 @@ function toggleUIVisibility() {
 
   // Apply the changes immediately
   applyUIHideSettings(newState);
-  
+
   // Update settings panel toggle if it exists
   updateSettingsPanelToggle(newState);
 }
@@ -576,7 +576,7 @@ window.applyUIHideSettings = function applyUIHideSettings(hideUI) {
 
   // Store the state in a data attribute for CSS targeting
   document.body.setAttribute("data-ui-hidden", hideUI.toString());
-}
+};
 
 // Function to restore UI state on page load
 function restoreUIHideState() {
