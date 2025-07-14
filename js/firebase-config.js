@@ -13,7 +13,7 @@ const firebaseConfig = {
 };
 
 // Global variables
-let firebaseApp = null;
+let firebaseApp;
 let database = null;
 let auth = null;
 let currentUser = null;
@@ -1671,40 +1671,6 @@ async function reserveUsername(username, userId, userEmail) {
   }
 }
 
-async function reserveUsername(username, userId, userEmail) {
-  if (!window.firebaseModules || !database) {
-    throw new Error("Firebase not ready");
-  }
-
-  const { ref, set } = window.firebaseModules;
-  const trimmed = username.trim();
-
-  try {
-    // Store in usernames collection for quick lookup
-    const usernameRef = ref(database, `usernames/${trimmed.toLowerCase()}`);
-    await set(usernameRef, {
-      username: trimmed,
-      userId: userId,
-      userEmail: userEmail,
-      createdAt: new Date().toISOString(),
-    });
-
-    // Also store in user profile
-    const userRef = ref(database, `users/${userId}`);
-    await set(userRef, {
-      username: trimmed,
-      email: userEmail,
-      createdAt: new Date().toISOString(),
-      lastActive: new Date().toISOString(),
-    });
-
-    console.log("✅ Username reserved successfully:", trimmed);
-    return { success: true };
-  } catch (error) {
-    console.error("❌ Error reserving username:", error);
-    throw error;
-  }
-}
 
 async function validateUsernameComplete(username) {
   const formatValidation = validateUsernameFormat(username);
