@@ -2229,7 +2229,7 @@ body[data-ui-hidden="true"] #versionInfo,
 body[data-ui-hidden="true"] .stats-container,
 body[data-ui-hidden="true"] .game-info,
 body[data-ui-hidden="true"] .footer,
-body[data-ui-hidden="true"] .progress,
+body[data-ui-hidden="true"] .progress.terminal,
 body[data-ui-hidden="true"] #buttons,
 body[data-ui-hidden="true"] .navbar-nav {
   display: none !important;

@@ -533,7 +533,7 @@ window.applyUIHideSettings = function applyUIHideSettings(hideUI) {
     ".stats-container",
     ".game-info",
     ".footer",
-    ".progress",
+    ".progress.terminal",
     "#buttons",
   ];
 
