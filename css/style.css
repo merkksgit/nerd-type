@@ -1023,14 +1023,14 @@ div#wordToType {
   border: none;
   border-radius: 0;
   padding: 20px;
-  text-align: left;
+  text-align: center;
   min-width: 220px;
   flex: 1 1 auto;
   overflow: visible;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .stat-label {
