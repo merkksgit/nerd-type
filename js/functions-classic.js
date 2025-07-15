@@ -2014,9 +2014,9 @@ function calculatePrecisionMultiplier() {
     return 1.0; // No bonus for less than 5 perfect words
   }
 
-  // Simple system: 1% bonus per perfect word after 5th
+  // Simple system: 3% bonus per perfect word after 5th
   const perfectWordsAboveFive = Math.max(0, precisionStreak - 5);
-  const bonusPercentage = perfectWordsAboveFive * 0.01;
+  const bonusPercentage = perfectWordsAboveFive * 0.03;
 
   // Return as multiplier for display (1.0 + bonus percentage)
   return 1.0 + bonusPercentage;
@@ -2032,9 +2032,9 @@ function calculatePeakPrecisionMultiplier() {
     return 1.0; // No bonus for less than 5 perfect words
   }
 
-  // Simple system: 1% bonus per perfect word after 5th
+  // Simple system: 3% bonus per perfect word after 5th
   const perfectWordsAboveFive = Math.max(0, peakPrecisionStreak - 5);
-  const bonusPercentage = perfectWordsAboveFive * 0.01;
+  const bonusPercentage = perfectWordsAboveFive * 0.03;
 
   // Return as multiplier for display (1.0 + bonus percentage)
   return 1.0 + bonusPercentage;
