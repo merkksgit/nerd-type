@@ -989,7 +989,7 @@ div#wordToType {
 
 /* Game stats in modal */
 .game-settings-info {
-  margin-top: 40px;
+  margin-top: 15px;
   text-align: center;
   color: #394b70;
   font-size: 14px;
@@ -1011,11 +1011,9 @@ div#wordToType {
   justify-content: center;
   align-items: stretch;
   flex-wrap: nowrap;
-  margin: 120px 0;
+  margin: 20px auto 10px auto;
   width: 100%;
   max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .stat-card {
@@ -1072,7 +1070,7 @@ div#wordToType {
 
 /* Score Breakdown Styling */
 .game-stats-container.score-breakdown {
-  margin: 20px 0 40px;
+  margin: 10px auto 15px auto;
   gap: 20px;
 }
 
@@ -1472,6 +1470,44 @@ body:not(.chart-page) #customAlertModal #alertModalMessage {
 /* Ensure game over modal text doesn't cause flickering */
 #totalTimeSpentDisplay {
   display: inline-block;
+}
+
+/* WPM Chart in Game Over Modal */
+.wpm-chart-container {
+  margin: 15px 0 10px 0;
+  background-color: #24283b;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.chart-header {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.chart-title {
+  color: #bb9af7;
+  font-family: 'jetbrains-mono', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 200px;
+  width: 100%;
+}
+
+.chart-wrapper canvas {
+  max-height: 200px;
+}
+
+/* Chart container responsive */
+@media (max-width: 768px) {
+  .wpm-chart-container {
+    display: none;
+  }
 }
 
 /* ====== 10. CHART & SCOREBOARD ELEMENTS ====== */

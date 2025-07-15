@@ -2191,6 +2191,21 @@ function displayModernGameOverContent(data) {
 
   content += `</div>`;
 
+  // Add WPM progression chart
+  content += `
+    <div class="wpm-chart-container">
+      <div class="chart-header">
+        <h5 class="chart-title">
+          <i class="fa-solid fa-chart-line me-2"></i>
+          Recent WPM Progress
+        </h5>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="gameOverWpmChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  `;
+
   // Add score breakdown for classic mode
   if (data.mode === "classic" && data.scoreBreakdown) {
     content += `
@@ -2245,6 +2260,9 @@ function displayModernGameOverContent(data) {
   }
 
   modalBody.innerHTML = content;
+
+  // Render WPM progression chart after modal content is set
+  setTimeout(() => renderGameOverWpmChart(), 100);
 
   gameOverModal.show();
 
@@ -3051,3 +3069,217 @@ function executeCommand(command) {
 window.addEventListener("beforeunload", function () {
   cleanupAllTimers();
 });
+
+// Render WPM progression chart for game over modal
+function renderGameOverWpmChart() {
+  const canvas = document.getElementById('gameOverWpmChart');
+  if (!canvas) return;
+
+  // Destroy existing chart if it exists
+  const existingChart = Chart.getChart(canvas);
+  if (existingChart) {
+    existingChart.destroy();
+  }
+
+  // Get game results from storage
+  const results = storageManager.getGameResults();
+  if (!results || results.length === 0) {
+    // Show empty state
+    const ctx = canvas.getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'WPM',
+          data: [],
+          borderColor: '#ff9e64',
+          backgroundColor: 'rgba(255, 158, 100, 0.2)',
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'No games played yet',
+            color: '#7dcfff',
+            font: {
+              family: "'jetbrains-mono', monospace",
+              size: 14
+            }
+          },
+          legend: { display: false }
+        },
+        scales: {
+          x: { display: false },
+          y: { display: false }
+        }
+      }
+    });
+    return;
+  }
+
+  // Sort by timestamp and take last 10 games
+  const sortedResults = results
+    .filter(result => result.wpm && !isNaN(parseFloat(result.wpm)))
+    .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0))
+    .slice(-10);
+
+  if (sortedResults.length === 0) return;
+
+  // Extract data for chart
+  const labels = sortedResults.map((_, index) => `Game ${index + 1}`);
+  const wpmData = sortedResults.map(result => parseFloat(result.wpm) || 0);
+  
+  // Calculate average
+  const averageWpm = wpmData.reduce((sum, wpm) => sum + wpm, 0) / wpmData.length;
+
+  // Get current game WPM (last data point)
+  const currentWpm = wpmData[wpmData.length - 1];
+  const isImprovement = wpmData.length > 1 && currentWpm > wpmData[wpmData.length - 2];
+
+  const ctx = canvas.getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'WPM',
+        data: wpmData,
+        borderColor: '#ff9e64',
+        backgroundColor: 'rgba(255, 158, 100, 0.2)',
+        fill: false,
+        borderWidth: 2,
+        pointBackgroundColor: wpmData.map((_, index) => 
+          index === wpmData.length - 1 ? '#7aa2f7' : '#ff9e64'
+        ),
+        pointBorderColor: wpmData.map((_, index) => 
+          index === wpmData.length - 1 ? '#7aa2f7' : '#ff9e64'
+        ),
+        pointRadius: wpmData.map((_, index) => 
+          index === wpmData.length - 1 ? 6 : 4
+        )
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: `Last 10 Games - Avg: ${averageWpm.toFixed(1)} WPM`,
+          color: '#bb9af7',
+          font: {
+            family: "'jetbrains-mono', monospace",
+            size: 14,
+            weight: 'bold'
+          },
+          padding: {
+            top: 10,
+            bottom: 15
+          }
+        },
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1f2335',
+          titleColor: '#bb9af7',
+          bodyColor: '#c0caf5',
+          borderColor: '#3b4261',
+          borderWidth: 2,
+          cornerRadius: 4,
+          displayColors: false,
+          titleFont: {
+            family: "'jetbrains-mono', monospace",
+            size: 13
+          },
+          bodyFont: {
+            family: "'jetbrains-mono', monospace",
+            size: 12
+          },
+          callbacks: {
+            title: function(context) {
+              if (context && context.length > 0) {
+                const dataIndex = context[0].dataIndex;
+                const result = sortedResults[dataIndex];
+                return result?.username || 'runner';
+              }
+              return '';
+            },
+            beforeBody: function(context) {
+              if (context && context.length > 0) {
+                const dataIndex = context[0].dataIndex;
+                const result = sortedResults[dataIndex];
+                const date = result?.date || 'Unknown';
+                let gameMode = result?.mode || 'Classic Mode';
+                // Remove "Mode" from the end if it exists
+                gameMode = gameMode.replace(/ Mode$/, '');
+                return [`${gameMode}`, `${date}`];
+              }
+              return [];
+            },
+            label: function(context) {
+              const value = context.parsed.y;
+              const isCurrentGame = context.dataIndex === wpmData.length - 1;
+              return `${value.toFixed(1)} WPM${isCurrentGame ? ' (Current)' : ''}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          display: false,
+          grid: { display: false }
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'WPM',
+            color: '#ff9e64',
+            font: {
+              family: "'jetbrains-mono', monospace",
+              size: 12
+            }
+          },
+          grid: {
+            color: '#292e42',
+            display: false
+          },
+          ticks: {
+            color: '#ff9e64',
+            font: {
+              family: "'jetbrains-mono', monospace",
+              size: 11
+            },
+            callback: function(value) {
+              return Math.round(value);
+            }
+          }
+        }
+      }
+    },
+    plugins: [{
+      beforeDraw: (chart) => {
+        const ctx = chart.ctx;
+        const chartArea = chart.chartArea;
+        
+        // Draw average line
+        if (wpmData.length > 1) {
+          const yValue = chart.scales.y.getPixelForValue(averageWpm);
+          ctx.save();
+          ctx.strokeStyle = '#bb9af7';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([5, 3]);
+          ctx.beginPath();
+          ctx.moveTo(chartArea.left, yValue);
+          ctx.lineTo(chartArea.right, yValue);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    }]
+  });
+}
