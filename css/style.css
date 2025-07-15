@@ -1815,7 +1815,7 @@ score h3 {
   background-color: #c3e88d;
   color: #1a1b26;
   padding: 4px 12px;
-  border-radius: 6px;
+  border-radius: 9999px;
   font-size: 0.85rem;
   font-weight: 600;
   display: inline-block;
@@ -1825,7 +1825,7 @@ score h3 {
   background-color: #7aa2f7;
   color: #1a1b26;
   padding: 4px 8px;
-  border-radius: 6px;
+  border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -1844,7 +1844,7 @@ score h3 {
   background-color: #7dcfff;
   color: #1a1b26;
   padding: 4px 8px;
-  border-radius: 6px;
+  border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: uppercase;
@@ -1953,7 +1953,7 @@ score h3 {
   background-color: #7aa2f7;
   color: #1a1b26;
   padding: 4px 12px;
-  border-radius: 12px;
+  border-radius: 9999px;
   font-size: 0.85rem;
   font-weight: 600;
   display: inline-block;
@@ -1991,7 +1991,7 @@ score h3 {
 }
 
 .tab-btn::before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
