@@ -563,7 +563,7 @@ input#userInput {
   top: 42%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(36, 40, 59, 0.95);
+  background: #1f2335;
   color: #ff9e64;
   padding: 1rem 2rem;
   border-radius: 8px;
@@ -1487,7 +1487,7 @@ body:not(.chart-page) #customAlertModal #alertModalMessage {
 
 .chart-title {
   color: #bb9af7;
-  font-family: 'jetbrains-mono', monospace;
+  font-family: "jetbrains-mono", monospace;
   font-size: 16px;
   font-weight: bold;
   margin: 0;
