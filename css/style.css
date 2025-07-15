@@ -559,8 +559,8 @@ input#userInput {
 
 #game.inactive::after {
   content: "Enter - Start/Restart, Ctrl + Enter - Reset";
-  position: absolute;
-  top: 42%;
+  position: fixed;
+  top: 41%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #24283b;
