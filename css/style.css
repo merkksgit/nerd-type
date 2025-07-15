@@ -1963,45 +1963,88 @@ score h3 {
 /* ====== TAB NAVIGATION STYLING ====== */
 .tab-navigation {
   display: flex;
-  background-color: #24283b;
-  border-radius: 8px;
-  padding: 4px;
-  gap: 4px;
+  background-color: transparent;
+  border-radius: 0;
+  padding: 0;
+  gap: 2px;
+  margin-bottom: 1rem;
 }
 
 .tab-btn {
   background-color: transparent;
   border: none;
   color: #7982a9;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  padding: 14px 24px;
+  border-radius: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
   font-family: "jetbrains-mono";
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
+  letter-spacing: 0.8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   display: flex;
   align-items: center;
   position: relative;
   overflow: hidden;
+  opacity: 0.8;
+}
+
+.tab-btn::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #7aa2f7;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tab-btn:hover {
-  color: #ff9e64;
-  transform: translateY(-1px);
+  color: #7aa2f7;
+  opacity: 1;
+  transform: none;
+}
+
+.tab-btn:hover::before {
+  width: 100%;
 }
 
 .tab-btn.active {
-  background-color: #7aa2f7;
-  color: #1f2335;
-  box-shadow: 0 2px 8px rgba(122, 162, 247, 0.2);
+  background-color: transparent;
+  color: #7aa2f7;
+  opacity: 1;
+  box-shadow: none;
+}
+
+.tab-btn.active::before {
+  width: 100%;
 }
 
 .tab-btn.active:hover {
-  background-color: #7aa2f7;
-  color: #1f2335;
+  color: #7aa2f7;
+}
+
+.tab-btn:nth-child(2).active {
+  color: #ff9e64;
+}
+
+.tab-btn:nth-child(2).active::before {
+  background-color: #ff9e64;
+  width: 100%;
+}
+
+.tab-btn:nth-child(2).active:hover {
+  color: #ff9e64;
+}
+
+.tab-btn:nth-child(2):hover {
+  color: #ff9e64;
+}
+
+.tab-btn:nth-child(2):hover::before {
+  background-color: #ff9e64;
 }
 
 .tab-btn i {
