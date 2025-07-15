@@ -23,19 +23,39 @@ https://github.com/folke/tokyonight.nvim
 
 ---
 
-Nerd Fonts (JetBrainsMono Nerd Font)  
+Nerd Fonts  
 MIT License  
 Copyright (c) Ryan L McIntyre  
 https://github.com/ryanoasis/nerd-fonts
 
-Includes:
+Includes the following fonts:
 
 JetBrains Mono Font  
 SIL Open Font License, Version 1.1  
 Copyright (c) 2020 JetBrains s.r.o.  
 https://github.com/JetBrains/JetBrainsMono
 
-JetBrains Mono is licensed under the SIL Open Font License, Version 1.1.  
+0xProto Font  
+SIL Open Font License, Version 1.1  
+Copyright (c) 0xType  
+https://github.com/0xType/0xProto
+
+BigBlue Terminal Font  
+CC BY-SA 4.0 License  
+Copyright (c) VileR  
+https://int10h.org/oldschool-pc-fonts/
+
+Departure Mono Font  
+SIL Open Font License, Version 1.1  
+Copyright (c) Helena Zhang  
+https://github.com/rektdeckard/departure-mono
+
+Fira Code Font  
+SIL Open Font License, Version 1.1  
+Copyright (c) The Fira Code Project Authors  
+https://github.com/tonsky/FiraCode
+
+All fonts are licensed under their respective licenses as indicated above.  
 
 ---
 
