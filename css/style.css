@@ -569,6 +569,7 @@ input#userInput {
   border-radius: 8px;
   font-size: 1.1em;
   font-weight: 500;
+  font-family: var(--game-font, "jetbrains-mono");
   border: 2px solid #ff9e64;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   z-index: 10;
@@ -581,6 +582,7 @@ input#userInput {
     content: "Tap to start";
     font-size: 1.2em;
     padding: 0.8rem 1.5rem;
+    font-family: var(--game-font, "jetbrains-mono");
   }
 }
 
