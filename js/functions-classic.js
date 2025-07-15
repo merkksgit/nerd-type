@@ -3,7 +3,13 @@ import { loadWordList, currentLanguage } from "./word-list-manager.js";
 import { DebugDisplay } from "./debug.js";
 import achievementSystem from "./achievements.js";
 import "./game-commands.js";
-import { GAME_DEFAULTS, TIMERS, STORAGE_KEYS, LIMITS, RESERVED_USERNAMES } from "./constants.js";
+import {
+  GAME_DEFAULTS,
+  TIMERS,
+  STORAGE_KEYS,
+  LIMITS,
+  RESERVED_USERNAMES,
+} from "./constants.js";
 import storageManager from "./storage-manager.js";
 import domManager from "./dom-manager.js";
 
@@ -52,7 +58,8 @@ function isReservedUsername(username) {
 
 function canUseUsername(username) {
   // Check admin mode for "merkks"
-  const isAdminMode = storageManager.getItem("nerdtype_admin", "false") === "true";
+  const isAdminMode =
+    storageManager.getItem("nerdtype_admin", "false") === "true";
 
   if (username.toLowerCase() === "merkks") {
     return isAdminMode;
@@ -86,9 +93,10 @@ function applyFont(fontFamily) {
 // UI hide state restoration function
 function restoreUIHideState() {
   // Check if we're on the game page
-  if (!window.location.pathname.includes('game.html')) return;
+  if (!window.location.pathname.includes("game.html")) return;
 
-  const hideUIState = storageManager.getItem("nerdtype_hide_ui", "false") === "true";
+  const hideUIState =
+    storageManager.getItem("nerdtype_hide_ui", "false") === "true";
 
   // Remove the preload CSS since we're taking over now
   const preloadStyle = document.getElementById("preload-ui-hide");
@@ -190,7 +198,7 @@ window.achievementSound = achievementSound;
 // Check the sound setting on initialization
 const achievementSoundEnabled = storageManager.getItem(
   "achievement_sound_enabled",
-  "true"
+  "true",
 );
 if (achievementSoundEnabled === "false") {
   achievementSound.muted = true;
@@ -213,7 +221,10 @@ for (let i = 0; i < poolSize; i++) {
 window.keypressSound = keypressAudioPool[0];
 
 // Check the keypress sound setting on initialization
-const keypressSoundEnabled = storageManager.getItem("keypress_sound_enabled", "true");
+const keypressSoundEnabled = storageManager.getItem(
+  "keypress_sound_enabled",
+  "true",
+);
 if (keypressSoundEnabled !== "true") {
   keypressAudioPool.forEach((audio) => (audio.muted = true));
 }
@@ -226,7 +237,10 @@ window.dispatchEvent(
 );
 
 function playKeypressSound() {
-  const keypressSoundEnabled = storageManager.getItem("keypress_sound_enabled", "true");
+  const keypressSoundEnabled = storageManager.getItem(
+    "keypress_sound_enabled",
+    "true",
+  );
   if (keypressSoundEnabled === "true" && hasStartedTyping) {
     const audio = keypressAudioPool[currentAudioIndex];
     audio.currentTime = 0;
@@ -375,7 +389,7 @@ async function initializeGame() {
   try {
     // Initialize DOM manager first
     domManager.init();
-    
+
     // Load the Zen Mode state
     isZenMode = storageManager.isZenModeEnabled();
 
@@ -385,7 +399,7 @@ async function initializeGame() {
 
     // Load saved settings with error handling
     const settings = storageManager.getGameSettings();
-    
+
     // Update the global gameSettings variable
     gameSettings = settings;
 
@@ -424,12 +438,12 @@ async function initializeGame() {
 
     // Initialize event listeners and other game elements
     initializeEventListeners();
-    
+
     // Game-specific initialization - only call these on game page
-    if (window.location.pathname.includes('game.html')) {
+    if (window.location.pathname.includes("game.html")) {
       displayPreviousResults();
     }
-    
+
     // Username validation can be on any page that has the input
     setupUsernameValidation();
 
@@ -460,7 +474,10 @@ async function initializeGame() {
         const { message, type } = pendingNotification;
         showSettingsNotification(message, type);
       } catch (error) {
-        console.error("Failed to process pending settings notification:", error);
+        console.error(
+          "Failed to process pending settings notification:",
+          error,
+        );
       }
     }
   }, TIMERS.SETTINGS_NOTIFICATION_DELAY);
@@ -473,27 +490,27 @@ async function initializeGame() {
 function setupUI() {
   // Update the UI based on current game mode
   updateUIForGameMode();
-  
+
   // Initialize game state variables but don't start timers
   gameEnded = false;
   currentWordIndex = 0;
   nextWordIndex = 1;
-  
+
   // Reset precision multiplier system
   resetPrecisionSystem();
-  
+
   // Shuffle the words array for variety
   words = words.sort(() => Math.random() - 0.5);
-  
+
   // Show words immediately on page load
   updateWordDisplay();
-  
+
   // Mark game as inactive initially
   const gameElement = document.getElementById("game");
   if (gameElement) {
     gameElement.classList.add("inactive");
   }
-  
+
   // Don't focus the input field initially - wait for user interaction
 }
 
@@ -544,7 +561,10 @@ function updateDebugInfo() {
 }
 
 // Set up your update interval (store reference for cleanup)
-let debugUpdateInterval = setInterval(updateDebugInfo, TIMERS.DEBUG_UPDATE_INTERVAL);
+let debugUpdateInterval = setInterval(
+  updateDebugInfo,
+  TIMERS.DEBUG_UPDATE_INTERVAL,
+);
 
 function optimizeForMobile() {
   // Check if we're on a small screen
@@ -579,8 +599,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function initializeEventListeners() {
   // Check if we're on the game page - some elements only exist there
-  const isGamePage = window.location.pathname.includes('game.html');
-  
+  const isGamePage = window.location.pathname.includes("game.html");
+
   // Track modal state
   const usernameModal = document.getElementById("usernameModal");
   if (usernameModal) {
@@ -745,7 +765,7 @@ function initializeEventListeners() {
     // Start button - activate game and focus input field
     const startButton = domManager.get("startButton");
     if (startButton) {
-      startButton.addEventListener("click", function() {
+      startButton.addEventListener("click", function () {
         activateGame();
       });
     }
@@ -997,7 +1017,8 @@ window.activateGame = activateGame;
 function updateWordDisplay() {
   const wordToTypeElement = domManager.get("wordToType");
   const nextWordElement = domManager.get("nextWord");
-  const showSpace = storageManager.getItem("showSpacesAfterWords", "true") !== "false";
+  const showSpace =
+    storageManager.getItem("showSpacesAfterWords", "true") !== "false";
 
   if (!wordToTypeElement) return;
 
@@ -1502,7 +1523,9 @@ function handleCommandInput(e, userInput) {
 
 // Helper function to validate input length
 function validateInputLength(e, userInput, currentWord, showSpace) {
-  const maxAllowedLength = showSpace ? currentWord.length + 1 : currentWord.length;
+  const maxAllowedLength = showSpace
+    ? currentWord.length + 1
+    : currentWord.length;
   if (userInput.length > maxAllowedLength) {
     e.target.value = userInput.substring(0, maxAllowedLength);
     return false;
@@ -1518,7 +1541,10 @@ function startGameTimers() {
 
     if (isZenMode) {
       sessionStartTime = new Date();
-      totalTimeInterval = setInterval(updateZenTimer, TIMERS.ZEN_TIMER_INTERVAL);
+      totalTimeInterval = setInterval(
+        updateZenTimer,
+        TIMERS.ZEN_TIMER_INTERVAL,
+      );
     }
   }
 }
@@ -1529,7 +1555,7 @@ function activateGame() {
   if (gameElement) {
     gameElement.classList.remove("inactive");
   }
-  
+
   // Focus the input field
   const userInput = domManager.get("userInput");
   if (userInput) {
@@ -1542,7 +1568,7 @@ function startGameOnFirstInput() {
   // Set game as started
   hasStartedTyping = true;
   gameStartTime = Date.now();
-  
+
   // Initialize timers based on mode
   if (isZenMode) {
     // Zen Mode - start zen timer
@@ -1550,7 +1576,7 @@ function startGameOnFirstInput() {
     if (document.getElementById("totalTimeValue")) {
       document.getElementById("totalTimeValue").textContent = "0:00";
     }
-    
+
     // Clear any existing intervals and start zen timer
     if (countDownInterval) clearInterval(countDownInterval);
     if (totalTimeInterval) clearInterval(totalTimeInterval);
@@ -1560,23 +1586,23 @@ function startGameOnFirstInput() {
     timeLeft = gameSettings.initialTime;
     bonusTime = gameSettings.bonusTime;
     updateTimer();
-    
+
     // Clear previous intervals if they exist
     if (countDownInterval) clearInterval(countDownInterval);
     if (totalTimeInterval) clearInterval(totalTimeInterval);
-    
+
     // Set up timer intervals
     countDownInterval = setInterval(countDown, TIMERS.COUNTDOWN_INTERVAL);
     totalTimeInterval = setInterval(totalTimeCount, TIMERS.TOTAL_TIME_INTERVAL);
   }
-  
+
   // Reset game state variables (already set in setupUI but ensure they're reset)
   wordsTyped = [];
   totalCharactersTyped = 0;
   totalKeystrokes = 0;
   correctKeystrokes = 0;
   totalTimeSpent = 0;
-  
+
   // Reset progress bar
   updateProgressBar();
 }
@@ -1598,8 +1624,12 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
 
-    const isCorrectChar = validateCharacterInput(userInput, currentWord, showSpace);
-    
+    const isCorrectChar = validateCharacterInput(
+      userInput,
+      currentWord,
+      showSpace,
+    );
+
     if (!isCorrectChar) {
       currentWordHasMistakes = true;
       if (!isZenMode) {
@@ -1640,7 +1670,8 @@ function isWordComplete(userInput, currentWord, showSpace) {
         return wordsTyped.length + 1 >= wordsGoal;
       })();
 
-  const expectedInput = showSpace && !isLastWord ? currentWord + " " : currentWord;
+  const expectedInput =
+    showSpace && !isLastWord ? currentWord + " " : currentWord;
   return userInput === expectedInput;
 }
 
@@ -1650,11 +1681,11 @@ function handleWordCompletion(e, currentWord, showSpace) {
   updateGameProgress(currentWord, showSpace);
   moveToNextWord();
   updateWordDisplayAfterCompletion();
-  
+
   e.target.value = "";
   updateLetterStates("");
   updateProgressBar();
-  
+
   checkGameCompletion();
 }
 
@@ -1662,11 +1693,11 @@ function handleWordCompletion(e, currentWord, showSpace) {
 function updatePrecisionStreak() {
   if (!currentWordHasMistakes && !isZenMode) {
     precisionStreak++;
-    
+
     if (precisionStreak > peakPrecisionStreak) {
       peakPrecisionStreak = precisionStreak;
     }
-    
+
     if (precisionStreak >= 5) {
       showPrecisionMultiplier();
       animatePrecisionIncrement();
@@ -1753,7 +1784,8 @@ function checkInput(e) {
 
   const currentWord = words[currentWordIndex];
   const wordDisplay = domManager.get("wordToType");
-  const showSpace = storageManager.getItem("showSpacesAfterWords", "true") !== "false";
+  const showSpace =
+    storageManager.getItem("showSpacesAfterWords", "true") !== "false";
 
   if (!wordDisplay) return;
 
@@ -2946,10 +2978,16 @@ function resumeGame() {
     if (!isZenMode) {
       // Classic mode - restart countdown
       countDownInterval = setInterval(countDown, TIMERS.COUNTDOWN_INTERVAL);
-      totalTimeInterval = setInterval(totalTimeCount, TIMERS.TOTAL_TIME_INTERVAL);
+      totalTimeInterval = setInterval(
+        totalTimeCount,
+        TIMERS.TOTAL_TIME_INTERVAL,
+      );
     } else {
       // Zen mode - restart total time counter
-      totalTimeInterval = setInterval(updateZenTimer, TIMERS.ZEN_TIMER_INTERVAL);
+      totalTimeInterval = setInterval(
+        updateZenTimer,
+        TIMERS.ZEN_TIMER_INTERVAL,
+      );
     }
   }
 }
@@ -3072,7 +3110,7 @@ window.addEventListener("beforeunload", function () {
 
 // Render WPM progression chart for game over modal
 function renderGameOverWpmChart() {
-  const canvas = document.getElementById('gameOverWpmChart');
+  const canvas = document.getElementById("gameOverWpmChart");
   if (!canvas) return;
 
   // Destroy existing chart if it exists
@@ -3085,18 +3123,20 @@ function renderGameOverWpmChart() {
   const results = storageManager.getGameResults();
   if (!results || results.length === 0) {
     // Show empty state
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     new Chart(ctx, {
-      type: 'line',
+      type: "line",
       data: {
         labels: [],
-        datasets: [{
-          label: 'WPM',
-          data: [],
-          borderColor: '#ff9e64',
-          backgroundColor: 'rgba(255, 158, 100, 0.2)',
-          fill: false
-        }]
+        datasets: [
+          {
+            label: "WPM",
+            data: [],
+            borderColor: "#ff9e64",
+            backgroundColor: "rgba(255, 158, 100, 0.2)",
+            fill: false,
+          },
+        ],
       },
       options: {
         responsive: true,
@@ -3104,27 +3144,27 @@ function renderGameOverWpmChart() {
         plugins: {
           title: {
             display: true,
-            text: 'No games played yet',
-            color: '#7dcfff',
+            text: "No games played yet",
+            color: "#7dcfff",
             font: {
               family: "'jetbrains-mono', monospace",
-              size: 14
-            }
+              size: 14,
+            },
           },
-          legend: { display: false }
+          legend: { display: false },
         },
         scales: {
           x: { display: false },
-          y: { display: false }
-        }
-      }
+          y: { display: false },
+        },
+      },
     });
     return;
   }
 
   // Sort by timestamp and take last 10 games
   const sortedResults = results
-    .filter(result => result.wpm && !isNaN(parseFloat(result.wpm)))
+    .filter((result) => result.wpm && !isNaN(parseFloat(result.wpm)))
     .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0))
     .slice(-10);
 
@@ -3132,37 +3172,41 @@ function renderGameOverWpmChart() {
 
   // Extract data for chart
   const labels = sortedResults.map((_, index) => `Game ${index + 1}`);
-  const wpmData = sortedResults.map(result => parseFloat(result.wpm) || 0);
-  
+  const wpmData = sortedResults.map((result) => parseFloat(result.wpm) || 0);
+
   // Calculate average
-  const averageWpm = wpmData.reduce((sum, wpm) => sum + wpm, 0) / wpmData.length;
+  const averageWpm =
+    wpmData.reduce((sum, wpm) => sum + wpm, 0) / wpmData.length;
 
   // Get current game WPM (last data point)
   const currentWpm = wpmData[wpmData.length - 1];
-  const isImprovement = wpmData.length > 1 && currentWpm > wpmData[wpmData.length - 2];
+  const isImprovement =
+    wpmData.length > 1 && currentWpm > wpmData[wpmData.length - 2];
 
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   new Chart(ctx, {
-    type: 'line',
+    type: "line",
     data: {
       labels: labels,
-      datasets: [{
-        label: 'WPM',
-        data: wpmData,
-        borderColor: '#ff9e64',
-        backgroundColor: 'rgba(255, 158, 100, 0.2)',
-        fill: false,
-        borderWidth: 2,
-        pointBackgroundColor: wpmData.map((_, index) => 
-          index === wpmData.length - 1 ? '#7aa2f7' : '#ff9e64'
-        ),
-        pointBorderColor: wpmData.map((_, index) => 
-          index === wpmData.length - 1 ? '#7aa2f7' : '#ff9e64'
-        ),
-        pointRadius: wpmData.map((_, index) => 
-          index === wpmData.length - 1 ? 6 : 4
-        )
-      }]
+      datasets: [
+        {
+          label: "WPM",
+          data: wpmData,
+          borderColor: "#ff9e64",
+          backgroundColor: "rgba(255, 158, 100, 0.2)",
+          fill: false,
+          borderWidth: 2,
+          pointBackgroundColor: wpmData.map((_, index) =>
+            index === wpmData.length - 1 ? "#7aa2f7" : "#ff9e64",
+          ),
+          pointBorderColor: wpmData.map((_, index) =>
+            index === wpmData.length - 1 ? "#7aa2f7" : "#ff9e64",
+          ),
+          pointRadius: wpmData.map((_, index) =>
+            index === wpmData.length - 1 ? 6 : 4,
+          ),
+        },
+      ],
     },
     options: {
       responsive: true,
@@ -3170,116 +3214,118 @@ function renderGameOverWpmChart() {
       plugins: {
         title: {
           display: true,
-          text: `Last 10 Games - Avg: ${averageWpm.toFixed(1)} WPM`,
-          color: '#bb9af7',
+          text: `Last 10 Games | Avg: ${averageWpm.toFixed(1)} WPM`,
+          color: "#bb9af7",
           font: {
             family: "'jetbrains-mono', monospace",
             size: 14,
-            weight: 'bold'
+            weight: "bold",
           },
           padding: {
             top: 10,
-            bottom: 15
-          }
+            bottom: 15,
+          },
         },
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#1f2335',
-          titleColor: '#bb9af7',
-          bodyColor: '#c0caf5',
-          borderColor: '#3b4261',
+          backgroundColor: "#1f2335",
+          titleColor: "#bb9af7",
+          bodyColor: "#c0caf5",
+          borderColor: "#3b4261",
           borderWidth: 2,
           cornerRadius: 4,
           displayColors: false,
           titleFont: {
             family: "'jetbrains-mono', monospace",
-            size: 13
+            size: 13,
           },
           bodyFont: {
             family: "'jetbrains-mono', monospace",
-            size: 12
+            size: 12,
           },
           callbacks: {
-            title: function(context) {
+            title: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
                 const result = sortedResults[dataIndex];
-                return result?.username || 'runner';
+                return result?.username || "runner";
               }
-              return '';
+              return "";
             },
-            beforeBody: function(context) {
+            beforeBody: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
                 const result = sortedResults[dataIndex];
-                const date = result?.date || 'Unknown';
-                let gameMode = result?.mode || 'Classic Mode';
+                const date = result?.date || "Unknown";
+                let gameMode = result?.mode || "Classic Mode";
                 // Remove "Mode" from the end if it exists
-                gameMode = gameMode.replace(/ Mode$/, '');
+                gameMode = gameMode.replace(/ Mode$/, "");
                 return [`${gameMode}`, `${date}`];
               }
               return [];
             },
-            label: function(context) {
+            label: function (context) {
               const value = context.parsed.y;
               const isCurrentGame = context.dataIndex === wpmData.length - 1;
-              return `${value.toFixed(1)} WPM${isCurrentGame ? ' (Current)' : ''}`;
-            }
-          }
-        }
+              return `${value.toFixed(1)} WPM${isCurrentGame ? " (Current)" : ""}`;
+            },
+          },
+        },
       },
       scales: {
         x: {
           display: false,
-          grid: { display: false }
+          grid: { display: false },
         },
         y: {
           display: true,
           title: {
             display: true,
-            text: 'WPM',
-            color: '#ff9e64',
+            text: "WPM",
+            color: "#ff9e64",
             font: {
               family: "'jetbrains-mono', monospace",
-              size: 12
-            }
+              size: 12,
+            },
           },
           grid: {
-            color: '#292e42',
-            display: false
+            color: "#292e42",
+            display: false,
           },
           ticks: {
-            color: '#ff9e64',
+            color: "#ff9e64",
             font: {
               family: "'jetbrains-mono', monospace",
-              size: 11
+              size: 11,
             },
-            callback: function(value) {
+            callback: function (value) {
               return Math.round(value);
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     },
-    plugins: [{
-      beforeDraw: (chart) => {
-        const ctx = chart.ctx;
-        const chartArea = chart.chartArea;
-        
-        // Draw average line
-        if (wpmData.length > 1) {
-          const yValue = chart.scales.y.getPixelForValue(averageWpm);
-          ctx.save();
-          ctx.strokeStyle = '#bb9af7';
-          ctx.lineWidth = 1;
-          ctx.setLineDash([5, 3]);
-          ctx.beginPath();
-          ctx.moveTo(chartArea.left, yValue);
-          ctx.lineTo(chartArea.right, yValue);
-          ctx.stroke();
-          ctx.restore();
-        }
-      }
-    }]
+    plugins: [
+      {
+        beforeDraw: (chart) => {
+          const ctx = chart.ctx;
+          const chartArea = chart.chartArea;
+
+          // Draw average line
+          if (wpmData.length > 1) {
+            const yValue = chart.scales.y.getPixelForValue(averageWpm);
+            ctx.save();
+            ctx.strokeStyle = "#bb9af7";
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 3]);
+            ctx.beginPath();
+            ctx.moveTo(chartArea.left, yValue);
+            ctx.lineTo(chartArea.right, yValue);
+            ctx.stroke();
+            ctx.restore();
+          }
+        },
+      },
+    ],
   });
 }
