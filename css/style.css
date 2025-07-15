@@ -547,10 +547,14 @@ input#userInput {
   position: relative;
 }
 
-/* Game inactive state - dims the game area until user interacts */
+/* Game inactive state - only blurs the word display area */
 #game.inactive {
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
+  position: relative;
+}
+
+#game.inactive #wordToType {
+  filter: blur(4px);
+  transition: filter 0.3s ease;
 }
 
 #game.inactive::after {
