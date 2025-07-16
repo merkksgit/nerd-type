@@ -79,6 +79,62 @@ body {
 
 .username-rank-icon {
   width: 12px;
+  transition: transform 0.3s ease;
+  position: relative;
+  display: inline-block;
+  transform-origin: center;
+}
+
+.username-rank-icon:hover {
+  transform: scale(2);
+  z-index: 10;
+}
+
+/* Container for the rank icon and tooltip */
+.rank-icon-container {
+  position: relative;
+  display: inline-block;
+  padding: 2px;
+  margin: -2px;
+  border-radius: 2px;
+  background-color: transparent;
+}
+
+.rank-icon-container .rank-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #24283b;
+  color: #c0caf5;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+  border: 1px solid #3b4261;
+  z-index: 1000;
+  pointer-events: none;
+  margin-top: 2px;
+}
+
+.rank-icon-container:hover .rank-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Change rank-icon-container background when row is hovered */
+.table-hover tbody tr:hover .rank-icon-container {
+  background-color: #292e42;
+}
+
+/* Ensure smooth transition when both row and icon are hovered */
+.table-hover tbody tr:hover .rank-icon-container:hover {
+  background-color: #292e42;
 }
 
 /* Username styling */
@@ -306,15 +362,59 @@ body {
   white-space: nowrap;
 }
 
-.admin-username::after {
-  content: "";
-  display: inline-block;
+/* Admin icon styling */
+.admin-icon {
   width: 14px;
   height: 14px;
-  background-image: url("../images/logo-no-keyboard-blue-bg-32x32.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
   margin-left: 5px;
   vertical-align: middle;
+  transition: transform 0.3s ease;
+  transform-origin: center;
+}
+
+.admin-icon:hover {
+  transform: scale(2);
+  z-index: 10;
+}
+
+/* Admin icon container */
+.admin-icon-container {
+  position: relative;
+  display: inline-block;
+  padding: 2px 2px 2px 0;
+  margin: -2px -2px -2px 0;
+  border-radius: 2px;
+  background-color: transparent;
+}
+
+.admin-icon-container .admin-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #24283b;
+  color: #c0caf5;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+  border: 1px solid #3b4261;
+  z-index: 1000;
+  pointer-events: none;
+  margin-top: 2px;
+}
+
+.admin-icon-container:hover .admin-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Admin icon container background on row hover */
+.table-hover tbody tr:hover .admin-icon-container {
+  background-color: #292e42;
 }
