@@ -2,13 +2,13 @@
 // This module manages achievement unlocks, notifications, and storage
 
 // Import storage manager
-import storageManager from './storage-manager.js';
+import storageManager from "./storage-manager.js";
 
 class AchievementSystem {
   constructor() {
     // Load existing achievements from localStorage
     const existingData = storageManager.getAchievements();
-    
+
     // Default structure
     const defaultData = {
       // Tracks which achievements have been unlocked
@@ -33,7 +33,7 @@ class AchievementSystem {
     };
 
     // Merge existing data with defaults, ensuring all required properties exist
-    if (existingData && typeof existingData === 'object') {
+    if (existingData && typeof existingData === "object") {
       this.achievementsData = {
         unlockedAchievements: existingData.unlockedAchievements || {},
         stats: {
@@ -41,10 +41,10 @@ class AchievementSystem {
           ...(existingData.stats || {}),
           languageWPM: {
             ...defaultData.stats.languageWPM,
-            ...(existingData.stats?.languageWPM || {})
-          }
+            ...(existingData.stats?.languageWPM || {}),
+          },
         },
-        pendingNotifications: existingData.pendingNotifications || []
+        pendingNotifications: existingData.pendingNotifications || [],
       };
     } else {
       this.achievementsData = defaultData;
@@ -304,7 +304,7 @@ class AchievementSystem {
       spray_and_pray: {
         id: "spray_and_pray",
         name: "Spray and Pray",
-        description: "Win a game with less than 40% accuracy",
+        description: "Win a game with less than 60% accuracy",
         icon: "fa-solid fa-fire",
         category: "gameplay",
         secret: false,
@@ -314,7 +314,7 @@ class AchievementSystem {
           const isVictory = gameData.timeLeft > 0;
           const accuracy = parseFloat(gameData.accuracy);
 
-          return !isNaN(accuracy) && accuracy < 40 && isVictory;
+          return !isNaN(accuracy) && accuracy < 60 && isVictory;
         },
       },
       night_owl: {
@@ -523,7 +523,7 @@ class AchievementSystem {
 
     // Update stats based on current date
     this.updateDailyStats();
-    
+
     // Save the properly structured data to ensure consistency
     this.saveData();
   }
