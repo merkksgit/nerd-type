@@ -1434,7 +1434,6 @@ body:not(.chart-page) #customAlertModal #alertModalMessage {
   color: #7aa2f7;
   white-space: pre-wrap;
   margin: 0;
-  padding: 1.5rem;
   background-color: #24283b;
   line-height: 1.6;
 }
@@ -2000,7 +1999,9 @@ score h3 {
   width: 0;
   height: 2px;
   background-color: #7aa2f7;
-  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tab-btn:nth-child(2)::before {
@@ -2997,7 +2998,6 @@ tr:hover .username-rank-icon {
     font-size: 0.9em;
     margin: 10px auto;
   }
-
 }
 
 /* Very small mobile devices */

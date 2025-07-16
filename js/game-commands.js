@@ -739,7 +739,7 @@ class GameCommands {
     const playerUsername =
       localStorage.getItem("nerdtype_username") || "runner";
 
-    const helpText = `<span style='color:#7dcfff'>[${playerUsername}@PENTAGON-CORE:~/docs/manual]$</span> cat commands.txt
+    const helpText = `<span style='color:#7dcfff'>[${playerUsername}@nerdtype_terminal:~/docs/manual]$</span> cat commands.txt
 
 <span style='color:#bb9af7'>/setwords</span>       - Set number of words for win
 <span style='color:#bb9af7'>/setbonus</span>       - Set bonus energy per word
@@ -818,7 +818,7 @@ class GameCommands {
 
     if (isZenMode) {
       // Zen Mode status with terminal-style output
-      statusText = `<span style='color:#7dcfff'>[${playerUsername}@PENTAGON-CORE:~/.config]$</span> cat settings.data
+      statusText = `<span style='color:#7dcfff'>[${playerUsername}@nerdtype_terminal:~/.config]$</span> cat settings.data
 
 zen_mode=<span style='color:#c3e88d'>enabled</span>
 zen_word_goal=<span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span>
@@ -831,7 +831,7 @@ font=<span style='color:#f7768e'>${currentFont}</span>
 `;
     } else {
       // Classic Mode status with terminal-style output
-      statusText = `<span style='color:#7dcfff'>[${playerUsername}@PENTAGON-CORE:~/.config]$</span> cat settings.data
+      statusText = `<span style='color:#7dcfff'>[${playerUsername}@nerdtype_terminal:~/.config]$</span> cat settings.data
 
 zen_mode=<span style='color:#ff007c'>disabled</span>
 game_mode=<span style='color:#ff9e64'>${settings.currentMode?.toLowerCase() || "classic"}</span>
@@ -867,7 +867,7 @@ font=<span style='color:#f7768e'>${currentFont}</span>
     }
 
     // Title
-    const formattedTitle = `[${playerUsername}@PENTAGON-CORE:${terminalPath}]$`;
+    const formattedTitle = `[${playerUsername}@nerdtype_terminal:${terminalPath}]$`;
 
     if (!modalContainer) {
       // Create the modal if it doesn't exist
