@@ -2000,7 +2000,11 @@ score h3 {
   width: 0;
   height: 2px;
   background-color: #7aa2f7;
-  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-btn:nth-child(2)::before {
+  background-color: #ff9e64;
 }
 
 .tab-btn:hover {
