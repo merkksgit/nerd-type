@@ -309,8 +309,8 @@ body {
 .admin-username::after {
   content: "";
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   background-image: url("../images/logo-no-keyboard-blue-bg-32x32.png");
   background-size: contain;
   background-repeat: no-repeat;
