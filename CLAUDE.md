@@ -107,6 +107,21 @@ Available during gameplay with `/` prefix:
 - FontAwesome icons throughout UI
 - Consistent color scheme using CSS custom properties
 
+### Code Formatting
+- Use Prettier default formatting for all code (JavaScript, CSS, HTML, JSON)
+- 2-space indentation
+- Semicolons in JavaScript
+- Double quotes for strings
+- Trailing commas where valid
+- Line length limit of 80 characters
+
+### Commenting Guidelines
+- Write professional comments that explain what the code does, not that it's a fix or improvement
+- Avoid references to previous versions, fixes, or changes (no "fix:", "better version", etc.)
+- Use JSDoc comments for functions and classes
+- Focus on explaining complex logic, business rules, or non-obvious behavior
+- Use descriptive variable/function names to reduce need for comments
+
 ## File Naming Patterns
 
 - JavaScript files: kebab-case (e.g., `game-commands.js`)
