@@ -139,7 +139,8 @@ function initSettingsModal() {
           zenWordGoalInput.readOnly = true;
           zenWordGoalInput.style.opacity = "0.6";
           zenWordGoalInput.style.cursor = "not-allowed";
-          zenWordGoalInput.title = "Alice in Wonderland requires exactly 254 words";
+          zenWordGoalInput.title =
+            "Alice in Wonderland requires exactly 254 words";
         } else {
           zenWordGoalInput.disabled = false;
           zenWordGoalInput.readOnly = false;
@@ -197,9 +198,13 @@ function loadSettings() {
   }
 
   // Set hide precision multiplier toggle
-  const hidePrecisionMultiplierToggle = document.getElementById("hidePrecisionMultiplierToggle");
+  const hidePrecisionMultiplierToggle = document.getElementById(
+    "hidePrecisionMultiplierToggle",
+  );
   if (hidePrecisionMultiplierToggle) {
-    const hidePrecisionUI = localStorage.getItem("hide_precision_multiplier_ui");
+    const hidePrecisionUI = localStorage.getItem(
+      "hide_precision_multiplier_ui",
+    );
     hidePrecisionMultiplierToggle.checked = hidePrecisionUI === "true";
   }
 
@@ -293,8 +298,7 @@ function loadSettings() {
 
   // If setting exists, use it (default is disabled if not set)
   if (soundToggle) {
-    soundToggle.checked =
-      achievementSoundEnabled === "true";
+    soundToggle.checked = achievementSoundEnabled === "true";
   }
 
   const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
@@ -302,12 +306,12 @@ function loadSettings() {
 
   // If setting exists, use it (default is disabled if not set)
   if (keypressSoundToggle) {
-    keypressSoundToggle.checked =
-      keypressSoundEnabled === "true";
+    keypressSoundToggle.checked = keypressSoundEnabled === "true";
   }
 
   // font selection
-  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-light";
+  const currentFont =
+    localStorage.getItem("nerdtype_font") || "jetbrains-light";
   const fontRadio = document.querySelector(
     `input[name="fontFamily"][value="${currentFont}"]`,
   );
@@ -373,7 +377,8 @@ function updateDataCollectionSettingVisibility() {
       `;
     } else {
       dataCollectionLabel.innerHTML = `
-        Share scores to global leaderboards (login required)
+        Share scores to global leaderboards
+<small class="d-block text-muted">Login required</small>
       `;
     }
   }
@@ -653,17 +658,21 @@ function resetSettings() {
   }
 
   // Reset hide precision multiplier to default (off - show multiplier)
-  const hidePrecisionMultiplierToggle = document.getElementById("hidePrecisionMultiplierToggle");
+  const hidePrecisionMultiplierToggle = document.getElementById(
+    "hidePrecisionMultiplierToggle",
+  );
   if (hidePrecisionMultiplierToggle) {
     hidePrecisionMultiplierToggle.checked = false;
   }
 
   // Reset sound settings to default (off)
-  const achievementSoundToggle = document.getElementById("achievementSoundToggle");
+  const achievementSoundToggle = document.getElementById(
+    "achievementSoundToggle",
+  );
   if (achievementSoundToggle) {
     achievementSoundToggle.checked = false;
   }
-  
+
   const keypressSoundToggle = document.getElementById("keypressSoundToggle");
   if (keypressSoundToggle) {
     keypressSoundToggle.checked = false;
@@ -802,9 +811,9 @@ async function applySettings() {
   if (minimalUIToggle) {
     const minimalUIEnabled = minimalUIToggle.checked;
     localStorage.setItem("nerdtype_hide_ui", minimalUIEnabled);
-    
+
     // Apply the UI changes immediately
-    if (typeof window.applyUIHideSettings === 'function') {
+    if (typeof window.applyUIHideSettings === "function") {
       window.applyUIHideSettings(minimalUIEnabled);
     }
   }
@@ -814,8 +823,13 @@ async function applySettings() {
   localStorage.setItem("showSpacesAfterWords", showSpacesEnabled);
 
   // Get hide precision multiplier toggle state
-  const hidePrecisionMultiplierEnabled = document.getElementById("hidePrecisionMultiplierToggle").checked;
-  localStorage.setItem("hide_precision_multiplier_ui", hidePrecisionMultiplierEnabled);
+  const hidePrecisionMultiplierEnabled = document.getElementById(
+    "hidePrecisionMultiplierToggle",
+  ).checked;
+  localStorage.setItem(
+    "hide_precision_multiplier_ui",
+    hidePrecisionMultiplierEnabled,
+  );
 
   // Dispatch events to update game settings in the correct order
   // First update zen mode if needed
@@ -923,10 +937,8 @@ function initSoundSettings() {
   const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
 
   // Default is disabled if setting doesn't exist
-  const soundEnabled =
-    achievementSoundEnabled === "true";
-  const keypressSoundEnabledBool =
-    keypressSoundEnabled === "true";
+  const soundEnabled = achievementSoundEnabled === "true";
+  const keypressSoundEnabledBool = keypressSoundEnabled === "true";
 
   // If the achievement sound exists, update its muted state
   if (typeof window.achievementSound !== "undefined") {
@@ -1032,7 +1044,8 @@ function showSettingsNotification(message, type = "success") {
 
 // Font management functions
 function initFontSettings() {
-  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-light";
+  const currentFont =
+    localStorage.getItem("nerdtype_font") || "jetbrains-light";
   applyFont(currentFont);
 
   const fontRadio = document.querySelector(
@@ -1093,4 +1106,3 @@ function saveFontSetting(fontFamily) {
     }),
   );
 }
-

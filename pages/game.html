@@ -983,11 +983,11 @@
                         />
                         <label class="form-check-label" for="showSpacesToggle">
                           Space After Words
+                          <small class="d-block text-muted"
+                            >Add space after each word for more realistic typing
+                            practice</small
+                          >
                         </label>
-                        <small class="d-block text-muted"
-                          >Add space after each word for more realistic typing
-                          practice</small
-                        >
                       </div>
                       <br />
                       <div class="form-check form-switch">
@@ -1004,11 +1004,6 @@
                         >
                           Share scores to global leaderboards
                         </label>
-                        <small class="d-block text-muted">
-                          When enabled, scores are shared to public leaderboards
-                          (login required). When disabled and logged in, game
-                          data is still saved to cloud privately.
-                        </small>
                       </div>
                     </div>
                   </div>
@@ -1061,10 +1056,10 @@
                           for="achievementSoundToggle"
                         >
                           Achievement Sound
+                          <small class="d-block text-muted"
+                            >Play sound when unlocking achievements</small
+                          >
                         </label>
-                        <small class="d-block text-muted"
-                          >Play sound when unlocking achievements</small
-                        >
                       </div>
                       <div class="form-check form-switch">
                         <input
@@ -1079,10 +1074,10 @@
                           for="keypressSoundToggle"
                         >
                           Keypress Sound
+                          <small class="d-block text-muted"
+                            >Play sound when typing during gameplay</small
+                          >
                         </label>
-                        <small class="d-block text-muted"
-                          >Play sound when typing during gameplay</small
-                        >
                       </div>
                     </div>
                   </div>
@@ -1155,7 +1150,10 @@
                           >Nightmare
                         </label>
                       </div>
-                      <div class="form-check zen-mode-element" style="display: none">
+                      <div
+                        class="form-check zen-mode-element"
+                        style="display: none"
+                      >
                         <input
                           class="form-check-input"
                           type="radio"
@@ -1164,7 +1162,8 @@
                           value="alice"
                         />
                         <label class="form-check-label" for="langAlice"
-                          >Alice in Wonderland (254 words)
+                          >Alice in Wonderland
+                          <small class="d-block text-muted">254 words</small>
                         </label>
                       </div>
                     </div>
@@ -1724,10 +1723,10 @@
           const gameElement = document.getElementById("game");
           const wordToTypeElement = document.getElementById("wordToType");
           const userInput = document.getElementById("userInput");
-          
+
           // Primary handler: tap anywhere on the game area when inactive
           if (gameElement) {
-            const handleGameActivation = function(e) {
+            const handleGameActivation = function (e) {
               // Only handle taps when game is inactive
               if (gameElement.classList.contains("inactive")) {
                 e.preventDefault();
@@ -1743,12 +1742,12 @@
                 }
               }
             };
-            
+
             // Add both click and touch handlers for better mobile support
             gameElement.onclick = handleGameActivation;
             gameElement.ontouchstart = handleGameActivation;
           }
-          
+
           // Secondary handler: word display area
           if (wordToTypeElement && !wordToTypeElement.onclick) {
             wordToTypeElement.onclick = function (e) {
@@ -1764,10 +1763,10 @@
               }
             };
           }
-          
+
           // Tertiary handler: input field itself for easier mobile interaction
           if (userInput) {
-            userInput.onclick = function() {
+            userInput.onclick = function () {
               if (typeof window.activateGame === "function") {
                 window.activateGame();
               } else {
