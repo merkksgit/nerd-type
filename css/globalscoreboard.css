@@ -86,8 +86,9 @@ body {
 }
 
 .username-rank-icon:hover {
-  transform: scale(2);
+  transform: scale(4);
   z-index: 10;
+  background: none !important;
 }
 
 /* Container for the rank icon and tooltip */
@@ -102,9 +103,9 @@ body {
 
 .rank-icon-container .rank-tooltip {
   position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  left: 180%;
+  transform: translateY(-50%);
   background-color: #1f2335;
   color: #c0caf5;
   padding: 6px 10px;
@@ -119,7 +120,7 @@ body {
   border: 2px solid #3b4261;
   z-index: 1000;
   pointer-events: none;
-  margin-bottom: 2px;
+  margin-left: 8px;
 }
 
 .rank-icon-container:hover .rank-tooltip {
@@ -372,11 +373,6 @@ body {
   transform-origin: center;
 }
 
-.admin-icon:hover {
-  transform: scale(2);
-  z-index: 10;
-}
-
 /* Admin icon container */
 .admin-icon-container {
   position: relative;
@@ -389,9 +385,9 @@ body {
 
 .admin-icon-container .admin-tooltip {
   position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  left: 150%;
+  transform: translateY(-50%);
   background-color: #1f2335;
   color: #c0caf5;
   padding: 6px 10px;
