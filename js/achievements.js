@@ -26,6 +26,7 @@ class AchievementSystem {
           swedish: 0,
           programming: 0,
           nightmare: 0,
+          alice: 0,
         },
       },
       // Track pending notifications
@@ -349,6 +350,24 @@ class AchievementSystem {
             stats.languageWPM.finnish >= 50 &&
             stats.languageWPM.swedish >= 50
           );
+        },
+      },
+
+      down_the_rabbit_hole: {
+        id: "down_the_rabbit_hole",
+        name: "Down the Rabbit Hole",
+        description: "Complete the full Alice in Wonderland story",
+        icon: "fa-solid fa-hat-wizard",
+        category: "story",
+        secret: true,
+        check: (stats, gameData) => {
+          // Check if this is Alice wordlist and Zen mode
+          if (!gameData || gameData.wordList !== "alice" || gameData.mode !== "Zen Mode") {
+            return false;
+          }
+          
+          // Check if the full story was completed (all 254 words)
+          return gameData.wordsTyped >= 254 && gameData.wordGoal >= 254;
         },
       },
 
@@ -1202,6 +1221,7 @@ class AchievementSystem {
         swedish: 0,
         programming: 0,
         nightmare: 0,
+        alice: 0,
       },
     };
   }
