@@ -664,14 +664,9 @@ function initializeEventListeners() {
 
     // Handle game controls - Enter key focuses input and starts game
     if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
-      if (hasStartedTyping) {
-        // If game is already active, restart it instantly without reload
-        startGame();
-        activateGame();
-      } else {
-        // Activate game and focus input field
-        activateGame();
-      }
+      // Always restart the game when Enter is pressed
+      startGame();
+      activateGame();
     }
     if (event.key === "Enter" && event.ctrlKey) {
       location.reload();
