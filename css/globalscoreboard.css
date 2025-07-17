@@ -91,6 +91,19 @@ body {
   background: none !important;
 }
 
+/* Rank-specific hover shadows */
+.rank-icon-container:hover .username-rank-icon[src*="rank1"] {
+  filter: drop-shadow(0 0 8px #ffd700) drop-shadow(0 0 16px #ffd700) drop-shadow(0 0 24px #ffd700);
+}
+
+.rank-icon-container:hover .username-rank-icon[src*="rank2"] {
+  filter: drop-shadow(0 0 8px #bb9af7) drop-shadow(0 0 16px #bb9af7) drop-shadow(0 0 24px #bb9af7);
+}
+
+.rank-icon-container:hover .username-rank-icon[src*="rank3"] {
+  filter: drop-shadow(0 0 8px #7aa2f7) drop-shadow(0 0 16px #7aa2f7) drop-shadow(0 0 24px #7aa2f7);
+}
+
 /* Container for the rank icon and tooltip */
 .rank-icon-container {
   position: relative;
