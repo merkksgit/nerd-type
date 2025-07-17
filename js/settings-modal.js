@@ -114,6 +114,43 @@ function initSettingsModal() {
   loadSettings();
   setupInputChangeListeners();
   setupRealTimeValidation();
+
+  // Add handlers for language radio buttons
+  const languageRadios = document.querySelectorAll(
+    'input[name="languageMode"]',
+  );
+  languageRadios.forEach((radio) => {
+    radio.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (applyButton) {
+          applyButton.click();
+        }
+      }
+    });
+
+    // Auto-set word goal when Alice is selected and lock it
+    radio.addEventListener("change", function (event) {
+      const zenWordGoalInput = document.getElementById("zenWordGoal");
+      if (zenWordGoalInput) {
+        if (event.target.value === "alice") {
+          zenWordGoalInput.value = 254;
+          zenWordGoalInput.disabled = true;
+          zenWordGoalInput.readOnly = true;
+          zenWordGoalInput.style.opacity = "0.6";
+          zenWordGoalInput.style.cursor = "not-allowed";
+          zenWordGoalInput.title = "Alice in Wonderland requires exactly 254 words";
+        } else {
+          zenWordGoalInput.disabled = false;
+          zenWordGoalInput.readOnly = false;
+          zenWordGoalInput.style.opacity = "";
+          zenWordGoalInput.style.cursor = "";
+          zenWordGoalInput.title = "";
+          zenWordGoalInput.value = 30;
+        }
+      }
+    });
+  });
 }
 
 const zenModeToggle = document.getElementById("zenModeToggle");
@@ -198,6 +235,23 @@ function loadSettings() {
   );
   if (languageRadio) {
     languageRadio.checked = true;
+  }
+
+  // If Alice is selected, lock the zen word goal
+  const zenWordGoalInput = document.getElementById("zenWordGoal");
+  if (currentLanguage === "alice" && zenWordGoalInput) {
+    zenWordGoalInput.value = 254;
+    zenWordGoalInput.disabled = true;
+    zenWordGoalInput.readOnly = true;
+    zenWordGoalInput.style.opacity = "0.6";
+    zenWordGoalInput.style.cursor = "not-allowed";
+    zenWordGoalInput.title = "Alice in Wonderland requires exactly 254 words";
+  } else if (zenWordGoalInput) {
+    zenWordGoalInput.disabled = false;
+    zenWordGoalInput.readOnly = false;
+    zenWordGoalInput.style.opacity = "";
+    zenWordGoalInput.style.cursor = "";
+    zenWordGoalInput.title = "";
   }
 
   // Set form values
@@ -508,10 +562,10 @@ function clearAllValidationStates() {
 
 function setupRealTimeValidation() {
   const validationRules = {
-    wordsGoal: { min: 10, max: 200, name: "Words Goal" },
+    wordsGoal: { min: 10, max: 500, name: "Words Goal" },
     bonusEnergy: { min: 1, max: 10, name: "Bonus Energy" },
     initialEnergy: { min: 4, max: 20, name: "Initial Energy" },
-    zenWordGoal: { min: 10, max: 200, name: "Zen Word Goal" },
+    zenWordGoal: { min: 10, max: 500, name: "Zen Word Goal" },
   };
 
   const applyButton = document.getElementById("applySettingsBtn");
@@ -532,21 +586,6 @@ function setupRealTimeValidation() {
         }
       });
     }
-  });
-
-  // Add handlers for language radio buttons
-  const languageRadios = document.querySelectorAll(
-    'input[name="languageMode"]',
-  );
-  languageRadios.forEach((radio) => {
-    radio.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        if (applyButton) {
-          applyButton.click();
-        }
-      }
-    });
   });
 }
 
@@ -690,7 +729,7 @@ async function applySettings() {
   // Validate all inputs with correct ranges
   let isValid = true;
 
-  if (!validateInput("wordsGoal", 10, 200, "Words Goal")) {
+  if (!validateInput("wordsGoal", 10, 500, "Words Goal")) {
     isValid = false;
   }
   if (!validateInput("bonusEnergy", 0, 50, "Bonus Energy")) {
@@ -699,7 +738,7 @@ async function applySettings() {
   if (!validateInput("initialEnergy", 1, 100, "Initial Energy")) {
     isValid = false;
   }
-  if (!validateInput("zenWordGoal", 10, 200, "Zen Word Goal")) {
+  if (!validateInput("zenWordGoal", 10, 500, "Zen Word Goal")) {
     isValid = false;
   }
 
@@ -723,6 +762,19 @@ async function applySettings() {
 
   // Save language setting
   localStorage.setItem("nerdtype_wordlist", selectedLanguage);
+
+  // If Alice in Wonderland is selected, automatically set word goal to 249 and lock it
+  if (selectedLanguage === "alice") {
+    const zenWordGoalInput = document.getElementById("zenWordGoal");
+    if (zenWordGoalInput) {
+      zenWordGoalInput.value = 254;
+      zenWordGoalInput.disabled = true;
+      zenWordGoalInput.readOnly = true;
+      zenWordGoalInput.style.opacity = "0.6";
+      zenWordGoalInput.style.cursor = "not-allowed";
+      zenWordGoalInput.title = "Alice in Wonderland requires exactly 254 words";
+    }
+  }
 
   // Get zen mode toggle state
   const zenModeEnabled = document.getElementById("zenModeToggle").checked;

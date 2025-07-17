@@ -1,5 +1,5 @@
 // Import common dependencies
-import { loadWordList, currentLanguage } from "./word-list-manager.js";
+import { loadWordList, currentLanguage, availableWordLists } from "./word-list-manager.js";
 import { DebugDisplay } from "./debug.js";
 import achievementSystem from "./achievements.js";
 import "./game-commands.js";
@@ -499,8 +499,10 @@ function setupUI() {
   // Reset precision multiplier system
   resetPrecisionSystem();
 
-  // Shuffle the words array for variety
-  words = words.sort(() => Math.random() - 0.5);
+  // Shuffle the words array for variety (unless it's a sequential word list)
+  if (!availableWordLists[currentLanguage]?.sequential) {
+    words = words.sort(() => Math.random() - 0.5);
+  }
 
   // Show words immediately on page load
   updateWordDisplay();
@@ -955,8 +957,10 @@ function startGame() {
   // Reset precision multiplier system
   resetPrecisionSystem();
 
-  // Shuffle the words array at game start for variety
-  words = words.sort(() => Math.random() - 0.5);
+  // Shuffle the words array at game start for variety (unless it's a sequential word list)
+  if (!availableWordLists[currentLanguage]?.sequential) {
+    words = words.sort(() => Math.random() - 0.5);
+  }
 
   // Update word display
   updateWordDisplay();
@@ -1726,7 +1730,10 @@ function moveToNextWord() {
   if (currentWordIndex >= words.length) {
     currentWordIndex = 0;
     nextWordIndex = 1;
-    words = words.sort(() => Math.random() - 0.5);
+    // Only shuffle if not a sequential word list
+    if (!availableWordLists[currentLanguage]?.sequential) {
+      words = words.sort(() => Math.random() - 0.5);
+    }
   }
 }
 

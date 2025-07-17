@@ -20,6 +20,11 @@ const availableWordLists = {
     name: "Nightmare",
     source: "./words-nm.js",
   },
+  alice: {
+    name: "Alice in Wonderland",
+    source: "./words-alice.js",
+    sequential: true,
+  },
 };
 
 const wordListIcons = {
@@ -28,6 +33,7 @@ const wordListIcons = {
   swedish: "🇸🇪 ",
   programming: "🖥️ ",
   nightmare: "💀 ",
+  alice: "🐰 ",
 };
 
 // Default language (you can set this based on the current page)
