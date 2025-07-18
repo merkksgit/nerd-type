@@ -161,6 +161,19 @@ if (zenModeToggle) {
   zenModeToggle.addEventListener("change", function () {
     localStorage.setItem("nerdtype_zen_mode", this.checked);
 
+    // If switching zen mode off and alice wordset is selected, fallback to english
+    if (!this.checked) {
+      const currentWordlist = localStorage.getItem("nerdtype_wordlist");
+      if (currentWordlist === "alice") {
+        localStorage.setItem("nerdtype_wordlist", "english");
+        // Update the selected radio button in the UI
+        const englishRadio = document.getElementById("langEnglish");
+        if (englishRadio) {
+          englishRadio.checked = true;
+        }
+      }
+    }
+
     // Update UI elements
     document.querySelectorAll(".classic-mode-setting").forEach((el) => {
       el.style.display = this.checked ? "none" : "block";

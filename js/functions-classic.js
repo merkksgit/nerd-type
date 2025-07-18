@@ -1,5 +1,9 @@
 // Import common dependencies
-import { loadWordList, currentLanguage, availableWordLists } from "./word-list-manager.js";
+import {
+  loadWordList,
+  currentLanguage,
+  availableWordLists,
+} from "./word-list-manager.js";
 import { DebugDisplay } from "./debug.js";
 import achievementSystem from "./achievements.js";
 import "./game-commands.js";
@@ -321,6 +325,15 @@ function isZenModeActive() {
 function setZenMode(enabled) {
   localStorage.setItem("nerdtype_zen_mode", enabled.toString());
   isZenMode = enabled;
+
+  // If switching zen mode off and alice wordset is selected, fallback to english
+  if (!enabled) {
+    const currentWordlist = localStorage.getItem("nerdtype_wordlist");
+    if (currentWordlist === "alice") {
+      localStorage.setItem("nerdtype_wordlist", "english");
+    }
+  }
+
   updateUIForGameMode();
 }
 
