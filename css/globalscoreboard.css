@@ -78,7 +78,7 @@ body {
 } /* Blue */
 
 .username-rank-icon {
-  width: 12px;
+  width: 16px;
   transition: transform 0.3s ease;
   position: relative;
   display: inline-block;
@@ -384,8 +384,8 @@ body {
 
 /* Admin icon styling */
 .admin-icon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   margin-left: 5px;
   vertical-align: middle;
   transition: transform 0.3s ease;
