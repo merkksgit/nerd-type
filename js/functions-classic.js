@@ -679,9 +679,19 @@ function initializeEventListeners() {
 
     // Handle game controls - Enter key focuses input and starts game
     if (event.key === "Enter" && !event.ctrlKey && !isUsernameModalOpen) {
-      // Always restart the game when Enter is pressed
-      startGame();
-      activateGame();
+      // Check if game is inactive (showing start message)
+      const gameElement = document.getElementById("game");
+      const isGameInactive =
+        gameElement && gameElement.classList.contains("inactive");
+
+      if (isGameInactive) {
+        // Just activate the game without changing words when showing start message
+        activateGame();
+      } else {
+        // Always restart the game when Enter is pressed during active gameplay
+        startGame();
+        activateGame();
+      }
     }
     if (event.key === "Enter" && event.ctrlKey) {
       location.reload();
