@@ -113,24 +113,24 @@ footer {
 }
 
 /* Footer icons */
-.fa-brands,
-.fa-solid,
-.fa-regular {
+footer .fa-brands,
+footer .fa-solid,
+footer .fa-regular {
   font-size: 0.9rem;
   color: #394b70;
   transition: all 0.3s ease;
 }
 
-.social-link:hover .fa-brands,
-.social-link:hover .fa-solid,
-.social-link:hover .fa-regular {
+footer .social-link:hover .fa-brands,
+footer .social-link:hover .fa-solid,
+footer .social-link:hover .fa-regular {
   color: #7aa2f7;
   transform: scale(1.3);
 }
 
-.social-link:active .fa-brands,
-.social-link:active .fa-solid,
-.social-link:active .fa-regular {
+footer .social-link:active .fa-brands,
+footer .social-link:active .fa-solid,
+footer .social-link:active .fa-regular {
   transform: scale(0.95);
 }
 
