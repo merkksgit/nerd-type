@@ -1,32 +1,27 @@
 ![nerdtype](./images/nt-logo-text-link.png)
 
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)](#)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)](#)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](#)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?logo=bootstrap&logoColor=white)](#)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-222222?logo=github&logoColor=white)](#)
+
 # NerdType
 
 A fast-paced, minimalistic typing game built with vanilla web technologies. Challenge yourself with multilingual vocabulary including programming terms, English, Finnish, and Swedish words. Features energy-based gameplay, multiple game modes, achievements system, and global leaderboards.
 
 ## Features
 
-- Multiple language support (English, Finnish, Swedish, Programming terms)
-- Several game modes: Classic, Hard, Practice, Speedrunner, Zen, Custom
-- Achievement system with various challenges
-- In-game slash commands for quick settings changes
-- Global leaderboards (optional)
-- No installation required - runs in any modern browser
-
-## How to Play
-
-1. Open the game in your browser
-2. Click Start or press Enter
-3. Type the displayed words before your energy runs out
-4. Use `/help` during gameplay to see available commands
-
-## Game Modes
-
-- **Classic** - Standard energy-based gameplay
-- **Hard** - Faster pace for experienced players
-- **Practice** - Extended time limits for learning
-- **Zen** - No energy limit, word goal-based
-- **Custom** - Create your own difficulty
+- **Multilingual Support** - English, Finnish, Swedish, Programming terms, and "Nightmare" mode
+- **Multiple Game Modes** - Classic, Hard, Practice, Speedrunner, Zen, and Custom modes
+- **Achievement System** - Comprehensive tracking with score, speed, gameplay style, and language-specific achievements
+- **Real-time Gameplay** - Energy-based mechanics with dynamic countdown timers
+- **In-game Commands** - Slash commands for quick settings changes without menu navigation
+- **Global Leaderboards** - Optional competitive seasonal system with leaderboard resets
+- **Responsive Design** - Mobile-optimized with device-specific adaptations
+- **No Installation Required** - Pure client-side web application running in any modern browser
+- **Minimalistic UI** - Clean, distraction-free interface with Bootstrap styling
+- **Audio Feedback** - Optional keypress sounds for enhanced typing experience
 
 ## Development
 
