@@ -85,26 +85,29 @@ body {
   transform-origin: center;
 }
 
-.username-rank-icon:hover {
-  transform: scale(4);
-  z-index: 10;
-  background: none !important;
-}
+/* Disable hover effects on touch devices */
+@media (hover: hover) and (pointer: fine) {
+  .username-rank-icon:hover {
+    transform: scale(4);
+    z-index: 10;
+    background: none !important;
+  }
 
-/* Rank-specific hover shadows */
-.username-rank-icon:hover[src*="rank1"] {
-  filter: drop-shadow(0 0 8px #ffd700) drop-shadow(0 0 16px #ffd700)
-    drop-shadow(0 0 24px #ffd700);
-}
+  /* Rank-specific hover shadows */
+  .username-rank-icon:hover[src*="rank1"] {
+    filter: drop-shadow(0 0 8px #ffd700) drop-shadow(0 0 16px #ffd700)
+      drop-shadow(0 0 24px #ffd700);
+  }
 
-.username-rank-icon:hover[src*="rank2"] {
-  filter: drop-shadow(0 0 8px #bb9af7) drop-shadow(0 0 16px #bb9af7)
-    drop-shadow(0 0 24px #bb9af7);
-}
+  .username-rank-icon:hover[src*="rank2"] {
+    filter: drop-shadow(0 0 8px #bb9af7) drop-shadow(0 0 16px #bb9af7)
+      drop-shadow(0 0 24px #bb9af7);
+  }
 
-.username-rank-icon:hover[src*="rank3"] {
-  filter: drop-shadow(0 0 8px #7aa2f7) drop-shadow(0 0 16px #7aa2f7)
-    drop-shadow(0 0 24px #7aa2f7);
+  .username-rank-icon:hover[src*="rank3"] {
+    filter: drop-shadow(0 0 8px #7aa2f7) drop-shadow(0 0 16px #7aa2f7)
+      drop-shadow(0 0 24px #7aa2f7);
+  }
 }
 
 /* Container for the rank icon and tooltip */
