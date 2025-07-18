@@ -2304,7 +2304,7 @@ function displayModernGameOverContent(data) {
           <div class="settings-row">
             <span>Mode: ${data.gameSettings.mode}</span>
             <span>Words Goal: ${data.gameSettings.wordGoal}</span>
-            <span>Bonus Energy: ${data.gameSettings.bonusEnergy}</span>
+            <span>Energy Bonus: ${data.gameSettings.bonusEnergy}</span>
           </div>
           <div class="settings-row">
             <span>Initial Energy: ${data.gameSettings.initialEnergy}</span>
