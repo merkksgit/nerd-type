@@ -227,7 +227,7 @@ window.keypressSound = keypressAudioPool[0];
 // Check the keypress sound setting on initialization
 const keypressSoundEnabled = storageManager.getItem(
   "keypress_sound_enabled",
-  "true",
+  "false",
 );
 if (keypressSoundEnabled !== "true") {
   keypressAudioPool.forEach((audio) => (audio.muted = true));
@@ -243,7 +243,7 @@ window.dispatchEvent(
 function playKeypressSound() {
   const keypressSoundEnabled = storageManager.getItem(
     "keypress_sound_enabled",
-    "true",
+    "false",
   );
   if (keypressSoundEnabled === "true" && hasStartedTyping) {
     const audio = keypressAudioPool[currentAudioIndex];
