@@ -1091,6 +1091,8 @@ function displayZenModeGraph() {
   });
 }
 
+let chartRefreshTimeout;
+
 window.refreshChartsWithLatestData = async function refreshChartsWithLatestData() {
   try {
     // Check if user is logged in and can sync from Firebase
@@ -1116,10 +1118,16 @@ window.refreshChartsWithLatestData = async function refreshChartsWithLatestData(
     console.error("❌ Failed to refresh chart data:", error);
   }
   
+  // Clear any pending refresh to prevent duplicate renders
+  if (chartRefreshTimeout) {
+    clearTimeout(chartRefreshTimeout);
+  }
+  
   // Wait a moment for localStorage to be fully updated, then display charts
-  setTimeout(() => {
+  chartRefreshTimeout = setTimeout(() => {
     displayScoreGraph();
     displayZenModeGraph();
+    chartRefreshTimeout = null;
   }, 100);
 }
 
