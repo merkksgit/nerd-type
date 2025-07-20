@@ -9,7 +9,7 @@ class SmoothCaret {
     this.lastUpdateTime = 0;
 
     // Animation settings
-    this.easeAmount = 0.45; // How smooth the animation is (balanced between smooth and responsive)
+    this.easeAmount = 0.65; // How smooth the animation is (balanced between smooth and responsive)
     this.threshold = 1.0; // Stop animating when within this many pixels
     this.fastTypingThreshold = 40; // Distance threshold for fast typing detection
     this.fastEaseAmount = 0.75; // Faster but still smooth animation for fast typing
@@ -222,4 +222,3 @@ window.smoothCaret = new SmoothCaret();
 if (typeof module !== "undefined" && module.exports) {
   module.exports = SmoothCaret;
 }
-
