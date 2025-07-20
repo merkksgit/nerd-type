@@ -1009,6 +1009,9 @@ function startGame() {
     words = words.sort(() => Math.random() - 0.5);
   }
 
+  // Clear punctuation cache for fresh capitalization logic
+  clearPunctuationCache();
+
   // Update word display
   updateWordDisplay();
 
@@ -1060,6 +1063,10 @@ function startGame() {
 window.startGame = startGame;
 window.updateWordDisplay = updateWordDisplay;
 window.activateGame = activateGame;
+window.clearPunctuationCache = clearPunctuationCache;
+
+// Cache for processed words to avoid recursion
+let punctuationCache = new Map();
 
 function addPunctuationToWord(word, wordIndex) {
   const punctuationEnabled = storageManager.getItem("punctuation_enabled", "false") === "true";
@@ -1067,6 +1074,18 @@ function addPunctuationToWord(word, wordIndex) {
   if (!punctuationEnabled) {
     return word;
   }
+
+  // Check cache first
+  const cacheKey = `${wordIndex}-${word}`;
+  if (punctuationCache.has(cacheKey)) {
+    return punctuationCache.get(cacheKey);
+  }
+
+  // Check if previous word ended with sentence-ending punctuation
+  const shouldCapitalize = checkIfPreviousWordEndsSentence(wordIndex);
+  
+  // Apply capitalization if needed
+  let processedWord = shouldCapitalize ? capitalizeWord(word) : word;
 
   // Different punctuation marks with their weights
   const punctuationMarks = [
@@ -1085,12 +1104,79 @@ function addPunctuationToWord(word, wordIndex) {
   const seed = wordIndex * 1234567 + word.length * 7;
   const pseudoRandom = (seed % 1000) / 1000;
 
+  let finalWord = processedWord;
+
   // Decide whether to add punctuation (about 25% chance)
-  if (pseudoRandom > 0.25) {
-    return word;
+  if (pseudoRandom <= 0.25) {
+    // Select punctuation based on deterministic value
+    const totalWeight = punctuationMarks.reduce((sum, p) => sum + p.weight, 0);
+    const randomValue = ((seed * 31) % 1000) / 1000 * totalWeight;
+    
+    let cumulativeWeight = 0;
+    for (const punct of punctuationMarks) {
+      cumulativeWeight += punct.weight;
+      if (randomValue <= cumulativeWeight) {
+        // Special handling for quotes - add to both sides occasionally
+        if (punct.mark === '"' && (seed % 2 === 0)) {
+          finalWord = `"${processedWord}"`;
+        } else if (punct.mark === "'" && processedWord.length > 2 && (seed % 3 === 0)) {
+          // Sometimes add apostrophe in middle for contractions
+          const insertPos = Math.floor(processedWord.length * 0.6);
+          finalWord = processedWord.slice(0, insertPos) + "'" + processedWord.slice(insertPos);
+        } else {
+          finalWord = processedWord + punct.mark;
+        }
+        break;
+      }
+    }
   }
 
-  // Select punctuation based on deterministic value
+  // Cache the result
+  punctuationCache.set(cacheKey, finalWord);
+  return finalWord;
+}
+
+function checkIfPreviousWordEndsSentence(currentWordIndex) {
+  if (currentWordIndex === 0) {
+    return true; // First word should always be capitalized
+  }
+  
+  const previousWordIndex = currentWordIndex - 1;
+  const previousCacheKey = `${previousWordIndex}-${words[previousWordIndex]}`;
+  
+  // Check cache first to avoid recursion
+  if (punctuationCache.has(previousCacheKey)) {
+    const previousWord = punctuationCache.get(previousCacheKey);
+    const sentenceEnders = ['.', '!', '?'];
+    return sentenceEnders.some(punct => previousWord.endsWith(punct));
+  }
+  
+  // If not in cache, calculate punctuation for previous word without capitalization
+  const previousWord = getPunctuationForWord(words[previousWordIndex], previousWordIndex);
+  const sentenceEnders = ['.', '!', '?'];
+  return sentenceEnders.some(punct => previousWord.endsWith(punct));
+}
+
+function getPunctuationForWord(word, wordIndex) {
+  // This function calculates punctuation without capitalization logic to avoid recursion
+  const seed = wordIndex * 1234567 + word.length * 7;
+  const pseudoRandom = (seed % 1000) / 1000;
+
+  if (pseudoRandom > 0.25) {
+    return word; // No punctuation
+  }
+
+  const punctuationMarks = [
+    { mark: ".", weight: 15 },
+    { mark: ",", weight: 12 },
+    { mark: "?", weight: 3 },
+    { mark: "!", weight: 2 },
+    { mark: ";", weight: 2 },
+    { mark: ":", weight: 2 },
+    { mark: '"', weight: 4 },
+    { mark: "'", weight: 3 },
+  ];
+
   const totalWeight = punctuationMarks.reduce((sum, p) => sum + p.weight, 0);
   const randomValue = ((seed * 31) % 1000) / 1000 * totalWeight;
   
@@ -1098,11 +1184,9 @@ function addPunctuationToWord(word, wordIndex) {
   for (const punct of punctuationMarks) {
     cumulativeWeight += punct.weight;
     if (randomValue <= cumulativeWeight) {
-      // Special handling for quotes - add to both sides occasionally
       if (punct.mark === '"' && (seed % 2 === 0)) {
         return `"${word}"`;
       } else if (punct.mark === "'" && word.length > 2 && (seed % 3 === 0)) {
-        // Sometimes add apostrophe in middle for contractions
         const insertPos = Math.floor(word.length * 0.6);
         return word.slice(0, insertPos) + "'" + word.slice(insertPos);
       } else {
@@ -1110,8 +1194,18 @@ function addPunctuationToWord(word, wordIndex) {
       }
     }
   }
-
+  
   return word;
+}
+
+function capitalizeWord(word) {
+  if (!word || word.length === 0) return word;
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+
+// Clear punctuation cache when game restarts or settings change
+function clearPunctuationCache() {
+  punctuationCache.clear();
 }
 
 function updateWordDisplay() {

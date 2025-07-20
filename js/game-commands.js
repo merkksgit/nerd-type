@@ -312,6 +312,11 @@ class GameCommands {
     // Update localStorage
     localStorage.setItem("punctuation_enabled", newState.toString());
 
+    // Clear punctuation cache when setting changes
+    if (typeof window.clearPunctuationCache === "function") {
+      window.clearPunctuationCache();
+    }
+
     // Dispatch event to update the game setting
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
