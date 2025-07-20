@@ -57,6 +57,8 @@ class GameCommands {
       "/language": this.setLanguage.bind(this), // Alias for /lang
       "/space": this.toggleSpaceAfterWords.bind(this),
       "/spaces": this.toggleSpaceAfterWords.bind(this), // Alias for /space
+      "/punc": this.togglePunctuation.bind(this),
+      "/punctuation": this.togglePunctuation.bind(this), // Alias for /punc
       "/sound": this.toggleKeypressSound.bind(this),
       "/help": this.showHelp.bind(this),
       "/status": this.showStatus.bind(this),
@@ -77,6 +79,8 @@ class GameCommands {
       "/language",
       "/space",
       "/spaces",
+      "/punc",
+      "/punctuation",
       "/reset",
       "/sound",
       "/data",
@@ -280,6 +284,44 @@ class GameCommands {
     // Show notification
     this.showNotification(
       `Space after words ${newState ? "enabled" : "disabled"}`,
+      "success",
+    );
+  }
+
+  // Toggle punctuation command
+  togglePunctuation(args) {
+    // Get current state
+    const currentState = localStorage.getItem("punctuation_enabled") === "true";
+
+    // Determine new state
+    let newState;
+    if (args.length === 0) {
+      // Toggle current state
+      newState = !currentState;
+    } else {
+      // Set based on argument (on/off, true/false, 1/0)
+      const arg = args[0].toLowerCase();
+      newState =
+        arg === "on" ||
+        arg === "true" ||
+        arg === "1" ||
+        arg === "enable" ||
+        arg === "enabled";
+    }
+
+    // Update localStorage
+    localStorage.setItem("punctuation_enabled", newState.toString());
+
+    // Dispatch event to update the game setting
+    window.dispatchEvent(
+      new CustomEvent("gameSettingsChanged", {
+        detail: { setting: "punctuation_enabled", value: newState },
+      }),
+    );
+
+    // Show notification
+    this.showNotification(
+      `Punctuation ${newState ? "enabled" : "disabled"}`,
       "success",
     );
   }
@@ -750,6 +792,7 @@ class GameCommands {
 <span style='color:#bb9af7'>/lang</span>           - Switch language
                   <span style='color:#ff9e64'>[finnish, english, swedish, programming, nightmare]</span>
 <span style='color:#bb9af7'>/space</span>          - Toggle space after words
+<span style='color:#bb9af7'>/punc</span>           - Toggle punctuation marks
 <span style='color:#bb9af7'>/sound</span>          - Toggle keypress sound
 <span style='color:#bb9af7'>/data</span>           - Toggle data collection
 <span style='color:#bb9af7'>/rm</span>             - Remove data from localStorage

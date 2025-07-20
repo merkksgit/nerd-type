@@ -1173,6 +1173,8 @@ window.syncSettingsToFirebase = async function () {
       hideUI: localStorage.getItem("nerdtype_hide_ui") === "true",
       showSpacesAfterWords:
         localStorage.getItem("showSpacesAfterWords") !== "false",
+      punctuationEnabled:
+        localStorage.getItem("punctuation_enabled") === "true",
       dataCollectionEnabled:
         localStorage.getItem("data_collection_enabled") !== "false",
       achievementSoundEnabled:
@@ -1273,6 +1275,13 @@ window.applyCloudSettingsToLocal = function (cloudSettings) {
       localStorage.setItem(
         "showSpacesAfterWords",
         cloudSettings.showSpacesAfterWords.toString(),
+      );
+    }
+
+    if (typeof cloudSettings.punctuationEnabled === "boolean") {
+      localStorage.setItem(
+        "punctuation_enabled",
+        cloudSettings.punctuationEnabled.toString(),
       );
     }
 

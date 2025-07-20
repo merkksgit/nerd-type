@@ -210,6 +210,13 @@ function loadSettings() {
       spacesAfterWords === null || spacesAfterWords === "true";
   }
 
+  // Set punctuation toggle
+  const punctuationToggle = document.getElementById("punctuationToggle");
+  if (punctuationToggle) {
+    const punctuationEnabled = localStorage.getItem("punctuation_enabled");
+    punctuationToggle.checked = punctuationEnabled === "true";
+  }
+
   // Set hide precision multiplier toggle
   const hidePrecisionMultiplierToggle = document.getElementById(
     "hidePrecisionMultiplierToggle",
@@ -670,6 +677,12 @@ function resetSettings() {
     showSpacesToggle.checked = true;
   }
 
+  // Reset punctuation to default (off)
+  const punctuationToggle = document.getElementById("punctuationToggle");
+  if (punctuationToggle) {
+    punctuationToggle.checked = false;
+  }
+
   // Reset hide precision multiplier to default (off - show multiplier)
   const hidePrecisionMultiplierToggle = document.getElementById(
     "hidePrecisionMultiplierToggle",
@@ -834,6 +847,10 @@ async function applySettings() {
   // Get show spaces toggle state
   const showSpacesEnabled = document.getElementById("showSpacesToggle").checked;
   localStorage.setItem("showSpacesAfterWords", showSpacesEnabled);
+
+  // Get punctuation toggle state
+  const punctuationEnabled = document.getElementById("punctuationToggle").checked;
+  localStorage.setItem("punctuation_enabled", punctuationEnabled);
 
   // Get hide precision multiplier toggle state
   const hidePrecisionMultiplierEnabled = document.getElementById(

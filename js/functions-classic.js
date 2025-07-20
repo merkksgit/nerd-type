@@ -574,9 +574,10 @@ function updateDebugInfo() {
   // Calculate time properly
   let effectiveTime = gameStartTime ? Date.now() - gameStartTime : 0;
 
+  const debugCurrentWord = hasStartedTyping ? addPunctuationToWord(words[currentWordIndex], currentWordIndex) : "";
   debugDisplay.updateInfo({
-    currentWord: hasStartedTyping ? words[currentWordIndex] : "",
-    wordLength: hasStartedTyping ? words[currentWordIndex]?.length || 0 : 0,
+    currentWord: debugCurrentWord,
+    wordLength: debugCurrentWord?.length || 0,
     totalCharactersTyped,
     gameStartTime,
     wordsTyped,
@@ -1060,6 +1061,59 @@ window.startGame = startGame;
 window.updateWordDisplay = updateWordDisplay;
 window.activateGame = activateGame;
 
+function addPunctuationToWord(word, wordIndex) {
+  const punctuationEnabled = storageManager.getItem("punctuation_enabled", "false") === "true";
+  
+  if (!punctuationEnabled) {
+    return word;
+  }
+
+  // Different punctuation marks with their weights
+  const punctuationMarks = [
+    { mark: ".", weight: 15 },  // Period - most common
+    { mark: ",", weight: 12 },  // Comma
+    { mark: "?", weight: 3 },   // Question mark
+    { mark: "!", weight: 2 },   // Exclamation mark
+    { mark: ";", weight: 2 },   // Semicolon
+    { mark: ":", weight: 2 },   // Colon
+    { mark: '"', weight: 4 },   // Quotes
+    { mark: "'", weight: 3 },   // Apostrophe
+  ];
+
+  // Create a deterministic "random" value based on word index
+  // This ensures same word always gets same punctuation
+  const seed = wordIndex * 1234567 + word.length * 7;
+  const pseudoRandom = (seed % 1000) / 1000;
+
+  // Decide whether to add punctuation (about 25% chance)
+  if (pseudoRandom > 0.25) {
+    return word;
+  }
+
+  // Select punctuation based on deterministic value
+  const totalWeight = punctuationMarks.reduce((sum, p) => sum + p.weight, 0);
+  const randomValue = ((seed * 31) % 1000) / 1000 * totalWeight;
+  
+  let cumulativeWeight = 0;
+  for (const punct of punctuationMarks) {
+    cumulativeWeight += punct.weight;
+    if (randomValue <= cumulativeWeight) {
+      // Special handling for quotes - add to both sides occasionally
+      if (punct.mark === '"' && (seed % 2 === 0)) {
+        return `"${word}"`;
+      } else if (punct.mark === "'" && word.length > 2 && (seed % 3 === 0)) {
+        // Sometimes add apostrophe in middle for contractions
+        const insertPos = Math.floor(word.length * 0.6);
+        return word.slice(0, insertPos) + "'" + word.slice(insertPos);
+      } else {
+        return word + punct.mark;
+      }
+    }
+  }
+
+  return word;
+}
+
 function updateWordDisplay() {
   const wordToTypeElement = domManager.get("wordToType");
   const nextWordElement = domManager.get("nextWord");
@@ -1084,7 +1138,8 @@ function updateWordDisplay() {
   // Add current and upcoming words - always start with currentWordIndex
   for (let i = 0; i < wordsToShow; i++) {
     const wordIndex = (currentWordIndex + i) % words.length;
-    const word = words[wordIndex];
+    const baseWord = words[wordIndex];
+    const word = addPunctuationToWord(baseWord, wordIndex);
     const isCurrentWord = i === 0;
 
     displayWords.push({
@@ -1309,7 +1364,8 @@ function addNewWordsToDisplay() {
   // Add new words starting from the next index
   for (let i = 1; i <= wordsToAdd; i++) {
     const wordIndex = (highestIndex + i) % words.length;
-    const word = words[wordIndex];
+    const baseWord = words[wordIndex];
+    const word = addPunctuationToWord(baseWord, wordIndex);
 
     if (!word) continue;
 
@@ -1870,7 +1926,7 @@ function checkInput(e) {
   // Handle command input
   if (handleCommandInput(e, userInput)) return;
 
-  const currentWord = words[currentWordIndex];
+  const currentWord = addPunctuationToWord(words[currentWordIndex], currentWordIndex);
   const wordDisplay = domManager.get("wordToType");
   const showSpace =
     storageManager.getItem("showSpacesAfterWords", "true") !== "false";
