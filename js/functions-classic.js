@@ -520,6 +520,11 @@ function setupUI() {
   // Show words immediately on page load
   updateWordDisplay();
 
+  // Initialize smooth caret system
+  if (window.smoothCaret) {
+    window.smoothCaret.init();
+  }
+
   // Mark game as inactive initially
   const gameElement = document.getElementById("game");
   if (gameElement) {
@@ -1154,6 +1159,21 @@ function updateWordDisplay() {
   if (nextWordElement) {
     nextWordElement.textContent = "";
   }
+
+  // Re-initialize smooth caret system after word display update
+  if (window.smoothCaret) {
+    // Check if caret element still exists in DOM
+    const existingCaret = document.getElementById("smooth-caret");
+    if (!existingCaret) {
+      // Caret was removed, reinitialize it
+      window.smoothCaret.destroy();
+      window.smoothCaret.init();
+    }
+    // Update position after ensuring caret exists
+    setTimeout(() => {
+      window.smoothCaret.updateCaretPosition(false); // Don't animate initially
+    }, 0);
+  }
 }
 
 // Helper function to get current word element
@@ -1236,6 +1256,13 @@ function scrollWordsDisplay() {
       .forEach((w) => w.classList.remove("current"));
     currentWordElement.classList.remove("upcoming");
     currentWordElement.classList.add("current");
+  }
+
+  // Update smooth caret position after scrolling
+  if (window.smoothCaret && window.smoothCaret.isInitialized) {
+    setTimeout(() => {
+      window.smoothCaret.updateCaretPosition();
+    }, 0);
   }
 }
 
@@ -1352,6 +1379,11 @@ function updateLetterStates(userInput) {
       letter.textContent = currentWord[index];
     }
   });
+
+  // Update smooth caret position if available
+  if (window.smoothCaret && window.smoothCaret.isInitialized) {
+    window.smoothCaret.updateCaretPosition();
+  }
 
   // No extra character handling needed since we prevent them from being typed
 }
@@ -1774,6 +1806,13 @@ function updateWordDisplayAfterCompletion() {
       nextWordElement.classList.remove("upcoming");
       nextWordElement.classList.add("current");
     }
+  }
+
+  // Update smooth caret position after word completion
+  if (window.smoothCaret && window.smoothCaret.isInitialized) {
+    setTimeout(() => {
+      window.smoothCaret.updateCaretPosition();
+    }, 0);
   }
 }
 

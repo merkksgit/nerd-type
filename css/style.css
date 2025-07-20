@@ -724,16 +724,25 @@ div#wordToType {
   position: relative;
 }
 
+/* Hide default caret - smooth caret replaces it entirely */
 .letter.current::before {
-  content: "";
+  display: none;
+}
+
+/* Smooth Caret Styles */
+.smooth-caret {
   position: absolute;
   left: -2px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2px;
+  top: 0;
+  width: 3px;
   height: 1.2em;
   background-color: #7aa2f7;
-  animation: caretBlink 1s infinite;
+  transform-origin: top left;
+  will-change: transform;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 1;
+  border-radius: 1px;
 }
 
 /* Extra character styling for overshoot typing */
