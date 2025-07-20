@@ -583,7 +583,7 @@ input#userInput {
 /* Mobile-specific instruction text */
 @media (max-width: 768px) and (hover: none) and (pointer: coarse) {
   #game.inactive::after {
-    content: "Tap to start";
+    content: "Tap to start/restart";
     font-size: 1.2em;
     padding: 0.8rem 1.5rem;
     font-family: var(--game-font, "jetbrains-mono");

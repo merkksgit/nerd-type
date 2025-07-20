@@ -33,6 +33,15 @@ let totalKeystrokes = 0;
 let correctKeystrokes = 0;
 let gameStartTime = null;
 let gameEnded = false;
+
+// Helper function to sync game state with window object
+function syncGameStateToWindow() {
+  window.hasStartedTyping = hasStartedTyping;
+  window.gameEnded = gameEnded;
+}
+
+// Initial sync
+syncGameStateToWindow();
 let showSpacesAfterWords =
   storageManager.getItem("showSpacesAfterWords", "true") !== "false";
 
@@ -506,6 +515,7 @@ function setupUI() {
 
   // Initialize game state variables but don't start timers
   gameEnded = false;
+  syncGameStateToWindow();
   currentWordIndex = 0;
   nextWordIndex = 1;
 
@@ -592,8 +602,15 @@ function optimizeForMobile() {
 
   if (isMobile) {
     // Smaller font for game elements
-    document.getElementById("wordToType").style.fontSize = "20px";
-    document.getElementById("nextWord").style.fontSize = "18px";
+    const wordToType = document.getElementById("wordToType");
+    if (wordToType) {
+      wordToType.style.fontSize = "20px";
+    }
+    
+    const nextWord = document.getElementById("nextWord");
+    if (nextWord) {
+      nextWord.style.fontSize = "18px";
+    }
 
     // Make sure input has appropriate size
     const userInput = document.getElementById("userInput");
@@ -979,6 +996,7 @@ function startGame() {
 
   // Reset game state and shuffle words at start
   gameEnded = false;
+  syncGameStateToWindow();
   currentWordIndex = 0;
   nextWordIndex = 1;
 
@@ -1026,6 +1044,7 @@ function startGame() {
   domManager.focus("userInput");
   gameStartTime = null;
   hasStartedTyping = false;
+  syncGameStateToWindow();
   wordsTyped = [];
   totalCharactersTyped = 0;
   totalKeystrokes = 0;
@@ -1525,6 +1544,7 @@ function updateZenTimer() {
 
   if (isZenMode && wordsTyped.length >= zenWordGoal) {
     gameEnded = true;
+    syncGameStateToWindow();
     clearInterval(totalTimeInterval);
     showGameOverModal(getRandomSuccessMessage(), true);
     return;
@@ -1591,6 +1611,7 @@ function validateInputLength(e, userInput, currentWord, showSpace) {
 function startGameTimers() {
   if (!hasStartedTyping) {
     hasStartedTyping = true;
+    syncGameStateToWindow();
     gameStartTime = Date.now();
 
     if (isZenMode) {
@@ -1621,6 +1642,7 @@ function activateGame() {
 function startGameOnFirstInput() {
   // Set game as started
   hasStartedTyping = true;
+  syncGameStateToWindow();
   gameStartTime = Date.now();
 
   // Initialize timers based on mode
@@ -1820,6 +1842,7 @@ function updateWordDisplayAfterCompletion() {
 function checkGameCompletion() {
   if (isZenMode && wordsTyped.length >= zenWordGoal) {
     gameEnded = true;
+    syncGameStateToWindow();
     clearInterval(totalTimeInterval);
     showGameOverModal(getRandomSuccessMessage(), true);
   } else if (!isZenMode) {
@@ -1832,6 +1855,7 @@ function checkGameCompletion() {
 
     if (wordsTyped.length >= wordsGoal) {
       gameEnded = true;
+    syncGameStateToWindow();
       clearInterval(countDownInterval);
       clearInterval(totalTimeInterval);
       showGameOverModal(getRandomSuccessMessage(), true);
