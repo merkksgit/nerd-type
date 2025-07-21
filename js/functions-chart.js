@@ -1,5 +1,5 @@
 // Import storage manager
-import storageManager from './storage-manager.js';
+import storageManager from "./storage-manager.js";
 
 // Toggle functionality for all sections
 function setupToggle(
@@ -68,7 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Display initial data
   displayPreviousResults();
-
 });
 
 // Calculate the size of localStorage data in KB
@@ -117,7 +116,6 @@ function handleScoreboardKeyPress(event) {
     }
   }
 }
-
 
 // Display previous results in scoreboard (only show last 20)
 function displayPreviousResults() {
@@ -272,8 +270,10 @@ function displayPreviousResults() {
     const infoRow = document.createElement("tr");
     // Get actual total count from localStorage, fallback to results.length
     const totalGameCount = localStorage.getItem("totalGameCount");
-    const actualTotal = totalGameCount ? parseInt(totalGameCount) : results.length;
-    
+    const actualTotal = totalGameCount
+      ? parseInt(totalGameCount)
+      : results.length;
+
     infoRow.innerHTML = `
       <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
         Showing last 15 of ${actualTotal} total games | Storage used: ${storageSize} KB

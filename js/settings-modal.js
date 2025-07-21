@@ -849,7 +849,8 @@ async function applySettings() {
   localStorage.setItem("showSpacesAfterWords", showSpacesEnabled);
 
   // Get punctuation toggle state
-  const punctuationEnabled = document.getElementById("punctuationToggle").checked;
+  const punctuationEnabled =
+    document.getElementById("punctuationToggle").checked;
   localStorage.setItem("punctuation_enabled", punctuationEnabled);
 
   // Get hide precision multiplier toggle state

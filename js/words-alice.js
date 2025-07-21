@@ -254,4 +254,3 @@ export const words = [
   "the",
   "hedge",
 ];
-

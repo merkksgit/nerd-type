@@ -574,7 +574,9 @@ function updateDebugInfo() {
   // Calculate time properly
   let effectiveTime = gameStartTime ? Date.now() - gameStartTime : 0;
 
-  const debugCurrentWord = hasStartedTyping ? addPunctuationToWord(words[currentWordIndex], currentWordIndex) : "";
+  const debugCurrentWord = hasStartedTyping
+    ? addPunctuationToWord(words[currentWordIndex], currentWordIndex)
+    : "";
   debugDisplay.updateInfo({
     currentWord: debugCurrentWord,
     wordLength: debugCurrentWord?.length || 0,
@@ -607,7 +609,7 @@ function optimizeForMobile() {
     if (wordToType) {
       wordToType.style.fontSize = "20px";
     }
-    
+
     const nextWord = document.getElementById("nextWord");
     if (nextWord) {
       nextWord.style.fontSize = "18px";
@@ -1069,8 +1071,9 @@ window.clearPunctuationCache = clearPunctuationCache;
 let punctuationCache = new Map();
 
 function addPunctuationToWord(word, wordIndex) {
-  const punctuationEnabled = storageManager.getItem("punctuation_enabled", "false") === "true";
-  
+  const punctuationEnabled =
+    storageManager.getItem("punctuation_enabled", "false") === "true";
+
   if (!punctuationEnabled) {
     return word;
   }
@@ -1083,20 +1086,20 @@ function addPunctuationToWord(word, wordIndex) {
 
   // Check if previous word ended with sentence-ending punctuation
   const shouldCapitalize = checkIfPreviousWordEndsSentence(wordIndex);
-  
+
   // Apply capitalization if needed
   let processedWord = shouldCapitalize ? capitalizeWord(word) : word;
 
   // Different punctuation marks with their weights
   const punctuationMarks = [
-    { mark: ".", weight: 15 },  // Period - most common
-    { mark: ",", weight: 12 },  // Comma
-    { mark: "?", weight: 3 },   // Question mark
-    { mark: "!", weight: 2 },   // Exclamation mark
-    { mark: ";", weight: 2 },   // Semicolon
-    { mark: ":", weight: 2 },   // Colon
-    { mark: '"', weight: 4 },   // Quotes
-    { mark: "'", weight: 3 },   // Apostrophe
+    { mark: ".", weight: 15 }, // Period - most common
+    { mark: ",", weight: 12 }, // Comma
+    { mark: "?", weight: 3 }, // Question mark
+    { mark: "!", weight: 2 }, // Exclamation mark
+    { mark: ";", weight: 2 }, // Semicolon
+    { mark: ":", weight: 2 }, // Colon
+    { mark: '"', weight: 4 }, // Quotes
+    { mark: "'", weight: 3 }, // Apostrophe
   ];
 
   // Create a deterministic "random" value based on word index
@@ -1114,19 +1117,26 @@ function addPunctuationToWord(word, wordIndex) {
     // Select punctuation based on deterministic value
     const totalWeight = punctuationMarks.reduce((sum, p) => sum + p.weight, 0);
     let punctSeed = wordIndex * 37 + word.length * 23;
-    const randomValue = (punctSeed % 1000) / 1000 * totalWeight;
-    
+    const randomValue = ((punctSeed % 1000) / 1000) * totalWeight;
+
     let cumulativeWeight = 0;
     for (const punct of punctuationMarks) {
       cumulativeWeight += punct.weight;
       if (randomValue <= cumulativeWeight) {
         // Special handling for quotes - add to both sides occasionally
-        if (punct.mark === '"' && (punctSeed % 2 === 0)) {
+        if (punct.mark === '"' && punctSeed % 2 === 0) {
           finalWord = `"${processedWord}"`;
-        } else if (punct.mark === "'" && processedWord.length > 2 && (punctSeed % 3 === 0)) {
+        } else if (
+          punct.mark === "'" &&
+          processedWord.length > 2 &&
+          punctSeed % 3 === 0
+        ) {
           // Sometimes add apostrophe in middle for contractions
           const insertPos = Math.floor(processedWord.length * 0.6);
-          finalWord = processedWord.slice(0, insertPos) + "'" + processedWord.slice(insertPos);
+          finalWord =
+            processedWord.slice(0, insertPos) +
+            "'" +
+            processedWord.slice(insertPos);
         } else {
           finalWord = processedWord + punct.mark;
         }
@@ -1144,21 +1154,24 @@ function checkIfPreviousWordEndsSentence(currentWordIndex) {
   if (currentWordIndex === 0) {
     return true; // First word should always be capitalized
   }
-  
+
   const previousWordIndex = currentWordIndex - 1;
   const previousCacheKey = `${previousWordIndex}-${words[previousWordIndex]}`;
-  
+
   // Check cache first to avoid recursion
   if (punctuationCache.has(previousCacheKey)) {
     const previousWord = punctuationCache.get(previousCacheKey);
-    const sentenceEnders = ['.', '!', '?'];
-    return sentenceEnders.some(punct => previousWord.endsWith(punct));
+    const sentenceEnders = [".", "!", "?"];
+    return sentenceEnders.some((punct) => previousWord.endsWith(punct));
   }
-  
+
   // If not in cache, calculate punctuation for previous word without capitalization
-  const previousWord = getPunctuationForWord(words[previousWordIndex], previousWordIndex);
-  const sentenceEnders = ['.', '!', '?'];
-  return sentenceEnders.some(punct => previousWord.endsWith(punct));
+  const previousWord = getPunctuationForWord(
+    words[previousWordIndex],
+    previousWordIndex,
+  );
+  const sentenceEnders = [".", "!", "?"];
+  return sentenceEnders.some((punct) => previousWord.endsWith(punct));
 }
 
 function getPunctuationForWord(word, wordIndex) {
@@ -1182,15 +1195,15 @@ function getPunctuationForWord(word, wordIndex) {
   ];
 
   const totalWeight = punctuationMarks.reduce((sum, p) => sum + p.weight, 0);
-  const randomValue = ((seed * 31) % 1000) / 1000 * totalWeight;
-  
+  const randomValue = (((seed * 31) % 1000) / 1000) * totalWeight;
+
   let cumulativeWeight = 0;
   for (const punct of punctuationMarks) {
     cumulativeWeight += punct.weight;
     if (randomValue <= cumulativeWeight) {
-      if (punct.mark === '"' && (seed % 2 === 0)) {
+      if (punct.mark === '"' && seed % 2 === 0) {
         return `"${word}"`;
-      } else if (punct.mark === "'" && word.length > 2 && (seed % 3 === 0)) {
+      } else if (punct.mark === "'" && word.length > 2 && seed % 3 === 0) {
         const insertPos = Math.floor(word.length * 0.6);
         return word.slice(0, insertPos) + "'" + word.slice(insertPos);
       } else {
@@ -1198,7 +1211,7 @@ function getPunctuationForWord(word, wordIndex) {
       }
     }
   }
-  
+
   return word;
 }
 
@@ -2009,7 +2022,7 @@ function checkGameCompletion() {
 
     if (wordsTyped.length >= wordsGoal) {
       gameEnded = true;
-    syncGameStateToWindow();
+      syncGameStateToWindow();
       clearInterval(countDownInterval);
       clearInterval(totalTimeInterval);
       showGameOverModal(getRandomSuccessMessage(), true);
@@ -2024,7 +2037,10 @@ function checkInput(e) {
   // Handle command input
   if (handleCommandInput(e, userInput)) return;
 
-  const currentWord = addPunctuationToWord(words[currentWordIndex], currentWordIndex);
+  const currentWord = addPunctuationToWord(
+    words[currentWordIndex],
+    currentWordIndex,
+  );
   const wordDisplay = domManager.get("wordToType");
   const showSpace =
     storageManager.getItem("showSpacesAfterWords", "true") !== "false";

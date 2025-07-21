@@ -43,14 +43,17 @@ document.addEventListener("DOMContentLoaded", function () {
 async function handleLoginWithDelayedReload(user) {
   try {
     window.authProcessing = true;
-    
+
     // Try to get stored username from database, fallback to email username
     let username;
     try {
       const storedUsername = await window.getUserStoredUsername(user.uid);
       username = storedUsername || user.email.split("@")[0];
     } catch (error) {
-      console.warn("Failed to retrieve stored username, using email fallback:", error);
+      console.warn(
+        "Failed to retrieve stored username, using email fallback:",
+        error,
+      );
       username = user.email.split("@")[0];
     }
 
@@ -178,7 +181,9 @@ function updateUsernameButtonDisplay() {
 
   if (currentUser) {
     // User is authenticated - show username with logout icon
-    const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
+    const storedUsername =
+      localStorage.getItem("nerdtype_username") ||
+      currentUser.email.split("@")[0];
 
     // Use logout icon when user is logged in
     changeUsernameBtn.innerHTML = `
@@ -290,7 +295,9 @@ function updateScoreboardDisplay() {
   const scoreboardMessages = document.querySelectorAll(".auth-message");
   scoreboardMessages.forEach((message) => {
     if (currentUser) {
-      const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
+      const storedUsername =
+        localStorage.getItem("nerdtype_username") ||
+        currentUser.email.split("@")[0];
       message.innerHTML = `
         <i class="fa-solid fa-user-check me-2"></i>
         Logged in as <strong>${storedUsername}</strong> - scores will appear on global leaderboards
@@ -317,7 +324,9 @@ window.logoutAndRedirect = async function () {
   const currentUser = window.getCurrentUser();
   if (!currentUser) return;
 
-  const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
+  const storedUsername =
+    localStorage.getItem("nerdtype_username") ||
+    currentUser.email.split("@")[0];
 
   try {
     console.log("🚪 Logging out user:", storedUsername);
@@ -358,7 +367,9 @@ window.showAccountSettings = async function () {
   const currentUser = window.getCurrentUser();
   if (!currentUser) return;
 
-  const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
+  const storedUsername =
+    localStorage.getItem("nerdtype_username") ||
+    currentUser.email.split("@")[0];
   const message = `Account: ${storedUsername}\nEmail: ${currentUser.email}\n\nAccount management features coming soon!`;
 
   // Use custom modal if available

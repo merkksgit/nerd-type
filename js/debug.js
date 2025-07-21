@@ -61,38 +61,38 @@ export class DebugDisplay {
 
   createContentContainer() {
     const content = document.createElement("div");
-    
+
     // Create achievement testing section
     this.achievementSection = document.createElement("div");
     this.achievementSection.innerHTML = `
       <div id="achievement-checkboxes" style="max-height: 300px; overflow-y: auto; width: 350px;"></div>
     `;
-    
+
     this.debugDiv.appendChild(content);
     this.debugDiv.appendChild(this.achievementSection);
-    
+
     // Initialize achievement checkboxes when achievement system is available
     this.initAchievementCheckboxes();
-    
+
     return content;
   }
 
   initAchievementCheckboxes() {
     // Wait for achievement system to be available
-    if (typeof window.achievementSystem === 'undefined') {
+    if (typeof window.achievementSystem === "undefined") {
       setTimeout(() => this.initAchievementCheckboxes(), 100);
       return;
     }
 
-    const container = document.getElementById('achievement-checkboxes');
+    const container = document.getElementById("achievement-checkboxes");
     if (!container) return;
 
     // Clear existing content
-    container.innerHTML = '';
+    container.innerHTML = "";
 
     // Add reset button
-    const resetButton = document.createElement('button');
-    resetButton.textContent = 'Reset All';
+    const resetButton = document.createElement("button");
+    resetButton.textContent = "Reset All";
     resetButton.style.cssText = `
       background: rgba(255, 68, 68, 0.8); 
       color: #00ff00; 
@@ -110,56 +110,62 @@ export class DebugDisplay {
     container.appendChild(resetButton);
 
     // Create checkboxes for each achievement
-    Object.entries(window.achievementSystem.achievements).forEach(([id, achievement]) => {
-      const wrapper = document.createElement('div');
-      wrapper.style.marginBottom = '2px';
-      
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.id = `achievement-${id}`;
-      checkbox.style.marginRight = '5px';
-      
-      const label = document.createElement('label');
-      label.htmlFor = `achievement-${id}`;
-      label.style.cursor = 'pointer';
-      label.style.fontSize = '12px';
-      label.style.fontFamily = 'monospace';
-      label.style.color = '#00ff00';
-      label.textContent = `${achievement.name}`;
-      
-      // Set initial state
-      checkbox.checked = !!window.achievementSystem.achievementsData.unlockedAchievements[id];
-      
-      // Add event listener
-      checkbox.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          // Unlock achievement
-          window.achievementSystem.achievementsData.unlockedAchievements[id] = {
-            unlockedAt: new Date().toISOString(),
-          };
-          window.achievementSystem.saveData();
-          window.achievementSystem.showNotification(achievement);
-        } else {
-          // Lock achievement
-          delete window.achievementSystem.achievementsData.unlockedAchievements[id];
-          window.achievementSystem.saveData();
-        }
-      });
-      
-      wrapper.appendChild(checkbox);
-      wrapper.appendChild(label);
-      container.appendChild(wrapper);
-    });
+    Object.entries(window.achievementSystem.achievements).forEach(
+      ([id, achievement]) => {
+        const wrapper = document.createElement("div");
+        wrapper.style.marginBottom = "2px";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = `achievement-${id}`;
+        checkbox.style.marginRight = "5px";
+
+        const label = document.createElement("label");
+        label.htmlFor = `achievement-${id}`;
+        label.style.cursor = "pointer";
+        label.style.fontSize = "12px";
+        label.style.fontFamily = "monospace";
+        label.style.color = "#00ff00";
+        label.textContent = `${achievement.name}`;
+
+        // Set initial state
+        checkbox.checked =
+          !!window.achievementSystem.achievementsData.unlockedAchievements[id];
+
+        // Add event listener
+        checkbox.addEventListener("change", (e) => {
+          if (e.target.checked) {
+            // Unlock achievement
+            window.achievementSystem.achievementsData.unlockedAchievements[id] =
+              {
+                unlockedAt: new Date().toISOString(),
+              };
+            window.achievementSystem.saveData();
+            window.achievementSystem.showNotification(achievement);
+          } else {
+            // Lock achievement
+            delete window.achievementSystem.achievementsData
+              .unlockedAchievements[id];
+            window.achievementSystem.saveData();
+          }
+        });
+
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(label);
+        container.appendChild(wrapper);
+      },
+    );
   }
 
   updateAchievementCheckboxes() {
     // Update checkbox states to match current achievement data
-    if (typeof window.achievementSystem === 'undefined') return;
-    
-    Object.keys(window.achievementSystem.achievements).forEach(id => {
+    if (typeof window.achievementSystem === "undefined") return;
+
+    Object.keys(window.achievementSystem.achievements).forEach((id) => {
       const checkbox = document.getElementById(`achievement-${id}`);
       if (checkbox) {
-        checkbox.checked = !!window.achievementSystem.achievementsData.unlockedAchievements[id];
+        checkbox.checked =
+          !!window.achievementSystem.achievementsData.unlockedAchievements[id];
       }
     });
   }

@@ -10,7 +10,7 @@ export const GAME_DEFAULTS = {
   AUDIO_POOL_SIZE: 2,
   DEFAULT_LANGUAGE: "english",
   DEFAULT_FONT: "jetbrains-light",
-  DEFAULT_USERNAME: "runner"
+  DEFAULT_USERNAME: "runner",
 };
 
 export const TIMERS = {
@@ -22,7 +22,7 @@ export const TIMERS = {
   COMMAND_RELOAD_DELAY: 2000,
   LOGIN_RELOAD_DELAY: 2000,
   CHART_REFRESH_DELAY: 500,
-  USERNAME_VALIDATION_DELAY: 500
+  USERNAME_VALIDATION_DELAY: 500,
 };
 
 export const STORAGE_KEYS = {
@@ -37,7 +37,7 @@ export const STORAGE_KEYS = {
   GAME_RESULTS_GUEST_BACKUP: "gameResults_guest_backup",
   TOTAL_GAME_COUNT: "totalGameCount",
   DATA_COLLECTION_ENABLED: "data_collection_enabled",
-  PENDING_SETTINGS_NOTIFICATION: "pending_settings_notification"
+  PENDING_SETTINGS_NOTIFICATION: "pending_settings_notification",
 };
 
 export const LIMITS = {
@@ -45,7 +45,7 @@ export const LIMITS = {
   MAX_ALLOWED_LENGTH: 100,
   MIN_USERNAME_LENGTH: 3,
   MAX_USERNAME_LENGTH: 20,
-  MAX_CONTEXT_LINES: 10
+  MAX_CONTEXT_LINES: 10,
 };
 
 export const RESERVED_USERNAMES = [
@@ -60,7 +60,7 @@ export const RESERVED_USERNAMES = [
   "test",
   "demo",
   "null",
-  "undefined"
+  "undefined",
 ];
 
 export const GAME_MODES = {
@@ -69,7 +69,7 @@ export const GAME_MODES = {
   PRACTICE: "practice",
   SPEEDRUNNER: "speedrunner",
   ZEN: "zen",
-  CUSTOM: "custom"
+  CUSTOM: "custom",
 };
 
 export const WORD_LANGUAGES = {
@@ -77,19 +77,20 @@ export const WORD_LANGUAGES = {
   FINNISH: "finnish",
   SWEDISH: "swedish",
   PROGRAMMING: "programming",
-  NIGHTMARE: "nightmare"
+  NIGHTMARE: "nightmare",
 };
 
 export const NOTIFICATION_TYPES = {
   SUCCESS: "success",
   ERROR: "error",
   WARNING: "warning",
-  INFO: "info"
+  INFO: "info",
 };
 
 export const DIFFICULTY_LEVELS = {
   EASY: "easy",
   MEDIUM: "medium",
   HARD: "hard",
-  EXPERT: "expert"
+  EXPERT: "expert",
 };
+

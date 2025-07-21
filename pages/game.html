@@ -995,7 +995,8 @@
                         <label class="form-check-label" for="punctuationToggle">
                           Add Punctuation
                           <small class="d-block text-muted"
-                            >Add punctuation marks like periods, commas, and quotes to words</small
+                            >Add punctuation marks like periods, commas, and
+                            quotes to words</small
                           >
                         </label>
                       </div>
@@ -1753,7 +1754,7 @@
                   userInput.focus();
                 }
               }
-            } 
+            }
             // Handle taps when game is active (restart game)
             else if (window.hasStartedTyping && !window.gameEnded) {
               e.preventDefault();
@@ -1766,7 +1767,6 @@
 
           // Primary handler: tap anywhere on the game area
           if (gameElement) {
-
             // Add both click and touch handlers for better mobile support
             gameElement.onclick = handleGameInteraction;
             gameElement.ontouchstart = handleGameInteraction;

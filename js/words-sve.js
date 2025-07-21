@@ -651,5 +651,6 @@ export const words = [
   "mandel",
   "valnöt",
   "jordnöt",
-  "cashew"
+  "cashew",
 ];
+

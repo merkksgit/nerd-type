@@ -21,20 +21,20 @@ let currentUser = null;
 // Enhanced error notification system
 function showFirebaseErrorNotification(operation, error) {
   const errorMessage = getFirebaseErrorMessage(error);
-  
+
   // Create notification element
-  const notification = document.createElement('div');
-  notification.className = 'firebase-error-notification';
+  const notification = document.createElement("div");
+  notification.className = "firebase-error-notification";
   notification.innerHTML = `
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
       <strong>Firebase Error:</strong> ${operation} - ${errorMessage}
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   `;
-  
+
   // Add to page
   document.body.appendChild(notification);
-  
+
   // Auto-remove after 5 seconds
   setTimeout(() => {
     if (notification.parentNode) {
@@ -45,29 +45,29 @@ function showFirebaseErrorNotification(operation, error) {
 
 // Convert Firebase error codes to user-friendly messages
 function getFirebaseErrorMessage(error) {
-  const errorCode = error.code || error.message || 'unknown';
-  
+  const errorCode = error.code || error.message || "unknown";
+
   switch (errorCode) {
-    case 'auth/network-request-failed':
-      return 'Network connection failed. Please check your internet connection.';
-    case 'auth/too-many-requests':
-      return 'Too many requests. Please try again later.';
-    case 'auth/user-not-found':
-      return 'User account not found.';
-    case 'auth/wrong-password':
-      return 'Incorrect password.';
-    case 'auth/invalid-email':
-      return 'Invalid email address.';
-    case 'auth/email-already-in-use':
-      return 'Email address is already in use.';
-    case 'auth/weak-password':
-      return 'Password is too weak. Please use a stronger password.';
-    case 'permission-denied':
-      return 'Permission denied. Please check your account permissions.';
-    case 'unavailable':
-      return 'Service temporarily unavailable. Please try again later.';
+    case "auth/network-request-failed":
+      return "Network connection failed. Please check your internet connection.";
+    case "auth/too-many-requests":
+      return "Too many requests. Please try again later.";
+    case "auth/user-not-found":
+      return "User account not found.";
+    case "auth/wrong-password":
+      return "Incorrect password.";
+    case "auth/invalid-email":
+      return "Invalid email address.";
+    case "auth/email-already-in-use":
+      return "Email address is already in use.";
+    case "auth/weak-password":
+      return "Password is too weak. Please use a stronger password.";
+    case "permission-denied":
+      return "Permission denied. Please check your account permissions.";
+    case "unavailable":
+      return "Service temporarily unavailable. Please try again later.";
     default:
-      return 'An unexpected error occurred. Please try again.';
+      return "An unexpected error occurred. Please try again.";
   }
 }
 
@@ -88,7 +88,7 @@ function shouldShareToLeaderboard() {
   const currentUser = window.getCurrentUser && window.getCurrentUser();
   const setting = localStorage.getItem("data_collection_enabled");
   const isDataCollectionEnabled = setting === null || setting === "true";
-  
+
   // Only share to leaderboard if user is logged in AND has enabled data sharing
   return currentUser !== null && isDataCollectionEnabled;
 }
@@ -172,7 +172,10 @@ async function handleAuthStateChange(user) {
       const storedUsername = await getUserStoredUsername(user.uid);
       username = storedUsername || user.email.split("@")[0];
     } catch (error) {
-      console.warn("Failed to retrieve stored username, using email fallback:", error);
+      console.warn(
+        "Failed to retrieve stored username, using email fallback:",
+        error,
+      );
       username = user.email.split("@")[0];
     }
 
@@ -217,19 +220,19 @@ async function handleAuthStateChange(user) {
     // Check if this is a first-time visitor or someone who was never authenticated
     const guestMode = localStorage.getItem("nerdtype_guest_mode");
     const currentUsername = localStorage.getItem("nerdtype_username");
-    
+
     if (guestMode !== "true" && !currentUsername) {
       // First-time visitor - set them up as guest without clearing any existing scores
       localStorage.setItem("nerdtype_guest_mode", "true");
       localStorage.setItem("nerdtype_username", "runner");
       window.playerUsername = "runner";
-      
+
       // Update UI if elements exist
       const usernameDisplay = document.getElementById("usernameDisplay");
       if (usernameDisplay) {
         usernameDisplay.textContent = "runner";
       }
-      
+
       // Skip all the logout-related logic for first-time visitors
       return;
     }
@@ -239,43 +242,58 @@ async function handleAuthStateChange(user) {
     window.playerUsername = "";
 
     // Refresh achievements on achievements page after logout
-    if (window.location.pathname.includes('achievements.html')) {
+    if (window.location.pathname.includes("achievements.html")) {
       setTimeout(() => {
         // Check if achievementSystem is available and refresh achievements
-        if (typeof window.achievementSystem !== 'undefined' || typeof achievementSystem !== 'undefined') {
+        if (
+          typeof window.achievementSystem !== "undefined" ||
+          typeof achievementSystem !== "undefined"
+        ) {
           const system = window.achievementSystem || achievementSystem;
-          
+
           // Re-render core achievements
-          const coreContainer = document.getElementById('core-achievements-container');
+          const coreContainer = document.getElementById(
+            "core-achievements-container",
+          );
           if (coreContainer && system.renderCoreAchievementsToContainer) {
-            system.renderCoreAchievementsToContainer('core-achievements-container');
+            system.renderCoreAchievementsToContainer(
+              "core-achievements-container",
+            );
           }
-          
-          // Re-render seasonal achievements  
-          const seasonalContainer = document.getElementById('seasonal-achievements-container');
-          if (seasonalContainer && system.renderSeasonalAchievementsToContainer) {
-            system.renderSeasonalAchievementsToContainer('seasonal-achievements-container');
+
+          // Re-render seasonal achievements
+          const seasonalContainer = document.getElementById(
+            "seasonal-achievements-container",
+          );
+          if (
+            seasonalContainer &&
+            system.renderSeasonalAchievementsToContainer
+          ) {
+            system.renderSeasonalAchievementsToContainer(
+              "seasonal-achievements-container",
+            );
           }
-          
+
           console.log("🏆 Refreshed achievements after logout");
         }
       }, 300);
     }
 
     // Refresh charts on chart page after logout (but not for guests visiting first time)
-    if (window.location.pathname.includes('chart.html')) {
+    if (window.location.pathname.includes("chart.html")) {
       // Only refresh if this was an actual logout, not a guest user visiting
-      const wasAlreadyGuest = localStorage.getItem("nerdtype_guest_mode") === "true";
+      const wasAlreadyGuest =
+        localStorage.getItem("nerdtype_guest_mode") === "true";
       if (!wasAlreadyGuest) {
         setTimeout(() => {
           // Ensure guest scoreboard is switched first, then refresh charts
           if (window.switchToGuestScoreboard) {
             window.switchToGuestScoreboard();
           }
-          
+
           // Give a moment for data to be restored, then refresh charts
           setTimeout(() => {
-            if (typeof window.refreshChartsWithLatestData === 'function') {
+            if (typeof window.refreshChartsWithLatestData === "function") {
               window.refreshChartsWithLatestData();
             }
           }, 200);
@@ -368,9 +386,7 @@ window.saveGuestScore = async function (gameData) {
 // Save game score to Firebase for authenticated users
 window.saveAuthenticatedScore = async function (gameData) {
   if (!currentUser) {
-    console.log(
-      "❌ User not authenticated - score not saved to Firebase",
-    );
+    console.log("❌ User not authenticated - score not saved to Firebase");
     return Promise.resolve({ key: "guest-only" });
   }
 
@@ -380,7 +396,9 @@ window.saveAuthenticatedScore = async function (gameData) {
     console.log("💾 Saving authenticated user data to Firebase:", gameData);
 
     // Enhanced game data with user ID and stored username
-    const storedUsername = localStorage.getItem("nerdtype_username") || currentUser.email.split("@")[0];
+    const storedUsername =
+      localStorage.getItem("nerdtype_username") ||
+      currentUser.email.split("@")[0];
     const enhancedGameData = {
       ...gameData,
       username: storedUsername, // Use stored username
@@ -393,16 +411,24 @@ window.saveAuthenticatedScore = async function (gameData) {
     // Always save to user's personal data
     const userScoreRef = ref(database, `users/${currentUser.uid}/scores`);
     const userResult = await push(userScoreRef, enhancedGameData);
-    console.log("✅ User data saved to personal collection! Key:", userResult.key);
+    console.log(
+      "✅ User data saved to personal collection! Key:",
+      userResult.key,
+    );
 
     // Only save to global leaderboard if data sharing is enabled
     if (shouldShareToLeaderboard()) {
       const globalScoresRef = ref(database, "scores");
       const globalResult = await push(globalScoresRef, enhancedGameData);
-      console.log("✅ Score shared to global leaderboard! Key:", globalResult.key);
+      console.log(
+        "✅ Score shared to global leaderboard! Key:",
+        globalResult.key,
+      );
       return globalResult;
     } else {
-      console.log("📴 Global leaderboard sharing disabled - data saved privately only");
+      console.log(
+        "📴 Global leaderboard sharing disabled - data saved privately only",
+      );
       return userResult;
     }
   } catch (error) {
@@ -428,7 +454,9 @@ window.saveScoreToFirebase = async function (gameData) {
     } else {
       // Guest users only save if data collection is enabled
       if (!isDataCollectionEnabled()) {
-        console.log("📴 Data collection disabled - guest score not saved to Firebase");
+        console.log(
+          "📴 Data collection disabled - guest score not saved to Firebase",
+        );
         return Promise.resolve({ key: "local-only" });
       }
       console.log("💾 Saving guest score...");
@@ -437,10 +465,10 @@ window.saveScoreToFirebase = async function (gameData) {
     }
   } catch (error) {
     console.error("❌ Error saving score to Firebase:", error);
-    
+
     // Show user-friendly error notification
     showFirebaseErrorNotification("Failed to save score", error);
-    
+
     // Don't throw the error - let the game continue
     return { error: error.message, saved: false };
   }
@@ -830,16 +858,16 @@ window.logoutUser = async function () {
     }
 
     console.log("✅ Logout successful");
-    
+
     // Refresh charts if on chart page
-    if (window.location.pathname.includes('chart.html')) {
+    if (window.location.pathname.includes("chart.html")) {
       setTimeout(() => {
-        if (typeof window.refreshChartsWithLatestData === 'function') {
+        if (typeof window.refreshChartsWithLatestData === "function") {
           window.refreshChartsWithLatestData();
         }
       }, 500); // Give more time for all logout processes to complete
     }
-    
+
     return { success: true };
   } catch (error) {
     console.error("❌ Logout error:", error);
@@ -898,7 +926,8 @@ window.addEventListener("fontChanged", function (event) {
 
 // Function to reapply current font whenever needed
 window.reapplyCurrentFont = function () {
-  const currentFont = localStorage.getItem("nerdtype_font") || "jetbrains-light";
+  const currentFont =
+    localStorage.getItem("nerdtype_font") || "jetbrains-light";
 
   const gameElements = document.querySelectorAll(
     "#userInput, #nextWord, #wordToType, #wordToType span, #currentGameMode, #timer, #timeLeft, #progressPercentage, #precisionMultiplier, .game-interface, .typing-area, #usernameDisplay",
@@ -1014,7 +1043,7 @@ window.loadScoreboardFromFirebase = async function () {
 
       // Sort by timestamp locally (most recent first) and limit to 50
       cloudScores.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-      
+
       // Store total count before limiting
       const totalCount = cloudScores.length;
       const limitedScores = cloudScores.slice(0, 50);
@@ -1026,11 +1055,11 @@ window.loadScoreboardFromFirebase = async function () {
         totalCount,
         ")",
       );
-      
+
       // Return both the scores and total count
       return {
         scores: limitedScores,
-        totalCount: totalCount
+        totalCount: totalCount,
       };
     }
 
@@ -1104,7 +1133,7 @@ window.switchToGuestScoreboard = function () {
     } else {
       // No backup, check if we already have guest scores and preserve them
       const currentScores = localStorage.getItem("gameResults");
-      
+
       // Parse and check if scores exist
       let parsedScores = [];
       try {
@@ -1112,7 +1141,7 @@ window.switchToGuestScoreboard = function () {
       } catch (e) {
         // Failed to parse, will create fresh scoreboard
       }
-      
+
       // Always start fresh when there's no guest backup - clear any logged-in user data
       localStorage.setItem("gameResults", JSON.stringify([]));
     }
@@ -1809,11 +1838,11 @@ async function getUserStoredUsername(userId) {
   }
 
   const { ref, get } = window.firebaseModules;
-  
+
   try {
     const userRef = ref(database, `users/${userId}`);
     const snapshot = await get(userRef);
-    
+
     if (snapshot.exists()) {
       const userData = snapshot.val();
       return userData.username || null;

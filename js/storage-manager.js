@@ -24,13 +24,13 @@ class StorageManager {
     try {
       const value = localStorage.getItem(key);
       const result = value !== null ? value : defaultValue;
-      
+
       // Cache the result
       this.cache.set(cacheKey, {
         value: result,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       return result;
     } catch (error) {
       console.error(`Failed to get localStorage item '${key}':`, error);
@@ -74,11 +74,14 @@ class StorageManager {
   getJSON(key, defaultValue = null) {
     const value = this.getItem(key);
     if (value === null) return defaultValue;
-    
+
     try {
       return JSON.parse(value);
     } catch (error) {
-      console.error(`Failed to parse JSON from localStorage item '${key}':`, error);
+      console.error(
+        `Failed to parse JSON from localStorage item '${key}':`,
+        error,
+      );
       return defaultValue;
     }
   }
@@ -91,7 +94,10 @@ class StorageManager {
       const value = JSON.stringify(object);
       return this.setItem(key, value);
     } catch (error) {
-      console.error(`Failed to stringify JSON for localStorage item '${key}':`, error);
+      console.error(
+        `Failed to stringify JSON for localStorage item '${key}':`,
+        error,
+      );
       return false;
     }
   }
@@ -113,11 +119,16 @@ class StorageManager {
   }
 
   isDataCollectionEnabled() {
-    return this.getItem(STORAGE_KEYS.DATA_COLLECTION_ENABLED, "true") !== "false";
+    return (
+      this.getItem(STORAGE_KEYS.DATA_COLLECTION_ENABLED, "true") !== "false"
+    );
   }
 
   setDataCollectionEnabled(enabled) {
-    return this.setItem(STORAGE_KEYS.DATA_COLLECTION_ENABLED, enabled.toString());
+    return this.setItem(
+      STORAGE_KEYS.DATA_COLLECTION_ENABLED,
+      enabled.toString(),
+    );
   }
 
   isZenModeEnabled() {
@@ -188,7 +199,10 @@ class StorageManager {
   }
 
   setPendingSettingsNotification(notification) {
-    return this.setJSON(STORAGE_KEYS.PENDING_SETTINGS_NOTIFICATION, notification);
+    return this.setJSON(
+      STORAGE_KEYS.PENDING_SETTINGS_NOTIFICATION,
+      notification,
+    );
   }
 
   removePendingSettingsNotification() {
@@ -216,3 +230,4 @@ class StorageManager {
 const storageManager = new StorageManager();
 
 export default storageManager;
+

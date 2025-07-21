@@ -13,29 +13,29 @@ class DOMManager {
    */
   init() {
     if (this.initialized) return;
-    
+
     // Cache frequently accessed elements
     this.cacheElements([
-      'userInput',
-      'wordToType',
-      'progressBar',
-      'timer',
-      'scoreDisplay',
-      'wpmDisplay',
-      'accuracyDisplay',
-      'gameStartButton',
-      'gameResetButton',
-      'previousResults',
-      'debugInfo',
-      'precisionMultiplier',
-      'zenProgress',
-      'zenTimer',
-      'usernameModal',
-      'settingsModal',
-      'scoreboardModal',
-      'gameOverModal',
-      'commandPaletteModal',
-      'commandPaletteInput'
+      "userInput",
+      "wordToType",
+      "progressBar",
+      "timer",
+      "scoreDisplay",
+      "wpmDisplay",
+      "accuracyDisplay",
+      "gameStartButton",
+      "gameResetButton",
+      "previousResults",
+      "debugInfo",
+      "precisionMultiplier",
+      "zenProgress",
+      "zenTimer",
+      "usernameModal",
+      "settingsModal",
+      "scoreboardModal",
+      "gameOverModal",
+      "commandPaletteModal",
+      "commandPaletteInput",
     ]);
 
     this.initialized = true;
@@ -45,7 +45,7 @@ class DOMManager {
    * Cache multiple elements by their IDs
    */
   cacheElements(ids) {
-    ids.forEach(id => {
+    ids.forEach((id) => {
       const element = document.getElementById(id);
       if (element) {
         this.cache.set(id, element);
@@ -198,14 +198,14 @@ class DOMManager {
    * Show element (remove 'd-none' class)
    */
   show(id) {
-    return this.removeClass(id, 'd-none');
+    return this.removeClass(id, "d-none");
   }
 
   /**
    * Hide element (add 'd-none' class)
    */
   hide(id) {
-    return this.addClass(id, 'd-none');
+    return this.addClass(id, "d-none");
   }
 
   /**
@@ -249,7 +249,7 @@ class DOMManager {
     return {
       size: this.cache.size,
       keys: Array.from(this.cache.keys()),
-      initialized: this.initialized
+      initialized: this.initialized,
     };
   }
 }
@@ -258,10 +258,11 @@ class DOMManager {
 const domManager = new DOMManager();
 
 // Auto-initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => domManager.init());
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => domManager.init());
 } else {
   domManager.init();
 }
 
 export default domManager;
+

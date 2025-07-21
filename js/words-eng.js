@@ -647,5 +647,6 @@ export const words = [
   "almond",
   "walnut",
   "peanut",
-  "cashew"
+  "cashew",
 ];
+

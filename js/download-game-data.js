@@ -6,10 +6,13 @@ document
 
     // Generate timestamp for filename
     const now = new Date();
-    const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19); // YYYY-MM-DDTHH-MM-SS
+    const timestamp = now.toISOString().replace(/[:.]/g, "-").slice(0, 19); // YYYY-MM-DDTHH-MM-SS
 
     // Check if user is logged in and can access full Firebase data
-    if (window.canSyncScoreboardToFirebase && window.canSyncScoreboardToFirebase()) {
+    if (
+      window.canSyncScoreboardToFirebase &&
+      window.canSyncScoreboardToFirebase()
+    ) {
       try {
         // Load FULL data from Firebase for logged-in users
         const cloudData = await loadFullGameDataFromFirebase();
@@ -55,7 +58,9 @@ document
 // Function to load FULL game data from Firebase (no limit)
 async function loadFullGameDataFromFirebase() {
   if (!window.canSyncScoreboardToFirebase()) {
-    console.log("🔒 Cannot load full data from Firebase - not logged in or data sharing disabled");
+    console.log(
+      "🔒 Cannot load full data from Firebase - not logged in or data sharing disabled",
+    );
     return [];
   }
 
@@ -83,7 +88,11 @@ async function loadFullGameDataFromFirebase() {
       // Sort by timestamp (most recent first) but DON'T limit for download
       cloudScores.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
-      console.log("📥 Loaded FULL scoreboard from Firebase for download:", cloudScores.length, "entries");
+      console.log(
+        "📥 Loaded FULL scoreboard from Firebase for download:",
+        cloudScores.length,
+        "entries",
+      );
       return cloudScores;
     }
 
