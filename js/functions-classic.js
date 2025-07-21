@@ -63,6 +63,10 @@ let precisionStreak = 0;
 let peakPrecisionStreak = 0;
 let currentWordHasMistakes = false;
 
+// Per-second WPM tracking variables
+let keystrokeTimestamps = [];
+let perSecondWpmData = [];
+
 function isReservedUsername(username) {
   return RESERVED_USERNAMES.some(
     (reserved) => username.toLowerCase() === reserved.toLowerCase(),
@@ -1538,6 +1542,10 @@ function updateLetterStates(userInput) {
       if (index < userInput.length) {
         if (userInput[index] === " ") {
           letter.classList.add("correct");
+          // Only record keystroke for the most recent character typed
+          if (index === userInput.length - 1) {
+            recordKeystroke();
+          }
         } else {
           letter.classList.add("incorrect");
         }
@@ -1553,6 +1561,10 @@ function updateLetterStates(userInput) {
       if (index < userInput.length) {
         if (userInput[index] === currentWord[index]) {
           letter.classList.add("correct");
+          // Only record keystroke for the most recent character typed
+          if (index === userInput.length - 1) {
+            recordKeystroke();
+          }
         } else {
           letter.classList.add("incorrect");
         }
@@ -1780,6 +1792,7 @@ function startGameTimers() {
     hasStartedTyping = true;
     syncGameStateToWindow();
     gameStartTime = Date.now();
+    startWpmTracking();
 
     if (isZenMode) {
       sessionStartTime = new Date();
@@ -1811,6 +1824,8 @@ function startGameOnFirstInput() {
   hasStartedTyping = true;
   syncGameStateToWindow();
   gameStartTime = Date.now();
+  keystrokeTimestamps = [];
+  startWpmTracking();
 
   // Initialize timers based on mode
   if (isZenMode) {
@@ -1868,7 +1883,11 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
     totalKeystrokes++;
 
     // Check if user pressed space at the end of the word with incorrect letters present
-    if (e.data === " " && userInput.length - 1 === currentWord.length && hasIncorrectLetters(userInput.slice(0, -1), currentWord)) {
+    if (
+      e.data === " " &&
+      userInput.length - 1 === currentWord.length &&
+      hasIncorrectLetters(userInput.slice(0, -1), currentWord)
+    ) {
       // Trigger blink animation and prevent the space from being added
       triggerErrorBlink();
       // Remove the space from the input
@@ -1921,12 +1940,12 @@ function hasIncorrectLetters(userInput, currentWord) {
 
 // Helper function to trigger error blink animation
 function triggerErrorBlink() {
-  const currentWordElement = document.querySelector('.word.current');
+  const currentWordElement = document.querySelector(".word.current");
   if (currentWordElement) {
-    currentWordElement.classList.add('error-blink');
+    currentWordElement.classList.add("error-blink");
     // Remove the class after animation completes (0.3s single iteration)
     setTimeout(() => {
-      currentWordElement.classList.remove('error-blink');
+      currentWordElement.classList.remove("error-blink");
     }, 300);
   }
 }
@@ -2091,8 +2110,13 @@ function checkInput(e) {
   handleKeypressSound(e);
 
   // Process character input
-  const shouldContinue = processCharacterInput(e, userInput, currentWord, showSpace);
-  
+  const shouldContinue = processCharacterInput(
+    e,
+    userInput,
+    currentWord,
+    showSpace,
+  );
+
   // If space was prevented due to incorrect letters, stop processing
   if (!shouldContinue) {
     return;
@@ -2130,6 +2154,79 @@ function calculateWPM() {
     wpm,
     accuracy: `${accuracy}%`,
   };
+}
+
+// Record keystroke timestamp for WPM calculation
+function recordKeystroke() {
+  if (!gameStartTime || gameEnded) return;
+  const timestamp = Date.now();
+
+  // Prevent duplicate recordings for the same timestamp
+  const lastTimestamp = keystrokeTimestamps[keystrokeTimestamps.length - 1];
+  if (timestamp === lastTimestamp) {
+    return; // Skip duplicate
+  }
+
+  keystrokeTimestamps.push(timestamp);
+}
+
+// Generate WPM graph from keystroke timestamps (Monkeytype style)
+function generateWmpGraphFromTimestamps() {
+  if (!gameStartTime || keystrokeTimestamps.length === 0) {
+    perSecondWpmData = [];
+    return;
+  }
+
+  const gameEndTime = Date.now();
+  const actualDuration = (gameEndTime - gameStartTime) / 1000;
+  const fullSeconds = Math.floor(actualDuration);
+  const rawWmpData = [];
+
+  // Calculate raw WPM for each FULL second only (exclude incomplete final second)
+  for (let sec = 0; sec < fullSeconds; sec++) {
+    const windowStart = gameStartTime + sec * 1000;
+    const windowEnd = windowStart + 1000;
+
+    const charsInWindow = keystrokeTimestamps.filter(
+      (t) => t >= windowStart && t < windowEnd,
+    ).length;
+
+    const wordsInWindow = charsInWindow / GAME_DEFAULTS.CHARS_PER_WORD;
+    const rawWmp = wordsInWindow * 60;
+    rawWmpData.push(rawWmp);
+  }
+
+  // Apply smoothing to reduce noise (3-point moving average)
+  const smoothedData = rawWmpData.map((wmp, i, arr) => {
+    const prev = arr[i - 1] ?? wmp;
+    const next = arr[i + 1] ?? wmp;
+    return Math.round((prev + wmp + next) / 3);
+  });
+
+  // Ignore ultra-short pauses by interpolating 0 WPM values
+  const cleanedWmpData = smoothedData.map((val, i, arr) => {
+    if (val === 0) {
+      const prev = arr[i - 1] ?? 0;
+      const next = arr[i + 1] ?? 0;
+      if (prev > 0 && next > 0) {
+        return Math.round((prev + next) / 2); // Fill small pause
+      }
+    }
+    return val;
+  });
+
+  perSecondWpmData = cleanedWmpData.map((val) => Math.max(0, val));
+}
+
+// Initialize keystroke recording
+function startWpmTracking() {
+  // Clear any existing tracking data
+  perSecondWpmData = [];
+}
+
+// Stop WMP tracking (no cleanup needed for timestamp-based system)
+function stopWpmTracking() {
+  // No cleanup needed - keystroke timestamps are processed at game end
 }
 
 // Classic Mode specific score calculation
@@ -2376,6 +2473,7 @@ function resetPrecisionSystem() {
 
 // Game Over Modal for both modes
 function showGameOverModal(message, isSuccess = true) {
+  stopWpmTracking();
   const stats = calculateWPM();
   const languageName =
     currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
@@ -2477,7 +2575,6 @@ function displayModernGameOverContent(data) {
         <div class="stat-label">WPM</div>
         <div class="stat-value wpm">${data.stats.wpm}</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-label">Accuracy</div>
         <div class="stat-value accuracy">${data.stats.accuracy}</div>
@@ -2491,7 +2588,6 @@ function displayModernGameOverContent(data) {
         <div class="stat-label">Time</div>
         <div class="stat-value">${data.stats.sessionTime}</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-label">Words</div>
         <div class="stat-value">${data.stats.wordGoal}</div>
@@ -2503,12 +2599,10 @@ function displayModernGameOverContent(data) {
         <div class="stat-label">Energy</div>
         <div class="stat-value energy">${data.stats.energyRemaining}</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-label">Score</div>
         <div class="stat-value score">${data.stats.finalScore}</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-label">Streak</div>
         <div class="stat-value precision">${data.stats.precisionStreak}</div>
@@ -2524,7 +2618,7 @@ function displayModernGameOverContent(data) {
       <div class="chart-header">
         <h5 class="chart-title">
           <i class="fa-solid fa-chart-line me-2"></i>
-          Recent WPM Progress
+          Game WPM Progress
         </h5>
       </div>
       <div class="chart-wrapper">
@@ -2541,12 +2635,10 @@ function displayModernGameOverContent(data) {
           <div class="stat-label">Base Score</div>
           <div class="stat-value">${data.scoreBreakdown.baseScore}</div>
         </div>
-        
         <div class="stat-card">
           <div class="stat-label">Precision Bonus</div>
           <div class="stat-value precision">${data.scoreBreakdown.precisionBonus}</div>
         </div>
-        
         <div class="stat-card">
           <div class="stat-label">Energy Bonus</div>
           <div class="stat-value energy">${data.scoreBreakdown.energyBonus}</div>
@@ -2589,6 +2681,7 @@ function displayModernGameOverContent(data) {
   modalBody.innerHTML = content;
 
   // Render WPM progression chart after modal content is set
+  generateWmpGraphFromTimestamps();
   setTimeout(() => renderGameOverWpmChart(), 100);
 
   gameOverModal.show();
@@ -2714,6 +2807,7 @@ function saveClassicResult(
     difficultyMultiplier: difficultyMultiplier,
     totalTimeSpent: totalTimeSpent, // Keep original for compatibility
     gameDurationSeconds: gameDurationSeconds, // Real duration for achievements
+    perSecondWpmData: perSecondWpmData,
   };
 
   // Save locally
@@ -2815,6 +2909,7 @@ function saveZenResult(wpm, totalTime, accuracy) {
     wordGoal: zenWordGoal,
     wordsTyped: wordsTyped.length, // Track how many words were actually typed
     timestamp: Date.now(), // Add timestamp for Firebase compatibility
+    perSecondWpmData: perSecondWpmData,
   };
 
   // Save locally
@@ -3408,15 +3503,16 @@ function renderGameOverWpmChart() {
   const canvas = document.getElementById("gameOverWpmChart");
   if (!canvas) return;
 
-  // Destroy existing chart if it exists
-  const existingChart = Chart.getChart(canvas);
+  // Destroy existing chart if it exists (Chart.js v3/v4 compatibility)
+  const existingChart = Chart.getChart
+    ? Chart.getChart(canvas)
+    : canvas.chartInstance;
   if (existingChart) {
     existingChart.destroy();
   }
 
-  // Get game results from storage
-  const results = storageManager.getGameResults();
-  if (!results || results.length === 0) {
+  // Use per-second WPM data from the current game
+  if (!perSecondWpmData || perSecondWpmData.length === 0) {
     // Show empty state
     const ctx = canvas.getContext("2d");
     new Chart(ctx, {
@@ -3439,7 +3535,7 @@ function renderGameOverWpmChart() {
         plugins: {
           title: {
             display: true,
-            text: "No games played yet",
+            text: "No WPM data available",
             color: "#7dcfff",
             font: {
               family: "'jetbrains-mono', monospace",
@@ -3457,17 +3553,9 @@ function renderGameOverWpmChart() {
     return;
   }
 
-  // Sort by timestamp and take last 10 games
-  const sortedResults = results
-    .filter((result) => result.wpm && !isNaN(parseFloat(result.wpm)))
-    .sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0))
-    .slice(-10);
-
-  if (sortedResults.length === 0) return;
-
   // Extract data for chart
-  const labels = sortedResults.map((_, index) => `Game ${index + 1}`);
-  const wpmData = sortedResults.map((result) => parseFloat(result.wpm) || 0);
+  const labels = perSecondWpmData.map((_, index) => `${index + 1}s`);
+  const wpmData = [...perSecondWpmData];
 
   // Calculate average
   const averageWpm =
@@ -3487,19 +3575,15 @@ function renderGameOverWpmChart() {
         {
           label: "WPM",
           data: wpmData,
-          borderColor: "#ff9e64",
-          backgroundColor: "rgba(255, 158, 100, 0.2)",
-          fill: false,
+          borderColor: "#7aa2f7",
+          backgroundColor: "rgba(122, 162, 247, 0.2)",
+          fill: true,
           borderWidth: 2,
-          pointBackgroundColor: wpmData.map((_, index) =>
-            index === wpmData.length - 1 ? "#7aa2f7" : "#ff9e64",
-          ),
-          pointBorderColor: wpmData.map((_, index) =>
-            index === wpmData.length - 1 ? "#7aa2f7" : "#ff9e64",
-          ),
-          pointRadius: wpmData.map((_, index) =>
-            index === wpmData.length - 1 ? 6 : 4,
-          ),
+          tension: 0.4,
+          pointBackgroundColor: "#7aa2f7",
+          pointBorderColor: "#7aa2f7",
+          pointRadius: 4,
+          pointHoverRadius: 6,
         },
       ],
     },
@@ -3508,18 +3592,7 @@ function renderGameOverWpmChart() {
       maintainAspectRatio: false,
       plugins: {
         title: {
-          display: true,
-          text: `Last 10 Games | Avg: ${averageWpm.toFixed(1)} WPM`,
-          color: "#bb9af7",
-          font: {
-            family: "'jetbrains-mono', monospace",
-            size: 14,
-            weight: "bold",
-          },
-          padding: {
-            top: 10,
-            bottom: 15,
-          },
+          display: false,
         },
         legend: { display: false },
         tooltip: {
@@ -3542,42 +3615,41 @@ function renderGameOverWpmChart() {
             title: function (context) {
               if (context && context.length > 0) {
                 const dataIndex = context[0].dataIndex;
-                const result = sortedResults[dataIndex];
-                return result?.username || "runner";
+                return `Second ${dataIndex + 1}`;
               }
               return "";
             },
             beforeBody: function (context) {
-              if (context && context.length > 0) {
-                const dataIndex = context[0].dataIndex;
-                const result = sortedResults[dataIndex];
-                const date = result?.date || "Unknown";
-                let gameMode = result?.mode || "Classic Mode";
-                // Remove "Mode" from the end if it exists
-                gameMode = gameMode.replace(/ Mode$/, "");
-                return [`${gameMode}`, `${date}`];
-              }
               return [];
             },
             label: function (context) {
               const value = context.parsed.y;
-              const isCurrentGame = context.dataIndex === wpmData.length - 1;
-              return `${value.toFixed(1)} WPM${isCurrentGame ? " (Current)" : ""}`;
+              return `${value.toFixed(1)} WPM`;
             },
           },
         },
       },
       scales: {
         x: {
-          display: false,
+          display: true,
           grid: { display: false },
+          ticks: {
+            color: "#3b4261",
+            font: {
+              family: "'jetbrains-mono', monospace",
+              size: 10,
+            },
+            callback: function (value, index) {
+              return index + 1;
+            },
+          },
         },
         y: {
           display: true,
           title: {
             display: true,
             text: "WPM",
-            color: "#ff9e64",
+            color: "#3b4261",
             font: {
               family: "'jetbrains-mono', monospace",
               size: 12,
@@ -3588,7 +3660,8 @@ function renderGameOverWpmChart() {
             display: false,
           },
           ticks: {
-            color: "#ff9e64",
+            stepSize: 10,
+            color: "#3b4261",
             font: {
               family: "'jetbrains-mono', monospace",
               size: 11,
