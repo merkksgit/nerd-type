@@ -1101,8 +1101,11 @@ function addPunctuationToWord(word, wordIndex) {
 
   // Create a deterministic "random" value based on word index
   // This ensures same word always gets same punctuation
-  const seed = wordIndex * 1234567 + word.length * 7;
-  const pseudoRandom = (seed % 1000) / 1000;
+  let seed = wordIndex * 31 + word.length * 17 + word.charCodeAt(0);
+  seed = seed ^ (seed >> 16);
+  seed = seed * 0x85ebca6b;
+  seed = seed ^ (seed >> 13);
+  const pseudoRandom = Math.abs(seed % 1000) / 1000;
 
   let finalWord = processedWord;
 
@@ -1110,16 +1113,17 @@ function addPunctuationToWord(word, wordIndex) {
   if (pseudoRandom <= 0.25) {
     // Select punctuation based on deterministic value
     const totalWeight = punctuationMarks.reduce((sum, p) => sum + p.weight, 0);
-    const randomValue = ((seed * 31) % 1000) / 1000 * totalWeight;
+    let punctSeed = wordIndex * 37 + word.length * 23;
+    const randomValue = (punctSeed % 1000) / 1000 * totalWeight;
     
     let cumulativeWeight = 0;
     for (const punct of punctuationMarks) {
       cumulativeWeight += punct.weight;
       if (randomValue <= cumulativeWeight) {
         // Special handling for quotes - add to both sides occasionally
-        if (punct.mark === '"' && (seed % 2 === 0)) {
+        if (punct.mark === '"' && (punctSeed % 2 === 0)) {
           finalWord = `"${processedWord}"`;
-        } else if (punct.mark === "'" && processedWord.length > 2 && (seed % 3 === 0)) {
+        } else if (punct.mark === "'" && processedWord.length > 2 && (punctSeed % 3 === 0)) {
           // Sometimes add apostrophe in middle for contractions
           const insertPos = Math.floor(processedWord.length * 0.6);
           finalWord = processedWord.slice(0, insertPos) + "'" + processedWord.slice(insertPos);
