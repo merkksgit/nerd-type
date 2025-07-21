@@ -824,6 +824,9 @@ div#wordToType {
 .progress.terminal.flash {
   animation: correctFlash 0.4s ease-out;
 }
+.word.error-blink {
+  animation: errorBlink 0.3s ease-in-out;
+}
 
 /* Simple Precision Multiplier */
 .precision-multiplier-simple {
@@ -2396,6 +2399,14 @@ tr:hover .username-rank-icon {
     box-shadow:
       0 4px 8px rgba(0, 0, 0, 0.25),
       0 0 6px rgba(122, 162, 247, 0.35);
+  }
+}
+@keyframes errorBlink {
+  0%, 100% {
+    text-shadow: none;
+  }
+  50% {
+    text-shadow: 0 0 8px #c53b53, 0 0 14px #c53b53, 0 0 20px #c53b53;
   }
 }
 

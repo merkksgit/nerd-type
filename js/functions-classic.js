@@ -1867,6 +1867,15 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
 
+    // Check if user pressed space at the end of the word with incorrect letters present
+    if (e.data === " " && userInput.length - 1 === currentWord.length && hasIncorrectLetters(userInput.slice(0, -1), currentWord)) {
+      // Trigger blink animation and prevent the space from being added
+      triggerErrorBlink();
+      // Remove the space from the input
+      e.target.value = userInput.slice(0, -1);
+      return false; // Indicate space was not allowed
+    }
+
     const isCorrectChar = validateCharacterInput(
       userInput,
       currentWord,
@@ -1881,6 +1890,7 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
       }
     }
   }
+  return true; // Normal processing
 }
 
 // Helper function to validate character input
@@ -1897,6 +1907,28 @@ function validateCharacterInput(userInput, currentWord, showSpace) {
     }
   }
   return false;
+}
+
+// Helper function to check if current input has incorrect letters
+function hasIncorrectLetters(userInput, currentWord) {
+  for (let i = 0; i < Math.min(userInput.length, currentWord.length); i++) {
+    if (userInput[i] !== currentWord[i]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Helper function to trigger error blink animation
+function triggerErrorBlink() {
+  const currentWordElement = document.querySelector('.word.current');
+  if (currentWordElement) {
+    currentWordElement.classList.add('error-blink');
+    // Remove the class after animation completes (0.3s single iteration)
+    setTimeout(() => {
+      currentWordElement.classList.remove('error-blink');
+    }, 300);
+  }
 }
 
 // Helper function to check if word is complete
@@ -2059,13 +2091,18 @@ function checkInput(e) {
   handleKeypressSound(e);
 
   // Process character input
-  processCharacterInput(e, userInput, currentWord, showSpace);
+  const shouldContinue = processCharacterInput(e, userInput, currentWord, showSpace);
+  
+  // If space was prevented due to incorrect letters, stop processing
+  if (!shouldContinue) {
+    return;
+  }
 
   // Update letter states
-  updateLetterStates(userInput);
+  updateLetterStates(e.target.value);
 
   // Check if word is complete
-  if (isWordComplete(userInput, currentWord, showSpace)) {
+  if (isWordComplete(e.target.value, currentWord, showSpace)) {
     handleWordCompletion(e, currentWord, showSpace);
   }
 }
