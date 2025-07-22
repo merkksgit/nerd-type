@@ -2487,6 +2487,10 @@ tr:hover .username-rank-icon {
   .mobile-reload-btn {
     display: none !important;
   }
+
+  .modal-dialog {
+    margin-top: 0 !important;
+  }
 }
 
 @media (min-width: 769px) {
