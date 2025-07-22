@@ -541,7 +541,7 @@ input#userInput {
 /* Base Game Container */
 #game {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1550px;
   margin: 0 auto;
   padding: 0 10px;
   box-sizing: border-box;
@@ -563,8 +563,8 @@ input#userInput {
 
 #game.inactive::after {
   content: "Enter - Start/Restart, Ctrl + Enter - Reset";
-  position: fixed;
-  top: 41%;
+  position: absolute;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #24283b;
@@ -584,6 +584,8 @@ input#userInput {
 @media (max-width: 768px) and (hover: none) and (pointer: coarse) {
   #game.inactive::after {
     content: "Tap to start/restart";
+    position: absolute;
+    top: 38%;
     font-size: 1.2em;
     padding: 0.8rem 1.5rem;
     font-family: var(--game-font, "jetbrains-mono");
@@ -640,7 +642,7 @@ div#wordToType {
 /* Word display */
 #wordToType {
   font-family: "jetbrains-mono";
-  font-size: 2.2em;
+  font-size: 2.1em;
   line-height: 1.4;
   position: relative;
   margin: 2rem 0;
@@ -2500,6 +2502,10 @@ tr:hover .username-rank-icon {
 
   .desktop-return-text {
     display: inline-block !important;
+  }
+
+  #game {
+    padding-top: 5em;
   }
 }
 
