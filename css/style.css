@@ -2841,6 +2841,21 @@ tr:hover .username-rank-icon {
       display: none !important;
     }
 
+    /* Make chart wider on mobile */
+    .wpm-chart-container {
+      margin: 15px -0.75rem 10px -0.75rem; /* Extend beyond modal body padding */
+      padding: 15px 0.75rem; /* Reduce horizontal padding to compensate */
+    }
+
+    .chart-wrapper {
+      margin: 0 -15px; /* Extend beyond chart container padding */
+      width: calc(100% + 30px); /* Compensate for chart container padding */
+    }
+
+    .chart-wrapper canvas {
+      width: 100% !important;
+    }
+
     .mobile-return-text {
       font-size: 1.2rem !important;
       padding: 1rem 2rem !important;
