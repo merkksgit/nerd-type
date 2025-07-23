@@ -282,6 +282,7 @@ function displayScoreGraph() {
           fill: false,
           yAxisID: "y",
           borderWidth: 2,
+          tension: 0.4,
         },
         {
           label: "WPM",
@@ -291,6 +292,7 @@ function displayScoreGraph() {
           fill: false,
           yAxisID: "y1",
           borderWidth: 2,
+          tension: 0.4,
         },
         {
           label: "Accuracy",
@@ -300,6 +302,7 @@ function displayScoreGraph() {
           fill: false,
           yAxisID: "y2",
           borderWidth: 2,
+          tension: 0.4,
         },
       ],
     },
@@ -807,6 +810,7 @@ function displayZenModeGraph() {
           fill: false,
           yAxisID: "y",
           borderWidth: 2,
+          tension: 0.4,
         },
         {
           label: "WPM",
@@ -816,6 +820,7 @@ function displayZenModeGraph() {
           fill: false,
           yAxisID: "y1",
           borderWidth: 2,
+          tension: 0.4,
         },
         {
           label: "Accuracy",
@@ -825,6 +830,7 @@ function displayZenModeGraph() {
           fill: false,
           yAxisID: "y2",
           borderWidth: 2,
+          tension: 0.4,
         },
       ],
     },
