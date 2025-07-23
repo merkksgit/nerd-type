@@ -66,6 +66,7 @@ let currentWordHasMistakes = false;
 // Per-second WPM tracking variables
 let keystrokeTimestamps = [];
 let perSecondWpmData = [];
+let mistakeTimestamps = [];
 
 function isReservedUsername(username) {
   return RESERVED_USERNAMES.some(
@@ -1825,6 +1826,7 @@ function startGameOnFirstInput() {
   syncGameStateToWindow();
   gameStartTime = Date.now();
   keystrokeTimestamps = [];
+  mistakeTimestamps = [];
   startWpmTracking();
 
   // Initialize timers based on mode
@@ -1902,6 +1904,10 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
     );
 
     if (!isCorrectChar) {
+      // Record mistake timestamp for chart visualization
+      if (gameStartTime && !gameEnded) {
+        mistakeTimestamps.push(Date.now());
+      }
       currentWordHasMistakes = true;
       if (!isZenMode) {
         precisionStreak = 0;
@@ -2216,6 +2222,32 @@ function generateWmpGraphFromTimestamps() {
   });
 
   perSecondWpmData = cleanedWmpData.map((val) => Math.max(0, val));
+}
+
+// Generate per-second mistake data for chart visualization
+function generatePerSecondMistakeData() {
+  if (!gameStartTime || mistakeTimestamps.length === 0) {
+    return [];
+  }
+
+  const gameEndTime = Date.now();
+  const actualDuration = (gameEndTime - gameStartTime) / 1000;
+  const fullSeconds = Math.floor(actualDuration);
+  const perSecondMistakes = [];
+
+  // Calculate mistakes for each full second
+  for (let sec = 0; sec < fullSeconds; sec++) {
+    const windowStart = gameStartTime + sec * 1000;
+    const windowEnd = windowStart + 1000;
+
+    const mistakesInWindow = mistakeTimestamps.filter(
+      (t) => t >= windowStart && t < windowEnd,
+    ).length;
+
+    perSecondMistakes.push(mistakesInWindow);
+  }
+
+  return perSecondMistakes;
 }
 
 // Initialize keystroke recording
@@ -3556,6 +3588,22 @@ function renderGameOverWpmChart() {
   // Extract data for chart
   const labels = perSecondWpmData.map((_, index) => `${index + 1}s`);
   const wpmData = [...perSecondWpmData];
+  
+  // Generate per-second mistake data for markers
+  const perSecondMistakes = generatePerSecondMistakeData();
+  // Ensure mistake data matches WPM data length
+  const alignedMistakes = [];
+  for (let i = 0; i < wpmData.length; i++) {
+    alignedMistakes.push(perSecondMistakes[i] || 0);
+  }
+  const mistakeMarkers = alignedMistakes.map((mistakes, index) => {
+    return mistakes > 0 ? mistakes : null; // Only show markers where mistakes occurred
+  });
+  
+  // Debug logging
+  console.log("Mistake timestamps:", mistakeTimestamps);
+  console.log("Per-second mistakes:", alignedMistakes);
+  console.log("Mistake markers:", mistakeMarkers);
 
   // Calculate average
   const averageWpm =
@@ -3584,12 +3632,39 @@ function renderGameOverWpmChart() {
           pointBorderColor: "#7aa2f7",
           pointRadius: 4,
           pointHoverRadius: 6,
+          yAxisID: "y",
+        },
+        {
+          label: "Mistakes",
+          data: mistakeMarkers,
+          borderColor: "#f7768e",
+          backgroundColor: "#f7768e",
+          fill: false,
+          borderWidth: 0,
+          tension: 0,
+          pointBackgroundColor: "#f7768e",
+          pointBorderColor: "#f7768e", 
+          pointBorderWidth: 3,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          pointStyle: "crossRot",
+          showLine: false,
+          yAxisID: "y2",
+          clip: false,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: {
+          top: 10,
+          right: 10,
+          bottom: 5,
+          left: 5
+        }
+      },
       plugins: {
         title: {
           display: false,
@@ -3624,7 +3699,11 @@ function renderGameOverWpmChart() {
             },
             label: function (context) {
               const value = context.parsed.y;
-              return `${value.toFixed(1)} WPM`;
+              if (context.datasetIndex === 0) {
+                return `${value.toFixed(1)} WPM`;
+              } else {
+                return `${value} mistake${value !== 1 ? 's' : ''}`;
+              }
             },
           },
         },
@@ -3646,6 +3725,7 @@ function renderGameOverWpmChart() {
         },
         y: {
           display: true,
+          position: "left", 
           title: {
             display: true,
             text: "WPM",
@@ -3670,6 +3750,36 @@ function renderGameOverWpmChart() {
               return Math.round(value);
             },
           },
+        },
+        y2: {
+          display: true,
+          position: "right",
+          title: {
+            display: true,
+            text: "Errors",
+            color: "#3b4261",
+            font: {
+              family: "'jetbrains-mono', monospace",
+              size: 12,
+            },
+          },
+          grid: {
+            display: false,
+          },
+          ticks: {
+            stepSize: 1,
+            color: "#3b4261",
+            font: {
+              family: "'jetbrains-mono', monospace",
+              size: 11,
+            },
+            callback: function (value) {
+              // Only show whole numbers, hide the +0.5 padding
+              return Number.isInteger(value) ? Math.round(value) : '';
+            },
+          },
+          min: 0,
+          max: Math.max(1, Math.max(...alignedMistakes)) + 0.5,
         },
       },
     },
