@@ -633,13 +633,27 @@ function optimizeForMobile() {
   }
 }
 
+// Debounced function to update word display on resize
+let resizeTimeout;
+function handleResize() {
+  optimizeForMobile();
+
+  // Debounce word display update to avoid too frequent recalculations
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(() => {
+    if (hasStartedTyping && !gameEnded) {
+      updateWordDisplay();
+    }
+  }, 150);
+}
+
 // Call this during initialization
 document.addEventListener("DOMContentLoaded", function () {
   // Add mobile optimization
   optimizeForMobile();
 
   // Re-optimize when window is resized
-  window.addEventListener("resize", optimizeForMobile);
+  window.addEventListener("resize", handleResize);
 });
 
 function initializeEventListeners() {
@@ -1230,6 +1244,71 @@ function clearPunctuationCache() {
   punctuationCache.clear();
 }
 
+/**
+ * Calculate how many words can fit in the available display area
+ */
+function calculateOptimalWordCount() {
+  const wordToTypeElement = domManager.get("wordToType");
+  if (!wordToTypeElement) return GAME_DEFAULTS.WORDS_TO_SHOW;
+
+  // Get the available width and height of the word display area
+  const containerRect = wordToTypeElement.getBoundingClientRect();
+  const availableWidth = containerRect.width || wordToTypeElement.offsetWidth;
+  const availableHeight =
+    containerRect.height || wordToTypeElement.offsetHeight;
+
+  // If no dimensions available, fall back to default
+  if (!availableWidth || !availableHeight) {
+    return GAME_DEFAULTS.WORDS_TO_SHOW;
+  }
+
+  // Create a temporary container to measure word dimensions
+  const tempContainer = document.createElement("div");
+  tempContainer.style.position = "absolute";
+  tempContainer.style.visibility = "hidden";
+  tempContainer.style.whiteSpace = "nowrap";
+  tempContainer.style.fontSize = getComputedStyle(wordToTypeElement).fontSize;
+  tempContainer.style.fontFamily =
+    getComputedStyle(wordToTypeElement).fontFamily;
+  tempContainer.style.lineHeight =
+    getComputedStyle(wordToTypeElement).lineHeight;
+  document.body.appendChild(tempContainer);
+
+  // Measure average word width by sampling some words
+  let totalWidth = 0;
+  const sampleSize = Math.min(10, words.length);
+  let actualSamplesUsed = 0;
+
+  for (let i = 0; i < sampleSize; i++) {
+    const wordIndex = (currentWordIndex + i) % words.length;
+    const baseWord = words[wordIndex];
+    const word = addPunctuationToWord(baseWord, wordIndex);
+
+    tempContainer.textContent = word + " "; // Include space
+    totalWidth += tempContainer.offsetWidth;
+  }
+
+  const averageWordWidth = totalWidth / sampleSize;
+
+  // Calculate line height
+  tempContainer.textContent = "Tg"; // Characters with descenders and ascenders
+  const lineHeight = tempContainer.offsetHeight;
+
+  // Clean up
+  document.body.removeChild(tempContainer);
+
+  // Calculate how many words can fit
+  const wordsPerLine = Math.floor(availableWidth / averageWordWidth);
+  const maxLines = Math.floor(availableHeight / lineHeight);
+  const maxWords = Math.max(
+    wordsPerLine * maxLines,
+    GAME_DEFAULTS.WORDS_TO_SHOW,
+  );
+
+  // Cap at a reasonable maximum to avoid performance issues
+  return Math.min(maxWords, 100);
+}
+
 function updateWordDisplay() {
   const wordToTypeElement = domManager.get("wordToType");
   const nextWordElement = domManager.get("nextWord");
@@ -1245,8 +1324,8 @@ function updateWordDisplay() {
   const wordContainer = document.createElement("div");
   wordContainer.classList.add("word-container");
 
-  // Always show words in the display regardless of word goal
-  const wordsToShow = GAME_DEFAULTS.WORDS_TO_SHOW;
+  // Calculate optimal number of words to show based on available space
+  const wordsToShow = calculateOptimalWordCount();
 
   // Generate word display - only show current and upcoming words for now
   const displayWords = [];
@@ -1465,9 +1544,10 @@ function addNewWordsToDisplay() {
 
   const showSpace = localStorage.getItem("showSpacesAfterWords") !== "false";
 
-  // Calculate how many words to add to maintain 3 rows
+  // Use dynamic word count calculation
+  const optimalWordCount = calculateOptimalWordCount();
   const existingWords = wordContainer.querySelectorAll(".word").length;
-  const wordsToAdd = Math.max(20 - existingWords, 10); // Ensure we have enough words
+  const wordsToAdd = Math.max(optimalWordCount - existingWords, 5); // Ensure we have enough words
 
   // Find the highest word index currently displayed
   const displayedWords = Array.from(wordContainer.querySelectorAll(".word"));
@@ -1910,8 +1990,8 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
           timestamp: Date.now(),
           word: currentWord,
           position: userInput.length - 1, // Position where mistake occurred
-          attempted: userInput[userInput.length - 1] || '', // What was typed
-          expected: currentWord[userInput.length - 1] || '' // What was expected
+          attempted: userInput[userInput.length - 1] || "", // What was typed
+          expected: currentWord[userInput.length - 1] || "", // What was expected
         });
       }
       currentWordHasMistakes = true;
@@ -2230,7 +2310,6 @@ function generateWmpGraphFromTimestamps() {
   perSecondWpmData = cleanedWmpData.map((val) => Math.max(0, val));
 }
 
-
 // Generate per-second mistake data for chart visualization
 function generatePerSecondMistakeData() {
   if (!gameStartTime || mistakeTimestamps.length === 0) {
@@ -2249,7 +2328,8 @@ function generatePerSecondMistakeData() {
     const windowEnd = windowStart + 1000;
 
     const mistakesInWindow = mistakeTimestamps.filter(
-      (mistake) => mistake.timestamp >= windowStart && mistake.timestamp < windowEnd,
+      (mistake) =>
+        mistake.timestamp >= windowStart && mistake.timestamp < windowEnd,
     );
 
     perSecondMistakes.push(mistakesInWindow.length);
@@ -3597,12 +3677,12 @@ function renderGameOverWpmChart() {
   // Extract data for chart
   const labels = perSecondWpmData.map((_, index) => `${index + 1}s`);
   const wpmData = [...perSecondWpmData];
-  
+
   // Generate per-second mistake data for markers
   const mistakeData = generatePerSecondMistakeData();
   const perSecondMistakes = mistakeData.counts;
   const perSecondMistakeDetails = mistakeData.details;
-  
+
   // Ensure mistake data matches WPM data length
   const alignedMistakes = [];
   const alignedMistakeDetails = [];
@@ -3613,7 +3693,7 @@ function renderGameOverWpmChart() {
   const mistakeMarkers = alignedMistakes.map((mistakes, index) => {
     return mistakes > 0 ? mistakes : null; // Only show markers where mistakes occurred
   });
-  
+
   // Debug logging
   console.log("Mistake timestamps:", mistakeTimestamps);
   console.log("Per-second mistakes:", alignedMistakes);
@@ -3659,7 +3739,7 @@ function renderGameOverWpmChart() {
           borderWidth: 0,
           tension: 0,
           pointBackgroundColor: "#f7768e",
-          pointBorderColor: "#f7768e", 
+          pointBorderColor: "#f7768e",
           pointBorderWidth: 3,
           pointRadius: 5,
           pointHoverRadius: 7,
@@ -3679,8 +3759,8 @@ function renderGameOverWpmChart() {
           top: 10,
           right: 10,
           bottom: 5,
-          left: 5
-        }
+          left: 5,
+        },
       },
       plugins: {
         title: {
@@ -3720,18 +3800,21 @@ function renderGameOverWpmChart() {
                 return `${value.toFixed(1)} WPM`;
               } else {
                 const secondIndex = context.dataIndex;
-                const mistakesInSecond = alignedMistakeDetails[secondIndex] || [];
-                
+                const mistakesInSecond =
+                  alignedMistakeDetails[secondIndex] || [];
+
                 if (mistakesInSecond.length === 0) {
-                  return `${value} mistake${value !== 1 ? 's' : ''}`;
+                  return `${value} mistake${value !== 1 ? "s" : ""}`;
                 }
-                
+
                 // Show unique words where mistakes occurred
-                const mistakeWords = [...new Set(mistakesInSecond.map(m => m.word))];
-                
+                const mistakeWords = [
+                  ...new Set(mistakesInSecond.map((m) => m.word)),
+                ];
+
                 return [
-                  `${value} mistake${value !== 1 ? 's' : ''} in:`,
-                  mistakeWords.join(', ')
+                  `${value} mistake${value !== 1 ? "s" : ""} in:`,
+                  mistakeWords.join(", "),
                 ];
               }
             },
@@ -3755,7 +3838,7 @@ function renderGameOverWpmChart() {
         },
         y: {
           display: true,
-          position: "left", 
+          position: "left",
           title: {
             display: true,
             text: "WPM",
@@ -3805,7 +3888,7 @@ function renderGameOverWpmChart() {
             },
             callback: function (value) {
               // Only show whole numbers, hide the +0.5 padding
-              return Number.isInteger(value) ? Math.round(value) : '';
+              return Number.isInteger(value) ? Math.round(value) : "";
             },
           },
           min: 0,
