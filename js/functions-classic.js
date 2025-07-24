@@ -68,6 +68,14 @@ let keystrokeTimestamps = [];
 let perSecondWpmData = [];
 let mistakeTimestamps = []; // Array of {timestamp, word, position} objects
 
+// Practice mistakes tracking
+let gameMistakes = {
+  words: [], // Array of words where mistakes occurred
+  totalMistakes: 0,
+};
+let isPracticeMistakesMode = false;
+let practiceMistakesWords = [];
+
 function isReservedUsername(username) {
   return RESERVED_USERNAMES.some(
     (reserved) => username.toLowerCase() === reserved.toLowerCase(),
@@ -1043,7 +1051,17 @@ function startGame() {
     gameStartTime = null;
     sessionStartTime = null;
     if (document.getElementById("totalTimeValue")) {
-      document.getElementById("totalTimeValue").textContent = "0:00";
+      if (isPracticeMistakesMode) {
+        // In practice mode, set words counter
+        document.getElementById("totalTimeValue").textContent = "0";
+        const totalTimeContainer = document.getElementById("totalTime");
+        if (totalTimeContainer) {
+          totalTimeContainer.innerHTML = `Words typed: <span id="totalTimeValue">0</span>`;
+        }
+      } else {
+        // Normal zen mode shows time
+        document.getElementById("totalTimeValue").textContent = "0:00";
+      }
     }
 
     // Clear any existing intervals
@@ -1680,6 +1698,11 @@ function flashProgress() {
 
 // Classic Mode: Countdown timer logic
 function countDown() {
+  // Skip timer countdown if in practice mistakes mode
+  if (isPracticeMistakesMode) {
+    return;
+  }
+
   // Only countdown if the player has started typing and game is not paused
   if (hasStartedTyping && timeLeft > 0 && !isPaused) {
     timeLeft--;
@@ -1696,15 +1719,61 @@ function countDown() {
 
 // Classic Mode: Update timer display
 function updateTimer() {
+  updateTimerDisplay();
+}
+
+// Universal timer display function that handles different modes
+function updateTimerDisplay() {
   const timerElement = document.getElementById("timeLeft");
-  if (timerElement) {
-    timerElement.textContent = timeLeft;
+  const timerContainer = document.getElementById("timer");
+  const totalTimeElement = document.getElementById("totalTimeValue");
+  const totalTimeContainer = document.getElementById("totalTime");
+
+  if (!timerElement || !timerContainer) return;
+
+  if (isPracticeMistakesMode) {
+    if (isZenMode) {
+      // In zen practice mode, the updateZenTimer function handles the totalTimeElement
+      // Just make sure the energy timer is hidden
+      timerContainer.style.display = "none";
+      if (totalTimeContainer) {
+        totalTimeContainer.style.display = "";
+      }
+    } else {
+      // In classic practice mode, show words typed in energy area
+      timerContainer.innerHTML = `Words typed: <span id="timeLeft">${wordsTyped.length}</span>`;
+      timerContainer.style.display = "";
+      if (totalTimeContainer) {
+        totalTimeContainer.style.display = "none";
+      }
+    }
+  } else {
+    // Show normal displays for regular modes
+    if (isZenMode) {
+      // Normal zen mode - energy hidden, time visible
+      timerContainer.style.display = "none";
+      if (totalTimeContainer) {
+        totalTimeContainer.style.display = "";
+      }
+    } else {
+      // Normal classic mode - energy visible, time hidden
+      timerContainer.innerHTML = `Energy: <span id="timeLeft">${timeLeft}</span>`;
+      timerContainer.style.display = "";
+      if (totalTimeContainer) {
+        totalTimeContainer.style.display = "none";
+      }
+    }
   }
 }
 
 // Classic Mode: Total time counter
 function totalTimeCount() {
   if (isPaused) return; // Don't count time when paused
+
+  // Skip time-based completion if in practice mistakes mode
+  if (isPracticeMistakesMode) {
+    return;
+  }
 
   // Check time-based achievements during gameplay
   checkTimeBasedAchievements();
@@ -1792,8 +1861,16 @@ function updateZenTimer() {
 
   // Update the timer display
   const totalTimeElement = document.getElementById("totalTimeValue");
-  if (totalTimeElement) {
-    totalTimeElement.textContent = calculateTotalTime();
+  const totalTimeContainer = document.getElementById("totalTime");
+
+  if (totalTimeElement && totalTimeContainer) {
+    if (isPracticeMistakesMode) {
+      // In practice mode, change the entire container to show words typed
+      totalTimeContainer.innerHTML = `Words typed: <span id="totalTimeValue">${wordsTyped.length}</span>`;
+    } else {
+      // Normal zen mode shows time with original label
+      totalTimeContainer.innerHTML = `Time: <span id="totalTimeValue">${calculateTotalTime()}</span>`;
+    }
   }
 
   // Update progress bar
@@ -1802,7 +1879,11 @@ function updateZenTimer() {
   // Check time-based achievements during gameplay
   checkTimeBasedAchievements();
 
-  if (isZenMode && wordsTyped.length >= zenWordGoal) {
+  if (
+    isZenMode &&
+    !isPracticeMistakesMode &&
+    wordsTyped.length >= zenWordGoal
+  ) {
     gameEnded = true;
     syncGameStateToWindow();
     clearInterval(totalTimeInterval);
@@ -1813,6 +1894,32 @@ function updateZenTimer() {
 
 // Update progress bar for both modes
 function updateProgressBar() {
+  const progressBar = document.getElementById("progressBar");
+  const progressText = document.getElementById("progressPercentage");
+
+  if (isPracticeMistakesMode) {
+    // In practice mistakes mode, hide the progress bar and precision multiplier entirely
+    if (progressBar && progressBar.parentElement) {
+      progressBar.parentElement.style.display = "none";
+    }
+    if (progressText) {
+      progressText.style.display = "none";
+    }
+    const precisionMultiplier = document.getElementById("precisionMultiplier");
+    if (precisionMultiplier) {
+      precisionMultiplier.style.display = "none";
+    }
+    return;
+  }
+
+  // Show progress bar for normal modes (precision multiplier handles its own visibility)
+  if (progressBar && progressBar.parentElement) {
+    progressBar.parentElement.style.display = "";
+  }
+  if (progressText) {
+    progressText.style.display = "";
+  }
+
   let progressPercentage;
 
   if (isZenMode) {
@@ -1825,9 +1932,6 @@ function updateProgressBar() {
     const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
     progressPercentage = (totalTimeSpent / goalTime) * 100;
   }
-
-  const progressBar = document.getElementById("progressBar");
-  const progressText = document.getElementById("progressPercentage");
 
   if (progressBar) {
     progressBar.style.width = `${progressPercentage}%`;
@@ -1907,6 +2011,15 @@ function startGameOnFirstInput() {
   gameStartTime = Date.now();
   keystrokeTimestamps = [];
   mistakeTimestamps = [];
+
+  // Reset mistake tracking for new game (unless in practice mistakes mode)
+  if (!isPracticeMistakesMode) {
+    gameMistakes = {
+      words: [],
+      totalMistakes: 0,
+    };
+  }
+
   startWpmTracking();
 
   // Initialize timers based on mode
@@ -1914,7 +2027,17 @@ function startGameOnFirstInput() {
     // Zen Mode - start zen timer
     sessionStartTime = new Date();
     if (document.getElementById("totalTimeValue")) {
-      document.getElementById("totalTimeValue").textContent = "0:00";
+      if (isPracticeMistakesMode) {
+        // In practice mode, keep words counter
+        document.getElementById("totalTimeValue").textContent = "0";
+        const totalTimeContainer = document.getElementById("totalTime");
+        if (totalTimeContainer) {
+          totalTimeContainer.innerHTML = `Words typed: <span id="totalTimeValue">0</span>`;
+        }
+      } else {
+        // Normal zen mode shows time
+        document.getElementById("totalTimeValue").textContent = "0:00";
+      }
     }
 
     // Clear any existing intervals and start zen timer
@@ -1993,6 +2116,17 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
           attempted: userInput[userInput.length - 1] || "", // What was typed
           expected: currentWord[userInput.length - 1] || "", // What was expected
         });
+
+        // Track words with mistakes for practice mode (skip if already in practice mistakes mode)
+        if (!isPracticeMistakesMode) {
+          // Get the base word without punctuation for practice
+          const baseWord =
+            words[currentWordIndex] || currentWord.replace(/[.,!?;:"']/g, "");
+          if (!gameMistakes.words.includes(baseWord)) {
+            gameMistakes.words.push(baseWord);
+          }
+        }
+        gameMistakes.totalMistakes++;
       }
       currentWordHasMistakes = true;
       if (!isZenMode) {
@@ -2044,17 +2178,19 @@ function triggerErrorBlink() {
 
 // Helper function to check if word is complete
 function isWordComplete(userInput, currentWord, showSpace) {
-  const isLastWord = isZenMode
-    ? wordsTyped.length + 1 >= zenWordGoal
-    : (() => {
-        const settings = storageManager.getGameSettings();
-        const wordsGoal = parseInt(
-          storageManager.getItem("nerdtype_words_goal") ||
-            settings.timeLimit ||
-            "30",
-        );
-        return wordsTyped.length + 1 >= wordsGoal;
-      })();
+  const isLastWord = isPracticeMistakesMode
+    ? false // Never treat as last word in practice mode
+    : isZenMode
+      ? wordsTyped.length + 1 >= zenWordGoal
+      : (() => {
+          const settings = storageManager.getGameSettings();
+          const wordsGoal = parseInt(
+            storageManager.getItem("nerdtype_words_goal") ||
+              settings.timeLimit ||
+              "30",
+          );
+          return wordsTyped.length + 1 >= wordsGoal;
+        })();
 
   const expectedInput =
     showSpace && !isLastWord ? currentWord + " " : currentWord;
@@ -2071,6 +2207,11 @@ function handleWordCompletion(e, currentWord, showSpace) {
   e.target.value = "";
   updateLetterStates("");
   updateProgressBar();
+
+  // Update timer display for practice mode
+  if (isPracticeMistakesMode) {
+    updateTimerDisplay();
+  }
 
   checkGameCompletion();
 }
@@ -2150,6 +2291,11 @@ function updateWordDisplayAfterCompletion() {
 
 // Helper function to check game completion
 function checkGameCompletion() {
+  // Skip game completion check if in practice mistakes mode
+  if (isPracticeMistakesMode) {
+    return;
+  }
+
   if (isZenMode && wordsTyped.length >= zenWordGoal) {
     gameEnded = true;
     syncGameStateToWindow();
@@ -2799,6 +2945,21 @@ function displayModernGameOverContent(data) {
     }
   }
 
+  // Add mistakes section if there were any mistakes and not in practice mode
+  if (!isPracticeMistakesMode && gameMistakes.words.length > 0) {
+    content += `
+      <div class="mistakes-section-simple" style="text-align: center;">
+        <h5 class="mistakes-title-simple" style="justify-content: center;">
+          <i class="fa-solid fa-exclamation-triangle me-2" style="color: #f7768e;"></i>
+          Words with Mistakes (${gameMistakes.words.length})
+        </h5>
+        <div class="mistakes-words-simple">
+          ${gameMistakes.words.map((word) => `<span class="mistake-word-simple">${word}</span>`).join(" ")}
+        </div>
+      </div>
+    `;
+  }
+
   modalBody.innerHTML = content;
 
   // Render WPM progression chart after modal content is set
@@ -2807,10 +2968,41 @@ function displayModernGameOverContent(data) {
 
   gameOverModal.show();
 
-  // Handle Enter key to restart
+  // Add practice mistakes notice if there are mistakes to practice
+  if (!isPracticeMistakesMode && gameMistakes.words.length > 0) {
+    const modalFooter = document.querySelector("#gameOverModal .modal-footer");
+    if (modalFooter) {
+      // Create the practice mistakes notice
+      const practiceNotice = document.createElement("span");
+      practiceNotice.id = "practiceMistakesNotice";
+      practiceNotice.className = "press-enter-text desktop-return-text";
+      practiceNotice.innerHTML = "Press Ctrl+M to practice mistakes";
+      practiceNotice.style.cssText = `
+        background-color: #ff007c;
+        color: #000000;
+        padding: 4px 8px;
+        border-radius: 9999px;
+        margin-left: 10px;
+      `;
+
+      // Insert the notice next to the existing text, keeping centered layout
+      const restartText = modalFooter.querySelector(".restart-text");
+      if (restartText) {
+        restartText.appendChild(practiceNotice);
+      }
+    }
+  }
+
+  // Handle Enter key to restart and Ctrl+M for practice mistakes
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       location.reload();
+    } else if (e.ctrlKey && e.key.toLowerCase() === "m") {
+      if (!isPracticeMistakesMode && gameMistakes.words.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        startPracticeMistakesMode();
+      }
     }
   };
 
@@ -2824,7 +3016,87 @@ function displayModernGameOverContent(data) {
     .getElementById("gameOverModal")
     .addEventListener("hidden.bs.modal", () => {
       document.removeEventListener("keydown", handleKeyPress);
+
+      // Clean up the practice mistakes notice
+      const practiceNotice = document.getElementById("practiceMistakesNotice");
+      if (practiceNotice) {
+        practiceNotice.remove();
+      }
     });
+}
+
+// Function to start practice mistakes mode
+function startPracticeMistakesMode() {
+  // Close the game over modal
+  const gameOverModal = bootstrap.Modal.getInstance(
+    document.getElementById("gameOverModal"),
+  );
+  if (gameOverModal) {
+    gameOverModal.hide();
+  }
+
+  // Check if we have mistake words
+  if (gameMistakes.words.length === 0) {
+    console.warn("No mistake words found - cannot start practice mode");
+    return;
+  }
+
+  // Set practice mode flags
+  isPracticeMistakesMode = true;
+  practiceMistakesWords = [...gameMistakes.words]; // Copy the mistake words
+
+  // Create repeating word list from mistakes (repeat multiple times for practice)
+  const repeatCount = Math.max(5, Math.ceil(50 / practiceMistakesWords.length)); // At least 50 words total
+  words = [];
+  for (let i = 0; i < repeatCount; i++) {
+    words.push(...practiceMistakesWords);
+  }
+
+  // Shuffle the practice words for variety
+  words = words.sort(() => Math.random() - 0.5);
+
+  // Update game mode display
+  const gameModeElement = document.getElementById("currentGameMode");
+  if (gameModeElement) {
+    gameModeElement.innerHTML =
+      "Practice Mistakes Mode <span style='opacity: 0.8;'>(Ctrl+Enter to exit)</span>";
+    gameModeElement.style.color = "#ff9e64"; // Orange color to indicate practice mode
+  }
+
+  // Reset and start the game
+  setTimeout(() => {
+    startGame();
+
+    // Update timer display after game starts and variables are reset
+    setTimeout(() => {
+      updateTimerDisplay();
+
+      // For zen mode, also immediately update the timer display
+      if (isZenMode) {
+        const totalTimeContainer = document.getElementById("totalTime");
+        if (totalTimeContainer) {
+          totalTimeContainer.innerHTML = `Words typed: <span id="totalTimeValue">0</span>`;
+        }
+      }
+    }, 50);
+  }, 100);
+}
+
+// Function to exit practice mistakes mode
+function exitPracticeMistakesMode() {
+  isPracticeMistakesMode = false;
+  practiceMistakesWords = [];
+
+  // Restore original game mode display
+  const gameModeElement = document.getElementById("currentGameMode");
+  if (gameModeElement) {
+    const mode = isZenMode ? "Zen" : gameSettings.mode || "Classic";
+    gameModeElement.textContent = `${mode.charAt(0).toUpperCase() + mode.slice(1)} Mode`;
+    gameModeElement.style.color = ""; // Reset color
+  }
+
+  // Reload to restore normal word list
+  location.reload();
 }
 
 function validateTimeFormat(timeStr) {
@@ -2842,6 +3114,11 @@ function saveClassicResult(
   finalScore,
   isSuccess = true,
 ) {
+  // Skip saving if in practice mistakes mode
+  if (isPracticeMistakesMode) {
+    return;
+  }
+
   // Only block if this is explicitly a failed game
   if (!isSuccess && !isZenMode) {
     return;
@@ -3010,12 +3287,19 @@ function saveClassicResult(
     }
   }
 
-  // Check for achievements
-  achievementSystem.handleGameCompletion(gameData);
+  // Check for achievements (skip if in practice mistakes mode)
+  if (!isPracticeMistakesMode) {
+    achievementSystem.handleGameCompletion(gameData);
+  }
 }
 
 // Save results for Zen Mode
 function saveZenResult(wpm, totalTime, accuracy) {
+  // Skip saving if in practice mistakes mode
+  if (isPracticeMistakesMode) {
+    return;
+  }
+
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
   // Create game data object for local storage
@@ -3052,10 +3336,10 @@ function saveZenResult(wpm, totalTime, accuracy) {
     });
   }
 
-  // Update achievements system
-  achievementSystem.handleGameCompletion(gameData);
-
-  console.log("Zen result saved:", gameData);
+  // Update achievements system (skip if in practice mistakes mode)
+  if (!isPracticeMistakesMode) {
+    achievementSystem.handleGameCompletion(gameData);
+  }
 }
 
 // Helper function to get display username
@@ -3348,6 +3632,13 @@ export {
 // Add global keybind for toggling scoreboard modal with Ctrl+I
 function setupScoreboardKeybind() {
   document.addEventListener("keydown", function (event) {
+    // Check for Ctrl+Enter to exit practice mistakes mode
+    if (event.ctrlKey && event.key === "Enter" && isPracticeMistakesMode) {
+      event.preventDefault();
+      exitPracticeMistakesMode();
+      return;
+    }
+
     // Check for Ctrl+I (or Cmd+I on Mac)
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "i") {
       event.preventDefault(); // Prevent browser default behavior
@@ -3695,10 +3986,6 @@ function renderGameOverWpmChart() {
   });
 
   // Debug logging
-  console.log("Mistake timestamps:", mistakeTimestamps);
-  console.log("Per-second mistakes:", alignedMistakes);
-  console.log("Mistake markers:", mistakeMarkers);
-  console.log("Mistake details:", alignedMistakeDetails);
 
   // Calculate average
   const averageWpm =
