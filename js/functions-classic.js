@@ -2983,7 +2983,7 @@ function displayModernGameOverContent(data) {
       const practiceNotice = document.createElement("span");
       practiceNotice.id = "practiceMistakesNotice";
       practiceNotice.className = "press-enter-text desktop-return-text";
-      practiceNotice.innerHTML = "Press Ctrl+M to practice mistakes";
+      practiceNotice.innerHTML = "Press Ctrl + M to practice mistakes";
       practiceNotice.style.cssText = `
         background-color: #ff007c;
         color: #000000;
@@ -3069,7 +3069,7 @@ function startPracticeMistakesMode() {
   const gameModeElement = document.getElementById("currentGameMode");
   if (gameModeElement) {
     gameModeElement.innerHTML =
-      "Practice Mistakes Mode <span style='opacity: 0.8;'>(Ctrl+Enter to exit)</span>";
+      "Practice Mistakes <span style='opacity: 0.8;'>[Ctrl + Enter to exit]</span>";
     gameModeElement.style.color = "#ff9e64"; // Orange color to indicate practice mode
   }
 
