@@ -2256,25 +2256,16 @@ function moveToNextWord() {
   nextWordIndex = currentWordIndex + 1;
 
   if (currentWordIndex >= words.length) {
+    // In practice mistakes mode, restart the practice session instead of regenerating
+    if (isPracticeMistakesMode) {
+      startPracticeMistakesMode();
+      return;
+    }
+
     currentWordIndex = 0;
     nextWordIndex = 1;
 
-    // In practice mistakes mode, regenerate the word list to ensure unlimited practice
-    if (isPracticeMistakesMode && practiceMistakesWords.length > 0) {
-      const repeatCount = Math.max(
-        5,
-        Math.ceil(50 / practiceMistakesWords.length),
-      );
-      words = [];
-      for (let i = 0; i < repeatCount; i++) {
-        words.push(...practiceMistakesWords);
-      }
-      // Shuffle for variety
-      words = words.sort(() => Math.random() - 0.5);
-
-      // Instead of forcing a full display refresh, just ensure we have enough words in the display
-      // The normal scrolling mechanism will handle adding new words as needed
-    } else if (!availableWordLists[currentLanguage]?.sequential) {
+    if (!availableWordLists[currentLanguage]?.sequential) {
       // Only shuffle if not a sequential word list
       words = words.sort(() => Math.random() - 0.5);
     }
@@ -3062,7 +3053,10 @@ function startPracticeMistakesMode() {
   practiceMistakesWords = [...gameMistakes.words]; // Copy the mistake words
 
   // Create repeating word list from mistakes (repeat multiple times for practice)
-  const repeatCount = Math.max(5, Math.ceil(50 / practiceMistakesWords.length)); // At least 50 words total
+  const repeatCount = Math.max(
+    5,
+    Math.ceil(100 / practiceMistakesWords.length),
+  ); // At least 100 words total
   words = [];
   for (let i = 0; i < repeatCount; i++) {
     words.push(...practiceMistakesWords);
