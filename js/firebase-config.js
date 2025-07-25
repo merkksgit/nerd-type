@@ -1071,6 +1071,63 @@ window.loadScoreboardFromFirebase = async function () {
   }
 };
 
+// New function to load scoreboard with pagination for the scoreboard display
+window.loadScoreboardFromFirebasePaginated = async function (
+  limit = 15,
+  offset = 0,
+) {
+  if (!window.canSyncScoreboardToFirebase()) {
+    console.log(
+      "🔒 Cannot load scoreboard from Firebase - not logged in or data sharing disabled",
+    );
+    return { scores: [], totalCount: 0 };
+  }
+
+  try {
+    const currentUser = window.getCurrentUser();
+    if (!currentUser) {
+      console.log("❌ No current user for scoreboard load");
+      return { scores: [], totalCount: 0 };
+    }
+
+    const { ref, get } = window.firebaseModules;
+    const userScoreboardRef = ref(
+      window.database,
+      `users/${currentUser.uid}/scoreboard`,
+    );
+
+    // Get all entries
+    const snapshot = await get(userScoreboardRef);
+
+    if (!snapshot.exists()) {
+      console.log("📭 No scoreboard data found in Firebase for this user");
+      return { scores: [], totalCount: 0 };
+    }
+
+    const cloudScores = [];
+    snapshot.forEach((child) => {
+      cloudScores.push(child.val());
+    });
+
+    // Sort by timestamp locally (most recent first)
+    cloudScores.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+    const totalCount = cloudScores.length;
+    const paginatedScores = cloudScores.slice(offset, offset + limit);
+
+    return {
+      scores: paginatedScores,
+      totalCount: totalCount,
+    };
+  } catch (error) {
+    console.error(
+      "❌ Error loading paginated scoreboard from Firebase:",
+      error,
+    );
+    return { scores: [], totalCount: 0 };
+  }
+};
+
 window.switchToUserScoreboard = async function () {
   if (!window.canSyncScoreboardToFirebase()) {
     console.log("🔒 Cannot sync scoreboard - using local only");
@@ -1117,7 +1174,9 @@ window.switchToUserScoreboard = async function () {
 
     // Refresh scoreboard display if visible
     if (typeof window.displayPreviousResults === "function") {
-      window.displayPreviousResults();
+      window.displayPreviousResults().catch((error) => {
+        console.error("❌ Error refreshing scoreboard display:", error);
+      });
     }
   } catch (error) {
     console.error("❌ Error switching to user scoreboard:", error);
@@ -1148,7 +1207,9 @@ window.switchToGuestScoreboard = function () {
 
     // Refresh scoreboard display if visible
     if (typeof window.displayPreviousResults === "function") {
-      window.displayPreviousResults();
+      window.displayPreviousResults().catch((error) => {
+        console.error("❌ Error refreshing scoreboard display:", error);
+      });
     }
   } catch (error) {
     console.error("❌ Error switching to guest scoreboard:", error);

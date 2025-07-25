@@ -557,7 +557,6 @@ function setupUI() {
   // Don't focus the input field initially - wait for user interaction
 }
 
-
 function updateDebugInfo() {
   const accuracy =
     totalKeystrokes > 0
@@ -853,9 +852,9 @@ function initializeEventListeners() {
     // Handle scoreboard view
     const viewScoreboardBtn = document.getElementById("viewScoreboardBtn");
     if (viewScoreboardBtn) {
-      viewScoreboardBtn.addEventListener("click", function () {
+      viewScoreboardBtn.addEventListener("click", async function () {
         // Update the scoreboard contents before showing
-        displayPreviousResults();
+        await displayPreviousResults();
 
         // Then show the modal
         const scoreboardModal = new bootstrap.Modal(
@@ -2727,7 +2726,7 @@ function resetPrecisionSystem() {
 }
 
 // Game Over Modal for both modes
-function showGameOverModal(message, isSuccess = true) {
+async function showGameOverModal(message, isSuccess = true) {
   stopWpmTracking();
   const stats = calculateWPM();
   const languageName =
@@ -2807,7 +2806,7 @@ function showGameOverModal(message, isSuccess = true) {
     );
   }
 
-  displayPreviousResults();
+  await displayPreviousResults();
 }
 
 // Modern game over display with card layout
@@ -3413,25 +3412,85 @@ window.getTopScores = async function () {
 
 // Display previous results in scoreboard with pagination
 let currentDisplayCount = 15; // Track how many results are currently displayed
+let allAvailableScores = []; // Cache for all available scores
+let totalScoreCount = 0; // Total count of scores available
 
-function displayPreviousResults(loadMore = false) {
+async function displayPreviousResults(loadMore = false) {
   const resultsContainer = document.getElementById("previousResults");
   if (!resultsContainer) return;
-
-  // Use localStorage directly but ensure it's up to date after auth changes
-  let results = JSON.parse(localStorage.getItem("gameResults")) || [];
-
-  // Sort results by timestamp (most recent first)
-  const sortedResults = results.sort(
-    (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
-  );
 
   // If not loading more, reset the display count
   if (!loadMore) {
     currentDisplayCount = 15;
   }
 
-  const displayResults = sortedResults.slice(0, currentDisplayCount);
+  let displayResults = [];
+  let sortedResults = [];
+
+  // Check if user is logged in to determine data source
+  const currentUser = window.getCurrentUser && window.getCurrentUser();
+
+  if (currentUser && window.loadScoreboardFromFirebasePaginated) {
+    // Logged-in user: Load from Firebase with pagination
+    try {
+      if (!loadMore) {
+        // Initial load: get first batch and set up cache
+        const firebaseData = await window.loadScoreboardFromFirebasePaginated(
+          Math.max(currentDisplayCount, 50), // Load at least 50 to reduce future calls
+          0,
+        );
+
+        allAvailableScores = firebaseData.scores || [];
+        totalScoreCount = firebaseData.totalCount || 0;
+      } else if (allAvailableScores.length < currentDisplayCount) {
+        // Load more: we need more data than we have cached
+        const needToLoad = Math.max(
+          currentDisplayCount + 30,
+          allAvailableScores.length + 50,
+        ); // Load extra for future clicks
+        const firebaseData = await window.loadScoreboardFromFirebasePaginated(
+          needToLoad,
+          0,
+        );
+
+        allAvailableScores = firebaseData.scores || [];
+        totalScoreCount = firebaseData.totalCount || 0;
+      } else {
+        // We have enough cached data, no need to call Firebase
+        // Using cached data - no console log needed
+      }
+
+      displayResults = allAvailableScores.slice(0, currentDisplayCount);
+    } catch (error) {
+      console.error(
+        "❌ Failed to load scores from Firebase, falling back to localStorage:",
+        error,
+      );
+      // Fallback to localStorage if Firebase fails
+      let results = JSON.parse(localStorage.getItem("gameResults")) || [];
+      sortedResults = results.sort(
+        (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
+      );
+      displayResults = sortedResults.slice(0, currentDisplayCount);
+      totalScoreCount = sortedResults.length;
+    }
+  } else {
+    // Guest user: Use localStorage with reasonable limit for performance
+    let results = JSON.parse(localStorage.getItem("gameResults")) || [];
+    sortedResults = results.sort(
+      (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
+    );
+
+    // Limit guest users to 100 most recent games for performance
+    const maxGuestGames = 100;
+    if (sortedResults.length > maxGuestGames) {
+      sortedResults = sortedResults.slice(0, maxGuestGames);
+    }
+
+    displayResults = sortedResults.slice(0, currentDisplayCount);
+    totalScoreCount = sortedResults.length;
+    allAvailableScores = sortedResults; // Cache all results
+  }
 
   // Clear existing content
   resultsContainer.innerHTML = "";
@@ -3570,17 +3629,11 @@ function displayPreviousResults(loadMore = false) {
   });
 
   // Add info row and load more functionality if there are more results available
-  if (sortedResults.length > currentDisplayCount) {
-    // Get actual total count from localStorage, fallback to results.length
-    const totalGameCount = localStorage.getItem("totalGameCount");
-    const actualTotal = totalGameCount
-      ? parseInt(totalGameCount)
-      : sortedResults.length;
-
+  if (totalScoreCount > currentDisplayCount) {
     const infoRow = document.createElement("tr");
     infoRow.innerHTML = `
       <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
-        Showing last ${currentDisplayCount} of ${actualTotal} total games
+        Showing last ${currentDisplayCount} of ${totalScoreCount} total games
       </td>
     `;
     tableBody.appendChild(infoRow);
@@ -3604,22 +3657,17 @@ function displayPreviousResults(loadMore = false) {
     // Add click handler for load more button
     const loadMoreBtn = document.getElementById("loadMoreGamesBtn");
     if (loadMoreBtn) {
-      loadMoreBtn.addEventListener("click", function() {
+      loadMoreBtn.addEventListener("click", async function () {
         currentDisplayCount += 15;
-        displayPreviousResults(true);
+        await displayPreviousResults(true);
       });
     }
-  } else if (sortedResults.length > 15) {
+  } else if (totalScoreCount > 15) {
     // Show info row without load more button when all results are displayed
-    const totalGameCount = localStorage.getItem("totalGameCount");
-    const actualTotal = totalGameCount
-      ? parseInt(totalGameCount)
-      : sortedResults.length;
-
     const infoRow = document.createElement("tr");
     infoRow.innerHTML = `
       <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
-        Showing all ${actualTotal} games
+        Showing all ${totalScoreCount} games
       </td>
     `;
     tableBody.appendChild(infoRow);
@@ -3645,9 +3693,9 @@ function displayPreviousResults(loadMore = false) {
     // Add click handler for show less button
     const showLessBtn = document.getElementById("showLessGamesBtn");
     if (showLessBtn) {
-      showLessBtn.addEventListener("click", function() {
+      showLessBtn.addEventListener("click", async function () {
         currentDisplayCount = 15;
-        displayPreviousResults(false);
+        await displayPreviousResults(false);
       });
     }
   }
@@ -3735,17 +3783,19 @@ function setupScoreboardKeybind() {
         }
 
         // Open the scoreboard modal
-        openScoreboardModal();
+        openScoreboardModal().catch((error) => {
+          console.error("❌ Error opening scoreboard modal:", error);
+        });
       }
     }
   });
 }
 
 // Function to open scoreboard modal
-function openScoreboardModal() {
+async function openScoreboardModal() {
   // Update the scoreboard contents before showing
   if (typeof displayPreviousResults === "function") {
-    displayPreviousResults();
+    await displayPreviousResults();
   }
 
   // Show the modal
@@ -3795,7 +3845,11 @@ document.addEventListener("DOMContentLoaded", function () {
     scoreboardBtn.replaceWith(scoreboardBtn.cloneNode(true));
     document
       .getElementById("viewScoreboardBtn")
-      .addEventListener("click", openScoreboardModal);
+      .addEventListener("click", () => {
+        openScoreboardModal().catch((error) => {
+          console.error("❌ Error opening scoreboard modal:", error);
+        });
+      });
   }
 
   const scoreboardChartBtn = document.getElementById("viewScoreboardChartBtn");
@@ -3804,7 +3858,11 @@ document.addEventListener("DOMContentLoaded", function () {
     scoreboardChartBtn.replaceWith(scoreboardChartBtn.cloneNode(true));
     document
       .getElementById("viewScoreboardChartBtn")
-      .addEventListener("click", openScoreboardModal);
+      .addEventListener("click", () => {
+        openScoreboardModal().catch((error) => {
+          console.error("❌ Error opening scoreboard modal:", error);
+        });
+      });
   }
 });
 
