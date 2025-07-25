@@ -557,25 +557,6 @@ function setupUI() {
   // Don't focus the input field initially - wait for user interaction
 }
 
-// Calculate the size of localStorage data in KB
-function calculateLocalStorageSize() {
-  let totalSize = 0;
-
-  // Get the game results data
-  const gameResults = localStorage.getItem("gameResults");
-  if (gameResults) {
-    totalSize += gameResults.length * 2; // Each character is 2 bytes in JavaScript
-  }
-
-  // Get achievements data size
-  const achievementsData = localStorage.getItem("nerdtype_achievements");
-  if (achievementsData) {
-    totalSize += achievementsData.length * 2;
-  }
-
-  // Convert to KB
-  return (totalSize / 1024).toFixed(2);
-}
 
 function updateDebugInfo() {
   const accuracy =
@@ -3430,20 +3411,27 @@ window.getTopScores = async function () {
   }
 };
 
-// Display previous results in scoreboard (only show last 20)
-function displayPreviousResults() {
+// Display previous results in scoreboard with pagination
+let currentDisplayCount = 15; // Track how many results are currently displayed
+
+function displayPreviousResults(loadMore = false) {
   const resultsContainer = document.getElementById("previousResults");
   if (!resultsContainer) return;
 
   // Use localStorage directly but ensure it's up to date after auth changes
   let results = JSON.parse(localStorage.getItem("gameResults")) || [];
 
-  // Sort results by timestamp (most recent first) and limit to 15
-  // This works for both local storage (chronological) and Firebase data (pre-sorted)
+  // Sort results by timestamp (most recent first)
   const sortedResults = results.sort(
     (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
   );
-  const displayResults = sortedResults.slice(0, 15);
+
+  // If not loading more, reset the display count
+  if (!loadMore) {
+    currentDisplayCount = 15;
+  }
+
+  const displayResults = sortedResults.slice(0, currentDisplayCount);
 
   // Clear existing content
   resultsContainer.innerHTML = "";
@@ -3581,22 +3569,87 @@ function displayPreviousResults() {
     tableBody.appendChild(row);
   });
 
-  // Add storage info if there are more than 15 results (matching original logic)
-  if (results.length > 15) {
-    const storageSize = calculateLocalStorageSize();
-    const infoRow = document.createElement("tr");
+  // Add info row and load more functionality if there are more results available
+  if (sortedResults.length > currentDisplayCount) {
     // Get actual total count from localStorage, fallback to results.length
     const totalGameCount = localStorage.getItem("totalGameCount");
     const actualTotal = totalGameCount
       ? parseInt(totalGameCount)
-      : results.length;
+      : sortedResults.length;
 
+    const infoRow = document.createElement("tr");
     infoRow.innerHTML = `
       <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
-        Showing last 15 of ${actualTotal} total games | Storage used: ${storageSize} KB
+        Showing last ${currentDisplayCount} of ${actualTotal} total games
       </td>
     `;
     tableBody.appendChild(infoRow);
+
+    // Add load more button
+    const loadMoreRow = document.createElement("tr");
+    loadMoreRow.innerHTML = `
+      <td colspan="7" class="text-center p-0" style="border-top: none;">
+        <div 
+          id="loadMoreGamesBtn" 
+          style="background: #1f2335; color: #7aa2f7; padding: 12px; cursor: pointer; font-size: 0.9rem; transition: background-color 0.2s ease; width: 100%;"
+          onmouseover="this.style.backgroundColor='#2a2f47'"
+          onmouseout="this.style.backgroundColor='#1f2335'"
+        >
+          <i class="fa-solid fa-chevron-down" style="margin-right: 8px;"></i>Load More
+        </div>
+      </td>
+    `;
+    tableBody.appendChild(loadMoreRow);
+
+    // Add click handler for load more button
+    const loadMoreBtn = document.getElementById("loadMoreGamesBtn");
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener("click", function() {
+        currentDisplayCount += 15;
+        displayPreviousResults(true);
+      });
+    }
+  } else if (sortedResults.length > 15) {
+    // Show info row without load more button when all results are displayed
+    const totalGameCount = localStorage.getItem("totalGameCount");
+    const actualTotal = totalGameCount
+      ? parseInt(totalGameCount)
+      : sortedResults.length;
+
+    const infoRow = document.createElement("tr");
+    infoRow.innerHTML = `
+      <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
+        Showing all ${actualTotal} games
+      </td>
+    `;
+    tableBody.appendChild(infoRow);
+  }
+
+  // Add show less button if we're displaying more than 15 games
+  if (currentDisplayCount > 15) {
+    const showLessRow = document.createElement("tr");
+    showLessRow.innerHTML = `
+      <td colspan="7" class="text-center p-0" style="border-top: none;">
+        <div 
+          id="showLessGamesBtn" 
+          style="background: #1f2335; color: #bb9af7; padding: 12px; cursor: pointer; font-size: 0.9rem; transition: background-color 0.2s ease; width: 100%;"
+          onmouseover="this.style.backgroundColor='#2a2f47'"
+          onmouseout="this.style.backgroundColor='#1f2335'"
+        >
+          <i class="fa-solid fa-chevron-up" style="margin-right: 8px;"></i>Show Less
+        </div>
+      </td>
+    `;
+    tableBody.appendChild(showLessRow);
+
+    // Add click handler for show less button
+    const showLessBtn = document.getElementById("showLessGamesBtn");
+    if (showLessBtn) {
+      showLessBtn.addEventListener("click", function() {
+        currentDisplayCount = 15;
+        displayPreviousResults(false);
+      });
+    }
   }
 }
 
