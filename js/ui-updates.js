@@ -95,7 +95,7 @@ function showLoginSuccessModal(username) {
     `<img src="../images/logo-text-no-keyboard.png" alt="Success" style="width: 300px; vertical-align: middle;">`;
   document.getElementById("alertModalMessage").innerHTML = `
         <div class="text-center">
-          <p class="mb-3">Welcome, <span style="color: #ff9e64"><strong>${username}</strong></span>!</p>
+          <p class="mb-3">Welcome to ${typeof APP_VERSION !== "undefined" ? APP_VERSION : "NerdType"}, <span style="color: #ff9e64"><strong>${username}</strong></span>!</p>
         </div>`;
 
   // Hide the OK button for this specific modal
