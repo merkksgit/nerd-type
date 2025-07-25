@@ -2985,7 +2985,7 @@ function displayModernGameOverContent(data) {
       practiceNotice.className = "press-enter-text desktop-return-text";
       practiceNotice.innerHTML = "Press Ctrl + M to practice mistakes";
       practiceNotice.style.cssText = `
-        background-color: #ff007c;
+        background-color: #7aa2f7;
         color: #24283b;
         padding: 4px 8px;
         border-radius: 9999px;
