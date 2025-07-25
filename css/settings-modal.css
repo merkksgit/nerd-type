@@ -288,11 +288,19 @@
 }
 
 /* Settings Modal Styling */
+#settingsModal .col-md-6,
+#settingsModal .col-md-12 {
+  display: flex;
+}
+
 .settings-card {
   background-color: #1f2335;
   border: 2px solid #3b4261;
   border-radius: 4px;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .settings-card-header {
@@ -306,6 +314,7 @@
 .settings-card-body {
   padding: 15px;
   border-bottom: 1px solid #3b4261;
+  flex: 1;
 }
 
 .form-label {
