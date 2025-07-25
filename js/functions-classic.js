@@ -2986,7 +2986,7 @@ function displayModernGameOverContent(data) {
       practiceNotice.innerHTML = "Press Ctrl + M to practice mistakes";
       practiceNotice.style.cssText = `
         background-color: #ff007c;
-        color: #000000;
+        color: #24283b;
         padding: 4px 8px;
         border-radius: 9999px;
         margin-left: 10px;
