@@ -2653,10 +2653,6 @@ tr:hover .username-rank-icon {
   margin: 0.3rem 0;
 }
 
-.keyboard-open .press-enter-text {
-  /* Keep original font size and padding */
-}
-
 /* Hide navbar and logo when mobile keyboard is open */
 .keyboard-open .navbar {
   display: none !important;
