@@ -3672,33 +3672,6 @@ async function displayPreviousResults(loadMore = false) {
     `;
     tableBody.appendChild(infoRow);
   }
-
-  // Add show less button if we're displaying more than 15 games
-  if (currentDisplayCount > 15) {
-    const showLessRow = document.createElement("tr");
-    showLessRow.innerHTML = `
-      <td colspan="7" class="text-center p-0" style="border-top: none;">
-        <div 
-          id="showLessGamesBtn" 
-          style="background: #1f2335; color: #bb9af7; padding: 12px; cursor: pointer; font-size: 0.9rem; transition: background-color 0.2s ease; width: 100%;"
-          onmouseover="this.style.backgroundColor='#2a2f47'"
-          onmouseout="this.style.backgroundColor='#1f2335'"
-        >
-          <i class="fa-solid fa-chevron-up" style="margin-right: 8px;"></i>Show Less
-        </div>
-      </td>
-    `;
-    tableBody.appendChild(showLessRow);
-
-    // Add click handler for show less button
-    const showLessBtn = document.getElementById("showLessGamesBtn");
-    if (showLessBtn) {
-      showLessBtn.addEventListener("click", async function () {
-        currentDisplayCount = 15;
-        await displayPreviousResults(false);
-      });
-    }
-  }
 }
 
 function setupScoreboardModalEnterKey() {
