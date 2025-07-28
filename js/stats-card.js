@@ -9,7 +9,7 @@ class StatsCard {
   async init() {
     await this.loadData();
     this.calculateAndDisplayStats();
-    this.loadAndDisplayUsername();
+    await this.loadAndDisplayUsername();
     this.setupAuthStateListener();
   }
 
@@ -359,11 +359,49 @@ class StatsCard {
     return totalAccuracy / this.results.length;
   }
 
-  loadAndDisplayUsername() {
+  async loadAndDisplayUsername() {
     const savedUsername = localStorage.getItem("nerdtype_username") || "runner";
     const usernameElement = document.getElementById("statsUsername");
     if (usernameElement) {
       usernameElement.textContent = savedUsername;
+    }
+
+    // Display account creation date if user is logged in
+    await this.loadAndDisplayAccountCreation();
+  }
+
+  async loadAndDisplayAccountCreation() {
+    const nerdtypistSinceElement = document.getElementById("nerdtypistSince");
+    if (!nerdtypistSinceElement) return;
+
+    // Check if user is logged in
+    const currentUser = window.getCurrentUser && window.getCurrentUser();
+    if (!currentUser) {
+      nerdtypistSinceElement.textContent = "guest user";
+      return;
+    }
+
+    // Get account creation date
+    try {
+      if (window.getUserCreationDate) {
+        const creationDate = await window.getUserCreationDate(currentUser.uid);
+        if (creationDate) {
+          const date = new Date(creationDate);
+          const formattedDate = date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          nerdtypistSinceElement.textContent = `nerd since ${formattedDate}`;
+        } else {
+          nerdtypistSinceElement.textContent = "";
+        }
+      } else {
+        nerdtypistSinceElement.textContent = "";
+      }
+    } catch (error) {
+      console.error("Error loading account creation date:", error);
+      nerdtypistSinceElement.textContent = "";
     }
   }
 

@@ -1920,6 +1920,35 @@ async function getUserStoredUsername(userId) {
 // Make function available globally
 window.getUserStoredUsername = getUserStoredUsername;
 
+// Function to get user's account creation date
+async function getUserCreationDate(userId) {
+  if (!window.firebaseModules || !database) {
+    console.warn("Firebase not ready for creation date retrieval");
+    return null;
+  }
+
+  const { ref, get } = window.firebaseModules;
+
+  try {
+    const userRef = ref(database, `users/${userId}`);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      const userData = snapshot.val();
+      return userData.createdAt || null;
+    } else {
+      console.log("No user data found for creation date");
+      return null;
+    }
+  } catch (error) {
+    console.error("❌ Error retrieving user creation date:", error);
+    return null;
+  }
+}
+
+// Make function available globally
+window.getUserCreationDate = getUserCreationDate;
+
 async function validateUsernameComplete(username) {
   const formatValidation = validateUsernameFormat(username);
   if (!formatValidation.isValid) return formatValidation;
