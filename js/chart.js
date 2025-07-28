@@ -108,7 +108,7 @@ function displayScoreGraph() {
           title: {
             display: true,
             text: "Last 15 Classic Mode Games",
-            color: "#7dcfff",
+            color: "#7aa2f7",
             font: {
               family: "'jetbrains-mono', monospace",
               size: 16,
@@ -316,7 +316,7 @@ function displayScoreGraph() {
         title: {
           display: true,
           text: "Last 15 Classic Mode Games",
-          color: "#7dcfff",
+          color: "#7aa2f7",
           font: {
             family: "'jetbrains-mono', monospace",
             size: 16,
@@ -641,7 +641,7 @@ function displayZenModeGraph() {
           title: {
             display: true,
             text: "Last 15 Zen Mode Games",
-            color: "#7dcfff",
+            color: "#7aa2f7",
             font: {
               family: "'jetbrains-mono', monospace",
               size: 16,
@@ -861,7 +861,7 @@ function displayZenModeGraph() {
         title: {
           display: true,
           text: "Last 15 Zen Mode Games",
-          color: "#7dcfff",
+          color: "#7aa2f7",
           font: {
             family: "'jetbrains-mono', monospace",
             size: 16,
