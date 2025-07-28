@@ -2344,34 +2344,17 @@ body[data-ui-hidden="true"]::after {
   justify-content: center;
 }
 
-.stats-card .stat-item:hover,
-.stats-card .stat-item:hover *,
-.info-section.stats-card .stat-item:hover,
-div.stats-card .stat-item:hover {
-  border-color: #7aa2f7 !important;
-  background-color: #24283b !important;
-  transform: translateY(-2px);
-}
-
-.stats-card .stat-item:hover .stat-value,
-.stats-card .stat-item:hover .stat-label,
-.info-section.stats-card .stat-item:hover .stat-value,
-.info-section.stats-card .stat-item:hover .stat-label {
-  color: #7aa2f7 !important;
-  background-color: transparent !important;
-}
-
 .stats-card .stat-value {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #7dcfff;
+  color: #7aa2f7;
   margin-bottom: 0.25rem;
   font-family: "jetbrains-mono", monospace;
 }
 
 .stats-card .stat-label {
   font-size: 0.875rem;
-  color: #c0caf5;
+  color: #394b70;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 600;
