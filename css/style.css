@@ -580,6 +580,10 @@ input#userInput {
   pointer-events: none;
 }
 
+body[data-ui-hidden="true"] #game.inactive::after {
+  top: 51.8%;
+}
+
 /* Mobile-specific instruction text */
 @media (max-width: 768px) and (hover: none) and (pointer: coarse) {
   #game.inactive::after {
