@@ -2361,7 +2361,7 @@ div.stats-card .stat-item:hover {
   background-color: transparent !important;
 }
 
-.stat-value {
+.stats-card .stat-value {
   font-size: 1.5rem;
   font-weight: bold;
   color: #7dcfff;
@@ -2369,7 +2369,7 @@ div.stats-card .stat-item:hover {
   font-family: "jetbrains-mono", monospace;
 }
 
-.stat-label {
+.stats-card .stat-label {
   font-size: 0.875rem;
   color: #c0caf5;
   text-transform: uppercase;
@@ -2390,11 +2390,11 @@ div.stats-card .stat-item:hover {
     min-height: 70px;
   }
 
-  .stat-value {
+  .stats-card .stat-value {
     font-size: 1.25rem;
   }
 
-  .stat-label {
+  .stats-card .stat-label {
     font-size: 0.8rem;
   }
 }
