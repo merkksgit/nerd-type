@@ -74,7 +74,6 @@ async function handleLoginWithDelayedReload(user) {
 
     // Wait longer to ensure Firebase auth is fully processed
     setTimeout(() => {
-      console.log("🔄 Reloading page to refresh all game state...");
       window.location.reload();
     }, 2000);
   } catch (error) {
@@ -140,8 +139,6 @@ async function handleLogout() {
     // Quick UI update
     updateUsernameButtonDisplay();
     updateScoreboardDisplay();
-
-    console.log("✅ Logged out successfully");
 
     // Show goodbye message if we have a username and siteModal is available
     if (storedUsername && window.siteModal) {
@@ -285,6 +282,23 @@ function updateScoreboardDisplay() {
   const currentUser = window.getCurrentUser();
   const isGuest = localStorage.getItem("nerdtype_guest_mode") === "true";
 
+  // Dispatch auth state change event for stats card and other components to listen
+  const authEvent = new CustomEvent("authStateChanged", {
+    detail: {
+      isLoggedIn: !!currentUser,
+      isGuest: isGuest,
+      user: currentUser,
+    },
+  });
+  window.dispatchEvent(authEvent);
+
+  // Force refresh stats card if we're on the chart page (clears cached data)
+  if (window.statsCard && typeof window.statsCard.forceRefresh === "function") {
+    window.statsCard.forceRefresh().catch((error) => {
+      console.warn("Failed to force refresh stats card:", error);
+    });
+  }
+
   // Remove any existing logout buttons since we're not using them anymore
   const existingLogoutBtn = document.getElementById("logoutBtn");
   if (existingLogoutBtn) {
@@ -329,12 +343,8 @@ window.logoutAndRedirect = async function () {
     currentUser.email.split("@")[0];
 
   try {
-    console.log("🚪 Logging out user:", storedUsername);
-
     // Perform logout immediately without loading state
     await window.logoutUser();
-
-    console.log("✅ Successfully logged out");
 
     // Update displays immediately
     updateUsernameButtonDisplay();
@@ -344,10 +354,8 @@ window.logoutAndRedirect = async function () {
     if (window.siteModal) {
       window.siteModal.showLogoutSuccessModal(storedUsername);
     }
-
-    console.log("User logged out - login available on demand");
   } catch (error) {
-    console.error("❌ Logout error:", error);
+    console.error("Logout error:", error);
 
     // Update displays even on error to reset state
     updateUsernameButtonDisplay();
@@ -611,7 +619,6 @@ function restoreUIHideState() {
   }
 
   if (hideUIState) {
-    console.log("🎨 Restoring UI hide state...");
     applyUIHideSettings(true);
 
     // Also set up an observer to handle dynamic changes to nextWord

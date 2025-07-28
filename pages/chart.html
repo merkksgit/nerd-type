@@ -171,6 +171,91 @@
       <div class="row justify-content-center py-4">
         <article class="col-md-12 p-3 flex-column d-flex align-items-center">
           <div id="graphContainer" class="text-center w-100">
+            <!-- Stats Card -->
+            <div class="row justify-content-center">
+              <div class="col-12 col-lg-10 col-xl-8 mb-4">
+                <div class="mt-4 p-4 info-section stats-card">
+                  <h5 class="info-title mb-4">
+                    <i class="fa-solid fa-chart-bar me-2"></i> Your Stats
+                  </h5>
+                  <div class="row g-2 g-md-3">
+                    <!-- Mobile: 1 column, Tablet: 2 columns, Desktop: 3 columns, Large: 4 columns -->
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Total Games</div>
+                        <div class="stat-value" id="totalGames">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">This Week</div>
+                        <div class="stat-value" id="gamesThisWeek">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Day Streak</div>
+                        <div class="stat-value" id="currentStreak">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Total Time</div>
+                        <div class="stat-value" id="totalTimePlayed">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Classic Games</div>
+                        <div class="stat-value" id="classicGames">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Zen Games</div>
+                        <div class="stat-value" id="zenGames">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Favorite Mode</div>
+                        <div class="stat-value" id="favoriteMode">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Favorite Language</div>
+                        <div class="stat-value" id="favoriteLanguage">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Highest Score</div>
+                        <div class="stat-value" id="highestScore">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Best WPM</div>
+                        <div class="stat-value" id="bestWpm">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Best Accuracy</div>
+                        <div class="stat-value" id="bestAccuracy">-</div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                      <div class="stat-item text-center">
+                        <div class="stat-label">Average WPM</div>
+                        <div class="stat-value" id="averageWpm">-</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row justify-content-center">
               <!-- Classic Mode Chart -->
               <div class="col-12 col-lg-10 col-xl-8 mb-4">
@@ -449,12 +534,21 @@
         }, 100);
       }
 
-      // When DOM is loaded, render achievements
-      document.addEventListener("DOMContentLoaded", function () {
+      // Import and initialize stats card
+      import statsCard from "../js/stats-card.js";
+
+      // Make stats card globally available for logout refresh
+      window.statsCard = statsCard;
+
+      // When DOM is loaded, render achievements and initialize stats
+      document.addEventListener("DOMContentLoaded", async function () {
         // Render achievements
         achievementSystem.renderAchievementsToContainer(
           "custom-achievements-container",
         );
+
+        // Initialize stats card (async to allow Firebase loading)
+        await statsCard.init();
       });
     </script>
     <script src="../js/firebase-config.js"></script>
@@ -463,6 +557,7 @@
     <script src="../js/keyboard-nav.js"></script>
     <script src="../js/chart.js" type="module"></script>
     <script src="../js/functions-chart.js" type="module"></script>
+    <script src="../js/stats-card.js" type="module"></script>
     <script src="../js/version.js"></script>
     <script src="../js/cursor-selection.js"></script>
     <script src="../js/download-game-data.js"></script>

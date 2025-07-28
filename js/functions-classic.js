@@ -3321,9 +3321,26 @@ function saveZenResult(wpm, totalTime, accuracy) {
     window.canSyncScoreboardToFirebase &&
     window.canSyncScoreboardToFirebase()
   ) {
-    window.syncScoreboardToFirebase(gameData).catch((error) => {
-      console.error("❌ Error syncing zen mode scoreboard to Firebase:", error);
+    console.log("🔥 Attempting to sync Zen mode game to Firebase:", {
+      mode: gameData.mode,
+      wpm: gameData.wpm,
+      totalTime: gameData.totalTime,
     });
+    window
+      .syncScoreboardToFirebase(gameData)
+      .then(() => {
+        console.log("✅ Zen mode game successfully synced to Firebase");
+      })
+      .catch((error) => {
+        console.error(
+          "❌ Error syncing zen mode scoreboard to Firebase:",
+          error,
+        );
+      });
+  } else {
+    console.warn(
+      "⚠️ Cannot sync Zen mode to Firebase - user not logged in or sync disabled",
+    );
   }
 
   // Update achievements system (skip if in practice mistakes mode)

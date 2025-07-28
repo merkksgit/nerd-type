@@ -1,5 +1,6 @@
-// Import storage manager
-import storageManager from './storage-manager.js';
+// Import storage manager and stats card
+import storageManager from "./storage-manager.js";
+import statsCard from "./stats-card.js";
 
 function enhanceChartVisuals() {
   // Enhanced fonts and colors
@@ -54,7 +55,9 @@ function displayScoreGraph() {
   );
 
   // Sort by timestamp (newest first) and take first 15, then reverse for timeline
-  const sortedResults = classicResults.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const sortedResults = classicResults.sort(
+    (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
+  );
   const last15Results = sortedResults.slice(0, 15).reverse();
 
   // Destroy existing chart if it exists
@@ -566,11 +569,28 @@ function displayScoreGraph() {
 function displayZenModeGraph() {
   let results = storageManager.getGameResults();
 
-  // Filter only Zen Mode results
-  const zenResults = results.filter((result) => result.mode === "Zen Mode");
+  if (!results || !Array.isArray(results)) {
+    console.warn("⚠️ No valid game results found for Zen chart");
+    results = [];
+  }
+
+  // Filter only Zen Mode results with validation
+  const zenResults = results.filter(
+    (result) =>
+      result &&
+      result.mode === "Zen Mode" &&
+      result.wpm !== undefined &&
+      result.accuracy !== undefined,
+  );
+
+  console.log(
+    `📊 Zen chart: Found ${zenResults.length} Zen mode games out of ${results.length} total games`,
+  );
 
   // Sort by timestamp (newest first) and take first 15, then reverse for timeline
-  const sortedZenResults = zenResults.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  const sortedZenResults = zenResults.sort(
+    (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
+  );
   const last15ZenResults = sortedZenResults.slice(0, 15).reverse();
 
   // Destroy existing chart if it exists
@@ -1098,44 +1118,117 @@ function displayZenModeGraph() {
 }
 
 let chartRefreshTimeout;
+let isRefreshing = false;
 
-window.refreshChartsWithLatestData = async function refreshChartsWithLatestData() {
-  try {
-    // Check if user is logged in and can sync from Firebase
-    if (window.canSyncScoreboardToFirebase && window.canSyncScoreboardToFirebase()) {
-      // Load fresh data from Firebase
-      const cloudData = await window.loadScoreboardFromFirebase();
-      
-      if (cloudData && cloudData.scores && cloudData.scores.length > 0) {
-        // Store total count separately before updating localStorage
-        storageManager.setTotalGameCount(cloudData.totalCount);
-        
-        // Update localStorage with fresh data
-        storageManager.setGameResults(cloudData.scores);
-      } else if (cloudData && cloudData.length > 0) {
-        // Fallback for old format (if function returns array directly)
-        storageManager.setGameResults(cloudData);
-        storageManager.setTotalGameCount(cloudData.length);
-      }
-    } else {
-      // User is logged out - ensure we're using guest data
+window.refreshChartsWithLatestData =
+  async function refreshChartsWithLatestData() {
+    // Prevent concurrent refreshes that could cause data loss
+    if (isRefreshing) {
+      console.log("🔄 Chart refresh already in progress, skipping...");
+      return;
     }
-  } catch (error) {
-    console.error("❌ Failed to refresh chart data:", error);
-  }
-  
-  // Clear any pending refresh to prevent duplicate renders
-  if (chartRefreshTimeout) {
-    clearTimeout(chartRefreshTimeout);
-  }
-  
-  // Wait a moment for localStorage to be fully updated, then display charts
-  chartRefreshTimeout = setTimeout(() => {
-    displayScoreGraph();
-    displayZenModeGraph();
-    chartRefreshTimeout = null;
-  }, 100);
-}
+
+    isRefreshing = true;
+    try {
+      // Check if user is logged in and can sync from Firebase
+      if (
+        window.canSyncScoreboardToFirebase &&
+        window.canSyncScoreboardToFirebase()
+      ) {
+        // Load more data from Firebase for charts (not just recent 50)
+        console.log("🔥 Loading expanded Firebase data for charts...");
+        const cloudData = await window.loadScoreboardFromFirebasePaginated(
+          200,
+          0,
+        ); // Load 200 recent games instead of 50
+
+        if (cloudData && cloudData.scores && cloudData.scores.length > 0) {
+          // Validate that we have Zen mode data before overwriting
+          const existingData = storageManager.getGameResults() || [];
+          const existingZenGames = existingData.filter(
+            (result) => result.mode === "Zen Mode",
+          );
+          const newZenGames = cloudData.scores.filter(
+            (result) => result.mode === "Zen Mode",
+          );
+
+          console.log(
+            `📊 Firebase sync: ${existingZenGames.length} existing Zen games → ${newZenGames.length} Firebase Zen games`,
+          );
+          console.log(
+            "🔍 Firebase data sample:",
+            cloudData.scores
+              .slice(0, 3)
+              .map((r) => ({ mode: r.mode, wpm: r.wpm, date: r.date })),
+          );
+          console.log("🔍 All unique modes in Firebase data:", [
+            ...new Set(cloudData.scores.map((r) => r.mode)),
+          ]);
+
+          // If we have existing Zen games but Firebase doesn't, something might be wrong
+          if (existingZenGames.length > 0 && newZenGames.length === 0) {
+            console.warn(
+              "⚠️ WARNING: localStorage has Zen games but Firebase doesn't. This might indicate a sync issue.",
+            );
+            console.log(
+              "🤔 Consider checking if Zen games are being properly saved to Firebase",
+            );
+          }
+
+          // Store total count separately before updating localStorage
+          storageManager.setTotalGameCount(cloudData.totalCount);
+
+          // Update localStorage with fresh data
+          storageManager.setGameResults(cloudData.scores);
+        } else if (cloudData && cloudData.length > 0) {
+          // Fallback for old format (if function returns array directly)
+          const existingData = storageManager.getGameResults() || [];
+          const existingZenGames = existingData.filter(
+            (result) => result.mode === "Zen Mode",
+          );
+          const newZenGames = cloudData.filter(
+            (result) => result.mode === "Zen Mode",
+          );
+
+          console.log(
+            `📊 Firebase sync (legacy): ${existingZenGames.length} existing Zen games → ${newZenGames.length} Firebase Zen games`,
+          );
+
+          storageManager.setGameResults(cloudData);
+          storageManager.setTotalGameCount(cloudData.length);
+        } else {
+          console.warn(
+            "⚠️ Firebase returned empty data, keeping existing localStorage data",
+          );
+        }
+      } else {
+        // User is logged out - ensure we're using guest data
+        console.log("💾 Using guest localStorage data");
+      }
+    } catch (error) {
+      console.error("❌ Failed to refresh chart data:", error);
+      console.log(
+        "🔄 Keeping existing localStorage data due to Firebase error",
+      );
+    }
+
+    // Clear any pending refresh to prevent duplicate renders
+    if (chartRefreshTimeout) {
+      clearTimeout(chartRefreshTimeout);
+    }
+
+    // Wait a moment for localStorage to be fully updated, then display charts and stats
+    chartRefreshTimeout = setTimeout(async () => {
+      // Add a small delay to ensure Firebase data is fully written to localStorage
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      displayScoreGraph();
+      displayZenModeGraph();
+      await statsCard.refresh();
+      chartRefreshTimeout = null;
+      isRefreshing = false; // Allow future refreshes
+    }, 100);
+  };
 
 document.addEventListener("DOMContentLoaded", () => {
   // Small delay to ensure Firebase is initialized
