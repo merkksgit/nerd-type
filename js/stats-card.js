@@ -15,7 +15,7 @@ class StatsCard {
   setupAuthStateListener() {
     // Listen for auth state changes to automatically refresh stats
     if (window.addEventListener) {
-      window.addEventListener('authStateChanged', async (event) => {
+      window.addEventListener("authStateChanged", async (event) => {
         await this.forceRefresh();
       });
     }
@@ -25,30 +25,39 @@ class StatsCard {
     // Clear any existing data first to prevent stale data from showing
     this.results = [];
     this.totalGameCount = 0;
-    
+
     // Check if user is logged in and can sync from Firebase
     if (this.isUserLoggedIn() && this.canAccessFirebase()) {
       try {
         const firebaseData = await this.loadFromFirebase();
-        if (firebaseData && firebaseData.scores && firebaseData.scores.length > 0) {
+        if (
+          firebaseData &&
+          firebaseData.scores &&
+          firebaseData.scores.length > 0
+        ) {
           this.results = firebaseData.scores;
-          this.totalGameCount = firebaseData.totalCount || firebaseData.scores.length;
+          this.totalGameCount =
+            firebaseData.totalCount || firebaseData.scores.length;
           return;
         }
       } catch (error) {
-        console.warn("Failed to load stats from Firebase, falling back to localStorage:", error);
+        console.warn(
+          "Failed to load stats from Firebase, falling back to localStorage:",
+          error,
+        );
       }
     }
 
     // Fallback to localStorage (for guests or if Firebase fails)
     this.results = storageManager.getGameResults() || [];
-    
+
     // For guest users, always use the actual results length, not the cached totalGameCount
     // which might contain stale Firebase data
     if (!this.isUserLoggedIn()) {
       this.totalGameCount = this.results.length;
     } else {
-      this.totalGameCount = storageManager.getTotalGameCount() || this.results.length;
+      this.totalGameCount =
+        storageManager.getTotalGameCount() || this.results.length;
     }
   }
 
@@ -57,7 +66,11 @@ class StatsCard {
   }
 
   canAccessFirebase() {
-    return window.firebaseModules && window.database && window.loadScoreboardFromFirebasePaginated;
+    return (
+      window.firebaseModules &&
+      window.database &&
+      window.loadScoreboardFromFirebasePaginated
+    );
   }
 
   async loadFromFirebase() {
@@ -74,7 +87,7 @@ class StatsCard {
     const { ref, get } = window.firebaseModules;
     const userScoreboardRef = ref(
       window.database,
-      `users/${currentUser.uid}/scoreboard`
+      `users/${currentUser.uid}/scoreboard`,
     );
 
     const snapshot = await get(userScoreboardRef);
@@ -83,11 +96,13 @@ class StatsCard {
     }
 
     const firebaseData = snapshot.val();
-    const scores = Object.values(firebaseData).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-    
+    const scores = Object.values(firebaseData).sort(
+      (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
+    );
+
     return {
       scores: scores,
-      totalCount: scores.length
+      totalCount: scores.length,
     };
   }
 
@@ -103,7 +118,7 @@ class StatsCard {
       favoriteLanguage: this.calculateFavoriteLanguage(),
       highestScore: this.calculateHighestScore(),
       bestWpm: this.calculateBestWpm(),
-      bestAccuracy: this.calculateBestAccuracy(),
+      averageAccuracy: this.calculateAverageAccuracy(),
       averageWpm: this.calculateAverageWpm(),
     };
 
@@ -269,7 +284,7 @@ class StatsCard {
   calculateHighestScore() {
     const classicModes = [
       "Classic Mode",
-      "Hard Mode", 
+      "Hard Mode",
       "Practice Mode",
       "Speedrunner Mode",
       "Custom Mode",
@@ -325,12 +340,30 @@ class StatsCard {
     return totalWpm / this.results.length;
   }
 
+  calculateAverageAccuracy() {
+    if (this.results.length === 0) return 0;
+
+    const totalAccuracy = this.results.reduce((sum, result) => {
+      let accuracy = 0;
+      if (result.accuracy !== undefined && result.accuracy !== null) {
+        if (typeof result.accuracy === "string") {
+          accuracy = parseFloat(result.accuracy.replace("%", "")) || 0;
+        } else {
+          accuracy = parseFloat(result.accuracy) || 0;
+        }
+      }
+      return sum + accuracy;
+    }, 0);
+
+    return totalAccuracy / this.results.length;
+  }
+
   displayStats(stats) {
     // Force clear and update each element to ensure old cached values are overwritten
     const totalGamesEl = document.getElementById("totalGames");
     totalGamesEl.textContent = "";
     totalGamesEl.textContent = stats.totalGames.toString();
-    
+
     document.getElementById("gamesThisWeek").textContent = stats.gamesThisWeek;
     document.getElementById("currentStreak").textContent = stats.currentStreak;
     document.getElementById("totalTimePlayed").textContent =
@@ -344,16 +377,16 @@ class StatsCard {
       stats.favoriteLanguage;
 
     // New stats with formatting
-    document.getElementById("highestScore").textContent = 
+    document.getElementById("highestScore").textContent =
       stats.highestScore > 0 ? stats.highestScore : "-";
-    
-    document.getElementById("bestWpm").textContent = 
+
+    document.getElementById("bestWpm").textContent =
       stats.bestWpm > 0 ? Math.round(stats.bestWpm) : "-";
-    
-    document.getElementById("bestAccuracy").textContent = 
-      stats.bestAccuracy > 0 ? `${stats.bestAccuracy.toFixed(1)}%` : "-";
-    
-    document.getElementById("averageWpm").textContent = 
+
+    document.getElementById("averageAccuracy").textContent =
+      stats.averageAccuracy > 0 ? `${stats.averageAccuracy.toFixed(1)}%` : "-";
+
+    document.getElementById("averageWpm").textContent =
       stats.averageWpm > 0 ? Math.round(stats.averageWpm) : "-";
   }
 
@@ -372,3 +405,4 @@ class StatsCard {
 const statsCard = new StatsCard();
 
 export default statsCard;
+
