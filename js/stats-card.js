@@ -9,6 +9,7 @@ class StatsCard {
   async init() {
     await this.loadData();
     this.calculateAndDisplayStats();
+    this.loadAndDisplayUsername();
     this.setupAuthStateListener();
   }
 
@@ -358,6 +359,14 @@ class StatsCard {
     return totalAccuracy / this.results.length;
   }
 
+  loadAndDisplayUsername() {
+    const savedUsername = localStorage.getItem("nerdtype_username") || "runner";
+    const usernameElement = document.getElementById("statsUsername");
+    if (usernameElement) {
+      usernameElement.textContent = savedUsername;
+    }
+  }
+
   displayStats(stats) {
     // Force clear and update each element to ensure old cached values are overwritten
     const totalGamesEl = document.getElementById("totalGames");
@@ -405,4 +414,3 @@ class StatsCard {
 const statsCard = new StatsCard();
 
 export default statsCard;
-
