@@ -27,15 +27,6 @@ const availableWordLists = {
   },
 };
 
-const wordListIcons = {
-  english: "🇬🇧 ",
-  finnish: "🇫🇮 ",
-  swedish: "🇸🇪 ",
-  programming: "🖥️ ",
-  nightmare: "💀 ",
-  alice: "🐰 ",
-};
-
 // Default language (you can set this based on the current page)
 let currentLanguage = localStorage.getItem("nerdtype_wordlist") || "english";
 
@@ -57,4 +48,4 @@ async function loadWordList(language) {
 }
 
 // Export functions and variables
-export { loadWordList, wordListIcons, availableWordLists, currentLanguage };
+export { loadWordList, availableWordLists, currentLanguage };
