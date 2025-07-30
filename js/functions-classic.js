@@ -982,9 +982,14 @@ function startGame() {
   // Reset gradient flow classes
   const progressBar = document.getElementById("progressBar");
   if (progressBar) {
-    progressBar.classList.remove("flow-excellent", "flow-good", "flow-average", "flow-poor");
+    progressBar.classList.remove(
+      "flow-excellent",
+      "flow-good",
+      "flow-average",
+      "flow-poor",
+    );
   }
-  
+
   keypressAudioPool.forEach((audio) => {
     audio.load(); // Force immediate loading
     // Attempt a silent play to prime the audio
@@ -1685,7 +1690,12 @@ function updateGradientFlow(progressBar) {
   const currentWPM = stats.wpm;
 
   // Remove existing flow classes
-  progressBar.classList.remove("flow-excellent", "flow-good", "flow-average", "flow-poor");
+  progressBar.classList.remove(
+    "flow-excellent",
+    "flow-good",
+    "flow-average",
+    "flow-poor",
+  );
 
   // Determine performance level based on WPM only
   if (currentWPM >= 60) {
@@ -1909,7 +1919,7 @@ function updateProgressBar() {
   const now = Date.now();
   if (now - lastProgressUpdate < 16) return;
   lastProgressUpdate = now;
-  
+
   const progressBar = document.getElementById("progressBar");
   const progressText = document.getElementById("progressPercentage");
 
@@ -1941,41 +1951,51 @@ function updateProgressBar() {
   if (isZenMode) {
     // In Zen mode, progress is based on words typed + partial progress of current word
     let baseProgress = wordsTyped.length;
-    
+
     // Add fractional progress for the current word being typed
     const currentWord = words[currentWordIndex];
     const userInput = document.getElementById("userInput");
     if (currentWord && userInput && userInput.value.length > 0) {
-      const currentProgress = Math.min(userInput.value.length / currentWord.length, 1);
+      const currentProgress = Math.min(
+        userInput.value.length / currentWord.length,
+        1,
+      );
       baseProgress += currentProgress * 0.8; // Add up to 80% of a word's progress while typing
     }
-    
+
     progressPercentage = (baseProgress / zenWordGoal) * 100;
   } else {
-    // In Classic mode, progress is based on percentage of goal with current word progress
+    // In Classic mode, progress is based on words completed + partial progress of current word
     const settings =
       JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
-    const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
-    
-    let baseProgress = totalTimeSpent;
-    
-    // Add small incremental progress for current typing activity
+    const wordsGoal = parseInt(settings.timeLimit || "30");
+
+    let baseProgress = wordsTyped.length;
+
+    // Add fractional progress for the current word being typed
     const currentWord = words[currentWordIndex];
     const userInput = document.getElementById("userInput");
-    if (currentWord && userInput && userInput.value.length > 0 && hasStartedTyping) {
-      const typingProgress = Math.min(userInput.value.length / currentWord.length, 1);
-      // Add a small fraction of progress (equivalent to ~0.2 seconds of time)
-      baseProgress += (0.2 * typingProgress);
+    if (
+      currentWord &&
+      userInput &&
+      userInput.value.length > 0 &&
+      hasStartedTyping
+    ) {
+      const typingProgress = Math.min(
+        userInput.value.length / currentWord.length,
+        1,
+      );
+      baseProgress += typingProgress * 0.8; // Add up to 80% of a word's progress while typing
     }
-    
-    progressPercentage = (baseProgress / goalTime) * 100;
+
+    progressPercentage = (baseProgress / wordsGoal) * 100;
   }
 
   if (progressBar) {
     progressBar.style.width = `${progressPercentage}%`;
     progressBar.setAttribute("aria-valuenow", progressPercentage);
     progressBar.style.backgroundColor = "#1f2335";
-    
+
     // Update gradient flow animation based on performance
     updateGradientFlow(progressBar);
   }
@@ -2389,7 +2409,7 @@ function checkInput(e) {
 
   // Update progress bar as user types for smooth movement
   updateProgressBar();
-  
+
   // Start game on first input
   if (e.target.value.length > 0 && !hasStartedTyping) {
     startGameOnFirstInput();
@@ -2720,10 +2740,10 @@ function hidePrecisionMultiplier() {
     if (multiplierElement.classList.contains("fade-out")) {
       return;
     }
-    
+
     // Add fade-out animation
     multiplierElement.classList.add("fade-out");
-    
+
     // Remove other animation classes that might interfere
     multiplierElement.classList.remove("appear", "increment");
 
