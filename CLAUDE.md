@@ -18,21 +18,24 @@ This is a static web application with the following architecture:
 ## Key Architecture Components
 
 ### Core Game System
+
 - **Game Logic**: Main game mechanics handled across multiple files:
   - `pages/game.html` - Main game interface
   - Game state management through localStorage
   - Real-time energy/timer system with countdown mechanics
 
-### Game Commands (`js/game-commands.js`)  
+### Game Commands (`js/game-commands.js`)
+
 - In-game slash commands (e.g., `/setwords`, `/mode`, `/help`)
 - Allows players to modify settings without opening menus
 - Automatic game reload after certain configuration changes
 - Command validation and error handling
 
 ### Achievement System (`js/achievements.js`)
+
 - Comprehensive achievement tracking with categories:
   - Score-based achievements
-  - Speed/WPM achievements  
+  - Speed/WPM achievements
   - Gameplay style achievements
   - Daily play frequency achievements
   - Language-specific achievements
@@ -42,11 +45,13 @@ This is a static web application with the following architecture:
 - Achievement rendering for achievements page
 
 ### Word List Management
+
 - Multiple language support: English, Finnish, Swedish, Programming terms, "Nightmare" mode
 - Dynamic word list loading
 - Language-specific WPM tracking for achievements
 
 ### Settings System
+
 - Game modes: Classic, Hard, Practice, Speedrunner, Zen, Custom
 - Persistent settings storage in localStorage
 - Real-time settings updates through custom events
@@ -57,38 +62,46 @@ This is a static web application with the following architecture:
 This project has no build system or package.json - it runs directly in browsers:
 
 **Local Development:**
+
 - Use any local web server (e.g., `python -m http.server`, Live Server extension)
 - All files can be edited directly
 - Changes are immediately visible on refresh
 
 **Testing:**
+
 - Manual testing in browser
 - No automated test framework currently implemented
 
 **Deployment:**
+
 - Static hosting via GitHub Pages
 - All files are deployed as-is to production
 
 ## Important Implementation Details
 
 ### Data Persistence
+
 - All user data stored in browser localStorage
 - No backend database - fully client-side application
 - Achievement data, game results, and settings persist across sessions
 - Data collection toggle for global leaderboards (optional)
 
 ### Global Leaderboard System
+
 - Optional data sharing to external Firebase service
 - User can disable data collection entirely
 - Seasonal competitive system with leaderboard resets
 
 ### Game Modes
+
 - **Classic/Hard/Practice/Speedrunner**: Traditional energy-based typing with different parameters
 - **Zen Mode**: No energy limit, word goal-based completion
 - **Custom Mode**: User-defined parameters
 
 ### Slash Commands (In-Game)
+
 Available during gameplay with `/` prefix:
+
 - `/setwords <n>` - Set word goal
 - `/mode <type>` - Change mode
 - `/zen` - Toggle Zen mode
@@ -108,6 +121,7 @@ Available during gameplay with `/` prefix:
 - Consistent color scheme using CSS custom properties
 
 ### Code Formatting
+
 - Use Prettier default formatting for all code (JavaScript, CSS, HTML, JSON)
 - 2-space indentation
 - Semicolons in JavaScript
@@ -116,6 +130,7 @@ Available during gameplay with `/` prefix:
 - Line length limit of 80 characters
 
 ### Commenting Guidelines
+
 - Write professional comments that explain what the code does, not that it's a fix or improvement
 - Avoid references to previous versions, fixes, or changes (no "fix:", "better version", etc.)
 - Use JSDoc comments for functions and classes
@@ -143,3 +158,4 @@ Available during gameplay with `/` prefix:
 - **Accessibility**: Keyboard navigation support
 - **Internationalization**: Multi-language word lists and UI elements
 - **Analytics**: Google Analytics integration for usage tracking
+
