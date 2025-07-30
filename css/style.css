@@ -2718,7 +2718,7 @@ tr:hover .username-rank-icon {
 
   /* Keep the desktop animation and styling intact for mobile */
   .progress.terminal .progress-bar::before {
-    animation: moveSegments 1s linear infinite;
+    animation: gradientFlow 3s ease-in-out infinite;
   }
 
   #buttons {
@@ -2778,6 +2778,8 @@ tr:hover .username-rank-icon {
 .keyboard-open .progress.terminal {
   margin: 0.5rem auto;
   height: 8px !important;
+  width: 85% !important;
+  max-width: 400px !important;
 }
 
 .keyboard-open #gameIndicator,
@@ -2828,8 +2830,21 @@ tr:hover .username-rank-icon {
   .progress {
     height: 6px !important;
     margin: 0.2rem auto;
-    background-color: transparent !important;
+  }
+
+  .progress.terminal {
+    background: transparent !important;
     border: none !important;
+    width: 85% !important;
+    max-width: 400px !important;
+  }
+
+  .progress.terminal .progress-bar {
+    transition: width 0.3s ease-out !important;
+  }
+
+  .progress.terminal .progress-bar::before {
+    animation: gradientFlow 3s ease-in-out infinite !important;
   }
 
   #buttons {
