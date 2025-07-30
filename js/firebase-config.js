@@ -1271,6 +1271,8 @@ window.syncSettingsToFirebase = async function () {
         localStorage.getItem("achievement_sound_enabled") === "true",
       keypressSoundEnabled:
         localStorage.getItem("keypress_sound_enabled") === "true",
+      hidePrecisionMultiplierUI:
+        localStorage.getItem("hide_precision_multiplier_ui") === "true",
 
       // Metadata
       syncedAt: new Date().toISOString(),
@@ -1393,6 +1395,13 @@ window.applyCloudSettingsToLocal = function (cloudSettings) {
       localStorage.setItem(
         "keypress_sound_enabled",
         cloudSettings.keypressSoundEnabled.toString(),
+      );
+    }
+
+    if (typeof cloudSettings.hidePrecisionMultiplierUI === "boolean") {
+      localStorage.setItem(
+        "hide_precision_multiplier_ui",
+        cloudSettings.hidePrecisionMultiplierUI.toString(),
       );
     }
 
