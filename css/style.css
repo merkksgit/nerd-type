@@ -581,7 +581,7 @@ input#userInput {
 }
 
 body[data-ui-hidden="true"] #game.inactive::after {
-  top: 51.8%;
+  top: 50.5%;
 }
 
 /* Mobile-specific instruction text */
@@ -791,14 +791,12 @@ div#wordToType {
 }
 
 .progress.terminal {
-  background: #1f2335;
-  border: 1px solid #1f2335;
-  padding: 3px;
+  background: transparent;
+  border: none;
+  padding: 0;
   position: relative;
-  height: 25px;
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.25),
-    0 0 6px rgba(122, 162, 247, 0.35);
+  height: 12px;
+  box-shadow: none;
   transition: all 0.3s ease;
   width: 80%;
   max-width: 400px;
@@ -808,6 +806,7 @@ div#wordToType {
   background: none;
   position: relative;
   height: 100%;
+  transition: width 0.3s ease-out;
 }
 
 .progress.terminal .progress-bar::before {
@@ -817,20 +816,71 @@ div#wordToType {
   left: 0;
   height: 100%;
   width: 100%;
-  background-image: repeating-linear-gradient(
-    90deg,
+  background: linear-gradient(
+    45deg,
     #7aa2f7 0%,
-    #7aa2f7 50%,
-    transparent 50%,
-    transparent 100%
+    #bb9af7 25%,
+    #7dcfff 50%,
+    #7aa2f7 75%,
+    #bb9af7 100%
   );
-  background-size: 20px 100%;
-  animation: moveSegments 1s linear infinite;
+  background-size: 200% 200%;
+  animation: gradientFlow 3s ease-in-out infinite;
+  border-radius: 6px;
 }
 
-.progress.terminal.flash {
-  animation: correctFlash 0.4s ease-out;
+.progress.terminal .progress-bar.flow-excellent::before {
+  background: linear-gradient(
+    45deg,
+    #9ece6a 0%,
+    #7dcfff 25%,
+    #bb9af7 50%,
+    #9ece6a 75%,
+    #7dcfff 100%
+  );
+  background-size: 300% 300%;
+  animation: gradientFlowFast 2s linear infinite;
 }
+
+.progress.terminal .progress-bar.flow-good::before {
+  background: linear-gradient(
+    45deg,
+    #7aa2f7 0%,
+    #7dcfff 25%,
+    #bb9af7 50%,
+    #7aa2f7 75%,
+    #7dcfff 100%
+  );
+  background-size: 250% 250%;
+  animation: gradientFlow 2.5s ease-in-out infinite;
+}
+
+.progress.terminal .progress-bar.flow-average::before {
+  background: linear-gradient(
+    45deg,
+    #ff9e64 0%,
+    #7aa2f7 25%,
+    #f7768e 50%,
+    #ff9e64 75%,
+    #7aa2f7 100%
+  );
+  background-size: 200% 200%;
+  animation: gradientFlowSlow 4s ease-in-out infinite;
+}
+
+.progress.terminal .progress-bar.flow-poor::before {
+  background: linear-gradient(
+    45deg,
+    #f7768e 0%,
+    #ff9e64 25%,
+    #c53b53 50%,
+    #f7768e 75%,
+    #ff9e64 100%
+  );
+  background-size: 150% 150%;
+  animation: gradientFlowSlow 5s ease-in-out infinite;
+}
+
 .word.error-blink {
   animation: errorBlink 0.3s ease-in-out;
 }
@@ -841,9 +891,12 @@ div#wordToType {
   font-size: 1.2rem;
   font-weight: bold;
   text-shadow: 0 0 8px rgba(122, 162, 247, 0.5);
-  min-width: 3rem;
+  width: 3rem;
   text-align: center;
   transition: all 0.3s ease;
+  flex-shrink: 0;
+  flex-grow: 0;
+  position: relative;
 }
 
 @keyframes precisionAppear {
@@ -2447,23 +2500,39 @@ tr:hover .username-rank-icon {
   }
 }
 
-@keyframes correctFlash {
+@keyframes gradientFlow {
   0% {
-    box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.25),
-      0 0 6px rgba(122, 162, 247, 0.35);
+    background-position: 0% 50%;
   }
   50% {
-    box-shadow:
-      0 4px 10px rgba(0, 0, 0, 0.3),
-      0 0 15px rgba(122, 162, 247, 0.7);
+    background-position: 100% 50%;
   }
   100% {
-    box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.25),
-      0 0 6px rgba(122, 162, 247, 0.35);
+    background-position: 0% 50%;
   }
 }
+
+@keyframes gradientFlowFast {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes gradientFlowSlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @keyframes errorBlink {
   0%,
   100% {
@@ -2642,7 +2711,7 @@ tr:hover .username-rank-icon {
 
   .progress.terminal {
     margin: 1rem auto;
-    height: 22px !important;
+    height: 10px !important;
     width: 85%;
     max-width: 450px;
   }
@@ -2708,7 +2777,7 @@ tr:hover .username-rank-icon {
 
 .keyboard-open .progress.terminal {
   margin: 0.5rem auto;
-  height: 18px !important;
+  height: 8px !important;
 }
 
 .keyboard-open #gameIndicator,
@@ -2757,14 +2826,10 @@ tr:hover .username-rank-icon {
   }
 
   .progress {
-    height: 10px !important;
+    height: 6px !important;
     margin: 0.2rem auto;
-    background-color: #1f2335 !important;
-    border: 1px solid #3b4261 !important;
-  }
-
-  .progress .progress-bar {
-    background-color: #7aa2f7 !important;
+    background-color: transparent !important;
+    border: none !important;
   }
 
   #buttons {

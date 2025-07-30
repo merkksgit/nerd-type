@@ -518,18 +518,21 @@
                     align-items: center;
                     justify-content: center;
                     gap: 0.5rem;
+                    width: 100%;
                   "
                 >
-                  <div class="progress terminal">
-                    <div
-                      id="progressBar"
-                      class="progress-bar"
-                      role="progressbar"
-                      style="width: 0%"
-                      aria-valuenow="0"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    ></div>
+                  <div style="flex: 1; display: flex; justify-content: center;">
+                    <div class="progress terminal">
+                      <div
+                        id="progressBar"
+                        class="progress-bar"
+                        role="progressbar"
+                        style="width: 0%"
+                        aria-valuenow="0"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                      ></div>
+                    </div>
                   </div>
                   <span
                     id="precisionMultiplier"
