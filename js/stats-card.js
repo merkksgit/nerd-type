@@ -392,7 +392,7 @@ class StatsCard {
             month: "long",
             day: "numeric",
           });
-          nerdtypistSinceElement.textContent = `nerd since ${formattedDate}`;
+          nerdtypistSinceElement.textContent = `nerdtypist since ${formattedDate}`;
         } else {
           nerdtypistSinceElement.textContent = "";
         }
