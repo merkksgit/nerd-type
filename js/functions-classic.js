@@ -23,6 +23,19 @@ let playerUsername = storageManager.getUsername();
 let isUsernameModalOpen = false;
 let isZenMode = storageManager.isZenModeEnabled();
 
+/**
+ * Fisher-Yates shuffle algorithm for truly random array shuffling
+ * @param {Array} array - Array to shuffle (modified in place)
+ * @returns {Array} - The shuffled array
+ */
+function fisherYatesShuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 // Variables shared between both modes
 let currentWordIndex = 0;
 let nextWordIndex = 0;
@@ -537,7 +550,7 @@ function setupUI() {
 
   // Shuffle the words array for variety (unless it's a sequential word list)
   if (!availableWordLists[currentLanguage]?.sequential) {
-    words = words.sort(() => Math.random() - 0.5);
+    fisherYatesShuffle(words);
   }
 
   // Show words immediately on page load
@@ -1026,7 +1039,7 @@ function startGame() {
 
   // Shuffle the words array at game start for variety (unless it's a sequential word list)
   if (!availableWordLists[currentLanguage]?.sequential) {
-    words = words.sort(() => Math.random() - 0.5);
+    fisherYatesShuffle(words);
   }
 
   // Clear punctuation cache for fresh capitalization logic
@@ -2329,7 +2342,7 @@ function moveToNextWord() {
 
     if (!availableWordLists[currentLanguage]?.sequential) {
       // Only shuffle if not a sequential word list
-      words = words.sort(() => Math.random() - 0.5);
+      fisherYatesShuffle(words);
     }
   }
 }
@@ -3137,7 +3150,7 @@ function startPracticeMistakesMode() {
   }
 
   // Shuffle the practice words for variety
-  words = words.sort(() => Math.random() - 0.5);
+  fisherYatesShuffle(words);
 
   // Update game mode display
   const gameModeElement = document.getElementById("currentGameMode");
