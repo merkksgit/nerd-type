@@ -1933,7 +1933,8 @@ function updateProgressBar() {
     }
     const precisionMultiplier = document.getElementById("precisionMultiplier");
     if (precisionMultiplier) {
-      precisionMultiplier.style.display = "none";
+      precisionMultiplier.style.visibility = "hidden";
+      precisionMultiplier.classList.remove("visible", "appear", "increment");
     }
     return;
   }
@@ -2723,12 +2724,13 @@ function showPrecisionMultiplier() {
 
   if (multiplierElement) {
     multiplierElement.textContent = `${precisionStreak}x`;
-    multiplierElement.style.display = "inline-block";
+    multiplierElement.style.visibility = "visible";
 
     // Add appear animation for first show
     multiplierElement.classList.add("appear");
     setTimeout(() => {
       multiplierElement.classList.remove("appear");
+      multiplierElement.classList.add("visible");
     }, 400);
   }
 }
@@ -2745,11 +2747,11 @@ function hidePrecisionMultiplier() {
     multiplierElement.classList.add("fade-out");
 
     // Remove other animation classes that might interfere
-    multiplierElement.classList.remove("appear", "increment");
+    multiplierElement.classList.remove("appear", "increment", "visible");
 
     // Hide after animation completes
     setTimeout(() => {
-      multiplierElement.style.display = "none";
+      multiplierElement.style.visibility = "hidden";
       multiplierElement.classList.remove("fade-out");
     }, 300);
   }

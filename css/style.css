@@ -581,7 +581,7 @@ input#userInput {
 }
 
 body[data-ui-hidden="true"] #game.inactive::after {
-  top: 50.5%;
+  top: 49%;
 }
 
 /* Mobile-specific instruction text */
@@ -897,6 +897,7 @@ div#wordToType {
   flex-shrink: 0;
   flex-grow: 0;
   position: relative;
+  opacity: 0;
 }
 
 @keyframes precisionAppear {
@@ -938,15 +939,22 @@ div#wordToType {
 }
 
 .precision-multiplier-simple.appear {
+  visibility: visible;
   animation: precisionAppear 0.4s ease-out;
 }
 
 .precision-multiplier-simple.increment {
+  visibility: visible;
   animation: precisionIncrement 0.4s ease-out;
 }
 
 .precision-multiplier-simple.fade-out {
   animation: precisionFadeOut 0.3s ease-in forwards;
+}
+
+.precision-multiplier-simple.visible {
+  visibility: visible;
+  opacity: 1;
 }
 
 /* Game Buttons Layout */
