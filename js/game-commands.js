@@ -44,6 +44,11 @@ class GameCommands {
         bonusTime: 2,
         initialTime: 8,
       },
+      hardcore: {
+        timeLimit: 30,
+        bonusTime: 2,
+        initialTime: 4,
+      },
     };
 
     // Available commands
@@ -704,11 +709,16 @@ class GameCommands {
   }
 
   setMode(args) {
-    const mode = args[0];
+    let mode = args[0];
+
+    // Handle hardcore mode alias
+    if (mode === "hc") {
+      mode = "hardcore";
+    }
 
     if (!this.gameModes[mode]) {
       this.showNotification(
-        "Error: Invalid mode. Available modes: classic, hard, practice, speedrunner",
+        "Error: Invalid mode. Available modes: classic, hard, practice, speedrunner, hardcore (or hc)",
         "error",
       );
       return;
@@ -792,7 +802,7 @@ class GameCommands {
 <span style='color:#bb9af7'>/setbonus</span>       - Set bonus energy per word
 <span style='color:#bb9af7'>/setinitial</span>     - Set starting energy
 <span style='color:#bb9af7'>/mode</span>           - Set game mode
-                  <span style='color:#ff9e64'>[classic, hard, practice, speedrunner]</span>
+                  <span style='color:#ff9e64'>[classic, hard, practice, speedrunner, hardcore, hc]</span>
 <span style='color:#bb9af7'>/zen</span>            - Toggle Zen Mode on/off
 <span style='color:#bb9af7'>/lang</span>           - Switch language
                   <span style='color:#ff9e64'>[finnish, english, swedish, programming, nightmare]</span>
