@@ -453,6 +453,18 @@ async function initializeGame() {
     // Load saved settings with error handling
     const settings = storageManager.getGameSettings();
 
+    // Debug: Check what's actually in localStorage
+    console.log("Loading game settings on page load:");
+    console.log(
+      "Raw localStorage gameSettings:",
+      localStorage.getItem("gameSettings"),
+    );
+    console.log("storageManager.getGameSettings():", settings);
+    console.log(
+      "nerdtype_zen_mode:",
+      localStorage.getItem("nerdtype_zen_mode"),
+    );
+
     // Update the global gameSettings variable
     gameSettings = settings;
 
@@ -2211,7 +2223,22 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
       currentWordHasMistakes = true;
 
       const isHardcoreMode =
-        gameSettings.currentMode === "hardcore" && !isPracticeMistakesMode;
+        gameSettings.currentMode === "hardcore" &&
+        !isPracticeMistakesMode &&
+        !isZenMode;
+
+      // Debug logging to track the issue
+      console.log(
+        "Mistake detected - gameSettings.currentMode:",
+        gameSettings.currentMode,
+        "isZenMode:",
+        isZenMode,
+        "isPracticeMistakesMode:",
+        isPracticeMistakesMode,
+        "isHardcoreMode:",
+        isHardcoreMode,
+      );
+
       if (isHardcoreMode && !gameEnded) {
         gameEnded = true;
         syncGameStateToWindow();

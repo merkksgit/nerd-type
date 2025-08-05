@@ -777,6 +777,31 @@ class GameCommands {
     // Update localStorage
     localStorage.setItem("nerdtype_zen_mode", enableZen.toString());
 
+    // When enabling zen mode, reset currentMode to classic to avoid hardcore mode behavior
+    if (enableZen) {
+      console.log("Setting zen mode - before:", this.gameSettings.currentMode);
+      this.gameSettings.currentMode = "classic";
+
+      // Force synchronous localStorage update
+      localStorage.setItem("gameSettings", JSON.stringify(this.gameSettings));
+
+      // Verify the update was saved
+      const savedSettings = JSON.parse(localStorage.getItem("gameSettings"));
+      console.log(
+        "Setting zen mode - after:",
+        this.gameSettings.currentMode,
+        "localStorage saved as:",
+        savedSettings.currentMode,
+      );
+
+      // Dispatch event to update the current mode
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "currentMode", value: "classic" },
+        }),
+      );
+    }
+
     // Dispatch event to update UI
     window.dispatchEvent(
       new CustomEvent("gameSettingsChanged", {
