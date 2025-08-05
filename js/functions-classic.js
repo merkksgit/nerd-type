@@ -343,6 +343,11 @@ const presetModes = {
     bonusTime: 5,
     initialTime: 15,
   },
+  hardcore: {
+    timeLimit: 30,
+    bonusTime: 2,
+    initialTime: 4,
+  },
   speedrunner: {
     timeLimit: 10,
     bonusTime: 2,
@@ -2204,6 +2209,34 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
         gameMistakes.totalMistakes++;
       }
       currentWordHasMistakes = true;
+
+      const isHardcoreMode =
+        gameSettings.currentMode === "hardcore" && !isPracticeMistakesMode;
+      if (isHardcoreMode && !gameEnded) {
+        gameEnded = true;
+        syncGameStateToWindow();
+        if (!isZenMode) {
+          clearInterval(countDownInterval);
+        }
+        clearInterval(totalTimeInterval);
+
+        const hardcoreGameData = {
+          mode: "Hardcore Mode",
+          wordsTyped: wordsTyped.length,
+          wordGoal: gameSettings.timeLimit,
+          success: false,
+          username: getDisplayUsername(),
+          wpm: 0,
+          accuracy: "0%",
+          wordList: currentLanguage,
+        };
+
+        achievementSystem.updateHardcoreProgress(hardcoreGameData);
+
+        showGameOverModal("", false);
+        return false;
+      }
+
       if (!isZenMode) {
         precisionStreak = 0;
         hidePrecisionMultiplier();
@@ -2736,7 +2769,18 @@ function showPrecisionMultiplier() {
   const multiplierElement = document.getElementById("precisionMultiplier");
 
   if (multiplierElement) {
-    multiplierElement.textContent = `${precisionStreak}x`;
+    const isHardcoreMode = gameSettings.currentMode === "hardcore";
+    if (isHardcoreMode) {
+      try {
+        const bestHardcoreProgress =
+          achievementSystem.getBestHardcoreProgress();
+        multiplierElement.textContent = `Best: ${bestHardcoreProgress}`;
+      } catch (error) {
+        multiplierElement.textContent = `Best: ${peakPrecisionStreak}`;
+      }
+    } else {
+      multiplierElement.textContent = `${precisionStreak}x`;
+    }
     multiplierElement.style.visibility = "visible";
 
     // Add appear animation for first show
@@ -2929,8 +2973,21 @@ function displayModernGameOverContent(data) {
   const isDefeat = data.mode !== "zen" && !data.isSuccess;
   const defeatClass = isDefeat ? "defeat" : "";
 
+  // Add status message if it exists and is not a success
+  let statusSection = "";
+  if (data.status && !data.isSuccess) {
+    statusSection = `
+      <div class="status-message-section" style="text-align: center; margin-bottom: 20px;">
+        <div class="status-message" style="color: #ff007c; font-weight: bold; font-size: 1.1em; line-height: 1.4; white-space: pre-line;">
+          ${data.status}
+        </div>
+      </div>
+    `;
+  }
+
   // Create modern card layout
   let content = `
+    ${statusSection}
     <div class="game-stats-container ${defeatClass}">
       <div class="stat-card">
         <div class="stat-label">WPM</div>
@@ -3021,21 +3078,38 @@ function displayModernGameOverContent(data) {
         </div>
       `;
     } else {
-      // Classic mode - show all settings
-      content += `
-        <div class="game-settings-info">
-          <div class="settings-row">
-            <span>Mode: ${data.gameSettings.mode}</span>
-            <span>Words Goal: ${data.gameSettings.wordGoal}</span>
-            <span>Energy Bonus: ${data.gameSettings.bonusEnergy}</span>
+      // Show different settings based on mode
+      if (data.gameSettings.mode === "Hardcore") {
+        // Hardcore mode - show minimal settings
+        content += `
+          <div class="game-settings-info">
+            <div class="settings-row">
+              <span>Mode: ${data.gameSettings.mode}</span>
+              <span>Difficulty: ${data.gameSettings.difficultyMultiplier}</span>
+              <span>Precision Multiplier: ${data.gameSettings.precisionMultiplier}</span>
+            </div>
+            <div class="settings-row">
+              <span>Best Hardcore Progress: ${achievementSystem.getBestHardcoreProgress()}</span>
+            </div>
           </div>
-          <div class="settings-row">
-            <span>Initial Energy: ${data.gameSettings.initialEnergy}</span>
-            <span>Difficulty: ${data.gameSettings.difficultyMultiplier}</span>
-            <span>Precision Multiplier: ${data.gameSettings.precisionMultiplier}</span>
+        `;
+      } else {
+        // Other modes - show all settings
+        content += `
+          <div class="game-settings-info">
+            <div class="settings-row">
+              <span>Mode: ${data.gameSettings.mode}</span>
+              <span>Words Goal: ${data.gameSettings.wordGoal}</span>
+              <span>Energy Bonus: ${data.gameSettings.bonusEnergy}</span>
+            </div>
+            <div class="settings-row">
+              <span>Initial Energy: ${data.gameSettings.initialEnergy}</span>
+              <span>Difficulty: ${data.gameSettings.difficultyMultiplier}</span>
+              <span>Precision Multiplier: ${data.gameSettings.precisionMultiplier}</span>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
     }
   }
 
@@ -3303,6 +3377,9 @@ function saveClassicResult(
     totalTimeSpent: totalTimeSpent, // Keep original for compatibility
     gameDurationSeconds: gameDurationSeconds, // Real duration for achievements
     perSecondWpmData: perSecondWpmData,
+    wordsTyped: wordsTyped.length, // Track how many words were actually typed
+    wordGoal: gameSettings.timeLimit, // Track the word goal for achievements
+    success: true, // Game completed successfully
   };
 
   // Save locally

@@ -28,6 +28,7 @@ class AchievementSystem {
           nightmare: 0,
           alice: 0,
         },
+        bestHardcoreProgress: 0,
       },
       // Track pending notifications
       pendingNotifications: [],
@@ -400,6 +401,32 @@ class AchievementSystem {
           const minimalUIEnabled =
             storageManager.getItem("nerdtype_hide_ui", "false") === "true";
           return minimalUIEnabled;
+        },
+      },
+
+      flawless_victory: {
+        id: "flawless_victory",
+        name: "Flawless Victory",
+        description: "Survive Hardcore Mode",
+        icon: "fa-solid fa-skull",
+        category: "gameplay",
+        secret: false,
+        check: function (stats, gameData) {
+          // Check if this is a Hardcore Mode game
+          if (!gameData || gameData.mode !== "Hardcore Mode") {
+            return false;
+          }
+
+          // Check if the game was completed successfully (not ended due to mistake)
+          if (
+            !gameData.wordsTyped ||
+            gameData.wordsTyped < (gameData.wordGoal || gameData.timeLimit)
+          ) {
+            return false;
+          }
+
+          // Check if the game ended with success (no mistakes)
+          return gameData.success === true;
         },
       },
 
@@ -818,6 +845,14 @@ class AchievementSystem {
       }
     }
 
+    // Update best hardcore progress if this was a hardcore game
+    if (gameData && gameData.mode === "Hardcore Mode" && gameData.wordsTyped) {
+      const hardcoreProgress = gameData.wordsTyped;
+      if (hardcoreProgress > this.achievementsData.stats.bestHardcoreProgress) {
+        this.achievementsData.stats.bestHardcoreProgress = hardcoreProgress;
+      }
+    }
+
     // Save date of this game (already set earlier if it was a new day)
     this.achievementsData.stats.lastGameDate = today;
 
@@ -1081,6 +1116,22 @@ class AchievementSystem {
     return this.getAllAchievements().filter((a) => a.unlocked);
   }
 
+  // Get best hardcore progress
+  getBestHardcoreProgress() {
+    return this.achievementsData.stats.bestHardcoreProgress || 0;
+  }
+
+  // Update hardcore progress only (for failed hardcore games)
+  updateHardcoreProgress(gameData) {
+    if (gameData && gameData.mode === "Hardcore Mode" && gameData.wordsTyped) {
+      const hardcoreProgress = gameData.wordsTyped;
+      if (hardcoreProgress > this.achievementsData.stats.bestHardcoreProgress) {
+        this.achievementsData.stats.bestHardcoreProgress = hardcoreProgress;
+        this.saveData();
+      }
+    }
+  }
+
   // Reset all achievements (called when clearing scoreboard)
   resetAchievements() {
     this.achievementsData = {
@@ -1227,6 +1278,7 @@ class AchievementSystem {
         nightmare: 0,
         alice: 0,
       },
+      bestHardcoreProgress: 0,
     };
   }
 

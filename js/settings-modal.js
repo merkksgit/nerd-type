@@ -480,6 +480,11 @@ function loadPresetValues(mode) {
       bonusTime: 5,
       initialTime: 15,
     },
+    hardcore: {
+      timeLimit: 30,
+      bonusTime: 2,
+      initialTime: 4,
+    },
     speedrunner: {
       timeLimit: 10,
       bonusTime: 2,
