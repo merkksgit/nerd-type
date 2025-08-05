@@ -51,6 +51,7 @@ function displayScoreGraph() {
       result.mode === "Speedrunner Mode" ||
       result.mode === "Hard Mode" ||
       result.mode === "Practice Mode" ||
+      result.mode === "Hardcore Mode" ||
       !result.mode,
   );
 
