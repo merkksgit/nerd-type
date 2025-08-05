@@ -1758,10 +1758,7 @@ function countDown() {
   } else if (timeLeft <= 0) {
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
-    showGameOverModal(
-      "System breach <span style='color:#ff007c'>FAILED!</span>",
-      false,
-    );
+    showGameOverModal("", false);
   }
 }
 
