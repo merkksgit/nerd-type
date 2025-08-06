@@ -995,8 +995,6 @@ function displayZenModeGraph() {
               return Math.round(value);
             },
           },
-          min: times.length === 1 ? Math.max(0, times[0] - 5) : undefined,
-          max: times.length === 1 ? times[0] + 5 : undefined,
         },
         y1: {
           title: {
