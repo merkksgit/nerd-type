@@ -3188,7 +3188,17 @@ function displayModernGameOverContent(data) {
   // Handle Enter key to restart and Ctrl+M for practice mistakes
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      location.reload();
+      // Close the game over modal
+      const gameOverModal = bootstrap.Modal.getInstance(
+        document.getElementById("gameOverModal"),
+      );
+      if (gameOverModal) {
+        gameOverModal.hide();
+      }
+
+      // Restart the game with new words
+      startGame();
+      activateGame();
     } else if (e.ctrlKey && e.key.toLowerCase() === "m") {
       if (!isPracticeMistakesMode && gameMistakes.words.length > 0) {
         e.preventDefault();
