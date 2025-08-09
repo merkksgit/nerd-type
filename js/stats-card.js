@@ -210,6 +210,7 @@ class StatsCard {
     const classicModes = [
       "Classic Mode",
       "Hard Mode",
+      "Hardcore Mode",
       "Practice Mode",
       "Speedrunner Mode",
       "Custom Mode",
@@ -286,6 +287,7 @@ class StatsCard {
     const classicModes = [
       "Classic Mode",
       "Hard Mode",
+      "Hardcore Mode",
       "Practice Mode",
       "Speedrunner Mode",
       "Custom Mode",
