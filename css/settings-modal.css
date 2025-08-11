@@ -29,7 +29,7 @@
 }
 
 .ui-toggle-btn.collapsed i {
-  transform: rotate(180deg);
+  transform: rotate(540deg);
 }
 
 /* Adjust other button positions to make room for toggle */

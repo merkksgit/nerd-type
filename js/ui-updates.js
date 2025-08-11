@@ -460,7 +460,7 @@ class UIToggle {
       body.classList.add("floating-buttons-hidden");
       this.toggleBtn?.classList.add("collapsed");
       if (toggleIcon) {
-        toggleIcon.className = "fa-solid fa-chevron-right";
+        toggleIcon.className = "fa-solid fa-chevron-left";
       }
     } else {
       body.classList.remove("floating-buttons-hidden");
