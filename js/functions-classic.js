@@ -112,8 +112,8 @@ function applyFont(fontFamily) {
   document.documentElement.style.setProperty("--game-font", fontFamily);
 
   const gameElements = document.querySelectorAll(`
-    #userInput, 
-    #nextWord, 
+    #userInput,
+    #nextWord,
     #wordToType,
     #wordToType span,
     #currentGameMode,
@@ -1702,11 +1702,8 @@ function updateLetterStates(userInput) {
   if (window.smoothCaret && window.smoothCaret.isInitialized) {
     window.smoothCaret.updateCaretPosition();
   }
-
-  // No extra character handling needed since we prevent them from being typed
 }
 
-// No animation for progress bar when word is completed (clean minimal approach)
 function flashProgress() {
   // Function kept for compatibility but no visual effect
 }
@@ -3877,8 +3874,8 @@ async function displayPreviousResults(loadMore = false) {
     const loadMoreRow = document.createElement("tr");
     loadMoreRow.innerHTML = `
       <td colspan="7" class="text-center p-0" style="border-top: none;">
-        <div 
-          id="loadMoreGamesBtn" 
+        <div
+          id="loadMoreGamesBtn"
           style="background: #1f2335; color: #7aa2f7; padding: 12px; cursor: pointer; font-size: 0.9rem; transition: background-color 0.2s ease; width: 100%;"
           onmouseover="this.style.backgroundColor='#2a2f47'"
           onmouseout="this.style.backgroundColor='#1f2335'"
