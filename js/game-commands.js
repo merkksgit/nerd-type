@@ -1,6 +1,5 @@
 // game-commands.js - Handles direct game commands input from the user input field
-// These allow players to use terminal commands directly in the game
-// This module allows using terminal commands directly in the game input field
+// These allow players to use quick commands directly in the game
 // All commands need to start with a slash (/)
 import {
   currentLanguage,
