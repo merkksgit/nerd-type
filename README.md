@@ -39,4 +39,3 @@ cd nerd-type
 
 - Email: nerdtype-contact@protonmail.com
 - Contact Page: [Contact Form](https://www.nerdtypegame.com/pages/contact.html)
-- Website: [nerdtypegame.com](https://www.nerdtypegame.com)
