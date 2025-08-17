@@ -123,7 +123,7 @@ function showLoginSuccessModal(username) {
   }, 2000); // Hide after 2 seconds
 }
 
-// Handle logout with goodbye message (no reload) - Fixed function name
+// Handle logout with goodbye message (no reload)
 async function handleLogout() {
   try {
     window.authProcessing = true;

@@ -158,7 +158,7 @@ async function testConnection(firebaseModules) {
   }
 }
 
-// Handle authentication state changes - FIXED TO RESPECT FONT SETTINGS
+// Handle authentication state changes
 async function handleAuthStateChange(user) {
   const usernameDisplay = document.getElementById("usernameDisplay");
   const changeUsernameBtn = document.getElementById("changeUsername");
@@ -184,7 +184,7 @@ async function handleAuthStateChange(user) {
     // Update displays immediately
     if (usernameDisplay) {
       usernameDisplay.textContent = username;
-      // FIXED: Use current font setting instead of hardcoded font
+      // use current font setting instead of hardcoded font
       const currentFont =
         localStorage.getItem("nerdtype_font") || "jetbrains-light";
       usernameDisplay.style.fontFamily = currentFont + " !important";
@@ -213,7 +213,7 @@ async function handleAuthStateChange(user) {
         });
     }
 
-    // FIXED: Apply current font setting for all game elements after login
+    // apply current font setting for all game elements after login
     setTimeout(() => {
       const currentFont =
         localStorage.getItem("nerdtype_font") || "jetbrains-light";
@@ -227,7 +227,7 @@ async function handleAuthStateChange(user) {
         }
       });
 
-      // FIXED: Set CSS variable to current font instead of hardcoded jetbrains-mono
+      // set CSS variable to current font instead of hardcoded jetbrains-mono
       document.documentElement.style.setProperty("--game-font", currentFont);
     }, 200);
   } else {
@@ -318,13 +318,13 @@ async function handleAuthStateChange(user) {
     // Update displays
     if (usernameDisplay) {
       usernameDisplay.textContent = "Login";
-      // FIXED: Use current font setting instead of hardcoded font
+      // use current font setting instead of hardcoded font
       const currentFont =
         localStorage.getItem("nerdtype_font") || "jetbrains-light";
       usernameDisplay.style.fontFamily = currentFont + " !important";
     }
 
-    // FIXED: Apply current font setting for all game elements after logout
+    // apply current font setting for all game elements after logout
     setTimeout(() => {
       const currentFont =
         localStorage.getItem("nerdtype_font") || "jetbrains-light";
@@ -338,7 +338,7 @@ async function handleAuthStateChange(user) {
         }
       });
 
-      // FIXED: Set CSS variable to current font instead of hardcoded jetbrains-mono
+      // set CSS variable to current font instead of hardcoded jetbrains-mono
       document.documentElement.style.setProperty("--game-font", currentFont);
     }, 200);
 
@@ -1984,7 +1984,7 @@ async function validateUsernameComplete(username) {
   return { isValid: true, message: "Username is valid and available" };
 }
 
-// Fixed real-time checker
+// real-time checker
 window.checkUsernameAvailabilityRealTime = (function () {
   let timeoutId;
   return function (username, callback, delay = 500) {
