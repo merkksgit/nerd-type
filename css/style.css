@@ -29,6 +29,11 @@
   font-family: "oxproto-mono";
 }
 
+@font-face {
+  src: url(../font/FiraCodeNerdFontMono-Light.ttf);
+  font-family: "firacode-light";
+}
+
 /* ====== 2. GLOBAL STYLES ====== */
 * {
   font-family: "jetbrains-mono";

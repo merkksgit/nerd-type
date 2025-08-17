@@ -890,6 +890,7 @@ class GameCommands {
       "jetbrains-light": "JetBrains Mono Light",
       "departure-mono": "Departure Mono",
       "firacode-mono": "FiraCode Mono",
+      "firacode-light": "FiraCode Mono Light",
       "bigblueterm-mono": "BigBlueTerm Mono",
       "oxproto-mono": "0xProto Mono",
     };
