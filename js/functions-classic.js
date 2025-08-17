@@ -2254,7 +2254,32 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
 
         achievementSystem.updateHardcoreProgress(hardcoreGameData);
 
-        showGameOverModal("", false);
+        // Get the most recent mistake details for hardcore mode display
+        const lastMistake = mistakeTimestamps[mistakeTimestamps.length - 1];
+        const showSpace =
+          storageManager.getItem("showSpacesAfterWords", "true") !== "false";
+        const position = userInput.length - 1;
+
+        let expectedChar = "";
+        if (position < currentWord.length) {
+          // Mistake within the word
+          expectedChar = currentWord[position];
+        } else if (position === currentWord.length && showSpace) {
+          // Mistake at the space after the word
+          expectedChar = " ";
+        } else {
+          // True end of word
+          expectedChar = "EOF";
+        }
+
+        const mistakeDetails = {
+          word: currentWord,
+          attempted: userInput[userInput.length - 1] || "",
+          expected: expectedChar,
+          position: position,
+        };
+
+        showGameOverModal("", false, mistakeDetails);
         return false;
       }
 
@@ -2898,7 +2923,11 @@ function resetPrecisionSystem() {
 }
 
 // Game Over Modal for both modes
-async function showGameOverModal(message, isSuccess = true) {
+async function showGameOverModal(
+  message,
+  isSuccess = true,
+  mistakeDetails = null,
+) {
   stopWpmTracking();
   const stats = calculateWPM();
   const languageName =
@@ -2945,6 +2974,7 @@ async function showGameOverModal(message, isSuccess = true) {
       username: playerUsername,
       status: message,
       isSuccess: isSuccess,
+      mistakeDetails: mistakeDetails,
       stats: {
         wpm: stats.wpm,
         accuracy: stats.accuracy,
@@ -3136,6 +3166,51 @@ function displayModernGameOverContent(data) {
 
   // Add mistakes section if there were any mistakes and not in practice mode
   if (!isPracticeMistakesMode && gameMistakes.words.length > 0) {
+    let mistakeWordsHtml = gameMistakes.words
+      .map((word) => {
+        // Add mistake details if this word matches the hardcore mistake and we have details
+        if (
+          data.mistakeDetails &&
+          data.gameSettings &&
+          data.gameSettings.mode === "Hardcore" &&
+          word === data.mistakeDetails.word
+        ) {
+          const position = data.mistakeDetails.position;
+          const expectedChar = data.mistakeDetails.expected || "EOF";
+          const attemptedChar = data.mistakeDetails.attempted || "nothing";
+
+          // Build the word with inline highlighting using just colored letters
+          let highlightedWord = "";
+          for (let i = 0; i < word.length; i++) {
+            if (i === position) {
+              // Highlight the expected character in green
+              highlightedWord += `<span style="color: #9ece6a;">${word[i]}</span>`;
+            } else {
+              highlightedWord += word[i];
+            }
+          }
+
+          // Handle case where mistake was at end of word
+          if (position >= word.length) {
+            if (expectedChar === " ") {
+              // Expected character was a space (between words)
+              highlightedWord += `<span style="color: #9ece6a;">_</span>`;
+            } else {
+              // True end of word
+              highlightedWord += `<span style="color: #9ece6a;">EOF</span>`;
+            }
+          }
+
+          // Display space character as underscore for visibility
+          const displayChar = attemptedChar === " " ? "_" : attemptedChar;
+
+          return `<span class="mistake-word-simple">${highlightedWord}</span> <span style="color: #f7768e;">[${displayChar}]</span>`;
+        }
+
+        return `<span class="mistake-word-simple">${word}</span>`;
+      })
+      .join(" ");
+
     content += `
       <div class="mistakes-section-simple" style="text-align: center;">
         <h5 class="mistakes-title-simple" style="justify-content: center;">
@@ -3143,7 +3218,7 @@ function displayModernGameOverContent(data) {
           Words with Mistakes (${gameMistakes.words.length})
         </h5>
         <div class="mistakes-words-simple">
-          ${gameMistakes.words.map((word) => `<span class="mistake-word-simple">${word}</span>`).join(" ")}
+          ${mistakeWordsHtml}
         </div>
       </div>
     `;
