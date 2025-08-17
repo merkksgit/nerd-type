@@ -199,6 +199,20 @@ async function handleAuthStateChange(user) {
 
     console.log("🎮 User ready to play as:", username);
 
+    // Run personal bests migration for existing users (async, don't block login)
+    if (window.migrateToPersonalBests) {
+      window
+        .migrateToPersonalBests()
+        .then((success) => {
+          if (success) {
+            console.log("✅ Personal bests migration completed successfully");
+          }
+        })
+        .catch((error) => {
+          console.error("❌ Personal bests migration failed:", error);
+        });
+    }
+
     // FIXED: Apply current font setting for all game elements after login
     setTimeout(() => {
       const currentFont =
@@ -1995,3 +2009,218 @@ window.checkUsernameAvailabilityRealTime = (function () {
     }, delay);
   };
 })();
+
+// Personal Bests Management Functions
+
+// Get personal best records for a user
+window.getPersonalBests = async function (language, mode = "classic") {
+  const currentUser = window.getCurrentUser();
+  if (!currentUser || !window.firebaseModules || !window.database) {
+    return null;
+  }
+
+  try {
+    const { ref, get } = window.firebaseModules;
+    const personalBestsRef = ref(
+      window.database,
+      `users/${currentUser.uid}/personalBests/${language}/${mode}`,
+    );
+
+    const snapshot = await get(personalBestsRef);
+
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      // No personal bests yet for this language/mode combination
+      return {
+        bestWpm: 0,
+        bestScore: 0,
+        lastUpdated: null,
+      };
+    }
+  } catch (error) {
+    console.error("❌ Error getting personal bests:", error);
+    return null;
+  }
+};
+
+// Update personal best records
+window.updatePersonalBests = async function (language, mode, wpm, score) {
+  const currentUser = window.getCurrentUser();
+  if (!currentUser || !window.firebaseModules || !window.database) {
+    return false;
+  }
+
+  try {
+    const { ref, set, get } = window.firebaseModules;
+    const personalBestsRef = ref(
+      window.database,
+      `users/${currentUser.uid}/personalBests/${language}/${mode}`,
+    );
+
+    // Get current personal bests
+    const snapshot = await get(personalBestsRef);
+    const currentBests = snapshot.exists()
+      ? snapshot.val()
+      : {
+          bestWpm: 0,
+          bestScore: 0,
+          lastUpdated: null,
+        };
+
+    // Check if we have new records
+    const newWpmRecord = wpm > (currentBests.bestWpm || 0);
+    const newScoreRecord = score > (currentBests.bestScore || 0);
+
+    if (newWpmRecord || newScoreRecord) {
+      // Update the records
+      const updatedBests = {
+        bestWpm: Math.max(wpm, currentBests.bestWpm || 0),
+        bestScore: Math.max(score, currentBests.bestScore || 0),
+        lastUpdated: new Date().toISOString(),
+      };
+
+      await set(personalBestsRef, updatedBests);
+      console.log("🥇 Personal bests updated:", updatedBests);
+
+      return {
+        wpmRecord: newWpmRecord,
+        scoreRecord: newScoreRecord,
+        updatedBests,
+      };
+    }
+
+    return {
+      wpmRecord: false,
+      scoreRecord: false,
+      updatedBests: currentBests,
+    };
+  } catch (error) {
+    console.error("❌ Error updating personal bests:", error);
+    return false;
+  }
+};
+
+// Check if current game stats are personal records (fast version)
+window.checkPersonalRecords = async function (language, mode, wpm, score) {
+  const currentBests = await window.getPersonalBests(language, mode);
+
+  if (!currentBests) {
+    // If we can't get Firebase data, return false (no highlighting)
+    return {
+      wpm: false,
+      accuracy: false,
+      score: false,
+      newWpm: false,
+      newScore: false,
+    };
+  }
+
+  const isWpmRecord = wpm > (currentBests.bestWpm || 0);
+  const isScoreRecord =
+    mode === "classic" && score > (currentBests.bestScore || 0);
+
+  return {
+    wpm: isWpmRecord,
+    accuracy: false, // Never highlight accuracy
+    score: isScoreRecord,
+    newWpm: isWpmRecord, // These will be true for NEW records
+    newScore: isScoreRecord,
+  };
+};
+
+// Migrate existing user data to personal bests format (run once per user)
+window.migrateToPersonalBests = async function () {
+  const currentUser = window.getCurrentUser();
+  if (!currentUser || !window.firebaseModules || !window.database) {
+    console.log("🔒 Cannot migrate - not logged in");
+    return false;
+  }
+
+  try {
+    const { ref, get } = window.firebaseModules;
+
+    // Check if migration already done
+    const migrationRef = ref(
+      window.database,
+      `users/${currentUser.uid}/migrationCompleted/personalBests`,
+    );
+    const migrationSnapshot = await get(migrationRef);
+
+    if (migrationSnapshot.exists()) {
+      console.log("✅ Personal bests migration already completed");
+      return true;
+    }
+
+    console.log("🔄 Starting personal bests migration...");
+
+    // Load all historical games
+    const userScoreboardRef = ref(
+      window.database,
+      `users/${currentUser.uid}/scoreboard`,
+    );
+    const snapshot = await get(userScoreboardRef);
+
+    if (!snapshot.exists()) {
+      console.log("📭 No historical data to migrate");
+      // Mark migration as complete even if no data
+      await window.firebaseModules.set(migrationRef, new Date().toISOString());
+      return true;
+    }
+
+    // Process all games to find personal bests
+    const personalBests = {};
+    snapshot.forEach((child) => {
+      const game = child.val();
+
+      // Only process classic mode successful games
+      if (game.mode === "Zen Mode" || game.success === false) {
+        return;
+      }
+
+      const language = game.wordList || "english";
+      const mode = "classic";
+      const wpm = parseFloat(game.wpm) || 0;
+      const score = parseFloat(game.score) || 0;
+
+      // Initialize language/mode if not exists
+      if (!personalBests[language]) {
+        personalBests[language] = {};
+      }
+      if (!personalBests[language][mode]) {
+        personalBests[language][mode] = {
+          bestWpm: 0,
+          bestScore: 0,
+          lastUpdated: null,
+        };
+      }
+
+      // Update personal bests
+      const current = personalBests[language][mode];
+      current.bestWpm = Math.max(current.bestWpm, wpm);
+      current.bestScore = Math.max(current.bestScore, score);
+      current.lastUpdated = new Date().toISOString();
+    });
+
+    // Save all personal bests to Firebase
+    const { set } = window.firebaseModules;
+    for (const language in personalBests) {
+      for (const mode in personalBests[language]) {
+        const personalBestsRef = ref(
+          window.database,
+          `users/${currentUser.uid}/personalBests/${language}/${mode}`,
+        );
+        await set(personalBestsRef, personalBests[language][mode]);
+      }
+    }
+
+    // Mark migration as complete
+    await set(migrationRef, new Date().toISOString());
+
+    console.log("✅ Personal bests migration completed:", personalBests);
+    return true;
+  } catch (error) {
+    console.error("❌ Error during personal bests migration:", error);
+    return false;
+  }
+};

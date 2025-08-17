@@ -200,7 +200,7 @@ function openSettingsModal() {
 }
 
 function loadSettings() {
-  console.log("Loading settings into modal...");
+  // Loading settings into modal
 
   // Set show spaces toggle
   const showSpacesToggle = document.getElementById("showSpacesToggle");
@@ -238,7 +238,7 @@ function loadSettings() {
     zenWordGoal: 30,
   };
 
-  console.log("Current game settings:", gameSettings);
+  // Current game settings loaded
 
   // Load data collection setting (default is enabled)
   const dataCollectionEnabled = localStorage.getItem("data_collection_enabled");
@@ -307,7 +307,7 @@ function loadSettings() {
   );
   if (modeRadio) {
     modeRadio.checked = true;
-    console.log("Set mode radio to:", gameSettings.currentMode);
+    // Set mode radio for current mode
   }
 
   // Load achievement sound setting
@@ -357,7 +357,7 @@ function loadSettings() {
   // Clear any validation states when loading settings
   clearAllValidationStates();
 
-  console.log("Settings loaded successfully");
+  // Settings loaded successfully
 }
 
 function toggleCustomSettings(isCustom) {

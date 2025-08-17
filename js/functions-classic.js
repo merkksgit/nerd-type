@@ -453,17 +453,7 @@ async function initializeGame() {
     // Load saved settings with error handling
     const settings = storageManager.getGameSettings();
 
-    // Debug: Check what's actually in localStorage
-    console.log("Loading game settings on page load:");
-    console.log(
-      "Raw localStorage gameSettings:",
-      localStorage.getItem("gameSettings"),
-    );
-    console.log("storageManager.getGameSettings():", settings);
-    console.log(
-      "nerdtype_zen_mode:",
-      localStorage.getItem("nerdtype_zen_mode"),
-    );
+    // Load game settings from localStorage
 
     // Update the global gameSettings variable
     gameSettings = settings;
@@ -2943,7 +2933,7 @@ async function showGameOverModal(
     // Zen Mode specific game over
     const totalTime = calculateTotalTime();
 
-    displayModernGameOverContent({
+    await displayModernGameOverContent({
       mode: "zen",
       username: playerUsername,
       status: message,
@@ -2969,7 +2959,7 @@ async function showGameOverModal(
       gameSettings.currentMode.charAt(0).toUpperCase() +
       gameSettings.currentMode.slice(1);
 
-    displayModernGameOverContent({
+    await displayModernGameOverContent({
       mode: "classic",
       username: playerUsername,
       status: message,
@@ -3011,14 +3001,71 @@ async function showGameOverModal(
   await displayPreviousResults();
 }
 
+// Check if current game stats represent personal records (classic mode only)
+async function checkForPersonalRecords(data) {
+  // Only check for personal records in classic mode and for logged-in users
+  if (data.mode === "zen") {
+    return {
+      wpm: false,
+      accuracy: false,
+      score: false,
+      newWpm: false,
+      newScore: false,
+    };
+  }
+
+  const currentUser = window.getCurrentUser && window.getCurrentUser();
+
+  if (currentUser && window.checkPersonalRecords) {
+    // Logged-in user: Use fast personal bests checking
+    try {
+      const currentWpm = parseFloat(data.stats.wpm) || 0;
+      const currentScore = parseFloat(data.stats.finalScore) || 0;
+
+      const records = await window.checkPersonalRecords(
+        currentLanguage,
+        "classic",
+        currentWpm,
+        currentScore,
+      );
+      return records;
+    } catch (error) {
+      console.error(
+        "❌ Failed to check personal records from Firebase:",
+        error,
+      );
+      // Return no highlighting for logged-in users if Firebase fails
+      return {
+        wpm: false,
+        accuracy: false,
+        score: false,
+        newWpm: false,
+        newScore: false,
+      };
+    }
+  }
+
+  // Guest user: No personal record highlighting
+  return {
+    wpm: false,
+    accuracy: false,
+    score: false,
+    newWpm: false,
+    newScore: false,
+  };
+}
+
 // Modern game over display with card layout
-function displayModernGameOverContent(data) {
+async function displayModernGameOverContent(data) {
   const gameOverModal = new bootstrap.Modal(
     document.getElementById("gameOverModal"),
   );
   const modalBody = document
     .getElementById("gameOverModal")
     .querySelector(".modal-body");
+
+  // Check for personal records
+  const personalRecords = await checkForPersonalRecords(data);
 
   // Determine if we should apply red styling for defeat (non-zen mode only)
   const isDefeat = data.mode !== "zen" && !data.isSuccess;
@@ -3036,13 +3083,20 @@ function displayModernGameOverContent(data) {
     `;
   }
 
+  // Determine CSS classes for personal records and animations
+  const wpmClass = personalRecords.newWpm
+    ? "new-personal-record"
+    : personalRecords.wpm
+      ? "personal-record"
+      : "";
+
   // Create modern card layout
   let content = `
     ${statusSection}
     <div class="game-stats-container ${defeatClass}">
       <div class="stat-card">
         <div class="stat-label">WPM</div>
-        <div class="stat-value wpm">${data.stats.wpm}</div>
+        <div class="stat-value wpm ${wpmClass}">${data.stats.wpm}</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Accuracy</div>
@@ -3063,6 +3117,13 @@ function displayModernGameOverContent(data) {
       </div>
     `;
   } else {
+    // Determine CSS class for score
+    const scoreClass = personalRecords.newScore
+      ? "new-personal-record"
+      : personalRecords.score
+        ? "personal-record"
+        : "";
+
     content += `
       <div class="stat-card">
         <div class="stat-label">Energy</div>
@@ -3070,7 +3131,7 @@ function displayModernGameOverContent(data) {
       </div>
       <div class="stat-card">
         <div class="stat-label">Score</div>
-        <div class="stat-value score">${data.stats.finalScore}</div>
+        <div class="stat-value score ${scoreClass}">${data.stats.finalScore}</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Streak</div>
@@ -3501,6 +3562,24 @@ function saveClassicResult(
     "highestAchievements",
     JSON.stringify(highestAchievements),
   );
+
+  // Update personal bests for logged-in users (async, don't block game flow)
+  if (
+    window.updatePersonalBests &&
+    window.getCurrentUser &&
+    window.getCurrentUser()
+  ) {
+    window
+      .updatePersonalBests(currentLanguage, "classic", wpm, finalScore)
+      .then((result) => {
+        if (result && (result.wpmRecord || result.scoreRecord)) {
+          console.log("🥇 New personal record achieved!", result);
+        }
+      })
+      .catch((error) => {
+        console.error("❌ Failed to update personal bests:", error);
+      });
+  }
 
   // Sync to Firebase if user is logged in (async, don't block game flow)
   // Only user scores sync to cloud - guest scores stay local only

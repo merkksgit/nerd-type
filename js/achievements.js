@@ -820,12 +820,7 @@ class AchievementSystem {
     // Update language-specific WPM stats
     if (gameData && gameData.wpm && gameData.wordList) {
       const language = gameData.wordList.toLowerCase();
-      console.log(
-        "Game completed in language:",
-        language,
-        "with WPM:",
-        gameData.wpm,
-      );
+      // Track game completion for achievements
 
       if (
         this.achievementsData.stats.languageWPM &&
@@ -834,14 +829,10 @@ class AchievementSystem {
         // Update if new WPM is higher
         if (gameData.wpm > this.achievementsData.stats.languageWPM[language]) {
           this.achievementsData.stats.languageWPM[language] = gameData.wpm;
-          console.log("Updated language WPM for", language, "to", gameData.wpm);
+          // Updated language WPM for tracking
         }
 
-        // Log current language WPM stats
-        console.log(
-          "Current language WPM stats:",
-          this.achievementsData.stats.languageWPM,
-        );
+        // Track language WPM stats
       }
     }
 
@@ -859,7 +850,7 @@ class AchievementSystem {
     // Check for newly unlocked achievements
     this.checkAchievements(gameData);
 
-    console.log(this.achievementsData.stats.languageWPM);
+    // Language WPM stats tracked
 
     // Save updated data
     this.saveData();
@@ -926,20 +917,12 @@ class AchievementSystem {
             this.achievements[id].category !== "seasonal",
         );
 
-        console.log("Checking completionist achievement:");
-        console.log("Total other achievements:", allOtherAchievementIds.length);
-        console.log("Other achievement IDs:", allOtherAchievementIds);
+        // Check completionist achievement progress
 
         // Count how many are unlocked
         const unlockedCount = allOtherAchievementIds.filter(
           (id) => this.achievementsData.unlockedAchievements[id] !== undefined,
         ).length;
-
-        console.log("Unlocked achievements:", unlockedCount);
-        console.log(
-          "Unlocked achievement data:",
-          this.achievementsData.unlockedAchievements,
-        );
 
         // Check if ALL other achievements are unlocked
         const allOthersUnlocked = allOtherAchievementIds.every(
