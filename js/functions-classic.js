@@ -3003,8 +3003,8 @@ async function showGameOverModal(
 
 // Check if current game stats represent personal records (classic mode only)
 async function checkForPersonalRecords(data) {
-  // Only check for personal records in classic mode and for logged-in users
-  if (data.mode === "zen") {
+  // Only check for personal records in classic mode, for logged-in users, and for successful games
+  if (data.mode === "zen" || !data.isSuccess) {
     return {
       wpm: false,
       accuracy: false,
@@ -3563,8 +3563,9 @@ function saveClassicResult(
     JSON.stringify(highestAchievements),
   );
 
-  // Update personal bests for logged-in users (async, don't block game flow)
+  // Update personal bests for logged-in users (only for successful games)
   if (
+    isSuccess &&
     window.updatePersonalBests &&
     window.getCurrentUser &&
     window.getCurrentUser()
