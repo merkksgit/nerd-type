@@ -327,7 +327,6 @@ class AchievementSystem {
         category: "lifestyle",
         secret: true,
         check: (stats, gameData) => {
-          // Must have completed a game successfully
           if (!gameData || gameData.timeLeft <= 0) return false;
 
           const currentHour = new Date().getHours();
