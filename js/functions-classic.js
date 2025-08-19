@@ -1967,12 +1967,25 @@ function updateProgressBar() {
     // In Zen mode, progress is based on words typed + partial progress of current word
     let baseProgress = wordsTyped.length;
 
-    // Add fractional progress for the current word being typed
+    // Add fractional progress for the current word being typed (only correct characters)
     const currentWord = words[currentWordIndex];
     const userInput = document.getElementById("userInput");
     if (currentWord && userInput && userInput.value.length > 0) {
+      // Count only correct characters typed so far
+      let correctCharsTyped = 0;
+      for (
+        let i = 0;
+        i < Math.min(userInput.value.length, currentWord.length);
+        i++
+      ) {
+        if (userInput.value[i] === currentWord[i]) {
+          correctCharsTyped++;
+        } else {
+          break; // Stop counting once we hit an incorrect character
+        }
+      }
       const currentProgress = Math.min(
-        userInput.value.length / currentWord.length,
+        correctCharsTyped / currentWord.length,
         1,
       );
       baseProgress += currentProgress * 0.8; // Add up to 80% of a word's progress while typing
@@ -1987,7 +2000,7 @@ function updateProgressBar() {
 
     let baseProgress = wordsTyped.length;
 
-    // Add fractional progress for the current word being typed
+    // Add fractional progress for the current word being typed (only correct characters)
     const currentWord = words[currentWordIndex];
     const userInput = document.getElementById("userInput");
     if (
@@ -1996,8 +2009,21 @@ function updateProgressBar() {
       userInput.value.length > 0 &&
       hasStartedTyping
     ) {
+      // Count only correct characters typed so far
+      let correctCharsTyped = 0;
+      for (
+        let i = 0;
+        i < Math.min(userInput.value.length, currentWord.length);
+        i++
+      ) {
+        if (userInput.value[i] === currentWord[i]) {
+          correctCharsTyped++;
+        } else {
+          break; // Stop counting once we hit an incorrect character
+        }
+      }
       const typingProgress = Math.min(
-        userInput.value.length / currentWord.length,
+        correctCharsTyped / currentWord.length,
         1,
       );
       baseProgress += typingProgress * 0.8; // Add up to 80% of a word's progress while typing

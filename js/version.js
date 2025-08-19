@@ -1,5 +1,5 @@
 // Set the application version and season info
-const APP_VERSION = "NerdType v2.3.12";
+const APP_VERSION = "NerdType v2.3.13";
 
 // When the document is loaded, update all version elements
 document.addEventListener("DOMContentLoaded", function () {
