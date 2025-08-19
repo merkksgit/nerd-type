@@ -32,7 +32,7 @@ class SmoothCaret {
     const wordToType = document.getElementById("wordToType");
     if (wordToType) {
       wordToType.appendChild(this.caretElement);
-      this.updateCaretPosition(false); // Instant placement on init
+      this.updateCaretPosition(false);
     }
   }
 
@@ -95,7 +95,7 @@ class SmoothCaret {
     }
 
     // Use LERP for smoother frame-rate independent movement
-    const speed = 35; // Higher = snappier, try values between 10–25
+    const speed = 20; // Higher = snappier, try values between 10–25
     const t = 1 - Math.exp(-speed * deltaTime); // Exponential smoothing
 
     this.currentPosition.x += deltaX * t;
