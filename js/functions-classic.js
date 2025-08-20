@@ -17,6 +17,133 @@ import {
 import storageManager from "./storage-manager.js";
 import domManager from "./dom-manager.js";
 
+// DOM Cache for frequently accessed elements
+class DOMCache {
+  constructor() {
+    this.cache = new Map();
+    this.init();
+  }
+
+  init() {
+    // Pre-cache commonly used elements
+    const commonElements = [
+      "userInput",
+      "wordToType",
+      "nextWord",
+      "currentGameMode",
+      "timer",
+      "progressPercentage",
+      "precisionMultiplier",
+      "usernameInput",
+      "usernameInputError",
+      "scoreboardModal",
+    ];
+
+    commonElements.forEach((id) => {
+      this.get(id); // This will cache the element
+    });
+  }
+
+  get(elementId) {
+    if (this.cache.has(elementId)) {
+      const element = this.cache.get(elementId);
+      // Check if element is still in DOM
+      if (element && document.contains(element)) {
+        return element;
+      }
+      // Remove stale cache entry
+      this.cache.delete(elementId);
+    }
+
+    const element = document.getElementById(elementId);
+    if (element) {
+      this.cache.set(elementId, element);
+    }
+    return element;
+  }
+
+  clear() {
+    this.cache.clear();
+  }
+
+  refresh() {
+    this.cache.clear();
+    this.init();
+  }
+}
+
+// Display utility functions
+class DisplayUtils {
+  static setElementDisplay(element, show, displayType = "block") {
+    if (element) {
+      element.style.display = show ? displayType : "none";
+    }
+  }
+
+  static setElementVisibility(element, visible) {
+    if (element) {
+      element.style.visibility = visible ? "visible" : "hidden";
+    }
+  }
+
+  static toggleElements(elements, show, displayType = "block") {
+    elements.forEach((element) => {
+      if (element) {
+        this.setElementDisplay(element, show, displayType);
+      }
+    });
+  }
+
+  static setElementColor(element, color) {
+    if (element) {
+      element.style.color = color;
+    }
+  }
+}
+
+// Error handling utility
+class ErrorHandler {
+  static handle(error, context = "", fallbackValue = null) {
+    console.error(`Error in ${context}:`, error);
+    return fallbackValue;
+  }
+
+  static tryExecute(fn, context = "", fallbackValue = null) {
+    try {
+      return fn();
+    } catch (error) {
+      return this.handle(error, context, fallbackValue);
+    }
+  }
+}
+
+// Initialize DOM cache
+const domCache = new DOMCache();
+
+// UI Constants
+const UI_CONSTANTS = {
+  MOBILE_BREAKPOINT: 768,
+  ERROR_COLOR: "#f7768e",
+  ZEN_MODE_COLOR: "#c3e88d",
+  CLASSIC_MODE_COLOR: "#ff9e64",
+  MAX_DISPLAY_WORDS: 100,
+};
+
+// Word state constants
+const WORD_STATES = {
+  COMPLETED: "completed",
+  CURRENT: "current",
+  UPCOMING: "upcoming",
+};
+
+// Letter state constants
+const LETTER_STATES = {
+  CORRECT: "correct",
+  CURRENT: "current",
+  REMAINING: "remaining",
+  INCORRECT: "incorrect",
+};
+
 // Global variables for game state
 let words = [];
 let playerUsername = storageManager.getUsername();
@@ -96,14 +223,12 @@ function isReservedUsername(username) {
 }
 
 function canUseUsername(username) {
-  // Check admin mode for "merkks"
   const isAdminMode =
     storageManager.getItem("nerdtype_admin", "false") === "true";
 
   if (username.toLowerCase() === "merkks") {
     return isAdminMode;
   }
-  // Block other reserved usernames
   return !isReservedUsername(username);
 }
 
@@ -153,41 +278,41 @@ function restoreUIHideState() {
 }
 
 function showUsernameError(message) {
-  const usernameInput = document.getElementById("usernameInput");
+  const usernameInput = domCache.get("usernameInput");
+  if (!usernameInput) return;
 
-  // Add error styling
   usernameInput.classList.add("is-invalid");
 
-  // Get or create error element
-  let errorElement = document.getElementById("usernameInputError");
+  let errorElement = domCache.get("usernameInputError");
   if (!errorElement) {
     errorElement = document.createElement("div");
     errorElement.id = "usernameInputError";
     errorElement.className = "invalid-feedback";
     errorElement.style.marginTop = "5px";
     errorElement.style.fontSize = "0.875rem";
-    errorElement.style.color = "#f7768e";
+    DisplayUtils.setElementColor(errorElement, UI_CONSTANTS.ERROR_COLOR);
 
-    // Insert after the input
     usernameInput.parentNode.insertBefore(
       errorElement,
       usernameInput.nextSibling,
     );
+    domCache.cache.set("usernameInputError", errorElement);
   }
 
   errorElement.textContent = message;
-  errorElement.style.display = "block";
+  DisplayUtils.setElementDisplay(errorElement, true);
 }
 
 function clearUsernameError() {
-  const usernameInput = document.getElementById("usernameInput");
-  const errorElement = document.getElementById("usernameInputError");
+  const usernameInput = domCache.get("usernameInput");
+  const errorElement = domCache.get("usernameInputError");
 
-  usernameInput.classList.remove("is-invalid");
-  usernameInput.classList.remove("is-valid");
+  if (usernameInput) {
+    usernameInput.classList.remove("is-invalid", "is-valid");
+  }
 
   if (errorElement) {
-    errorElement.style.display = "none";
+    DisplayUtils.setElementDisplay(errorElement, false);
   }
 }
 
@@ -359,18 +484,20 @@ const presetModes = {
 
 // Game Mode Utilities
 function isZenModeActive() {
-  return localStorage.getItem("nerdtype_zen_mode") === "true";
+  return storageManager.getItem("nerdtype_zen_mode", "false") === "true";
 }
 
 function setZenMode(enabled) {
-  localStorage.setItem("nerdtype_zen_mode", enabled.toString());
+  storageManager.setItem("nerdtype_zen_mode", enabled.toString());
   isZenMode = enabled;
 
-  // If switching zen mode off and alice wordset is selected, fallback to english
   if (!enabled) {
-    const currentWordlist = localStorage.getItem("nerdtype_wordlist");
+    const currentWordlist = storageManager.getItem(
+      "nerdtype_wordlist",
+      "english",
+    );
     if (currentWordlist === "alice") {
-      localStorage.setItem("nerdtype_wordlist", "english");
+      storageManager.setItem("nerdtype_wordlist", "english");
     }
   }
 
@@ -378,22 +505,18 @@ function setZenMode(enabled) {
 }
 
 function updateUIForGameMode() {
-  // Get DOM elements
-  const gameIndicator = document.getElementById("currentGameMode");
+  const gameIndicator = domCache.get("currentGameMode");
   const classicElements = document.querySelectorAll(".classic-mode-element");
   const zenElements = document.querySelectorAll(".zen-mode-element");
   const classicSettings = document.querySelectorAll(".classic-mode-setting");
 
-  // Update game indicator
   if (gameIndicator) {
     if (isZenMode) {
       gameIndicator.textContent = "Game Mode: Zen";
     } else {
-      // Check current mode from gameSettings
       const settings = storageManager.getGameSettings();
       const currentMode = settings.currentMode || "classic";
 
-      // Format the text based on mode
       if (currentMode === "classic") {
         gameIndicator.textContent = "Classic Mode";
       } else {
@@ -402,36 +525,26 @@ function updateUIForGameMode() {
         gameIndicator.textContent = `Game Mode: ${formattedMode}`;
       }
     }
-    gameIndicator.style.color = isZenMode ? "#c3e88d" : "#ff9e64";
+    DisplayUtils.setElementColor(
+      gameIndicator,
+      isZenMode ? UI_CONSTANTS.ZEN_MODE_COLOR : UI_CONSTANTS.CLASSIC_MODE_COLOR,
+    );
   }
 
-  // Toggle visibility based on mode
-  classicElements.forEach((el) => {
-    el.style.display = isZenMode ? "none" : "block";
-  });
+  DisplayUtils.toggleElements(Array.from(classicElements), !isZenMode);
+  DisplayUtils.toggleElements(Array.from(zenElements), isZenMode);
+  DisplayUtils.toggleElements(Array.from(classicSettings), !isZenMode);
 
-  zenElements.forEach((el) => {
-    el.style.display = isZenMode ? "block" : "none";
-  });
-
-  // Update settings modal UI
   const zenModeToggle = document.getElementById("zenModeToggle");
   if (zenModeToggle) {
     zenModeToggle.checked = isZenMode;
   }
 
-  // Toggle visibility of classic mode settings
-  classicSettings.forEach((el) => {
-    el.style.display = isZenMode ? "none" : "block";
-  });
-
-  // Show/hide zen mode settings based on mode
   const zenModeSettings = document.getElementById("zenModeSettings");
   if (zenModeSettings && zenModeToggle) {
-    zenModeSettings.style.display = zenModeToggle.checked ? "block" : "none";
+    DisplayUtils.setElementDisplay(zenModeSettings, zenModeToggle.checked);
   }
 
-  // Hide precision multiplier in zen mode
   if (isZenMode) {
     hidePrecisionMultiplier();
   }
@@ -865,7 +978,7 @@ function initializeEventListeners() {
 
   // Game-specific initialization
   if (isGamePage) {
-    if (!localStorage.getItem("nerdtype_username")) {
+    if (!storageManager.getItem("nerdtype_username")) {
       showUsernameModal();
     }
 
@@ -1335,7 +1448,111 @@ function calculateOptimalWordCount() {
   );
 
   // Cap at a reasonable maximum to avoid performance issues
-  return Math.min(maxWords, 100);
+  return Math.min(maxWords, UI_CONSTANTS.MAX_DISPLAY_WORDS);
+}
+
+function createLetterElement(
+  char,
+  letterIndex,
+  wordState,
+  isFirstLetter = false,
+) {
+  const letterElement = document.createElement("span");
+  letterElement.classList.add("letter");
+  letterElement.textContent = char;
+  letterElement.setAttribute("data-letter-index", letterIndex);
+
+  if (wordState === WORD_STATES.COMPLETED) {
+    letterElement.classList.add(LETTER_STATES.CORRECT);
+  } else if (wordState === WORD_STATES.CURRENT) {
+    letterElement.classList.add(
+      isFirstLetter ? LETTER_STATES.CURRENT : LETTER_STATES.REMAINING,
+    );
+  } else {
+    letterElement.classList.add(LETTER_STATES.REMAINING);
+  }
+
+  return letterElement;
+}
+
+function createSpaceElement(wordLength, isCurrentWord) {
+  const spaceElement = document.createElement("span");
+  spaceElement.classList.add("letter", "space");
+  spaceElement.innerHTML = "&nbsp;";
+  spaceElement.setAttribute("data-letter-index", wordLength);
+  spaceElement.classList.add("remaining");
+  return spaceElement;
+}
+
+function createWordElement(displayWord, wordIndex) {
+  const { word, isCompleted } = displayWord;
+  const wordElement = document.createElement("div");
+  wordElement.classList.add("word");
+  wordElement.setAttribute("data-word-index", displayWord.index);
+
+  let wordState;
+  if (isCompleted) {
+    wordState = WORD_STATES.COMPLETED;
+    wordElement.classList.add(WORD_STATES.COMPLETED);
+  } else if (wordIndex === 0) {
+    wordState = WORD_STATES.CURRENT;
+    wordElement.classList.add(WORD_STATES.CURRENT);
+  } else {
+    wordState = WORD_STATES.UPCOMING;
+    wordElement.classList.add(WORD_STATES.UPCOMING);
+  }
+
+  for (let i = 0; i < word.length; i++) {
+    const letterElement = createLetterElement(word[i], i, wordState, i === 0);
+    wordElement.appendChild(letterElement);
+  }
+
+  return { wordElement, wordState };
+}
+
+function generateDisplayWords(wordsToShow) {
+  const displayWords = [];
+  for (let i = 0; i < wordsToShow; i++) {
+    const wordIndex = (currentWordIndex + i) % words.length;
+    const baseWord = words[wordIndex];
+    const word = addPunctuationToWord(baseWord, wordIndex);
+
+    displayWords.push({
+      index: wordIndex,
+      word: word,
+      isCurrentWord: i === 0,
+      isCompleted: false,
+      displayPosition: i,
+    });
+  }
+  return displayWords;
+}
+
+function setupWordDisplayClickHandler(wordToTypeElement) {
+  wordToTypeElement.onclick = function () {
+    const userInput = domManager.get("userInput");
+    if (userInput) {
+      userInput.focus();
+
+      const isMobile = window.innerWidth <= UI_CONSTANTS.MOBILE_BREAKPOINT;
+      if (isMobile && gameStartTime === null && !hasStartedTyping) {
+        startGame();
+      }
+    }
+  };
+}
+
+function reinitializeSmoothCaret() {
+  if (window.smoothCaret) {
+    const existingCaret = document.getElementById("smooth-caret");
+    if (!existingCaret) {
+      window.smoothCaret.destroy();
+      window.smoothCaret.init();
+    }
+    setTimeout(() => {
+      window.smoothCaret.updateCaretPosition(false);
+    }, 0);
+  }
 }
 
 function updateWordDisplay() {
@@ -1346,132 +1563,36 @@ function updateWordDisplay() {
 
   if (!wordToTypeElement) return;
 
-  // Clear existing content
   wordToTypeElement.innerHTML = "";
 
-  // Create word container
   const wordContainer = document.createElement("div");
   wordContainer.classList.add("word-container");
 
-  // Calculate optimal number of words to show based on available space
   const wordsToShow = calculateOptimalWordCount();
+  const displayWords = generateDisplayWords(wordsToShow);
 
-  // Generate word display - only show current and upcoming words for now
-  const displayWords = [];
+  displayWords.forEach((displayWord, wordIdx) => {
+    const { wordElement, wordState } = createWordElement(displayWord, wordIdx);
 
-  // Add current and upcoming words - always start with currentWordIndex
-  for (let i = 0; i < wordsToShow; i++) {
-    const wordIndex = (currentWordIndex + i) % words.length;
-    const baseWord = words[wordIndex];
-    const word = addPunctuationToWord(baseWord, wordIndex);
-    const isCurrentWord = i === 0;
-
-    displayWords.push({
-      index: wordIndex,
-      word: word,
-      isCurrentWord: isCurrentWord,
-      isCompleted: false,
-      displayPosition: i, // Track position in display
-    });
-  }
-
-  for (let wordIdx = 0; wordIdx < displayWords.length; wordIdx++) {
-    const { word, isCurrentWord, isCompleted } = displayWords[wordIdx];
-
-    // Create word element
-    const wordElement = document.createElement("div");
-    wordElement.classList.add("word");
-    wordElement.setAttribute("data-word-index", displayWords[wordIdx].index);
-
-    // Add word state classes - ensure only one current word
-    if (isCompleted) {
-      wordElement.classList.add("completed");
-    } else if (wordIdx === 0) {
-      // First word in display should always be current
-      wordElement.classList.add("current");
-    } else {
-      wordElement.classList.add("upcoming");
-    }
-
-    // Create letter elements
-    for (let i = 0; i < word.length; i++) {
-      const letterElement = document.createElement("span");
-      letterElement.classList.add("letter");
-      letterElement.textContent = word[i];
-      letterElement.setAttribute("data-letter-index", i);
-
-      // Set letter state based on word type
-      if (isCompleted) {
-        letterElement.classList.add("correct");
-      } else if (wordIdx === 0) {
-        // For current word (first in display), set first letter as current, rest as remaining
-        if (i === 0) {
-          letterElement.classList.add("current");
-        } else {
-          letterElement.classList.add("remaining");
-        }
-      } else {
-        letterElement.classList.add("remaining");
-      }
-
-      wordElement.appendChild(letterElement);
-    }
-
-    // Add invisible space for word completion (no visual indicator)
     if (showSpace && wordIdx < displayWords.length - 1) {
-      const spaceElement = document.createElement("span");
-      spaceElement.classList.add("letter", "space");
-      spaceElement.innerHTML = "&nbsp;"; // Invisible space
-      spaceElement.setAttribute("data-letter-index", word.length);
-
-      if (isCurrentWord) {
-        spaceElement.classList.add("remaining");
-      } else {
-        spaceElement.classList.add("remaining");
-      }
-
+      const spaceElement = createSpaceElement(
+        displayWord.word.length,
+        displayWord.isCurrentWord,
+      );
       wordElement.appendChild(spaceElement);
     }
 
     wordContainer.appendChild(wordElement);
-  }
+  });
 
   wordToTypeElement.appendChild(wordContainer);
+  setupWordDisplayClickHandler(wordToTypeElement);
 
-  // Add click handler to focus the hidden input when clicking on the word display
-  wordToTypeElement.onclick = function () {
-    const userInput = domManager.get("userInput");
-    if (userInput) {
-      userInput.focus();
-
-      // Start game on mobile tap (regardless of minimal mode)
-      const isMobile = window.innerWidth <= 768;
-
-      if (isMobile && gameStartTime === null && !hasStartedTyping) {
-        startGame();
-      }
-    }
-  };
-
-  // Clear the next word display since we show multiple words now
   if (nextWordElement) {
     nextWordElement.textContent = "";
   }
 
-  // Re-initialize smooth caret system after word display update
-  if (window.smoothCaret) {
-    // Check if caret element still exists in DOM
-    const existingCaret = document.getElementById("smooth-caret");
-    if (!existingCaret) {
-      // Caret was removed, reinitialize it
-      window.smoothCaret.destroy();
-      window.smoothCaret.init();
-    }
-    // Update position after ensuring caret exists
-    setTimeout(() => {
-      window.smoothCaret.updateCaretPosition(false); // Don't animate initially
-    }, 0);
-  }
+  reinitializeSmoothCaret();
 }
 
 // Helper function to get current word element
@@ -2589,7 +2710,7 @@ function recordKeystroke() {
 }
 
 // Generate WPM graph from keystroke timestamps (Monkeytype style)
-function generateWmpGraphFromTimestamps() {
+function generateWpmGraphFromTimestamps() {
   if (!gameStartTime || keystrokeTimestamps.length === 0) {
     perSecondWpmData = [];
     return;
@@ -2725,13 +2846,7 @@ function calculateScoreBreakdown() {
     const accuracy = parseFloat(wpmResult.accuracy.replace("%", "")) / 100;
 
     // Get game settings for difficulty multiplier
-    const settings = JSON.parse(localStorage.getItem("gameSettings")) || {
-      timeLimit: 30,
-      bonusTime: 3,
-      initialTime: 10,
-      goalPercentage: 100,
-      currentMode: "classic",
-    };
+    const settings = storageManager.getGameSettings();
 
     // Calculate difficulty multiplier based on game settings
     const difficultyMultiplier = calculateDifficultyMultiplier(settings);
@@ -3314,7 +3429,7 @@ async function displayModernGameOverContent(data) {
   modalBody.innerHTML = content;
 
   // Render WPM progression chart after modal content is set
-  generateWmpGraphFromTimestamps();
+  generateWpmGraphFromTimestamps();
   setTimeout(() => renderGameOverWpmChart(), 100);
 
   gameOverModal.show();
@@ -3749,11 +3864,9 @@ function saveZenResult(wpm, totalTime, accuracy) {
 function getDisplayUsername() {
   const currentUser = window.getCurrentUser();
   if (currentUser) {
-    // Return authenticated username
-    return localStorage.getItem("nerdtype_username") || "User";
+    return storageManager.getItem("nerdtype_username", "User");
   } else {
-    // Return guest username
-    return localStorage.getItem("nerdtype_username") || "runner";
+    return storageManager.getItem("nerdtype_username", "runner");
   }
 }
 
