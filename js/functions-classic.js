@@ -368,59 +368,137 @@ if (achievementSoundEnabled === "false") {
   achievementSound.muted = true;
 }
 
-// Create keypress audio pool for better performance
-const keypressAudioPool = [];
-const poolSize = GAME_DEFAULTS.AUDIO_POOL_SIZE; // Create multiple instances
-let currentAudioIndex = 0;
+// Professional Web Audio API-based keypress sound system
+let audioContext = null;
+let keypressBuffer = null;
+let keypressSoundMuted = false;
+let fallbackAudio = null;
 
-// Create the audio pool
-for (let i = 0; i < poolSize; i++) {
-  const audio = new Audio("../sounds/keypress_1.wav");
-  audio.volume = 0.3;
-  audio.preload = "auto"; // Ensure it's preloaded
-  keypressAudioPool.push(audio);
+// Initialize the audio system
+async function initializeKeypressAudio() {
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    const response = await fetch("../sounds/keypress_1.wav");
+    const arrayBuffer = await response.arrayBuffer();
+    keypressBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+    console.log("Web Audio API keypress sound loaded successfully");
+  } catch (error) {
+    console.log("Web Audio API failed, using fallback:", error);
+    fallbackAudio = new Audio("../sounds/keypress_1.wav");
+    const initialVolume =
+      parseInt(storageManager.getItem("keypress_sound_volume", "50")) / 100;
+    fallbackAudio.volume = initialVolume;
+    fallbackAudio.preload = "auto";
+  }
 }
 
-// Keep reference for backward compatibility
-window.keypressSound = keypressAudioPool[0];
+// Initialize audio system
+initializeKeypressAudio();
+
+// Ensure AudioContext is resumed on any user interaction
+function ensureAudioContextReady() {
+  if (audioContext && audioContext.state === "suspended") {
+    audioContext
+      .resume()
+      .catch((e) => console.log("AudioContext auto-resume failed:", e));
+  }
+}
+
+// Resume audio context on various user interactions
+document.addEventListener("click", ensureAudioContextReady, { once: false });
+document.addEventListener("keydown", ensureAudioContextReady, { once: false });
+document.addEventListener("touchstart", ensureAudioContextReady, {
+  once: false,
+});
 
 // Check the keypress sound setting on initialization
 const keypressSoundEnabled = storageManager.getItem(
   "keypress_sound_enabled",
   "false",
 );
-if (keypressSoundEnabled !== "true") {
-  keypressAudioPool.forEach((audio) => (audio.muted = true));
-}
+keypressSoundMuted = keypressSoundEnabled !== "true";
+
+// Keep reference for backward compatibility
+window.keypressSound = { muted: keypressSoundMuted };
 
 // Dispatch an event to notify that the keypress sound is loaded
-window.dispatchEvent(
-  new CustomEvent("keypress_sound_loaded", {
-    detail: { sound: keypressAudioPool[0] },
-  }),
-);
+setTimeout(() => {
+  window.dispatchEvent(
+    new CustomEvent("keypress_sound_loaded", {
+      detail: { sound: window.keypressSound },
+    }),
+  );
+}, 100);
 
 function playKeypressSound() {
   const keypressSoundEnabled = storageManager.getItem(
     "keypress_sound_enabled",
     "false",
   );
-  if (keypressSoundEnabled === "true" && hasStartedTyping) {
-    const audio = keypressAudioPool[currentAudioIndex];
-    audio.currentTime = 0;
-    audio.play().catch((e) => console.log("Keypress sound play prevented:", e));
 
-    // Move to next audio in pool
-    currentAudioIndex = (currentAudioIndex + 1) % poolSize;
+  if (keypressSoundEnabled !== "true" || keypressSoundMuted) {
+    return;
+  }
+
+  const volumeLevel =
+    parseInt(storageManager.getItem("keypress_sound_volume", "50")) / 100;
+
+  if (audioContext && keypressBuffer) {
+    if (audioContext.state === "suspended") {
+      audioContext
+        .resume()
+        .catch((e) => console.log("AudioContext resume failed:", e));
+    }
+
+    try {
+      const source = audioContext.createBufferSource();
+      const gainNode = audioContext.createGain();
+
+      source.buffer = keypressBuffer;
+      gainNode.gain.value = volumeLevel;
+
+      source.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      source.start(0);
+    } catch (error) {
+      console.log("Web Audio playback failed:", error);
+    }
+  } else if (fallbackAudio) {
+    try {
+      fallbackAudio.volume = volumeLevel;
+      fallbackAudio.currentTime = 0;
+      fallbackAudio
+        .play()
+        .catch((e) => console.log("Fallback audio play prevented:", e));
+    } catch (error) {
+      console.log("Fallback audio failed:", error);
+    }
   }
 }
 
 // Function to handle sound setting changes
 function updateKeypressSoundSetting(enabled) {
-  keypressAudioPool.forEach((audio) => {
-    audio.muted = !enabled;
-  });
+  keypressSoundMuted = !enabled;
+  if (fallbackAudio) {
+    fallbackAudio.muted = !enabled;
+  }
+  if (window.keypressSound) {
+    window.keypressSound.muted = !enabled;
+  }
 }
+
+// Function to update keypress volume in real-time
+function updateKeypressVolume(volumeLevel) {
+  if (fallbackAudio) {
+    fallbackAudio.volume = volumeLevel;
+  }
+}
+
+// Make volume update function globally accessible
+window.updateKeypressVolume = updateKeypressVolume;
 
 // Make it available globally if needed by other modules
 window.updateKeypressSoundSetting = updateKeypressSoundSetting;
@@ -1123,22 +1201,25 @@ function startGame() {
     );
   }
 
-  keypressAudioPool.forEach((audio) => {
-    audio.load(); // Force immediate loading
-    // Attempt a silent play to prime the audio
-    audio.volume = 0;
-    audio
+  // Prime the audio systems for optimal performance
+  if (fallbackAudio) {
+    // Prime the fallback HTML5 audio
+    fallbackAudio.load();
+    const originalVolume = fallbackAudio.volume;
+    fallbackAudio.volume = 0;
+    fallbackAudio
       .play()
       .then(() => {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.volume = 0.3; // Restore volume
+        fallbackAudio.pause();
+        fallbackAudio.currentTime = 0;
+        fallbackAudio.volume = originalVolume;
       })
       .catch(() => {
-        // Silent fail - some browsers block this
-        audio.volume = 0.3;
+        fallbackAudio.volume = originalVolume;
       });
-  });
+  }
+
+  // Web Audio API system doesn't need priming - it's ready on demand
   // Reset the next word element styles to default game styles
   const nextWordDiv = document.getElementById("nextWord");
   if (nextWordDiv) {
@@ -2296,10 +2377,9 @@ function startGameOnFirstInput() {
 // Helper function to handle keypress sound
 function handleKeypressSound(e) {
   if (
-    hasStartedTyping &&
-    ((e.inputType === "insertText" && e.data) ||
-      e.inputType === "deleteContentBackward" ||
-      e.inputType === "deleteContentForward")
+    (e.inputType === "insertText" && e.data) ||
+    e.inputType === "deleteContentBackward" ||
+    e.inputType === "deleteContentForward"
   ) {
     playKeypressSound();
   }

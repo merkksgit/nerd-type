@@ -7,7 +7,6 @@ export const GAME_DEFAULTS = {
   ZEN_WORD_GOAL: 30,
   WORDS_TO_SHOW: 30,
   CHARS_PER_WORD: 5,
-  AUDIO_POOL_SIZE: 2,
   DEFAULT_LANGUAGE: "english",
   DEFAULT_FONT: "jetbrains-light",
   DEFAULT_USERNAME: "runner",
@@ -93,4 +92,3 @@ export const DIFFICULTY_LEVELS = {
   HARD: "hard",
   EXPERT: "expert",
 };
-

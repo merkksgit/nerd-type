@@ -1,3 +1,59 @@
+/* Volume Slider Styling */
+#keypressVolumeSlider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: #c0caf5 !important;
+  outline: none;
+}
+
+#keypressVolumeSlider::-webkit-slider-track {
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: #c0caf5 !important;
+}
+
+#keypressVolumeSlider::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #c0caf5 !important;
+  border: none;
+}
+
+#keypressVolumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #7aa2f7;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#keypressVolumeSlider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #7aa2f7;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#keypressVolumeContainer .fa-volume-low,
+#keypressVolumeContainer .fa-volume-high {
+  color: #7aa2f7 !important;
+}
+
+#volumeValueDisplay {
+  color: #7aa2f7 !important;
+  font-weight: 500;
+}
+
 /* UI Toggle Button */
 .ui-toggle-btn {
   position: fixed;

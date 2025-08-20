@@ -329,6 +329,58 @@ function loadSettings() {
     keypressSoundToggle.checked = keypressSoundEnabled === "true";
   }
 
+  // Load keypress volume setting
+  const keypressVolume = localStorage.getItem("keypress_sound_volume") || "50";
+  const keypressVolumeSlider = document.getElementById("keypressVolumeSlider");
+  const volumeValueDisplay = document.getElementById("volumeValueDisplay");
+
+  if (keypressVolumeSlider) {
+    keypressVolumeSlider.value = keypressVolume;
+  }
+  if (volumeValueDisplay) {
+    volumeValueDisplay.textContent = `${keypressVolume}%`;
+  }
+
+  // Volume slider event listener
+  if (keypressVolumeSlider) {
+    keypressVolumeSlider.addEventListener("input", function () {
+      const volume = this.value;
+      if (volumeValueDisplay) {
+        volumeValueDisplay.textContent = `${volume}%`;
+      }
+      if (window.updateKeypressVolume) {
+        window.updateKeypressVolume(volume / 100);
+      }
+    });
+  }
+
+  // Show/hide volume slider based on keypress sound toggle
+  const keypressVolumeContainer = document.getElementById(
+    "keypressVolumeContainer",
+  );
+
+  function updateVolumeSliderVisibility() {
+    if (keypressVolumeContainer) {
+      const isKeypressSoundEnabled = keypressSoundToggle
+        ? keypressSoundToggle.checked
+        : false;
+      keypressVolumeContainer.style.display = isKeypressSoundEnabled
+        ? "block"
+        : "none";
+    }
+  }
+
+  // Set initial visibility
+  updateVolumeSliderVisibility();
+
+  // Update visibility when toggle changes
+  if (keypressSoundToggle) {
+    keypressSoundToggle.addEventListener(
+      "change",
+      updateVolumeSliderVisibility,
+    );
+  }
+
   // font selection
   const currentFont =
     localStorage.getItem("nerdtype_font") || "jetbrains-light";
@@ -836,6 +888,12 @@ async function applySettings() {
 
   localStorage.setItem("achievement_sound_enabled", achievementSoundEnabled);
   localStorage.setItem("keypress_sound_enabled", keypressSoundEnabled);
+
+  // Save keypress volume setting
+  const keypressVolumeSlider = document.getElementById("keypressVolumeSlider");
+  if (keypressVolumeSlider) {
+    localStorage.setItem("keypress_sound_volume", keypressVolumeSlider.value);
+  }
 
   // Get minimal UI toggle state
   const minimalUIToggle = document.getElementById("minimalUIToggle");
