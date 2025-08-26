@@ -224,7 +224,6 @@ export const words = [
   "varis",
   "punarinta",
   "varpunen",
-  "pöllö",
   "haukka",
   "joutsen",
   "riikinkukko",
