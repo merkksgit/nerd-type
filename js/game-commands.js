@@ -62,6 +62,7 @@ class GameCommands {
       "/space": this.toggleSpaceAfterWords.bind(this),
       "/spaces": this.toggleSpaceAfterWords.bind(this), // Alias for /space
       "/punc": this.togglePunctuation.bind(this),
+      "/nerdroids": this.openNerdroids.bind(this),
       "/punctuation": this.togglePunctuation.bind(this), // Alias for /punc
       "/sound": this.toggleKeypressSound.bind(this),
       "/help": this.showHelp.bind(this),
@@ -838,6 +839,7 @@ class GameCommands {
                   <span style='color:#ff9e64'>[scoreboard.data, achievements.data]</span>
 <span style='color:#bb9af7'>/status</span>         - Show current game settings
 <span style='color:#bb9af7'>/reset</span>          - Reset to default settings
+<span style='color:#bb9af7'>/nerdroids</span>      
 <span style='color:#bb9af7'>/help</span>           - Show this help message
 `;
     this.showInfoModal("Game Commands Help", helpText);
@@ -1050,6 +1052,14 @@ font=<span style='color:#f7768e'>${currentFont}</span>
         );
         break;
     }
+  }
+
+  openNerdroids() {
+    this.showNotification("Opening Nerdroids...", "info");
+
+    setTimeout(() => {
+      window.location.href = "./nerdroids.html";
+    }, 1000);
   }
 }
 

@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en" class="h-100">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <!-- iOS Safari theme colors -->
+    <meta name="theme-color" content="#24283b" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-R80KP2H5BL"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-R80KP2H5BL");
+    </script>
+
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="../css/fontawesome/all.min.css" />
+
+    <!-- Prefetch other pages -->
+    <link rel="prefetch" href="../index.html" />
+    <link rel="prefetch" href="./game.html" />
+    <link rel="prefetch" href="./chart.html" />
+    <link rel="prefetch" href="./achievements.html" />
+    <link rel="prefetch" href="./info.html" />
+    <link rel="prefetch" href="./contact.html" />
+    <link rel="prefetch" href="./terms.html" />
+    <link rel="prefetch" href="./archive.html" />
+
+    <title>NerdType | Asteroid Typing</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="../images/logo-no-keyboard-blue-bg-32x32.png"
+      sizes="32x32"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../images/logo-no-keyboard-blue-bg-192x192.png"
+      sizes="192x192"
+    />
+    <link href="../css/style.css" rel="stylesheet" />
+    <link href="../css/settings-modal.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
+    <!-- Firebase -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        push,
+        query,
+        orderByChild,
+        limitToLast,
+        get,
+        equalTo,
+        set,
+        remove,
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+      window.firebaseModules = {
+        initializeApp,
+        getDatabase,
+        ref,
+        push,
+        query,
+        orderByChild,
+        limitToLast,
+        get,
+        equalTo,
+        set,
+        remove,
+        getAuth,
+        onAuthStateChanged,
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        signOut,
+      };
+
+      if (typeof window.initializeFirebaseApp === "function") {
+        window.initializeFirebaseApp(window.firebaseModules);
+      } else {
+        document.addEventListener("DOMContentLoaded", () => {
+          if (typeof window.initializeFirebaseApp === "function") {
+            window.initializeFirebaseApp(window.firebaseModules);
+          }
+        });
+      }
+    </script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/auth-handler.js"></script>
+    <script src="../js/ui-updates.js"></script>
+
+    <style>
+      #asteroidCanvas {
+        border: none;
+        border-radius: 12px;
+        background: radial-gradient(circle at center, #24283b 0%, #1a1d2e 100%);
+        box-shadow:
+          0 8px 32px rgba(122, 162, 247, 0.15),
+          0 4px 16px rgba(157, 124, 216, 0.1),
+          0 2px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      #asteroidGameContainer {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      #asteroidStats {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 2rem 0;
+        min-width: 120px;
+      }
+
+      .stat-item {
+        text-align: center;
+        color: #ffffff;
+        font-family: "departure-mono", monospace;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 300;
+        color: #7aa2f7;
+        line-height: 1;
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.8rem;
+        color: #e2e8f0;
+        letter-spacing: 0.1em;
+        font-weight: 400;
+      }
+
+      #asteroidInputContainer {
+        position: absolute;
+        top: 52%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10;
+        background: transparent;
+      }
+
+      #asteroidInput {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        text-align: center;
+        padding: 0.5rem;
+        font-family: "departure-mono", monospace;
+        font-size: 1.4rem;
+        font-weight: 300;
+        width: 250px;
+        outline: none;
+      }
+
+      #asteroidInput:focus {
+        outline: none;
+      }
+
+      #asteroidStartBtn {
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 4px;
+        font-family: "departure-mono", monospace;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      #asteroidStartBtn:hover {
+        background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+      }
+
+      #asteroidGameOver {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #24283b !important;
+        border: 2px solid #7aa2f7 !important;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        color: #7aa2f7;
+        font-family: "departure-mono", monospace;
+        display: none;
+        width: 450px;
+        min-height: 250px;
+        box-sizing: border-box;
+        outline: none;
+        box-shadow: none;
+        z-index: 1000;
+      }
+
+      #asteroidGameOver h3 {
+        color: #ff9e64 !important;
+        font-family: "departure-mono", monospace;
+        font-size: 24px;
+        margin-bottom: 0.5rem;
+        font-weight: 400;
+      }
+
+      #asteroidGameOver p {
+        color: #a9b1d6;
+        font-family: "departure-mono", monospace;
+        font-size: 16px;
+        margin: 0.5rem 0;
+      }
+
+      #asteroidGameOver kbd {
+        background: transparent;
+        color: #ff9e64;
+        border: 1px solid #ff9e64;
+        font-family: "departure-mono", monospace;
+        padding: 2px 6px;
+        border-radius: 3px;
+      }
+
+      .asteroid-instructions {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1.5rem;
+        background: rgba(31, 35, 53, 0.8);
+        border: 1px solid rgba(124, 58, 237, 0.4);
+        border-radius: 8px;
+        color: #e0def4;
+        font-family: "departure-mono", monospace;
+        text-align: left;
+      }
+
+      .asteroid-instructions h3 {
+        color: #a855f7;
+        margin-bottom: 1rem;
+      }
+
+      .asteroid-instructions ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .asteroid-instructions li {
+        margin: 0.5rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+      }
+
+      .asteroid-instructions li::before {
+        content: "▸";
+        position: absolute;
+        left: 0;
+        color: #7c3aed;
+      }
+
+      kbd {
+        background: rgba(122, 162, 247, 0.2);
+        border: 1px solid rgba(122, 162, 247, 0.4);
+        border-radius: 3px;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+        color: #7aa2f7;
+        font-family: "departure-mono", monospace;
+      }
+
+      @media (max-width: 1400px) {
+        /* Hide leaderboard on smaller screens */
+        #nerdroidsLeaderboard {
+          display: none !important;
+        }
+
+        /* Adjust game layout for smaller screens */
+        .game-layout {
+          justify-content: center !important;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        #asteroidStats {
+          position: static !important;
+          flex-direction: row !important;
+          justify-content: center;
+          gap: 2rem;
+          padding: 1rem 0;
+          margin-bottom: 1rem;
+        }
+
+        .stat-item {
+          text-align: center;
+        }
+      }
+
+      @media (max-width: 768px) {
+        #asteroidCanvas {
+          width: 100% !important;
+          height: 400px !important;
+        }
+
+        .stat-value {
+          font-size: 1.5rem;
+        }
+
+        .stat-label {
+          font-size: 0.7rem;
+        }
+
+        #asteroidStats {
+          gap: 1.5rem;
+          padding: 0.5rem 0;
+        }
+
+        #asteroidInputContainer {
+          top: 60%;
+        }
+
+        #asteroidInput {
+          width: 200px;
+          font-size: 1.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="d-flex flex-column h-100">
+    <div class="container-fluid flex-grow-1">
+      <nav class="navbar navbar-dark navbar-expand">
+        <div class="container-fluid">
+          <a href="./game.html">
+            <img
+              id="header-logo"
+              src="../images/logo-text-no-keyboard.png"
+              alt="NerdType Logo"
+            />
+          </a>
+          <a href="./game.html">
+            <img
+              id="header-logo-no-text"
+              src="../images/mobile-header-logo-v2.png"
+              alt="NerdType Logo"
+            />
+          </a>
+          <div class="navbar-collapse justify-content-start ms-4" id="mainmenu">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="../index.html"
+                  ><i class="fa-solid fa-house"></i
+                ></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./game.html"
+                  ><i class="fa-solid fa-keyboard"></i
+                ></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./chart.html"
+                  ><i class="fa-solid fa-chart-line"></i
+                ></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./achievements.html"
+                  ><i class="fa-solid fa-trophy"></i
+                ></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./globalscoreboard.html"
+                  ><i class="fa-solid fa-medal"></i
+                ></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <div id="asteroidGameContainer" style="padding-bottom: 3rem">
+                  <!-- Game Title -->
+                  <div class="text-center mb-4" style="padding-top: 3rem">
+                    <h1
+                      style="
+                        color: #7aa2f7;
+                        font-family: &quot;departure-mono&quot;, monospace;
+                      "
+                    >
+                      <img
+                        src="../images/spaceship.png"
+                        alt="Spaceship"
+                        style="
+                          width: 48px;
+                          height: 48px;
+                          transform: rotate(15deg);
+                        "
+                      />
+                      NERDROIDS
+                    </h1>
+                  </div>
+
+                  <!-- Game Layout -->
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: center;
+                      align-items: flex-start;
+                      width: 100%;
+                      position: relative;
+                    "
+                  >
+                    <!-- Centered Canvas Container -->
+                    <div style="position: relative">
+                      <canvas
+                        id="asteroidCanvas"
+                        width="1000"
+                        height="600"
+                      ></canvas>
+
+                      <!-- Floating Input Field Overlay -->
+                      <div id="asteroidInputContainer">
+                        <input
+                          type="text"
+                          id="asteroidInput"
+                          autocomplete="off"
+                          autocorrect="off"
+                          autocapitalize="off"
+                          spellcheck="false"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Left Side Stats (absolute positioned) -->
+                    <div
+                      id="asteroidStats"
+                      style="
+                        position: absolute;
+                        right: calc(50% + 520px);
+                        top: 0;
+                      "
+                    >
+                      <div id="asteroidScore" class="stat-item">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">SCORE</div>
+                      </div>
+                      <div id="asteroidLevel" class="stat-item">
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">LEVEL</div>
+                      </div>
+                      <div id="asteroidLives" class="stat-item">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">LIVES</div>
+                      </div>
+                    </div>
+
+                    <!-- Right Side Leaderboard (absolute positioned) -->
+                    <div
+                      id="nerdroidsLeaderboard"
+                      style="
+                        position: absolute;
+                        left: calc(50% + 520px);
+                        top: 0;
+                        width: 350px;
+                      "
+                    >
+                      <h3
+                        style="
+                          color: #7aa2f7;
+                          font-family: &quot;departure-mono&quot;, monospace;
+                          text-align: center;
+                          margin-bottom: 1rem;
+                          font-size: 1.2rem;
+                        "
+                      >
+                        <i class="fa-solid fa-trophy me-2"></i>
+                        TOP 10 PILOTS
+                      </h3>
+                      <div
+                        id="nerdroidsLeaderboardContent"
+                        style="
+                          background: rgba(36, 40, 59, 0.8);
+                          border-radius: 12px;
+                          padding: 1rem;
+                          height: 600px;
+                          overflow-y: auto;
+                        "
+                      >
+                        <div
+                          style="
+                            color: #a9b1d6;
+                            font-family: &quot;departure-mono&quot;, monospace;
+                            text-align: center;
+                            padding: 2rem;
+                          "
+                        >
+                          Loading leaderboard...
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Keyboard Shortcuts Info -->
+                  <div
+                    style="
+                      margin-top: 2rem;
+                      text-align: center;
+                      color: #e2e8f0;
+                      font-family: &quot;departure-mono&quot;, monospace;
+                      font-size: 0.9rem;
+                    "
+                  >
+                    <div>
+                      Press <kbd>Enter</kbd> to start - <kbd>Ctrl+Enter</kbd> to
+                      reset
+                    </div>
+                  </div>
+
+                  <!-- Game Over Modal -->
+                  <div id="asteroidGameOver" tabindex="-1">
+                    <h3 style="color: #ef4444; margin-bottom: 1rem">
+                      <i class="fa-solid fa-explosion me-2"></i>
+                      MISSION FAILED
+                    </h3>
+                    <p style="color: #a9b1d6">Your ship was destroyed!</p>
+                    <div
+                      id="asteroidFinalStats"
+                      style="margin: 1rem 0; color: #a9b1d6"
+                    >
+                      <p>Final Score: <span id="asteroidFinalScore">0</span></p>
+                      <p>
+                        Level Reached: <span id="asteroidFinalLevel">1</span>
+                      </p>
+                      <p>
+                        Words Destroyed: <span id="asteroidFinalWords">0</span>
+                      </p>
+                    </div>
+                    <div
+                      style="
+                        margin-top: 1.5rem;
+                        color: #6b7280;
+                        font-family: &quot;departure-mono&quot;, monospace;
+                        font-size: 0.9rem;
+                      "
+                    >
+                      Press <kbd>Enter</kbd> to restart
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto p-3">
+      <div class="container-fluid">
+        <div class="row">
+          <div
+            class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 gap-md-4"
+          >
+            <span id="versionInfo" class="footer-text"></span>
+            <span class="d-flex align-items-center footer-text">
+              <i class="fa-regular fa-copyright me-2"></i>
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              ERKKA LEPPÄNEN
+            </span>
+            <div class="d-flex gap-4 mt-2 mt-md-0">
+              <a
+                href="https://github.com/merkksgit/nerd-type"
+                target="_blank"
+                class="text-decoration-none social-link"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="GitHub"
+              >
+                <i class="fa-brands fa-github"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/nerdtypegame/"
+                target="_blank"
+                class="text-decoration-none social-link"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Instagram"
+              >
+                <i class="fa-brands fa-instagram"></i>
+              </a>
+              <a
+                href="./contact.html"
+                class="text-decoration-none social-link"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Contact"
+              >
+                <i class="fa-solid fa-envelope"></i>
+              </a>
+              <a
+                href="./info.html"
+                class="text-decoration-none social-link"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Info"
+              >
+                <i class="fa-solid fa-circle-info"></i>
+              </a>
+              <a
+                href="./terms.html"
+                class="text-decoration-none social-link"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Terms of Use"
+              >
+                <i class="fa-solid fa-file-lines"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Settings Modal (reused from main game) -->
+    <div
+      class="modal fade"
+      id="settingsModal"
+      tabindex="-1"
+      aria-labelledby="settingsModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header border-bottom-0 text-center">
+            <h5 class="modal-title w-100" id="settingsModalLabel">
+              [ASTEROID GAME SETTINGS]
+            </h5>
+          </div>
+          <div class="modal-body border-top-0 border-bottom-0">
+            <div class="container-fluid">
+              <div class="row">
+                <!-- Language Settings -->
+                <div class="col-md-6 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-language me-2"></i>Word Set
+                    </h5>
+                    <div class="settings-card-body">
+                      <p class="text-muted small mb-3">
+                        <i class="fa-solid fa-link me-1"></i>
+                        Synced with main game settings
+                      </p>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="asteroidLanguageMode"
+                          id="asteroidLangEnglish"
+                          value="english"
+                          checked
+                        />
+                        <label
+                          class="form-check-label"
+                          for="asteroidLangEnglish"
+                        >
+                          English
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="asteroidLanguageMode"
+                          id="asteroidLangFinnish"
+                          value="finnish"
+                        />
+                        <label
+                          class="form-check-label"
+                          for="asteroidLangFinnish"
+                        >
+                          Finnish
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="asteroidLanguageMode"
+                          id="asteroidLangSwedish"
+                          value="swedish"
+                        />
+                        <label
+                          class="form-check-label"
+                          for="asteroidLangSwedish"
+                        >
+                          Swedish
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="asteroidLanguageMode"
+                          id="asteroidLangProgramming"
+                          value="programming"
+                        />
+                        <label
+                          class="form-check-label"
+                          for="asteroidLangProgramming"
+                        >
+                          Programming
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Difficulty Settings -->
+                <div class="col-md-6 mb-4">
+                  <div class="settings-card">
+                    <h5 class="settings-card-header">
+                      <i class="fa-solid fa-sliders me-2"></i>Difficulty
+                    </h5>
+                    <div class="settings-card-body">
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="asteroidDifficulty"
+                          id="asteroidEasy"
+                          value="easy"
+                        />
+                        <label class="form-check-label" for="asteroidEasy">
+                          Easy
+                          <small class="d-block text-muted"
+                            >Slower movement, more lives</small
+                          >
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="asteroidDifficulty"
+                          id="asteroidNormal"
+                          value="normal"
+                          checked
+                        />
+                        <label class="form-check-label" for="asteroidNormal">
+                          Normal
+                          <small class="d-block text-muted"
+                            >Balanced gameplay</small
+                          >
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="asteroidDifficulty"
+                          id="asteroidHard"
+                          value="hard"
+                        />
+                        <label class="form-check-label" for="asteroidHard">
+                          Hard
+                          <small class="d-block text-muted"
+                            >Faster movement, fewer lives</small
+                          >
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="modal-footer border-top-0 d-flex justify-content-center"
+            style="background-color: #24283b"
+          >
+            <button id="asteroidApplySettingsBtn" type="button" class="btn">
+              Apply
+            </button>
+            <button
+              id="asteroidCloseSettingsBtn"
+              type="button"
+              class="btn"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/username.js"></script>
+    <script src="../js/version.js"></script>
+    <script src="../js/custom-modals.js"></script>
+    <script src="../js/asteroid-game.js" type="module"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
