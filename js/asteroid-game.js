@@ -145,7 +145,6 @@ class AsteroidGame {
     await this.loadWordList();
     console.log(`Word list loaded: ${this.wordList.length} words`);
     console.log(`Current language: ${this.currentLanguage}`);
-    console.log(`Sample words:`, this.wordList.slice(0, 5));
     this.drawWelcomeScreen();
     this.updateUI();
     console.log("Asteroid game initialized");
@@ -484,7 +483,6 @@ class AsteroidGame {
 
     // Spawn new words
     if (currentTime - this.lastSpawnTime > this.spawnInterval) {
-      console.log(`Spawning word... Current words: ${this.words.length}`);
       this.spawnWord();
       this.lastSpawnTime = currentTime;
     }
@@ -622,9 +620,6 @@ class AsteroidGame {
     };
 
     this.words.push(wordObj);
-    console.log(
-      `Spawned word: "${word}" from ${this.currentLanguage} list at (${x.toFixed(1)}, ${y.toFixed(1)}) with velocity (${vx.toFixed(2)}, ${vy.toFixed(2)})`,
-    );
   }
 
   checkWord() {
@@ -999,6 +994,9 @@ class AsteroidGame {
     // Save score to Firebase for logged in users
     this.saveNerdroidsScore();
 
+    // Trigger Star Pilot achievement after completing a game
+    this.triggerStarPilotAchievement();
+
     // Show game over modal
     this.gameOverModal.style.display = "block";
 
@@ -1098,7 +1096,37 @@ class AsteroidGame {
     if (this.ship.angle > 2 * Math.PI) this.ship.angle -= 2 * Math.PI;
   }
 
-  // No score saving or achievement tracking - keeping the game completely separate
+  triggerStarPilotAchievement() {
+    // Add a small delay to ensure achievements manager is loaded
+    setTimeout(() => {
+      try {
+        console.log(
+          "Checking for achievement system...",
+          typeof window.achievementSystem,
+        );
+        if (typeof window.achievementSystem !== "undefined") {
+          const stats = window.achievementSystem.achievementsData.stats;
+          console.log("Current stats:", stats);
+          console.log("nerdroidsPlayed already set:", stats.nerdroidsPlayed);
+
+          if (!stats.nerdroidsPlayed) {
+            console.log(
+              "Setting nerdroidsPlayed to true and triggering achievement check",
+            );
+            stats.nerdroidsPlayed = true;
+            window.achievementSystem.saveData();
+            window.achievementSystem.checkAchievements(stats);
+          } else {
+            console.log("nerdroidsPlayed already true, not triggering again");
+          }
+        } else {
+          console.log("Achievement system not found");
+        }
+      } catch (error) {
+        console.error("Error triggering Star Pilot achievement:", error);
+      }
+    }, 100);
+  }
 }
 
 // Initialize game when DOM is loaded

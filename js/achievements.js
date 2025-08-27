@@ -559,6 +559,18 @@ class AchievementSystem {
         },
       },
 
+      star_pilot: {
+        id: "star_pilot",
+        name: "Star Pilot",
+        description: "Played a Nerdroids game",
+        icon: "fa-solid fa-rocket",
+        category: "secret",
+        secret: true,
+        check: function (stats) {
+          return stats.nerdroidsPlayed === true;
+        },
+      },
+
       completionist: {
         id: "completionist",
         name: "Completionist",
