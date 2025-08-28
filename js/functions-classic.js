@@ -3539,9 +3539,9 @@ async function displayModernGameOverContent(data) {
     }
   }
 
-  // Always add the save image button
+  // Add the save image button if it doesn't already exist
   const modalFooter = document.querySelector("#gameOverModal .modal-footer");
-  if (modalFooter) {
+  if (modalFooter && !document.getElementById("saveResultImageBtn")) {
     // Create the save image button
     const saveButton = document.createElement("span");
     saveButton.id = "saveResultImageBtn";
@@ -3553,13 +3553,13 @@ async function displayModernGameOverContent(data) {
       color: #24283b;
       padding: 4px 8px;
       border-radius: 9999px;
-      margin-left: 10px;
       cursor: pointer;
       user-select: none;
+      margin-left: 10px;
     `;
     saveButton.onclick = saveResultAsImage;
 
-    // Insert the save button next to the existing text, keeping centered layout
+    // Insert the save button right after the restart text
     const restartText = modalFooter.querySelector(".restart-text");
     if (restartText) {
       restartText.appendChild(saveButton);
