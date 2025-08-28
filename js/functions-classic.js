@@ -4964,8 +4964,12 @@ async function saveResultAsImage() {
       scrollX: 0,
       scrollY: 0,
       ignoreElements: (element) => {
-        // Don't capture the save button itself
-        return element.id === "saveResultImageBtn";
+        // Don't capture the save button itself or press enter/ctrl+m indicators
+        return (
+          element.id === "saveResultImageBtn" ||
+          element.classList.contains("press-enter-text") ||
+          element.id === "practiceMistakesNotice"
+        );
       },
     });
 
