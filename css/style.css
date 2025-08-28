@@ -3380,3 +3380,29 @@ tr:hover .username-rank-icon {
     font-size: 0.8rem;
   }
 }
+
+/* ====== SCREENSHOT MODE STYLES ====== */
+.screenshot-mode {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.screenshot-mode .modal-content {
+  border: none !important;
+  background: linear-gradient(135deg, #1a1a1a 0%, #24283b 100%) !important;
+}
+
+.screenshot-mode .modal-body {
+  background: transparent !important;
+}
+
+.screenshot-mode .modal-footer {
+  background: rgba(36, 40, 59, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Hide save button in screenshot mode */
+.screenshot-mode #saveResultImageBtn {
+  display: none !important;
+}

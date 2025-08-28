@@ -3539,6 +3539,33 @@ async function displayModernGameOverContent(data) {
     }
   }
 
+  // Always add the save image button
+  const modalFooter = document.querySelector("#gameOverModal .modal-footer");
+  if (modalFooter) {
+    // Create the save image button
+    const saveButton = document.createElement("span");
+    saveButton.id = "saveResultImageBtn";
+    saveButton.className = "press-enter-text desktop-return-text";
+    saveButton.innerHTML = '<i class="fas fa-camera me-1"></i>Save Image';
+    saveButton.title = "Save result as image";
+    saveButton.style.cssText = `
+      background-color: #7aa2f7;
+      color: #24283b;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      margin-left: 10px;
+      cursor: pointer;
+      user-select: none;
+    `;
+    saveButton.onclick = saveResultAsImage;
+
+    // Insert the save button next to the existing text, keeping centered layout
+    const restartText = modalFooter.querySelector(".restart-text");
+    if (restartText) {
+      restartText.appendChild(saveButton);
+    }
+  }
+
   // Handle Enter key to restart and Ctrl+M for practice mistakes
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -4907,3 +4934,71 @@ function renderGameOverWpmChart() {
     ],
   });
 }
+
+// Function to save game result as image
+async function saveResultAsImage() {
+  const modal = document.getElementById("gameOverModal");
+  const modalContent = modal.querySelector(".modal-content");
+  const button = document.getElementById("saveResultImageBtn");
+
+  // Show loading state
+  const originalContent = button.innerHTML;
+  button.innerHTML =
+    '<i class="fas fa-spinner fa-spin"></i><span class="d-none d-sm-inline ms-1">Saving...</span>';
+  button.disabled = true;
+
+  try {
+    // Add a class to the modal for screenshot styling
+    modal.classList.add("screenshot-mode");
+
+    // Wait a moment for any animations to complete
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    // Capture only the modal content, not the entire modal with backdrop
+    const canvas = await html2canvas(modalContent, {
+      backgroundColor: "#1a1a1a", // Match the dark theme
+      scale: 2, // Higher resolution
+      useCORS: true,
+      allowTaint: false,
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+      ignoreElements: (element) => {
+        // Don't capture the save button itself
+        return element.id === "saveResultImageBtn";
+      },
+    });
+
+    // Create download link
+    canvas.toBlob(
+      (blob) => {
+        const link = document.createElement("a");
+        const timestamp = new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/:/g, "-");
+        link.download = `nerdtype-result-${timestamp}.png`;
+        link.href = URL.createObjectURL(blob);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      },
+      "image/png",
+      0.95,
+    );
+  } catch (error) {
+    console.error("Error capturing screenshot:", error);
+    alert("Failed to save image. Please try again.");
+  } finally {
+    // Remove screenshot styling
+    modal.classList.remove("screenshot-mode");
+
+    // Restore button state
+    button.innerHTML = originalContent;
+    button.disabled = false;
+  }
+}
+
+// Make function globally available
+window.saveResultAsImage = saveResultAsImage;
