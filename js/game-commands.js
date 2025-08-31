@@ -70,6 +70,7 @@ class GameCommands {
       "/data": this.toggleDataCollection.bind(this),
       "/debug": this.toggleDebug.bind(this),
       "/rm": this.removeData.bind(this),
+      "/prac": this.startCustomPractice.bind(this),
     };
 
     // Commands that need reload after execution
@@ -834,6 +835,8 @@ class GameCommands {
 <span style='color:#bb9af7'>/punc</span>           - Toggle punctuation marks
 <span style='color:#bb9af7'>/sound</span>          - Toggle keypress sound
 <span style='color:#bb9af7'>/data</span>           - Toggle data collection
+<span style='color:#bb9af7'>/prac</span>           - Practice specific words
+                  <span style='color:#ff9e64'>[word1 word2 word3...]</span>
 <span style='color:#bb9af7'>/rm</span>             - Remove data from localStorage
                   <span style='color:#ff9e64'>[scoreboard.data, achievements.data]</span>
 <span style='color:#bb9af7'>/status</span>         - Show current game settings
@@ -1012,6 +1015,55 @@ font=<span style='color:#f7768e'>${currentFont}</span>
     }, 1000);
   }
 
+  startCustomPractice(args) {
+    if (args.length === 0) {
+      this.showNotification(
+        "Usage: /prac <word1> <word2> ... - Start practice session with specified words",
+        "info",
+      );
+      return;
+    }
+
+    // Filter out empty strings and trim whitespace
+    const customWords = args
+      .map((word) => word.trim())
+      .filter((word) => word.length > 0);
+
+    if (customWords.length === 0) {
+      this.showNotification(
+        "Error: Please provide at least one valid word for practice",
+        "error",
+      );
+      return;
+    }
+
+    // Start practice session immediately without page reload
+    this.startCustomPracticeSession(customWords);
+  }
+
+  startCustomPracticeSession(customWords) {
+    // Check if startPracticeMistakesMode function is available
+    if (typeof window.startPracticeMistakesMode === "function") {
+      // Store the custom words temporarily for the practice session
+      localStorage.setItem("customPracticeWords", JSON.stringify(customWords));
+
+      // Start the practice session directly
+      window.startPracticeMistakesMode();
+
+      // Activate the game immediately after a small delay
+      setTimeout(() => {
+        if (typeof window.activateGame === "function") {
+          window.activateGame();
+        }
+      }, 100);
+    } else {
+      this.showNotification(
+        "Error: Practice mode not available on this page",
+        "error",
+      );
+    }
+  }
+
   removeData(args) {
     if (args.length === 0) {
       this.showNotification(
@@ -1051,7 +1103,6 @@ font=<span style='color:#f7768e'>${currentFont}</span>
         break;
     }
   }
-
 }
 
 // Create and initialize game commands

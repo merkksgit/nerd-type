@@ -710,6 +710,19 @@ async function initializeGame() {
     document.body.prepend(errorMessage);
   }
 
+  // Check for custom practice words from /prac command
+  setTimeout(() => {
+    const customWords = localStorage.getItem("customPracticeWords");
+    if (customWords) {
+      // Start custom practice session and activate immediately
+      startPracticeMistakesMode();
+      // Add a small delay to ensure practice mode is fully initialized
+      setTimeout(() => {
+        activateGame();
+      }, 200);
+    }
+  }, TIMERS.SETTINGS_NOTIFICATION_DELAY);
+
   // Check for pending settings notification at the end
   setTimeout(() => {
     const pendingNotification = storageManager.getPendingSettingsNotification();
@@ -1308,6 +1321,7 @@ window.startGame = startGame;
 window.updateWordDisplay = updateWordDisplay;
 window.activateGame = activateGame;
 window.clearPunctuationCache = clearPunctuationCache;
+window.startPracticeMistakesMode = startPracticeMistakesMode;
 
 // Cache for processed words to avoid recursion
 let punctuationCache = new Map();
@@ -3632,15 +3646,39 @@ function startPracticeMistakesMode() {
     gameOverModal.hide();
   }
 
-  // Check if we have mistake words
-  if (gameMistakes.words.length === 0) {
-    console.warn("No mistake words found - cannot start practice mode");
+  // Check for custom practice words first
+  const customWords = localStorage.getItem("customPracticeWords");
+  let wordsToUse = [];
+  let practiceType = "";
+
+  if (customWords) {
+    // Use custom words from /prac command
+    try {
+      wordsToUse = JSON.parse(customWords);
+      practiceType = "Custom Practice";
+      // Clear the custom words after using them
+      localStorage.removeItem("customPracticeWords");
+    } catch (error) {
+      console.error("Error parsing custom practice words:", error);
+      localStorage.removeItem("customPracticeWords");
+    }
+  }
+
+  // Fall back to mistake words if no custom words
+  if (wordsToUse.length === 0 && gameMistakes.words.length > 0) {
+    wordsToUse = [...gameMistakes.words];
+    practiceType = "Practice Mistakes";
+  }
+
+  // Check if we have any words to practice
+  if (wordsToUse.length === 0) {
+    console.warn("No words found for practice - cannot start practice mode");
     return;
   }
 
   // Set practice mode flags
   isPracticeMistakesMode = true;
-  practiceMistakesWords = [...gameMistakes.words]; // Copy the mistake words
+  practiceMistakesWords = [...wordsToUse]; // Copy the words to practice
 
   // Create repeating word list from mistakes (repeat multiple times for practice)
   const repeatCount = Math.max(
@@ -3658,8 +3696,7 @@ function startPracticeMistakesMode() {
   // Update game mode display
   const gameModeElement = document.getElementById("currentGameMode");
   if (gameModeElement) {
-    gameModeElement.innerHTML =
-      "Practice Mistakes <span style='opacity: 0.8;'>[Ctrl + Enter to exit]</span>";
+    gameModeElement.innerHTML = `${practiceType} <span style='opacity: 0.8;'>[Ctrl + Enter to exit]</span>`;
     gameModeElement.style.color = "#ff9e64"; // Orange color to indicate practice mode
   }
 
