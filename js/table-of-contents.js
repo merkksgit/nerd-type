@@ -3,7 +3,11 @@ class TableOfContents {
     this.tocContainer = document.getElementById("tocList");
     this.headings = [];
     this.activeSection = null;
-    this.init();
+
+    // Only initialize if the TOC container exists
+    if (this.tocContainer) {
+      this.init();
+    }
   }
 
   init() {
@@ -13,6 +17,8 @@ class TableOfContents {
   }
 
   generateTOC() {
+    if (!this.tocContainer) return;
+
     // Find all headings (h2, h3, h4) in the content
     this.headings = Array.from(document.querySelectorAll("h2, h3, h4, h5"));
 
@@ -77,6 +83,8 @@ class TableOfContents {
   }
 
   setActiveSection(sectionId) {
+    if (!this.tocContainer) return;
+
     // Remove active class from all TOC links
     const allLinks = this.tocContainer.querySelectorAll(".toc-link");
     allLinks.forEach((link) => link.classList.remove("active"));
@@ -92,6 +100,8 @@ class TableOfContents {
   }
 
   setupSmoothScrolling() {
+    if (!this.tocContainer) return;
+
     // Add smooth scrolling to TOC links
     this.tocContainer.addEventListener("click", (e) => {
       if (e.target.classList.contains("toc-link")) {
@@ -118,7 +128,9 @@ class TableOfContents {
 
   // Method to refresh TOC if content changes dynamically
   refresh() {
-    this.generateTOC();
+    if (this.tocContainer) {
+      this.generateTOC();
+    }
   }
 }
 
