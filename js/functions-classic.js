@@ -3683,8 +3683,8 @@ function startPracticeMistakesMode() {
   // Create repeating word list from mistakes (repeat multiple times for practice)
   const repeatCount = Math.max(
     5,
-    Math.ceil(100 / practiceMistakesWords.length),
-  ); // At least 100 words total
+    Math.ceil(200 / practiceMistakesWords.length),
+  ); // At least 200 words total
   words = [];
   for (let i = 0; i < repeatCount; i++) {
     words.push(...practiceMistakesWords);
