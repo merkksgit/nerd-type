@@ -2412,12 +2412,26 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
     if (!isCorrectChar) {
       // Record mistake timestamp with word context for chart visualization
       if (gameStartTime && !gameEnded) {
+        // Determine what was expected based on position
+        const mistakePosition = userInput.length - 1;
+        let expectedChar = "";
+        if (mistakePosition < currentWord.length) {
+          // Mistake within the word
+          expectedChar = currentWord[mistakePosition];
+        } else if (mistakePosition === currentWord.length && showSpace) {
+          // Mistake at the space after the word
+          expectedChar = " ";
+        } else {
+          // True end of word
+          expectedChar = "EOF";
+        }
+
         mistakeTimestamps.push({
           timestamp: Date.now(),
           word: currentWord,
-          position: userInput.length - 1, // Position where mistake occurred
+          position: mistakePosition, // Position where mistake occurred
           attempted: userInput[userInput.length - 1] || "", // What was typed
-          expected: currentWord[userInput.length - 1] || "", // What was expected
+          expected: expectedChar, // What was expected
         });
 
         // Track words with mistakes for practice mode (skip if already in practice mistakes mode)
@@ -4839,36 +4853,61 @@ function renderGameOverWpmChart() {
 
                 // Show each word with wrong letter indicators
                 Object.entries(wordMistakes).forEach(([word, mistakes]) => {
-                  // Create word display with red highlighting for wrong letters
-                  let wordDisplay = "";
-                  const corrections = [];
-
-                  // Get unique mistake positions
-                  const mistakePositions = new Set(
-                    mistakes.map((m) => m.position),
+                  // Check if there are any space character mistakes (position >= word.length and expected = " ")
+                  const spaceMistakes = mistakes.filter(
+                    (m) => m.position >= word.length && m.expected === " ",
+                  );
+                  const letterMistakes = mistakes.filter(
+                    (m) => m.position < word.length,
                   );
 
-                  // Build word with red highlighting for wrong letters
-                  for (let i = 0; i < word.length; i++) {
-                    if (mistakePositions.has(i)) {
-                      // Find the mistake for this position
-                      const mistake = mistakes.find((m) => m.position === i);
-                      if (mistake) {
-                        // Capitalize wrong letter to indicate mistake
-                        wordDisplay += word[i].toUpperCase();
-                        // Add to corrections list
-                        const attemptedChar =
-                          mistake.attempted === " " ? "_" : mistake.attempted;
-                        corrections.push(`${word[i]}→${attemptedChar}`);
-                      }
-                    } else {
-                      wordDisplay += word[i];
-                    }
+                  // Handle space character mistakes separately
+                  if (spaceMistakes.length > 0) {
+                    // Show word with underscore for space mistake
+                    lines.push(`→ ${word}_`);
+                    // Show space corrections
+                    spaceMistakes.forEach((mistake) => {
+                      const attemptedChar =
+                        mistake.attempted === " " ? "_" : mistake.attempted;
+                      lines.push(`  _→${attemptedChar}`);
+                    });
                   }
 
-                  lines.push(`→ ${wordDisplay}`);
-                  if (corrections.length > 0) {
-                    lines.push(`  ${corrections.join(", ")}`);
+                  // Handle regular letter mistakes within the word
+                  if (letterMistakes.length > 0) {
+                    // Create word display with red highlighting for wrong letters
+                    let wordDisplay = "";
+                    const corrections = [];
+
+                    // Get unique mistake positions
+                    const mistakePositions = new Set(
+                      letterMistakes.map((m) => m.position),
+                    );
+
+                    // Build word with red highlighting for wrong letters
+                    for (let i = 0; i < word.length; i++) {
+                      if (mistakePositions.has(i)) {
+                        // Find the mistake for this position
+                        const mistake = letterMistakes.find(
+                          (m) => m.position === i,
+                        );
+                        if (mistake) {
+                          // Capitalize wrong letter to indicate mistake
+                          wordDisplay += word[i].toUpperCase();
+                          // Add to corrections list
+                          const attemptedChar =
+                            mistake.attempted === " " ? "_" : mistake.attempted;
+                          corrections.push(`${word[i]}→${attemptedChar}`);
+                        }
+                      } else {
+                        wordDisplay += word[i];
+                      }
+                    }
+
+                    lines.push(`→ ${wordDisplay}`);
+                    if (corrections.length > 0) {
+                      lines.push(`  ${corrections.join(", ")}`);
+                    }
                   }
                 });
 
