@@ -132,7 +132,6 @@ export const words = [
   "taikajuoma",
   "jäätikkö",
   "markkinat",
-  "kanjoni",
   "tanssija",
   "mysteeri",
   "kukinta",
