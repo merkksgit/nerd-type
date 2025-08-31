@@ -4821,15 +4821,58 @@ function renderGameOverWpmChart() {
                   return `${value} mistake${value !== 1 ? "s" : ""}`;
                 }
 
-                // Show unique words where mistakes occurred
-                const mistakeWords = [
-                  ...new Set(mistakesInSecond.map((m) => m.word)),
-                ];
+                // Group mistakes by word and create detailed breakdown
+                const wordMistakes = {};
+                mistakesInSecond.forEach((mistake) => {
+                  const word = mistake.word;
+                  if (!wordMistakes[word]) {
+                    wordMistakes[word] = [];
+                  }
+                  wordMistakes[word].push({
+                    position: mistake.position,
+                    attempted: mistake.attempted,
+                    expected: mistake.expected,
+                  });
+                });
 
-                return [
-                  `${value} mistake${value !== 1 ? "s" : ""} in:`,
-                  mistakeWords.join(", "),
-                ];
+                const lines = [`${value} mistake${value !== 1 ? "s" : ""}:`];
+
+                // Show each word with wrong letter indicators
+                Object.entries(wordMistakes).forEach(([word, mistakes]) => {
+                  // Create word display with red highlighting for wrong letters
+                  let wordDisplay = "";
+                  const corrections = [];
+
+                  // Get unique mistake positions
+                  const mistakePositions = new Set(
+                    mistakes.map((m) => m.position),
+                  );
+
+                  // Build word with red highlighting for wrong letters
+                  for (let i = 0; i < word.length; i++) {
+                    if (mistakePositions.has(i)) {
+                      // Find the mistake for this position
+                      const mistake = mistakes.find((m) => m.position === i);
+                      if (mistake) {
+                        // Capitalize wrong letter to indicate mistake
+                        wordDisplay += word[i].toUpperCase();
+                        // Add to corrections list
+                        const attemptedChar =
+                          mistake.attempted === " " ? "_" : mistake.attempted;
+                        corrections.push(`${word[i]}→${attemptedChar}`);
+                      }
+                    } else {
+                      wordDisplay += word[i];
+                    }
+                  }
+
+                  lines.push(`→ ${wordDisplay}`);
+                  if (corrections.length > 0) {
+                    lines.push(`  ${corrections.join(", ")}`);
+                  }
+                });
+
+                return lines;
               }
             },
           },
