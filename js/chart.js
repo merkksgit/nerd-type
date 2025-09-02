@@ -47,7 +47,7 @@ const getBaseLayout = (title) => ({
     },
   },
   margin: {
-    l: 40,
+    l: 80,
     r: 60,
     t: 80,
     b: 60,
@@ -277,6 +277,11 @@ function displayScoreGraph() {
   };
 
   const data = [scoreTrace, wpmTrace, accuracyTrace];
+
+  const maxScore = scores.length > 0 ? Math.max(...scores) : 100;
+  const minScore = scores.length > 0 ? Math.min(...scores) : 0;
+  const scoreRange = maxScore - minScore;
+  const scoreTickSpacing = Math.max(25, Math.ceil(scoreRange / 6));
 
   const layout = {
     ...getBaseLayout("Last 15 Classic Mode Games"),
