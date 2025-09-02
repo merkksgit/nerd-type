@@ -653,4 +653,3 @@ export const words = [
   "jordnöt",
   "cashew",
 ];
-

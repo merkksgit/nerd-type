@@ -78,12 +78,10 @@ function displayScoreGraph() {
       !result.mode,
   );
 
-
   const sortedResults = classicResults.sort(
     (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
   );
   const last15Results = sortedResults.slice(0, 15).reverse();
-
 
   if (last15Results.length === 0) {
     const layout = {
@@ -358,7 +356,6 @@ function displayZenModeGraph() {
       result.wpm !== undefined &&
       result.accuracy !== undefined,
   );
-
 
   const sortedZenResults = zenResults.sort(
     (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
@@ -673,7 +670,6 @@ window.refreshChartsWithLatestData =
             (result) => result.mode === "Zen Mode",
           );
 
-
           if (existingZenGames.length > 0 && newZenGames.length === 0) {
           }
 
@@ -689,15 +685,13 @@ window.refreshChartsWithLatestData =
             (result) => result.mode === "Zen Mode",
           );
 
-
           storageManager.setGameResults(cloudData);
           storageManager.setTotalGameCount(cloudData.length);
         } else {
         }
       } else {
       }
-    } catch (error) {
-    }
+    } catch (error) {}
 
     if (chartRefreshTimeout) {
       clearTimeout(chartRefreshTimeout);
@@ -715,7 +709,6 @@ window.refreshChartsWithLatestData =
   };
 
 document.addEventListener("DOMContentLoaded", () => {
-
   const scoreChartEl = document.getElementById("scoreChart");
   const zenChartEl = document.getElementById("zenChart");
 
@@ -723,4 +716,3 @@ document.addEventListener("DOMContentLoaded", () => {
     refreshChartsWithLatestData();
   }, 500);
 });
-

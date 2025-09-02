@@ -649,4 +649,3 @@ export const words = [
   "peanut",
   "cashew",
 ];
-

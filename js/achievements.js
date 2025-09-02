@@ -559,7 +559,6 @@ class AchievementSystem {
         },
       },
 
-
       completionist: {
         id: "completionist",
         name: "Completionist",

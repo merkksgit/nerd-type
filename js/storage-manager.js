@@ -230,4 +230,3 @@ class StorageManager {
 const storageManager = new StorageManager();
 
 export default storageManager;
-

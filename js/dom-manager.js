@@ -265,4 +265,3 @@ if (document.readyState === "loading") {
 }
 
 export default domManager;
-
