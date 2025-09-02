@@ -1644,9 +1644,67 @@ body:not(.chart-page) #customAlertModal #alertModalMessage {
 #scoreChart,
 #zenChart {
   width: 100%;
-  height: calc(100% - 40px);
+  height: 400px;
   max-width: 1500px;
-  background-color: #24283b;
+  background-color: transparent !important;
+}
+
+/* Fix Plotly chart visibility - override global background */
+#scoreChart *,
+#zenChart * {
+  background-color: transparent !important;
+}
+
+/* Ensure Plotly SVG elements are visible */
+.js-plotly-plot .plotly,
+.js-plotly-plot .plotly div,
+.js-plotly-plot svg,
+.js-plotly-plot svg * {
+  background-color: transparent !important;
+}
+
+/* Fix Plotly tooltip colors */
+.hovertext,
+.hoverlayer .hovertext {
+  background-color: #24283b !important;
+  color: #c0caf5 !important;
+  border-color: #3b4261 !important;
+}
+
+.hovertext text,
+.hoverlayer text {
+  fill: #c0caf5 !important;
+}
+
+/* Fix Plotly modebar (toolbar) colors */
+.modebar {
+  background-color: rgba(31, 35, 53, 0.8) !important;
+}
+
+.modebar-btn {
+  color: #c0caf5 !important;
+}
+
+.modebar-btn:hover {
+  background-color: #3b4261 !important;
+}
+
+/* Simply hide the Plotly notification - cleaner approach */
+.notifier-note,
+div[class*="notifier"] {
+  display: none !important;
+}
+
+/* Change chart cursor to normal arrow */
+.js-plotly-plot,
+.js-plotly-plot *,
+.js-plotly-plot .plotly,
+.js-plotly-plot .plotly *,
+#scoreChart,
+#zenChart,
+#scoreChart *,
+#zenChart * {
+  cursor: default !important;
 }
 
 #scoreboardContainer {
