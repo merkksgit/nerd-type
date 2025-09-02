@@ -47,7 +47,7 @@ const getBaseLayout = (title) => ({
     },
   },
   margin: {
-    l: 60,
+    l: 40,
     r: 60,
     t: 80,
     b: 60,
@@ -285,6 +285,7 @@ function displayScoreGraph() {
       showgrid: false,
       zeroline: false,
       showticklabels: false,
+      range: [-0.5, 15.2],
     },
     yaxis: {
       title: {
@@ -294,7 +295,7 @@ function displayScoreGraph() {
         },
       },
       side: "left",
-      showgrid: true,
+      showgrid: false,
       gridcolor: "#292e42",
       zeroline: false,
       color: "#7aa2f7",
@@ -584,6 +585,7 @@ function displayZenModeGraph() {
       showgrid: false,
       zeroline: false,
       showticklabels: false,
+      range: [-0.5, 15.2],
     },
     yaxis: {
       title: {
@@ -593,7 +595,7 @@ function displayZenModeGraph() {
         },
       },
       side: "left",
-      showgrid: true,
+      showgrid: false,
       gridcolor: "#292e42",
       zeroline: false,
       color: "#c3e88d",
