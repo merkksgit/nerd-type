@@ -1287,6 +1287,8 @@ window.syncSettingsToFirebase = async function () {
         localStorage.getItem("keypress_sound_enabled") === "true",
       keypressSoundVolume:
         localStorage.getItem("keypress_sound_volume") || "50",
+      keypressSoundFile:
+        localStorage.getItem("keypress_sound_file") || "typewriter.wav",
       hidePrecisionMultiplierUI:
         localStorage.getItem("hide_precision_multiplier_ui") === "true",
 
@@ -1418,6 +1420,13 @@ window.applyCloudSettingsToLocal = function (cloudSettings) {
       localStorage.setItem(
         "keypress_sound_volume",
         cloudSettings.keypressSoundVolume,
+      );
+    }
+
+    if (typeof cloudSettings.keypressSoundFile === "string") {
+      localStorage.setItem(
+        "keypress_sound_file",
+        cloudSettings.keypressSoundFile,
       );
     }
 
