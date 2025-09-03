@@ -374,19 +374,39 @@ let keypressBuffer = null;
 let keypressSoundMuted = false;
 let fallbackAudio = null;
 
+// Volume multipliers for different keypress sounds to normalize their perceived loudness
+const KEYPRESS_VOLUME_MULTIPLIERS = {
+  "typewriter.wav": 1.0,
+  "pencil.wav": 0.8,
+  "pingpong.wav": 1.0,
+  "bubbles_1.ogg": 0.8,
+  "bubbles_2.wav": 0.8,
+};
+
 // Initialize the audio system
 async function initializeKeypressAudio() {
   try {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-    const response = await fetch("../sounds/keypress_1.wav");
+    const selectedSoundFile = storageManager.getItem(
+      "keypress_sound_file",
+      "typewriter.wav",
+    );
+    const response = await fetch(`../sounds/${selectedSoundFile}`);
     const arrayBuffer = await response.arrayBuffer();
     keypressBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-    console.log("Web Audio API keypress sound loaded successfully");
+    console.log(
+      "Web Audio API keypress sound loaded successfully:",
+      selectedSoundFile,
+    );
   } catch (error) {
     console.log("Web Audio API failed, using fallback:", error);
-    fallbackAudio = new Audio("../sounds/keypress_1.wav");
+    const selectedSoundFile = storageManager.getItem(
+      "keypress_sound_file",
+      "typewriter.wav",
+    );
+    fallbackAudio = new Audio(`../sounds/${selectedSoundFile}`);
     const initialVolume =
       parseInt(storageManager.getItem("keypress_sound_volume", "50")) / 100;
     fallbackAudio.volume = initialVolume;
@@ -396,6 +416,19 @@ async function initializeKeypressAudio() {
 
 // Initialize audio system
 initializeKeypressAudio();
+
+// Event listener for keypress sound changes
+window.addEventListener("keypressSoundChanged", function (event) {
+  const { enabled, soundFile } = event.detail;
+  keypressSoundMuted = !enabled;
+  if (window.keypressSound) {
+    window.keypressSound.muted = !enabled;
+  }
+  // Reload the audio with the new sound file if enabled
+  if (enabled && soundFile) {
+    initializeKeypressAudio();
+  }
+});
 
 // Ensure AudioContext is resumed on any user interaction
 function ensureAudioContextReady() {
@@ -445,6 +478,15 @@ function playKeypressSound() {
   const volumeLevel =
     parseInt(storageManager.getItem("keypress_sound_volume", "50")) / 100;
 
+  // Get the current sound file and apply its volume multiplier
+  const selectedSoundFile = storageManager.getItem(
+    "keypress_sound_file",
+    "typewriter.wav",
+  );
+  const volumeMultiplier =
+    KEYPRESS_VOLUME_MULTIPLIERS[selectedSoundFile] || 1.0;
+  const adjustedVolume = volumeLevel * volumeMultiplier;
+
   if (audioContext && keypressBuffer) {
     if (audioContext.state === "suspended") {
       audioContext
@@ -457,7 +499,7 @@ function playKeypressSound() {
       const gainNode = audioContext.createGain();
 
       source.buffer = keypressBuffer;
-      gainNode.gain.value = volumeLevel;
+      gainNode.gain.value = adjustedVolume;
 
       source.connect(gainNode);
       gainNode.connect(audioContext.destination);
@@ -468,7 +510,7 @@ function playKeypressSound() {
     }
   } else if (fallbackAudio) {
     try {
-      fallbackAudio.volume = volumeLevel;
+      fallbackAudio.volume = adjustedVolume;
       fallbackAudio.currentTime = 0;
       fallbackAudio
         .play()

@@ -354,17 +354,33 @@ function loadSettings() {
     });
   }
 
-  // Show/hide volume slider based on keypress sound toggle
+  // Load keypress sound selection setting
+  const keypressSoundFile =
+    localStorage.getItem("keypress_sound_file") || "typewriter.wav";
+  const keypressSoundRadio = document.querySelector(
+    `input[name="keypressSound"][value="${keypressSoundFile}"]`,
+  );
+  if (keypressSoundRadio) {
+    keypressSoundRadio.checked = true;
+  }
+
+  // Show/hide volume slider and sound selection based on keypress sound toggle
   const keypressVolumeContainer = document.getElementById(
     "keypressVolumeContainer",
   );
+  const keypressSoundSelectionContainer = document.getElementById(
+    "keypressSoundSelectionContainer",
+  );
 
   function updateVolumeSliderVisibility() {
-    if (keypressVolumeContainer) {
+    if (keypressVolumeContainer && keypressSoundSelectionContainer) {
       const isKeypressSoundEnabled = keypressSoundToggle
         ? keypressSoundToggle.checked
         : false;
       keypressVolumeContainer.style.display = isKeypressSoundEnabled
+        ? "block"
+        : "none";
+      keypressSoundSelectionContainer.style.display = isKeypressSoundEnabled
         ? "block"
         : "none";
     }
@@ -895,6 +911,12 @@ async function applySettings() {
     localStorage.setItem("keypress_sound_volume", keypressVolumeSlider.value);
   }
 
+  // Save keypress sound selection
+  const selectedKeypressSound =
+    document.querySelector('input[name="keypressSound"]:checked')?.value ||
+    "typewriter.wav";
+  localStorage.setItem("keypress_sound_file", selectedKeypressSound);
+
   // Get minimal UI toggle state
   const minimalUIToggle = document.getElementById("minimalUIToggle");
   if (minimalUIToggle) {
@@ -975,7 +997,10 @@ async function applySettings() {
   // Dispatch event for keypress sound setting
   window.dispatchEvent(
     new CustomEvent("keypressSoundChanged", {
-      detail: { enabled: keypressSoundEnabled },
+      detail: {
+        enabled: keypressSoundEnabled,
+        soundFile: selectedKeypressSound,
+      },
     }),
   );
 
