@@ -3970,31 +3970,39 @@ function saveClassicResult(
         console.error("❌ Error saving authenticated score:", error);
       });
 
-    // Send to Discord via n8n webhook
-    fetch(
-      "https://n8n.n8nmerkks.uk/webhook/1b5eabef-f77c-47c3-af6a-49081aee54ea",
-      {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: firebaseGameData.username,
-          score: firebaseGameData.score,
-          mode: firebaseGameData.mode.replace(" Mode", ""),
-          wpm: firebaseGameData.wpm,
-          accuracy: firebaseGameData.accuracy,
-        }),
-      },
-    )
-      .then((response) => {
-        return response.text();
-      })
-      .then((text) => {
-        // Discord webhook completed successfully
-      })
-      .catch((err) => {
-        console.error("🔍 DEBUG: Discord webhook failed:", err);
-      });
+    // Send to Discord via n8n webhook only if data collection is enabled
+    const dataCollectionEnabled = localStorage.getItem(
+      "data_collection_enabled",
+    );
+    const shouldSendToDiscord =
+      dataCollectionEnabled === null || dataCollectionEnabled === "true";
+
+    if (shouldSendToDiscord) {
+      fetch(
+        "https://n8n.n8nmerkks.uk/webhook/1b5eabef-f77c-47c3-af6a-49081aee54ea",
+        {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: firebaseGameData.username,
+            score: firebaseGameData.score,
+            mode: firebaseGameData.mode.replace(" Mode", ""),
+            wpm: firebaseGameData.wpm,
+            accuracy: firebaseGameData.accuracy,
+          }),
+        },
+      )
+        .then((response) => {
+          return response.text();
+        })
+        .then((text) => {
+          // Discord webhook completed successfully
+        })
+        .catch((err) => {
+          console.error("🔍 DEBUG: Discord webhook failed:", err);
+        });
+    }
   } else {
     // Guest user - check if guest submissions are allowed
     const allowGuestSubmissions = localStorage.getItem(
