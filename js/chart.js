@@ -467,7 +467,8 @@ function displayZenModeGraph() {
       "<extra></extra>",
     customdata: last15ZenResults.map((result) => [
       result.username || "runner",
-      (result.mode || "Zen Mode").replace(/ Mode$/, ""),
+      (result.mode || "Zen Mode").replace(/ Mode$/, "") +
+        (result.wordGoal ? ` [${result.wordGoal} words]` : ""),
       result.date || "Unknown",
     ]),
   };
@@ -496,7 +497,8 @@ function displayZenModeGraph() {
       "<extra></extra>",
     customdata: last15ZenResults.map((result) => [
       result.username || "runner",
-      (result.mode || "Zen Mode").replace(/ Mode$/, ""),
+      (result.mode || "Zen Mode").replace(/ Mode$/, "") +
+        (result.wordGoal ? ` [${result.wordGoal} words]` : ""),
       result.date || "Unknown",
     ]),
   };
@@ -525,7 +527,8 @@ function displayZenModeGraph() {
       "<extra></extra>",
     customdata: last15ZenResults.map((result) => [
       result.username || "runner",
-      (result.mode || "Zen Mode").replace(/ Mode$/, ""),
+      (result.mode || "Zen Mode").replace(/ Mode$/, "") +
+        (result.wordGoal ? ` [${result.wordGoal} words]` : ""),
       result.date || "Unknown",
     ]),
   };
