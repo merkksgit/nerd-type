@@ -978,8 +978,67 @@ class AchievementSystem {
     }
   }
 
+  // Send achievement unlock to Discord via n8n webhook
+  sendAchievementToDiscord(achievement) {
+    // Check if Discord webhook is enabled
+    const discordWebhookEnabled = localStorage.getItem(
+      "discord_webhook_enabled",
+    );
+    const shouldSendToDiscord =
+      discordWebhookEnabled === null || discordWebhookEnabled === "true";
+
+    if (!shouldSendToDiscord) {
+      return;
+    }
+
+    // Get current username
+    const username = localStorage.getItem("nerdtype_username") || "Anonymous";
+
+    // Get current user's stats for additional context
+    const userStats = this.achievementsData.stats;
+
+    // Prepare webhook payload
+    const webhookData = {
+      type: "achievement",
+      username: username,
+      achievement: {
+        id: achievement.id,
+        name: achievement.name,
+        description: achievement.description,
+        category: achievement.category,
+        secret: achievement.secret || false,
+      },
+      userStats: {
+        highestScore: userStats.highestScore,
+        highestWPM: userStats.highestWPM,
+        highestAccuracy: userStats.highestAccuracy,
+        gamesPlayedToday: userStats.gamesPlayedToday,
+      },
+      timestamp: new Date().toISOString(),
+    };
+
+    // Send to n8n webhook (separate endpoint for achievements)
+    fetch("https://n8n.n8nmerkks.uk/webhook/webhook/achievements-nerdtype", {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(webhookData),
+    })
+      .then(() => {
+        console.log("🎉 Achievement sent to Discord:", achievement.name);
+      })
+      .catch((error) => {
+        console.error("❌ Failed to send achievement to Discord:", error);
+      });
+  }
+
   // Show achievement unlock notification
   showNotification(achievement) {
+    // Send Discord webhook notification for achievement unlock
+    this.sendAchievementToDiscord(achievement);
+
     // Store in localStorage for persistence across reloads
     if (!this.achievementsData.pendingNotifications) {
       this.achievementsData.pendingNotifications = [];
