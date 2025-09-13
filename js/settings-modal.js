@@ -28,6 +28,13 @@ function setupSettingsModalEvents() {
       console.log("Settings modal about to show, pre-loading settings...");
       loadSettings();
     });
+
+    // Stop webhook status checks when modal is hidden to save bandwidth
+    settingsModal.addEventListener("hidden.bs.modal", function () {
+      if (window.webhookStatusChecker) {
+        window.webhookStatusChecker.stopPeriodicCheck();
+      }
+    });
   }
 }
 
@@ -256,6 +263,13 @@ function loadSettings() {
   if (discordWebhookToggle) {
     discordWebhookToggle.checked =
       discordWebhookEnabled === null || discordWebhookEnabled === "true";
+  }
+
+  // Initialize webhook status checker if available
+  if (window.webhookStatusChecker) {
+    initWebhookStatusUI();
+    // Start periodic checks only when settings modal is opened
+    window.webhookStatusChecker.startPeriodicCheck(60000); // Check every minute
   }
 
   // Update data collection visibility based on auth status
@@ -1241,4 +1255,40 @@ function saveFontSetting(fontFamily) {
       detail: { fontFamily: fontFamily },
     }),
   );
+}
+
+// Webhook status UI management
+function initWebhookStatusUI() {
+  const statusIcon = document.getElementById("webhookStatusIcon");
+  const statusText = document.getElementById("webhookStatusText");
+
+  if (!statusIcon || !statusText || !window.webhookStatusChecker) {
+    return;
+  }
+
+  // Update UI when status changes
+  window.webhookStatusChecker.addStatusListener((status, timestamp) => {
+    updateWebhookStatusDisplay(status);
+  });
+
+  // Initial status check
+  window.webhookStatusChecker.checkStatus().then((status) => {
+    updateWebhookStatusDisplay(status);
+  });
+}
+
+function updateWebhookStatusDisplay(status) {
+  const statusIcon = document.getElementById("webhookStatusIcon");
+  const statusText = document.getElementById("webhookStatusText");
+
+  if (!statusIcon || !statusText || !window.webhookStatusChecker) {
+    return;
+  }
+
+  const display = window.webhookStatusChecker.getStatusDisplay();
+
+  statusIcon.textContent = display.icon;
+  statusText.textContent = display.text;
+  statusText.style.color = display.color;
+  statusText.title = display.description;
 }

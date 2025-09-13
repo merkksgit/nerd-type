@@ -1065,6 +1065,12 @@
                           <small class="d-block text-muted"
                             >Share your results via Discord webhook</small
                           >
+                          <small class="d-block" id="webhookStatusIndicator">
+                            <span id="webhookStatusIcon">🟡</span>
+                            <span id="webhookStatusText" style="color: #f7768e"
+                              >Checking...</span
+                            >
+                          </small>
                         </label>
                       </div>
                     </div>
@@ -1830,6 +1836,7 @@
 
     <script src="../js/smooth-caret.js"></script>
     <script src="../js/username.js"></script>
+    <script src="../js/webhook-status.js"></script>
     <script src="../js/settings-modal.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
