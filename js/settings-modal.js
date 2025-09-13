@@ -249,6 +249,15 @@ function loadSettings() {
       dataCollectionEnabled === null || dataCollectionEnabled === "true";
   }
 
+  // Load Discord webhook setting (default is enabled)
+  const discordWebhookEnabled = localStorage.getItem("discord_webhook_enabled");
+  const discordWebhookToggle = document.getElementById("discordWebhookToggle");
+
+  if (discordWebhookToggle) {
+    discordWebhookToggle.checked =
+      discordWebhookEnabled === null || discordWebhookEnabled === "true";
+  }
+
   // Update data collection visibility based on auth status
   updateDataCollectionSettingVisibility();
 
@@ -822,6 +831,14 @@ async function applySettings() {
     localStorage.setItem(
       "data_collection_enabled",
       dataCollectionToggle.checked,
+    );
+  }
+
+  const discordWebhookToggle = document.getElementById("discordWebhookToggle");
+  if (discordWebhookToggle) {
+    localStorage.setItem(
+      "discord_webhook_enabled",
+      discordWebhookToggle.checked,
     );
   }
 

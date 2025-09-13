@@ -36,6 +36,7 @@ export const STORAGE_KEYS = {
   GAME_RESULTS_GUEST_BACKUP: "gameResults_guest_backup",
   TOTAL_GAME_COUNT: "totalGameCount",
   DATA_COLLECTION_ENABLED: "data_collection_enabled",
+  DISCORD_WEBHOOK_ENABLED: "discord_webhook_enabled",
   PENDING_SETTINGS_NOTIFICATION: "pending_settings_notification",
 };
 

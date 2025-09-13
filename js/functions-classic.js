@@ -3970,12 +3970,12 @@ function saveClassicResult(
         console.error("❌ Error saving authenticated score:", error);
       });
 
-    // Send to Discord via n8n webhook only if data collection is enabled
-    const dataCollectionEnabled = localStorage.getItem(
-      "data_collection_enabled",
+    // Send to Discord via n8n webhook only if Discord webhook is enabled
+    const discordWebhookEnabled = localStorage.getItem(
+      "discord_webhook_enabled",
     );
     const shouldSendToDiscord =
-      dataCollectionEnabled === null || dataCollectionEnabled === "true";
+      discordWebhookEnabled === null || discordWebhookEnabled === "true";
 
     if (shouldSendToDiscord) {
       fetch(

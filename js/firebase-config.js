@@ -1281,6 +1281,8 @@ window.syncSettingsToFirebase = async function () {
         localStorage.getItem("punctuation_enabled") === "true",
       dataCollectionEnabled:
         localStorage.getItem("data_collection_enabled") !== "false",
+      discordWebhookEnabled:
+        localStorage.getItem("discord_webhook_enabled") !== "false",
       achievementSoundEnabled:
         localStorage.getItem("achievement_sound_enabled") === "true",
       keypressSoundEnabled:
@@ -1399,6 +1401,12 @@ window.applyCloudSettingsToLocal = function (cloudSettings) {
       localStorage.setItem(
         "data_collection_enabled",
         cloudSettings.dataCollectionEnabled.toString(),
+      );
+    }
+    if (typeof cloudSettings.discordWebhookEnabled === "boolean") {
+      localStorage.setItem(
+        "discord_webhook_enabled",
+        cloudSettings.discordWebhookEnabled.toString(),
       );
     }
 
@@ -1617,6 +1625,10 @@ window.debugSettingsSync = {
     console.log(
       "  dataCollection:",
       localStorage.getItem("data_collection_enabled"),
+    );
+    console.log(
+      "  discordWebhook:",
+      localStorage.getItem("discord_webhook_enabled"),
     );
     console.log(
       "  achievementSound:",

@@ -68,6 +68,7 @@ class GameCommands {
       "/status": this.showStatus.bind(this),
       "/reset": this.resetGame.bind(this),
       "/data": this.toggleDataCollection.bind(this),
+      "/discord": this.toggleDiscordWebhook.bind(this),
       "/debug": this.toggleDebug.bind(this),
       "/rm": this.removeData.bind(this),
       "/prac": this.startCustomPractice.bind(this),
@@ -207,6 +208,34 @@ class GameCommands {
     // Show notification
     this.showNotification(
       `Data collection ${newState ? "enabled" : "disabled"}. ${newState ? "Scores will be saved to global leaderboards." : "Scores will not be saved to global leaderboards."}`,
+      "success",
+    );
+  }
+
+  toggleDiscordWebhook(args) {
+    // Get current state
+    const currentState = localStorage.getItem("discord_webhook_enabled");
+    const isCurrentlyEnabled = currentState === null || currentState === "true";
+    // Determine new state
+    let newState;
+    if (args.length === 0) {
+      // Toggle current state
+      newState = !isCurrentlyEnabled;
+    } else {
+      // Set based on argument (on/off, true/false, 1/0)
+      const arg = args[0].toLowerCase();
+      newState =
+        arg === "on" ||
+        arg === "true" ||
+        arg === "1" ||
+        arg === "enable" ||
+        arg === "enabled";
+    }
+    // Update localStorage
+    localStorage.setItem("discord_webhook_enabled", newState.toString());
+    // Show notification
+    this.showNotification(
+      `Discord webhook ${newState ? "enabled" : "disabled"}. ${newState ? "Scores will be sent to Discord." : "Scores will not be sent to Discord."}`,
       "success",
     );
   }
@@ -835,6 +864,7 @@ class GameCommands {
 <span style='color:#bb9af7'>/punc</span>           - Toggle punctuation marks
 <span style='color:#bb9af7'>/sound</span>          - Toggle keypress sound
 <span style='color:#bb9af7'>/data</span>           - Toggle data collection
+<span style='color:#bb9af7'>/discord</span>        - Toggle Discord webhook
 <span style='color:#bb9af7'>/prac</span>           - Practice specific words
                   <span style='color:#ff9e64'>[word1 word2 word3...]</span>
 <span style='color:#bb9af7'>/rm</span>             - Remove data from localStorage
@@ -882,6 +912,11 @@ class GameCommands {
     );
     const isDataCollectionEnabled =
       dataCollectionEnabled === null || dataCollectionEnabled === "true";
+    const discordWebhookEnabled = localStorage.getItem(
+      "discord_webhook_enabled",
+    );
+    const isDiscordWebhookEnabled =
+      discordWebhookEnabled === null || discordWebhookEnabled === "true";
 
     // Get current font selection
     const currentFont =
@@ -913,6 +948,7 @@ space_after_words=<span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"
 achievement_sound=<span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "enabled" : "disabled"}</span>
 keypress_sound=<span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "enabled" : "disabled"}</span>
 global_leaderboard=<span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "enabled" : "disabled"}</span>
+discord_webhook=<span style='color:${isDiscordWebhookEnabled ? "#c3e88d" : "#ff007c"}'>${isDiscordWebhookEnabled ? "enabled" : "disabled"}</span>
 font=<span style='color:#f7768e'>${currentFont}</span>
 `;
     } else {
@@ -929,6 +965,7 @@ space_after_words=<span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"
 achievement_sound=<span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "enabled" : "disabled"}</span>
 keypress_sound=<span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "enabled" : "disabled"}</span>
 data_collection=<span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "enabled" : "disabled"}</span>
+discord_webhook=<span style='color:${isDiscordWebhookEnabled ? "#c3e88d" : "#ff007c"}'>${isDiscordWebhookEnabled ? "enabled" : "disabled"}</span>
 font=<span style='color:#f7768e'>${currentFont}</span>
 `;
     }
