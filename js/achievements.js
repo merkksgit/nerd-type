@@ -980,6 +980,17 @@ class AchievementSystem {
 
   // Send achievement unlock to Discord via n8n webhook
   sendAchievementToDiscord(achievement) {
+    // Check if user is logged in
+    const username = localStorage.getItem("nerdtype_username");
+    if (
+      !username ||
+      username === "Anonymous" ||
+      username === "runner" ||
+      username.trim() === ""
+    ) {
+      return;
+    }
+
     // Check if Discord webhook is enabled
     const discordWebhookEnabled = localStorage.getItem(
       "discord_webhook_enabled",
@@ -990,9 +1001,6 @@ class AchievementSystem {
     if (!shouldSendToDiscord) {
       return;
     }
-
-    // Get current username
-    const username = localStorage.getItem("nerdtype_username") || "Anonymous";
 
     // Get current user's stats for additional context
     const userStats = this.achievementsData.stats;
