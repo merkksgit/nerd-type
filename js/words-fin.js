@@ -599,7 +599,6 @@ export const words = [
   "kirsikka",
   "persikka",
   "luumu",
-  "jenni",
   "päärynä",
   "banaani",
   "appelsiini",
