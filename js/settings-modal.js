@@ -316,6 +316,12 @@ function loadSettings() {
   if (zenModeToggle) {
     zenModeToggle.checked =
       localStorage.getItem("nerdtype_zen_mode") === "true";
+
+    // Update visibility of classic-mode settings based on zen mode state
+    const isZenMode = zenModeToggle.checked;
+    document.querySelectorAll(".classic-mode-setting").forEach((el) => {
+      el.style.display = isZenMode ? "none" : "block";
+    });
   }
 
   // Set zen word goal
