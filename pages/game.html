@@ -1029,50 +1029,6 @@
                           >
                         </label>
                       </div>
-                      <br />
-                      <div class="form-check form-switch classic-mode-setting">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          role="switch"
-                          id="dataCollectionToggle"
-                          checked
-                        />
-                        <label
-                          class="form-check-label"
-                          for="dataCollectionToggle"
-                        >
-                          Share scores to global leaderboards
-                          <small class="d-block text-muted"
-                            >Login required</small
-                          >
-                        </label>
-                      </div>
-                      <br />
-                      <div class="form-check form-switch classic-mode-setting">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          role="switch"
-                          id="discordWebhookToggle"
-                          checked
-                        />
-                        <label
-                          class="form-check-label"
-                          for="discordWebhookToggle"
-                        >
-                          Send scores to Discord
-                          <small class="d-block text-muted"
-                            >Share your results via Discord webhook</small
-                          >
-                          <small class="d-block" id="webhookStatusIndicator">
-                            <span id="webhookStatusIcon">🟡</span>
-                            <span id="webhookStatusText" style="color: #f7768e"
-                              >Checking...</span
-                            >
-                          </small>
-                        </label>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -1100,6 +1056,67 @@
                     >Affects score calculation. Higher difficulty = higher
                     potential score.</small
                   >
+                </div>
+              </div>
+
+              <!-- Data Sharing Settings -->
+              <div class="col-md-12 mb-4 classic-mode-setting">
+                <div class="settings-card">
+                  <h5 class="settings-card-header">
+                    <i class="fa-solid fa-share me-2"></i>Data Sharing
+                  </h5>
+                  <div class="settings-card-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-check form-switch">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            role="switch"
+                            id="dataCollectionToggle"
+                            checked
+                          />
+                          <label
+                            class="form-check-label"
+                            for="dataCollectionToggle"
+                          >
+                            Share scores to global leaderboards
+                            <small class="d-block text-muted"
+                              >Login required</small
+                            >
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-check form-switch">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            role="switch"
+                            id="discordWebhookToggle"
+                            checked
+                          />
+                          <label
+                            class="form-check-label"
+                            for="discordWebhookToggle"
+                          >
+                            Send scores to Discord
+                            <small class="d-block text-muted"
+                              >Share your results via Discord webhook</small
+                            >
+                            <small class="d-block" id="webhookStatusIndicator">
+                              <span id="webhookStatusIcon">🟡</span>
+                              <span
+                                id="webhookStatusText"
+                                style="color: #f7768e"
+                                >Checking...</span
+                              >
+                            </small>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
