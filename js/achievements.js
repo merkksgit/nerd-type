@@ -1133,11 +1133,14 @@ class AchievementSystem {
     this.notificationContainer.appendChild(notification);
 
     // Play a sound if available
-    if (window.achievementSound && this.soundEnabled !== false) {
-      window.achievementSound.currentTime = 0;
-      window.achievementSound
-        .play()
-        .catch((e) => console.log("Sound play prevented:", e));
+    if (this.soundEnabled !== false) {
+      const achievementSound = window.getAchievementSound?.();
+      if (achievementSound) {
+        achievementSound.currentTime = 0;
+        achievementSound
+          .play()
+          .catch((e) => console.log("Sound play prevented:", e));
+      }
     }
 
     // Remove after animation completes

@@ -363,23 +363,37 @@ function validateUsernameClassic(username) {
   return true;
 }
 
-// Set up sound for achievements
-const achievementSound = new Audio("../sounds/achievement.mp3");
-window.achievementSound = achievementSound;
+// Lazy-load achievement sound only when needed
+window.getAchievementSound = function getAchievementSound() {
+  if (!window.achievementSound) {
+    window.achievementSound = new Audio("../sounds/achievement.mp3");
+    const achievementSoundEnabled = storageManager.getItem(
+      "achievement_sound_enabled",
+      "true",
+    );
+    if (achievementSoundEnabled === "false") {
+      window.achievementSound.muted = true;
+    }
 
-// Check the sound setting on initialization
-const achievementSoundEnabled = storageManager.getItem(
-  "achievement_sound_enabled",
-  "true",
-);
-if (achievementSoundEnabled === "false") {
-  achievementSound.muted = true;
+    // Dispatch event to notify that the sound is loaded
+    window.dispatchEvent(
+      new CustomEvent("achievement_sound_loaded", {
+        detail: { sound: window.achievementSound },
+      }),
+    );
+  }
+  return window.achievementSound;
+};
+
+// Lazy-load mistake sound only when needed
+function getMistakeSound() {
+  if (!window.mistakeSound) {
+    window.mistakeSound = new Audio("../sounds/mistake.wav");
+    window.mistakeSound.volume = 0.6;
+    window.mistakeSound.preload = "auto";
+  }
+  return window.mistakeSound;
 }
-
-// Set up mistake sound for offscreen practice
-const mistakeSound = new Audio("../sounds/mistake.wav");
-mistakeSound.volume = 0.6;
-mistakeSound.preload = "auto";
 
 // Function to play mistake sound only when offscreen window is open and sounds are enabled
 function playMistakeSound() {
@@ -393,6 +407,7 @@ function playMistakeSound() {
 
   if (hasOffscreenWindow && keypressSoundsEnabled) {
     try {
+      const mistakeSound = getMistakeSound();
       mistakeSound.currentTime = 0;
       mistakeSound.play().catch(() => {
         // Sound play failed, continue silently
@@ -421,7 +436,10 @@ const KEYPRESS_VOLUME_MULTIPLIERS = {
 // Initialize the audio system
 async function initializeKeypressAudio() {
   try {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // Only create AudioContext if it doesn't exist
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
 
     const selectedSoundFile = storageManager.getItem(
       "keypress_sound_file",
@@ -441,7 +459,9 @@ async function initializeKeypressAudio() {
       "keypress_sound_file",
       "typewriter.wav",
     );
-    fallbackAudio = new Audio(`../sounds/${selectedSoundFile}`);
+    if (!fallbackAudio) {
+      fallbackAudio = new Audio(`../sounds/${selectedSoundFile}`);
+    }
     const initialVolume =
       parseInt(storageManager.getItem("keypress_sound_volume", "50")) / 100;
     fallbackAudio.volume = initialVolume;
@@ -449,8 +469,7 @@ async function initializeKeypressAudio() {
   }
 }
 
-// Initialize audio system
-initializeKeypressAudio();
+// Audio will be initialized when game activates
 
 // Event listener for keypress sound changes
 window.addEventListener("keypressSoundChanged", function (event) {
@@ -580,12 +599,7 @@ window.updateKeypressVolume = updateKeypressVolume;
 // Make it available globally if needed by other modules
 window.updateKeypressSoundSetting = updateKeypressSoundSetting;
 
-// Dispatch an event to notify that the sound is loaded
-window.dispatchEvent(
-  new CustomEvent("achievement_sound_loaded", {
-    detail: { sound: achievementSound },
-  }),
-);
+// Achievement sound event will be dispatched when first loaded
 
 // Create debug display instance
 const debugDisplay = new DebugDisplay();
@@ -2394,6 +2408,15 @@ function activateGame() {
   const gameElement = document.getElementById("game");
   if (gameElement) {
     gameElement.classList.remove("inactive");
+  }
+
+  // Initialize keypress audio when game activates
+  const keypressSoundEnabled = storageManager.getItem(
+    "keypress_sound_enabled",
+    "false",
+  );
+  if (keypressSoundEnabled === "true" && !audioContext && !fallbackAudio) {
+    initializeKeypressAudio();
   }
 
   // Focus the input field
