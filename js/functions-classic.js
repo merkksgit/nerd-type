@@ -2506,6 +2506,8 @@ function handleKeypressSound(e) {
 
 // Helper function to process character input
 function processCharacterInput(e, userInput, currentWord, showSpace) {
+  const hasOffscreenWindow =
+    window.offscreenWindow && !window.offscreenWindow.closed;
   if (e.inputType === "insertText" && e.data) {
     totalKeystrokes++;
 
@@ -2522,7 +2524,10 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
       triggerErrorBlink();
       // Remove the space from the input
       e.target.value = userInput.slice(0, -1);
-      return false; // Indicate space was not allowed
+      return {
+        shouldContinue: false,
+        isMistakeInOffscreen: hasOffscreenWindow,
+      }; // Indicate space was not allowed
     }
 
     const isCorrectChar = validateCharacterInput(
@@ -2636,16 +2641,28 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
         };
 
         showGameOverModal("", false, mistakeDetails);
-        return false;
+        return {
+          shouldContinue: false,
+          isMistakeInOffscreen: hasOffscreenWindow,
+        };
       }
 
       if (!isZenMode) {
         precisionStreak = 0;
         hidePrecisionMultiplier();
       }
+
+      // Return that this was a mistake in offscreen mode
+      return {
+        shouldContinue: true,
+        isMistakeInOffscreen: hasOffscreenWindow,
+      };
     }
   }
-  return true; // Normal processing
+  return {
+    shouldContinue: true,
+    isMistakeInOffscreen: false,
+  }; // Normal processing
 }
 
 // Helper function to validate character input
@@ -2864,19 +2881,22 @@ function checkInput(e) {
     startGameOnFirstInput();
   }
 
-  // Handle keypress sound
-  handleKeypressSound(e);
-
-  // Process character input
-  const shouldContinue = processCharacterInput(
+  // Process character input first to detect mistakes
+  const inputResult = processCharacterInput(
     e,
     userInput,
     currentWord,
     showSpace,
   );
 
+  // Handle keypress sound (skip if mistake in offscreen mode)
+  const shouldPlayKeypressSound = !inputResult.isMistakeInOffscreen;
+  if (shouldPlayKeypressSound) {
+    handleKeypressSound(e);
+  }
+
   // If space was prevented due to incorrect letters, stop processing
-  if (!shouldContinue) {
+  if (!inputResult.shouldContinue) {
     return;
   }
 
