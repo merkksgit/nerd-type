@@ -180,6 +180,14 @@ function syncGameStateToWindow() {
   window.gameEnded = gameEnded;
 }
 
+// Helper function to get current words for offscreen display
+function getCurrentWords() {
+  return words.slice(); // Return a copy of the words array
+}
+
+// Expose getCurrentWords globally for offscreen popup
+window.getCurrentWords = getCurrentWords;
+
 // Initial sync
 syncGameStateToWindow();
 let showSpacesAfterWords =
@@ -366,6 +374,33 @@ const achievementSoundEnabled = storageManager.getItem(
 );
 if (achievementSoundEnabled === "false") {
   achievementSound.muted = true;
+}
+
+// Set up mistake sound for offscreen practice
+const mistakeSound = new Audio("../sounds/mistake.wav");
+mistakeSound.volume = 0.6;
+mistakeSound.preload = "auto";
+
+// Function to play mistake sound only when offscreen window is open and sounds are enabled
+function playMistakeSound() {
+  // Check if offscreen window is open
+  const hasOffscreenWindow =
+    window.offscreenWindow && !window.offscreenWindow.closed;
+
+  // Check if keypress sounds are enabled
+  const keypressSoundsEnabled =
+    storageManager.getItem("keypress_sound_enabled", "false") === "true";
+
+  if (hasOffscreenWindow && keypressSoundsEnabled) {
+    try {
+      mistakeSound.currentTime = 0;
+      mistakeSound.play().catch(() => {
+        // Sound play failed, continue silently
+      });
+    } catch (error) {
+      // Sound setup failed, continue silently
+    }
+  }
 }
 
 // Professional Web Audio API-based keypress sound system
@@ -1356,6 +1391,11 @@ function startGame() {
 
   // Reset progress bar
   updateProgressBar();
+
+  // Update offscreen popups with new words
+  if (window.gameCommandsPopupUpdater && words.length > 0) {
+    window.gameCommandsPopupUpdater.updateAllPopups(words, currentWordIndex);
+  }
 }
 
 // Expose functions to global scope for tap-to-start functionality
@@ -2452,6 +2492,9 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
       userInput.length - 1 === currentWord.length &&
       hasIncorrectLetters(userInput.slice(0, -1), currentWord)
     ) {
+      // Play mistake sound for offscreen practice (only if offscreen window is open and sounds enabled)
+      playMistakeSound();
+
       // Trigger blink animation and prevent the space from being added
       triggerErrorBlink();
       // Remove the space from the input
@@ -2466,6 +2509,9 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
     );
 
     if (!isCorrectChar) {
+      // Play mistake sound for offscreen practice (only if offscreen window is open and sounds enabled)
+      playMistakeSound();
+
       // Record mistake timestamp with word context for chart visualization
       if (gameStartTime && !gameEnded) {
         // Determine what was expected based on position

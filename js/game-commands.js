@@ -72,6 +72,7 @@ class GameCommands {
       "/debug": this.toggleDebug.bind(this),
       "/rm": this.removeData.bind(this),
       "/prac": this.startCustomPractice.bind(this),
+      "/offscreen": this.openOffscreenWindow.bind(this),
     };
 
     // Commands that need reload after execution
@@ -867,6 +868,7 @@ class GameCommands {
 <span style='color:#bb9af7'>/discord</span>        - Toggle Discord webhook
 <span style='color:#bb9af7'>/prac</span>           - Practice specific words
                   <span style='color:#ff9e64'>[word1 word2 word3...]</span>
+<span style='color:#bb9af7'>/offscreen</span>      - Open popup with current word list
 <span style='color:#bb9af7'>/rm</span>             - Remove data from localStorage
                   <span style='color:#ff9e64'>[scoreboard.data, achievements.data]</span>
 <span style='color:#bb9af7'>/status</span>         - Show current game settings
@@ -1140,12 +1142,284 @@ font=<span style='color:#f7768e'>${currentFont}</span>
         break;
     }
   }
+
+  openOffscreenWindow() {
+    try {
+      // Check if we have access to current words from the game
+      if (typeof window.getCurrentWords === "function") {
+        const currentWords = window.getCurrentWords();
+        this.createOffscreenPopup(currentWords);
+      } else if (
+        typeof window.words !== "undefined" &&
+        window.words.length > 0
+      ) {
+        // Fallback to global words array
+        this.createOffscreenPopup(window.words);
+      } else {
+        this.showNotification(
+          "No word list available. Start a game first.",
+          "error",
+        );
+      }
+    } catch (error) {
+      this.showNotification("Error opening offscreen window", "error");
+    }
+  }
+
+  createOffscreenPopup(wordList, showNotification = true) {
+    // Close any existing offscreen window
+    if (window.offscreenWindow && !window.offscreenWindow.closed) {
+      window.offscreenWindow.close();
+    }
+
+    // Mark that we have an offscreen window active for restoration after reloads
+    localStorage.setItem("offscreen_window_active", "true");
+
+    // Create new popup window
+    const popup = window.open(
+      "",
+      "offscreenWords",
+      "width=800,height=600,resizable=yes,scrollbars=yes,menubar=no,toolbar=no,location=no,status=no",
+    );
+
+    if (!popup) {
+      this.showNotification(
+        "Popup blocked! Please allow popups for this site.",
+        "error",
+      );
+      return;
+    }
+
+    window.offscreenWindow = popup;
+
+    // Get player's current font setting
+    const currentFont =
+      localStorage.getItem("nerdtype_font") || "jetbrains-light";
+
+    // Set up auto-refresh when game starts
+    this.setupPopupAutoRefresh(popup);
+
+    // Create the popup content
+    popup.document.write(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NerdType - Word List</title>
+        <style>
+          ${this.getFontCSS(currentFont)}
+
+          body {
+            background-color: #24283b;
+            color: #c0caf5;
+            margin: 0;
+            padding: 40px 20px;
+            font-family: ${this.getFontFamily(currentFont)};
+            overflow-x: hidden;
+          }
+
+          .word-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 2rem;
+            line-height: 1.3;
+            text-align: center;
+            min-height: 80vh;
+            padding: 2rem;
+          }
+
+          .word {
+            color: #565f89;
+            font-family: inherit;
+            white-space: nowrap;
+            transition: color 0.2s ease;
+          }
+
+          .word:hover {
+            color: #c0caf5;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="word-display" id="wordDisplay">
+          ${wordList.map((word) => `<span class="word">${word}</span>`).join("")}
+        </div>
+
+        <script>
+          // Function to update the word list
+          function updateWordList(newWords) {
+            const wordDisplay = document.getElementById('wordDisplay');
+            wordDisplay.innerHTML = newWords.map(word =>
+              '<span class="word">' + word + '</span>'
+            ).join('');
+          }
+
+          // Function to request word list update from parent window
+          function requestWordListUpdate() {
+            if (window.opener && !window.opener.closed) {
+              try {
+                let currentWords = [];
+                if (typeof window.opener.getCurrentWords === 'function') {
+                  currentWords = window.opener.getCurrentWords();
+                } else if (window.opener.words && window.opener.words.length > 0) {
+                  currentWords = window.opener.words.slice();
+                }
+
+                if (currentWords.length > 0) {
+                  updateWordList(currentWords);
+                }
+              } catch (error) {
+                // Error updating word list, continue silently
+              }
+            }
+          }
+
+          // Listen for updates from parent window
+          window.addEventListener('message', function(event) {
+            if (event.origin === window.location.origin && event.data.type === 'updateWords') {
+              updateWordList(event.data.words);
+            }
+          });
+
+          // Handle window close
+          window.addEventListener('beforeunload', function() {
+            if (window.opener && !window.opener.closed) {
+              if (window.opener.offscreenWindow) {
+                window.opener.offscreenWindow = null;
+              }
+              // Clear the active flag when popup is manually closed
+              if (window.opener.localStorage) {
+                window.opener.localStorage.removeItem('offscreen_window_active');
+              }
+            }
+          });
+        </script>
+      </body>
+      </html>
+    `);
+
+    popup.document.close();
+
+    if (showNotification) {
+      this.showNotification(
+        "Offscreen mode enabled! Drag the popup to your second monitor for multi-screen practice.",
+        "success",
+      );
+    }
+  }
+
+  setupPopupAutoRefresh(popup) {
+    // Store reference to popup for updates
+    if (!window.gameCommandsPopupUpdater) {
+      window.gameCommandsPopupUpdater = {
+        popups: new Set(),
+        updateAllPopups: function (words) {
+          this.popups.forEach((popup) => {
+            if (popup && !popup.closed) {
+              try {
+                popup.postMessage(
+                  {
+                    type: "updateWords",
+                    words: words,
+                  },
+                  window.location.origin,
+                );
+              } catch (error) {
+                this.popups.delete(popup);
+              }
+            } else {
+              this.popups.delete(popup);
+            }
+          });
+        },
+      };
+    }
+
+    window.gameCommandsPopupUpdater.popups.add(popup);
+
+    // Clean up on popup close
+    popup.addEventListener("beforeunload", () => {
+      window.gameCommandsPopupUpdater.popups.delete(popup);
+    });
+  }
+
+  getFontFamily(fontKey) {
+    // Use the exact same font family names as defined in style.css
+    return `"${fontKey}", "Courier New", monospace`;
+  }
+
+  getFontCSS(fontKey) {
+    // Return the exact @font-face declarations from style.css
+    const fontCSS = {
+      "jetbrains-mono": `
+        @font-face {
+          src: url(../font/JetBrainsMonoNLNerdFontMono-SemiBold.ttf);
+          font-family: "jetbrains-mono";
+        }`,
+      "jetbrains-light": `
+        @font-face {
+          src: url(../font/JetBrainsMonoNLNerdFont-Light.ttf);
+          font-family: "jetbrains-light";
+        }`,
+      "departure-mono": `
+        @font-face {
+          src: url(../font/DepartureMonoNerdFontMono-Regular.otf);
+          font-family: "departure-mono";
+        }`,
+      "firacode-mono": `
+        @font-face {
+          src: url(../font/FiraCodeNerdFontMono-SemiBold.ttf);
+          font-family: "firacode-mono";
+        }`,
+      "firacode-light": `
+        @font-face {
+          src: url(../font/FiraCodeNerdFontMono-Light.ttf);
+          font-family: "firacode-light";
+        }`,
+      "bigblueterm-mono": `
+        @font-face {
+          src: url(../font/BigBlueTerm437NerdFontMono-Regular.ttf);
+          font-family: "bigblueterm-mono";
+        }`,
+      "oxproto-mono": `
+        @font-face {
+          src: url(../font/0xProtoNerdFontMono-Regular.ttf);
+          font-family: "oxproto-mono";
+        }`,
+    };
+    return fontCSS[fontKey] || fontCSS["jetbrains-light"];
+  }
+
+  checkAndRestoreOffscreenPopup() {
+    // Check if offscreen popup was active before page reload
+    const wasOffscreenActive =
+      localStorage.getItem("offscreen_window_active") === "true";
+
+    if (wasOffscreenActive) {
+      // Wait a bit for the page to fully load, then restore the popup
+      setTimeout(() => {
+        if (typeof window.getCurrentWords === "function") {
+          const currentWords = window.getCurrentWords();
+          if (currentWords && currentWords.length > 0) {
+            this.createOffscreenPopup(currentWords, false);
+          }
+        }
+      }, 100); // Wait 100ms for game to initialize
+    }
+  }
 }
 
 // Create and initialize game commands
 const gameCommands = new GameCommands();
 document.addEventListener("DOMContentLoaded", () => {
   gameCommands.init();
+
+  // Check if we should restore offscreen popup after page reload
+  gameCommands.checkAndRestoreOffscreenPopup();
 });
 
 export default gameCommands;
