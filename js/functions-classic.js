@@ -182,7 +182,22 @@ function syncGameStateToWindow() {
 
 // Helper function to get current words for offscreen display
 function getCurrentWords() {
-  return words.slice(); // Return a copy of the words array
+  const gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
+    timeLimit: 30,
+    currentMode: "classic",
+    zenWordGoal: 30,
+  };
+
+  // Determine word limit based on whether zen mode is active
+  let wordLimit;
+  if (isZenModeActive()) {
+    wordLimit = gameSettings.zenWordGoal || 30;
+  } else {
+    wordLimit = gameSettings.timeLimit || 30;
+  }
+
+  // Return limited words based on settings
+  return words.slice(0, wordLimit);
 }
 
 // Expose getCurrentWords globally for offscreen popup
@@ -1067,6 +1082,10 @@ function initializeEventListeners() {
     switch (setting) {
       case "timeLimit":
         gameSettings.timeLimit = value;
+        // Update offscreen popup with new word count
+        if (window.gameCommandsPopupUpdater && words.length > 0) {
+          window.gameCommandsPopupUpdater.updateAllPopups(getCurrentWords());
+        }
         break;
       case "bonusTime":
         gameSettings.bonusTime = value;
@@ -1082,6 +1101,10 @@ function initializeEventListeners() {
         gameSettings.zenWordGoal = value;
         zenWordGoal = value; // Update current game variable
         updateUIForGameMode(); // Update the UI to show the new goal
+        // Update offscreen popup with new word count
+        if (window.gameCommandsPopupUpdater && words.length > 0) {
+          window.gameCommandsPopupUpdater.updateAllPopups(getCurrentWords());
+        }
         break;
     }
 
@@ -1408,7 +1431,7 @@ function startGame() {
 
   // Update offscreen popups with new words
   if (window.gameCommandsPopupUpdater && words.length > 0) {
-    window.gameCommandsPopupUpdater.updateAllPopups(words, currentWordIndex);
+    window.gameCommandsPopupUpdater.updateAllPopups(getCurrentWords());
   }
 }
 

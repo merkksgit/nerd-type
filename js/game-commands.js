@@ -1207,6 +1207,7 @@ font=<span style='color:#f7768e'>${currentFont}</span>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>NerdType - Word List</title>
+        <link rel="stylesheet" href="../css/fontawesome/all.min.css" />
         <style>
           ${this.getFontCSS(currentFont)}
 
@@ -1223,12 +1224,11 @@ font=<span style='color:#f7768e'>${currentFont}</span>
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             gap: 1.5rem;
             font-size: 2rem;
             line-height: 1.3;
             text-align: center;
-            min-height: 80vh;
             padding: 2rem;
           }
 
@@ -1242,14 +1242,62 @@ font=<span style='color:#f7768e'>${currentFont}</span>
           .word:hover {
             color: #c0caf5;
           }
+
+          .mobile-close-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #f7768e;
+            color: #24283b;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.2s ease;
+          }
+
+          .mobile-close-btn:hover {
+            background-color: #ff7a93;
+          }
+
+          .mobile-close-btn:active {
+            background-color: #e73c7e;
+          }
+
+          @media (max-width: 768px), (pointer: coarse) {
+            .mobile-close-btn {
+              display: block;
+            }
+          }
         </style>
       </head>
       <body>
+        <button class="mobile-close-btn" onclick="closeWindow()"><i class="fas fa-times"></i></button>
         <div class="word-display" id="wordDisplay">
           ${wordList.map((word) => `<span class="word">${word}</span>`).join("")}
         </div>
 
         <script>
+          // Function to close the popup window
+          function closeWindow() {
+            if (window.opener && !window.opener.closed) {
+              // Clear the offscreen window reference in parent
+              if (window.opener.offscreenWindow) {
+                window.opener.offscreenWindow = null;
+              }
+              // Clear the active flag
+              if (window.opener.localStorage) {
+                window.opener.localStorage.removeItem('offscreen_window_active');
+              }
+            }
+            window.close();
+          }
+
           // Function to update the word list
           function updateWordList(newWords) {
             const wordDisplay = document.getElementById('wordDisplay');
