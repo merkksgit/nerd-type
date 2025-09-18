@@ -120,10 +120,13 @@
                 <div class="mt-4 mb-4 d-flex justify-content-center">
                   <div class="tab-navigation">
                     <button class="tab-btn active" data-tab="year-2025">
-                      <i class="fa-solid fa-calendar me-2"></i>2025
+                      <i class="fa-solid fa-newspaper me-2"></i>NEWS 2025
                     </button>
                     <button class="tab-btn" data-tab="year-2024">
-                      <i class="fa-solid fa-calendar me-2"></i>2024
+                      <i class="fa-solid fa-newspaper me-2"></i>NEWS 2024
+                    </button>
+                    <button class="tab-btn" data-tab="patch-notes">
+                      <i class="fa-solid fa-code-branch me-2"></i>Patch Notes
                     </button>
                   </div>
                 </div>
@@ -808,6 +811,384 @@
                             >nerdtype-contact@protonmail.com</a
                           >
                         </p>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+
+                <!-- Patch Notes Tab Content -->
+                <div id="patch-notes-tab" class="tab-content">
+                  <div class="news-container">
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">21/07/25</span>
+                        <span class="version-number">v2.2.6</span>
+                      </div>
+                      <div class="news-card-body">
+                        <p class="news-content">
+                          Added optional punctuation marks to words for more
+                          realistic typing practice. Enable in Settings to add
+                          periods, commas, quotes, and other punctuation with
+                          consistent patterns.
+                        </p>
+                        <ul
+                          class="news-content"
+                          style="margin-top: 10px; padding-left: 20px"
+                        >
+                          <li>NEW: Optional punctuation toggle in Settings</li>
+                          <li>
+                            NEW: /punc command for quick toggle during gameplay
+                          </li>
+                          <li>
+                            NEW: Auto-capitalization after sentence endings (. !
+                            ?)
+                          </li>
+                          <li>
+                            NEW: Per-second WPM progression chart in game over
+                            modal
+                          </li>
+                          <li>
+                            NEW: Visual error feedback with red glow animation
+                            when attempting to continue with incorrect letters
+                          </li>
+                          <li>
+                            Realistic punctuation distribution (periods, commas,
+                            quotes, etc.)
+                          </li>
+                          <li>
+                            Deterministic generation ensures consistent patterns
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">20/07/25</span>
+                        <span class="version-number">v2.2.5</span>
+                      </div>
+                      <div class="news-card-body">
+                        <p class="news-content">
+                          Added smooth caret animation for a more polished
+                          typing experience. The caret now glides smoother
+                          between letters instead of jumping instantly,
+                          providing a more fluid and professional feel.
+                        </p>
+                        <ul
+                          class="news-content"
+                          style="margin-top: 10px; padding-left: 20px"
+                        >
+                          <li>NEW: Smoother caret animation</li>
+                          <li>
+                            MOBILE: Tap anywhere in game area to restart during
+                            active gameplay
+                          </li>
+                          <li>
+                            Removed blinking animation for distraction-free
+                            typing
+                          </li>
+                          <li>
+                            Increased caret width to 3px for better visibility
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">15/07/25</span>
+                        <span class="version-number">v2.2.4</span>
+                      </div>
+                      <div class="news-card-body">
+                        <p class="news-content">
+                          Enhanced game initialization, mobile experience, and
+                          reset functionality. Words are now visible immediately
+                          when entering the game page, with a clear visual
+                          indicator showing when the game is ready to start. The
+                          input field no longer auto-focuses on mobile,
+                          preventing unwanted keyboard popup.
+                        </p>
+                        <ul
+                          class="news-content"
+                          style="margin-top: 10px; padding-left: 20px"
+                        >
+                          <li>
+                            Instant game reset when pressing Enter during
+                            gameplay - no more page reload
+                          </li>
+                          <li>
+                            Added blur effect to words when game is inactive for
+                            better visual feedback
+                          </li>
+                          <li>
+                            Start message remains crisp while inactive words are
+                            blurred
+                          </li>
+                          <li>
+                            Added a WPM progress graph showing the last 10 games
+                            to the Game Over modal
+                          </li>
+                          <li>
+                            Increased precision bonus from 1% to 2% per perfect
+                            word for better scoring rewards
+                          </li>
+                          <li>
+                            Pressing Enter now restarts the game, even if typing
+                            hasn't started
+                          </li>
+                          <li>Added cool hover effects on rank icons</li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">14/07/25</span>
+                        <span class="version-number">v2.2.3</span>
+                      </div>
+                      <div class="news-card-body">
+                        <p class="news-content">
+                          Mobile improvements and logout fixes. Game over modal
+                          is now cleaner on mobile devices, and
+                          charts/achievements properly refresh when logging out.
+                        </p>
+                        <ul
+                          class="news-content"
+                          style="margin-top: 10px; padding-left: 20px"
+                        >
+                          <li>
+                            Improved game over modal layout for mobile - hidden
+                            detailed stats for cleaner design
+                          </li>
+                          <li>
+                            Larger, touch-friendly return button in mobile game
+                            over modal
+                          </li>
+                          <li>
+                            Tapping the screen now starts the game on mobile
+                            when Minimal UI is enabled
+                          </li>
+                          <li>
+                            Score breakdown values now appear red after lost
+                            games
+                          </li>
+                          <li>
+                            Achievements page automatically refreshes after
+                            logout
+                          </li>
+                          <li>
+                            Chart page automatically refreshes after logout
+                          </li>
+                          <li>
+                            Precision multiplier now uses selected font family
+                          </li>
+                          <li>
+                            The game now ends immediately after the last
+                            character is typed — no space required
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">13/07/25</span>
+                        <span class="version-number">v2.2.2</span>
+                      </div>
+                      <div class="news-card-body">
+                        <p class="news-content">
+                          Added precision bonus system that rewards consecutive
+                          perfect words with bonus points. Simple 1% bonus per
+                          perfect word encourages longer streaks.
+                        </p>
+                        <ul
+                          class="news-content"
+                          style="margin-top: 10px; padding-left: 20px"
+                        >
+                          <li>
+                            NEW: Precision bonus tracks consecutive perfect
+                            words
+                          </li>
+                          <li>
+                            1% of base score per perfect word after 5th (no cap)
+                          </li>
+                          <li>Added score breakdown in game over modal</li>
+                          <li>
+                            Smooth fade animation when precision streak resets
+                          </li>
+                          <li>
+                            Added toggle to hide precision multiplier for
+                            anxiety-free typing
+                          </li>
+                          <li>
+                            Precision multiplier auto-hides in minimal UI mode
+                          </li>
+                          <li>Zen mode remains unaffected for pure practice</li>
+                          <li>
+                            Updated info page with complete scoring
+                            documentation
+                          </li>
+                          <li>
+                            Added login, settings, and scoreboard buttons to
+                            most pages
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">10/07/25</span>
+                        <span class="version-number">v2.2.1</span>
+                      </div>
+                      <div class="news-card-body">
+                        <p class="news-content">
+                          Enhanced data handling for logged-in users. User data
+                          is now always saved to cloud when logged in, while the
+                          leaderboard toggle only controls public visibility.
+                        </p>
+                        <ul
+                          class="news-content"
+                          style="margin-top: 10px; padding-left: 20px"
+                        >
+                          <li>Always save user data to cloud when logged in</li>
+                          <li>
+                            Toggle only controls global leaderboard visibility
+                          </li>
+                          <li>Updated UI text to clarify toggle purpose</li>
+                          <li>
+                            Modified Firebase save logic to separate personal vs
+                            public data
+                          </li>
+                          <li>
+                            Prevents data loss for users who disable leaderboard
+                            sharing
+                          </li>
+                        </ul>
+                        <br />
+                        <p class="news-content">
+                          Quality of life changes and cleanup:
+                        </p>
+                        <ul
+                          class="news-content"
+                          style="margin-top: 10px; padding-left: 20px"
+                        >
+                          <li>
+                            Minimal UI can now be toggled from the settings
+                            panel or with CTRL + Z
+                          </li>
+                          <li>Added patch notes section to frontpage</li>
+                          <li>
+                            Removed speed tier and accuracy rank table from
+                            achievements page
+                          </li>
+                          <li>
+                            Added earned achievements counter to achievements
+                            page headers
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">10/07/25</span>
+                        <span class="version-number">v2.2.0</span>
+                      </div>
+                      <div class="news-card-body">
+                        <ul class="news-content" style="padding-left: 20px">
+                          <li>
+                            NEW: Cross-Device Data Sync - Complete cross-device
+                            sync for achievements, personal scoreboard, and all
+                            game settings
+                          </li>
+                          <li>
+                            ENHANCED: Version 2.0.0 - Major update with flowing
+                            multi-line word display and seamless typing flow
+                          </li>
+                          <li>
+                            NEW: Precision Bonus System - Build consecutive
+                            perfect words to earn bonus points
+                          </li>
+                          <li>
+                            NEW: Practice Mistakes - Turn mistakes into mastery
+                            with targeted practice sessions
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">07/07/25</span>
+                        <span class="version-number">v2.0.0</span>
+                      </div>
+                      <div class="news-card-body">
+                        <ul class="news-content" style="padding-left: 20px">
+                          <li>
+                            MAJOR: Enhanced Word Display - Complete redesign
+                            with flowing multi-line word display for seamless
+                            typing experience
+                          </li>
+                          <li>
+                            NEW: Natural word wrapping across multiple lines
+                            creates flowing typing experience
+                          </li>
+                          <li>
+                            ENHANCED: Improved visual feedback and character
+                            highlighting system
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">30/06/25</span>
+                        <span class="version-number">v1.9.8</span>
+                      </div>
+                      <div class="news-card-body">
+                        <ul class="news-content" style="padding-left: 20px">
+                          <li>
+                            NEW: Season 1 Launch - Global leaderboard reset and
+                            competitive season system begins
+                          </li>
+                          <li>
+                            NEW: Wall of Fame - Permanent recognition for top
+                            performers at season end
+                          </li>
+                          <li>
+                            NEW: Season 1 Veteran Achievement - Exclusive
+                            achievement for participating in the first season
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
+                        <span class="news-date">22/06/25</span>
+                        <span class="version-number">v1.9.5</span>
+                      </div>
+                      <div class="news-card-body">
+                        <ul class="news-content" style="padding-left: 20px">
+                          <li>
+                            NEW: Global Leaderboards - Compete with typists
+                            worldwide with real-time competitive rankings
+                          </li>
+                          <li>
+                            NEW: Privacy Toggle - Complete control over data
+                            sharing and collection
+                          </li>
+                          <li>
+                            NEW: Custom Cursor Themes - Orange, Green, Purple
+                            cursor options with pixel art designs
+                          </li>
+                          <li>
+                            NEW: Customizable Font Selection - Four premium Nerd
+                            Fonts for personalized typing experience
+                          </li>
+                        </ul>
                       </div>
                     </article>
                   </div>
