@@ -116,668 +116,682 @@
         <div class="row justify-content-center">
           <article class="col-md-8 p-3 pt-1">
             <div class="wpm-info pt-2 pt-md-5">
-              <!-- Table of Contents -->
-              <div class="row justify-content-center">
-                <div class="table-of-contents col-md-8">
-                  <div class="toc-header">
-                    <i class="fa-solid fa-box-archive"></i> News Archive
-                  </div>
-                  <ul class="toc-list">
-                    <li><a href="#year-2025" class="toc-link">2025</a></li>
-                    <li><a href="#year-2024" class="toc-link">2024</a></li>
-                  </ul>
+              <!-- Tab Navigation -->
+              <div class="mt-4 mb-4 d-flex justify-content-center">
+                <div class="tab-navigation">
+                  <button class="tab-btn active" data-tab="year-2025">
+                    <i class="fa-solid fa-calendar me-2"></i>2025
+                  </button>
+                  <button class="tab-btn" data-tab="year-2024">
+                    <i class="fa-solid fa-calendar me-2"></i>2024
+                  </button>
                 </div>
               </div>
-              <h4 id="year-2025" class="system-updates-title-alt">2025</h4>
 
-              <!-- Recently moved news items from front page -->
-              <div class="news-container mb-4">
-                <!-- News Card - Global Leaderboards Are Now Live! -->
-                <article class="news-card">
-                  <div class="news-card-header">
-                    <span class="news-date">22/06/25</span>
-                    <span class="news-category announcement">Announcement</span>
-                  </div>
-                  <div class="news-card-body">
-                    <h5 class="news-title">
-                      Global Leaderboards Are Now Live!
-                    </h5>
-                    <p class="news-content">
-                      Major Update: Global Leaderboards are now live! Compete
-                      with typists from around the world and see where your
-                      skills rank. Your scores are now automatically submitted
-                      to a global database, creating real-time competitive
-                      rankings. View the top 20 performers worldwide, filter by
-                      game mode (Classic, Custom), and track total games played
-                      across the community. Visit the new
-                      <a
-                        href="./globalscoreboard.html"
-                        class="custom-link"
-                        style="color: #7aa2f7; text-decoration: none"
-                        >Global Leaderboard</a
+              <!-- 2025 Tab Content -->
+              <div id="year-2025-tab" class="tab-content active">
+                <div class="news-container mb-4">
+                  <!-- News Card - Global Leaderboards Are Now Live! -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">22/06/25</span>
+                      <span class="news-category announcement"
+                        >Announcement</span
                       >
-                      to see how you measure up against the fastest fingers on
-                      the planet. Ready to claim your spot in typing history,
-                      nerds?
-                    </p>
-                  </div>
-                </article>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">
+                        Global Leaderboards Are Now Live!
+                      </h5>
+                      <p class="news-content">
+                        Major Update: Global Leaderboards are now live! Compete
+                        with typists from around the world and see where your
+                        skills rank. Your scores are now automatically submitted
+                        to a global database, creating real-time competitive
+                        rankings. View the top 20 performers worldwide, filter
+                        by game mode (Classic, Custom), and track total games
+                        played across the community. Visit the new
+                        <a
+                          href="./globalscoreboard.html"
+                          class="custom-link"
+                          style="color: #7aa2f7; text-decoration: none"
+                          >Global Leaderboard</a
+                        >
+                        to see how you measure up against the fastest fingers on
+                        the planet. Ready to claim your spot in typing history,
+                        nerds?
+                      </p>
+                    </div>
+                  </article>
 
-                <!-- News Card - Privacy First: New Privacy Toggle -->
+                  <!-- News Card - Privacy First: New Privacy Toggle -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">22/06/25</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">
+                        Privacy First: New Privacy Toggle
+                      </h5>
+                      <p class="news-content">
+                        Privacy First: New privacy toggle in Settings allows you
+                        to opt out of data collection entirely. When disabled,
+                        all your game data stays local on your device and
+                        nothing is sent to our servers. Your choice, your data,
+                        your privacy. Toggle it anytime with the new "Share game
+                        data for leaderboards" setting or use the
+                        <code style="color: #bb9af7">/data</code> command during
+                        gameplay. Privacy-conscious nerds, this one's for you!
+                      </p>
+                    </div>
+                  </article>
+
+                  <!-- News Card - Streamlined Word Set Selection -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">03/06/25</span>
+                      <span class="news-category update">Update</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Streamlined Word Set Selection</h5>
+                      <p class="news-content">
+                        UI Update: We've streamlined the word set selection! The
+                        word set selector has been moved from the game area into
+                        the settings panel for better organization. Access all
+                        word sets (English, Finnish, Swedish, Programming,
+                        Nightmare) through the settings panel or with the /lang
+                        quick command.
+                      </p>
+                    </div>
+                  </article>
+
+                  <!-- News Card - Keypress Sounds Added -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">02/06/25</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Keypress Sounds Added</h5>
+                      <p class="news-content">
+                        New feature: We've added satisfying keypress sounds to
+                        enhance your typing experience. Each keystroke now
+                        produces a subtle audio feedback that helps you maintain
+                        rhythm and flow during intense typing sessions. The
+                        feature is fully customizable - toggle it on/off in the
+                        settings panel or use the quick command /sound during
+                        gameplay. Whether you prefer the zen silence or the
+                        tactile satisfaction of audio feedback, the choice is
+                        yours, nerds!
+                      </p>
+                    </div>
+                  </article>
+
+                  <!-- News Card - Space Between Words Feature -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">14/05/25</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Space Between Words Feature</h5>
+                      <p class="news-content">
+                        New feature: We've added a more realistic typing
+                        experience with an optional space-after-word setting.
+                        Toggle this feature in the settings menu to practice
+                        typing spaces between words, just like in real-world
+                        typing. This helps build proper typing habits and gives
+                        more accurate WPM measurements. The choice is yours:
+                        traditional word-by-word mode or the complete typing
+                        experience with spaces. Which will you master first,
+                        nerd?
+                      </p>
+                    </div>
+                  </article>
+                </div>
+                <!-- News Card - Zen Mode Integration -->
                 <article class="news-card">
                   <div class="news-card-header">
-                    <span class="news-date">22/06/25</span>
-                    <span class="news-category feature">Feature</span>
-                  </div>
-                  <div class="news-card-body">
-                    <h5 class="news-title">
-                      Privacy First: New Privacy Toggle
-                    </h5>
-                    <p class="news-content">
-                      Privacy First: New privacy toggle in Settings allows you
-                      to opt out of data collection entirely. When disabled, all
-                      your game data stays local on your device and nothing is
-                      sent to our servers. Your choice, your data, your privacy.
-                      Toggle it anytime with the new "Share game data for
-                      leaderboards" setting or use the
-                      <code style="color: #bb9af7">/data</code> command during
-                      gameplay. Privacy-conscious nerds, this one's for you!
-                    </p>
-                  </div>
-                </article>
-
-                <!-- News Card - Streamlined Word Set Selection -->
-                <article class="news-card">
-                  <div class="news-card-header">
-                    <span class="news-date">03/06/25</span>
+                    <span class="news-date">29/04/25</span>
                     <span class="news-category update">Update</span>
                   </div>
                   <div class="news-card-body">
-                    <h5 class="news-title">Streamlined Word Set Selection</h5>
+                    <h5 class="news-title">Zen Mode Integration</h5>
                     <p class="news-content">
-                      UI Update: We've streamlined the word set selection! The
-                      word set selector has been moved from the game area into
-                      the settings panel for better organization. Access all
-                      word sets (English, Finnish, Swedish, Programming,
-                      Nightmare) through the settings panel or with the /lang
-                      quick command.
+                      UI Update: Zen Mode is now integrated directly into the
+                      game settings! No more switching between pages - simply
+                      toggle Zen Mode on/off in the settings panel for a
+                      seamless transition between pressure-based and relaxed
+                      typing experiences. This streamlined approach keeps all
+                      your gameplay options in one convenient location. Enjoy
+                      the simplified experience, nerds!
                     </p>
                   </div>
                 </article>
 
-                <!-- News Card - Keypress Sounds Added -->
+                <!-- News Card - New Achievements -->
                 <article class="news-card">
                   <div class="news-card-header">
-                    <span class="news-date">02/06/25</span>
+                    <span class="news-date">23/04/25</span>
                     <span class="news-category feature">Feature</span>
                   </div>
                   <div class="news-card-body">
-                    <h5 class="news-title">Keypress Sounds Added</h5>
+                    <h5 class="news-title">New Achievements Available</h5>
                     <p class="news-content">
-                      New feature: We've added satisfying keypress sounds to
-                      enhance your typing experience. Each keystroke now
-                      produces a subtle audio feedback that helps you maintain
-                      rhythm and flow during intense typing sessions. The
-                      feature is fully customizable - toggle it on/off in the
-                      settings panel or use the quick command /sound during
-                      gameplay. Whether you prefer the zen silence or the
-                      tactile satisfaction of audio feedback, the choice is
-                      yours, nerds!
+                      Are you just a script kiddie, or have you earned admin
+                      privileges? New
+                      <a
+                        href="./achievements.html#achievements"
+                        class="custom-link"
+                        style="color: #7aa2f7; text-decoration: none"
+                        >achievements</a
+                      >
+                      just dropped – prove your skills and unlock them all,
+                      nerds!
                     </p>
                   </div>
                 </article>
 
-                <!-- News Card - Space Between Words Feature -->
+                <!-- News Card - Score Calculation Update -->
                 <article class="news-card">
                   <div class="news-card-header">
-                    <span class="news-date">14/05/25</span>
+                    <span class="news-date">22/04/25</span>
+                    <span class="news-category update">Update</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">Score Calculation Overhaul</h5>
+                    <p class="news-content">
+                      Update: We have completely changed how the score is
+                      calculated in ClassicMode. The scoring system should now
+                      ensure that your results are comparable across different
+                      game modes and difficulty settings. Check the
+                      <a
+                        href="./info.html#how-score-is-calculated"
+                        class="custom-link"
+                        style="color: #7aa2f7; text-decoration: none"
+                        >INFO</a
+                      >
+                      page for more information! If you find any bugs related to
+                      the scoring system, please file an issue on the
+                      <a
+                        href="./contact.html"
+                        class="custom-link"
+                        style="color: #7aa2f7; text-decoration: none"
+                        >Contact</a
+                      >
+                      page. Thanks, nerds!
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Contact Page Launch -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">21/04/25</span>
                     <span class="news-category feature">Feature</span>
                   </div>
                   <div class="news-card-body">
-                    <h5 class="news-title">Space Between Words Feature</h5>
+                    <h5 class="news-title">Contact Page Launch</h5>
                     <p class="news-content">
-                      New feature: We've added a more realistic typing
-                      experience with an optional space-after-word setting.
-                      Toggle this feature in the settings menu to practice
-                      typing spaces between words, just like in real-world
-                      typing. This helps build proper typing habits and gives
-                      more accurate WPM measurements. The choice is yours:
-                      traditional word-by-word mode or the complete typing
-                      experience with spaces. Which will you master first, nerd?
+                      Need to report a bug, suggest a feature, or just say
+                      hello? We've launched a dedicated contact page to make
+                      reaching out easier than ever. Simply navigate to
+                      <a
+                        href="./contact.html"
+                        class="custom-link"
+                        style="color: #7aa2f7; text-decoration: none"
+                        >Contact</a
+                      >
+                      and submit your feedback. All submissions can be made
+                      completely anonymous if you prefer. You can also find the
+                      link in the footer below.
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Quick Commands -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">19/04/25</span>
+                    <span class="news-category feature">Feature</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">Quick Commands for Classic Mode</h5>
+                    <p class="news-content">
+                      New feature: Quick Commands for Classic Mode! Now you can
+                      customize your typing experience without opening the
+                      terminal. Just type a slash followed by a command—like
+                      '/mode hard' to switch difficulty or '/setinitial 15' to
+                      adjust starting energy. Use '/help' to view all available
+                      commands or '/status' to check current settings. All
+                      changes apply instantly, allowing you to tailor your
+                      challenge on-the-fly. Unleash your efficiency, nerds!
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Language Selection Classic -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">17/04/25</span>
+                    <span class="news-category update">Update</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">
+                      Language Selection in Classic Mode
+                    </h5>
+                    <p class="news-content">
+                      Major update: Language Selection now available in Classic
+                      Mode! Choose between Finnish, English, Swedish,
+                      Programming, and Nightmare word sets without changing
+                      pages. Also enhanced the navigation with sleek animated
+                      highlights and glow effects. Master multiple languages and
+                      breach the Pentagon mainframe, nerd!
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Language Selection Zen -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">01/04/25</span>
+                    <span class="news-category feature">Feature</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">Language Selection in Zen Mode</h5>
+                    <p class="news-content">
+                      New feature: Language Selection now available in Zen Mode!
+                      You can now switch languages on-the-fly and your high
+                      scores display which language you conquered. Get at it,
+                      nerd!
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Auto-rotating Tips -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">27/03/25</span>
+                    <span class="news-category feature">Feature</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">
+                      Auto-rotating Tips & Visual Upgrades
+                    </h5>
+                    <p class="news-content">
+                      New feature: Auto-rotating Tips & Visual Upgrades! Tips
+                      now automatically cycle while you're between games,
+                      keeping things fresh and interesting. Also added sleek new
+                      visuals to game buttons. Embrace the nerd in you, nerd!
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Achievement Ranks -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">16/01/25</span>
+                    <span class="news-category feature">Feature</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">Achievement Ranks Introduced</h5>
+                    <p class="news-content">
+                      Introducing Achievement Ranks! Your typing skills now have
+                      a clear progression system. Each Classic Mode game tracks
+                      your highest achievements in Speed and Accuracy, ranking
+                      you from Initiating (Rank 1) to Quantum Speed (Rank 5).
+                      Whether you're a Digital Runner or aiming for Neural
+                      Master status, your typing prowess is now quantified and
+                      celebrated. Check out your highest achievements on the
+                      ScoreChart and push your limits!
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Codenames -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">15/01/25</span>
+                    <span class="news-category feature">Feature</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">Codenames Are Live</h5>
+                    <p class="news-content">
+                      New feature: Codenames are now live! Every hacker needs a
+                      signature, right? We've added username support across all
+                      game modes. Create your digital identity, mark your
+                      territory in the scoreboard, and let everyone know who's
+                      dominating those typing charts. Your achievements deserve
+                      recognition - claim your cyber identity now, nerds!
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Custom Wallpapers -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">14/01/25</span>
+                    <span class="news-category announcement">Announcement</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">Custom Wallpapers Available</h5>
+                    <p class="news-content">
+                      Make your desktop match your typing skills with our custom
+                      <a
+                        href="https://github.com/merkksgit/nerd-type/tree/main/wallpapers"
+                        target="_blank"
+                        style="color: #7aa2f7; text-decoration: none"
+                        >wallpapers</a
+                      >! Available now in our GitHub repo. Deck out your desktop
+                      with some proper nerd aesthetics!
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Real-time Character Feedback -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">11/01/25</span>
+                    <span class="news-category feature">Feature</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">Real-time Character Feedback</h5>
+                    <p class="news-content">
+                      New feature: Real-time character feedback! Ever typed
+                      something and wished you could see exactly where you went
+                      wrong? Well, now you can! We've added
+                      character-by-character highlighting that shows you exactly
+                      which keys you're nailing and which ones need some love.
+                      Orange for perfect hits, red for those rebellious
+                      misclicks, and gray for the keys waiting their turn. It's
+                      like having a tiny typing coach right in your browser!
+                      Debug your typing and optimize your input, nerds!
+                    </p>
+                  </div>
+                </article>
+
+                <!-- News Card - Accuracy Tracking -->
+                <article class="news-card">
+                  <div class="news-card-header">
+                    <span class="news-date">09/01/25</span>
+                    <span class="news-category feature">Feature</span>
+                  </div>
+                  <div class="news-card-body">
+                    <h5 class="news-title">Accuracy Tracking Added</h5>
+                    <p class="news-content">
+                      New feature: Accuracy tracking! Ever wondered how precise
+                      your typing really is? Now you can find out! We've added
+                      accuracy tracking to both Classic and ZenMode, showing you
+                      exactly how many keystrokes hit their mark. Every
+                      character counts - no pressure though! Watch your accuracy
+                      percentage climb as you perfect those keystrokes. Keep it
+                      clean and precise, nerds!
                     </p>
                   </div>
                 </article>
               </div>
-              <!-- News Card - Zen Mode Integration -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">29/04/25</span>
-                  <span class="news-category update">Update</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Zen Mode Integration</h5>
-                  <p class="news-content">
-                    UI Update: Zen Mode is now integrated directly into the game
-                    settings! No more switching between pages - simply toggle
-                    Zen Mode on/off in the settings panel for a seamless
-                    transition between pressure-based and relaxed typing
-                    experiences. This streamlined approach keeps all your
-                    gameplay options in one convenient location. Enjoy the
-                    simplified experience, nerds!
-                  </p>
-                </div>
-              </article>
 
-              <!-- News Card - New Achievements -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">23/04/25</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">New Achievements Available</h5>
-                  <p class="news-content">
-                    Are you just a script kiddie, or have you earned admin
-                    privileges? New
-                    <a
-                      href="./achievements.html#achievements"
-                      class="custom-link"
-                      style="color: #7aa2f7; text-decoration: none"
-                      >achievements</a
-                    >
-                    just dropped – prove your skills and unlock them all, nerds!
-                  </p>
-                </div>
-              </article>
+              <!-- 2024 Tab Content -->
+              <div id="year-2024-tab" class="tab-content">
+                <div class="news-container mb-4">
+                  <!-- News Card - Christmas Words -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">20/12/24</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Finnish Christmas Words Added</h5>
+                      <p class="news-content">
+                        We're dashing through the snow towards Christmas, and to
+                        get you into the festive spirit, we've just added a
+                        magical batch of Finnish Christmas-themed words to the
+                        "Suomi" game! From traditional "tonttu" (elves) to the
+                        sweet aroma of "pipari" (gingerbread) and the warmth of
+                        "glögi" (mulled wine), these new additions will bring
+                        the cozy Nordic Christmas feeling to your typing
+                        practice. Get ready to jingle all the way, nerds! Merry
+                        Xmas!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Score Calculation Update -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">22/04/25</span>
-                  <span class="news-category update">Update</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Score Calculation Overhaul</h5>
-                  <p class="news-content">
-                    Update: We have completely changed how the score is
-                    calculated in ClassicMode. The scoring system should now
-                    ensure that your results are comparable across different
-                    game modes and difficulty settings. Check the
-                    <a
-                      href="./info.html#how-score-is-calculated"
-                      class="custom-link"
-                      style="color: #7aa2f7; text-decoration: none"
-                      >INFO</a
-                    >
-                    page for more information! If you find any bugs related to
-                    the scoring system, please file an issue on the
-                    <a
-                      href="./contact.html"
-                      class="custom-link"
-                      style="color: #7aa2f7; text-decoration: none"
-                      >Contact</a
-                    >
-                    page. Thanks, nerds!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - ZenMode Launch -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">27/10/24</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">ZenMode Launch</h5>
+                      <p class="news-content">
+                        New feature: ZenMode! For all you nerds who want to
+                        practice without the pressure, we've added a totally
+                        chill typing experience. No energy bar - just you and
+                        your keyboard in perfect harmony. Plus, we've upgraded
+                        the ScoreChart to track both Classic and ZenMode stats.
+                        Now you can see your progress in both intense hacking
+                        sessions and peaceful typing flows. Time to find your
+                        inner zen, nerds!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Contact Page Launch -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">21/04/25</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Contact Page Launch</h5>
-                  <p class="news-content">
-                    Need to report a bug, suggest a feature, or just say hello?
-                    We've launched a dedicated contact page to make reaching out
-                    easier than ever. Simply navigate to
-                    <a
-                      href="./contact.html"
-                      class="custom-link"
-                      style="color: #7aa2f7; text-decoration: none"
-                      >Contact</a
-                    >
-                    and submit your feedback. All submissions can be made
-                    completely anonymous if you prefer. You can also find the
-                    link in the footer below.
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - Ctrl+Enter Reset -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">24/10/24</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Keyboard Game Reset</h5>
+                      <p class="news-content">
+                        New feature: Now you can press Ctrl + Enter to reset the
+                        game! Because reaching for the mouse is so 1999. Keep
+                        those fingers where they belong - on the keyboard!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Quick Commands -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">19/04/25</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Quick Commands for Classic Mode</h5>
-                  <p class="news-content">
-                    New feature: Quick Commands for Classic Mode! Now you can
-                    customize your typing experience without opening the
-                    terminal. Just type a slash followed by a command—like
-                    '/mode hard' to switch difficulty or '/setinitial 15' to
-                    adjust starting energy. Use '/help' to view all available
-                    commands or '/status' to check current settings. All changes
-                    apply instantly, allowing you to tailor your challenge
-                    on-the-fly. Unleash your efficiency, nerds!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - ScoreChart -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">18/10/24</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">ScoreChart Added</h5>
+                      <p class="news-content">
+                        New feature: The ScoreChart! The score chart displays
+                        your scores plotted over time, making it easy to see
+                        your improvements and milestones. With this update, we
+                        aim to enhance your gaming experience and motivate you
+                        to reach new heights in your typing journey. Check out
+                        the ScoreChart page and see how far you've come! Keep
+                        practicing, nerd!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Language Selection Classic -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">17/04/25</span>
-                  <span class="news-category update">Update</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Language Selection in Classic Mode</h5>
-                  <p class="news-content">
-                    Major update: Language Selection now available in Classic
-                    Mode! Choose between Finnish, English, Swedish, Programming,
-                    and Nightmare word sets without changing pages. Also
-                    enhanced the navigation with sleek animated highlights and
-                    glow effects. Master multiple languages and breach the
-                    Pentagon mainframe, nerd!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - Scoreboard -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">17/10/24</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Scoreboard Added</h5>
+                      <p class="news-content">
+                        New feature: Scoreboard added! We're thrilled to
+                        announce the latest enhancement to our game: The
+                        Scoreboard! Now you can keep track of your performance
+                        and celebrate your victories as you hack through our
+                        typing challenges! Go claim your bragging rights, nerds!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Language Selection Zen -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">01/04/25</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Language Selection in Zen Mode</h5>
-                  <p class="news-content">
-                    New feature: Language Selection now available in Zen Mode!
-                    You can now switch languages on-the-fly and your high scores
-                    display which language you conquered. Get at it, nerd!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - Halloween Update -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">15/10/24</span>
+                      <span class="news-category update">Update</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Halloween Update</h5>
+                      <p class="news-content">
+                        Halloween Update: We're creeping closer to Halloween,
+                        and to get you in the spirit, we've just added a
+                        spine-chilling batch of Halloween-themed words to the
+                        English words game! Also added small quality-of-life
+                        changes and the NerdType logo. Let the spooky fun begin,
+                        nerds!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Auto-rotating Tips -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">27/03/25</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">
-                    Auto-rotating Tips & Visual Upgrades
-                  </h5>
-                  <p class="news-content">
-                    New feature: Auto-rotating Tips & Visual Upgrades! Tips now
-                    automatically cycle while you're between games, keeping
-                    things fresh and interesting. Also added sleek new visuals
-                    to game buttons. Embrace the nerd in you, nerd!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - Progress Bar -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">11/10/24</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Progress Bar Added</h5>
+                      <p class="news-content">
+                        New feature: Progress bar added! Now you can visually
+                        track your hacking prowess in real-time! The new
+                        progress bar lets you follow your infiltration as it
+                        intensifies, showing just how close you are to cracking
+                        the system. Have you hacked the Pentagon yet?
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Achievement Ranks -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">16/01/25</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Achievement Ranks Introduced</h5>
-                  <p class="news-content">
-                    Introducing Achievement Ranks! Your typing skills now have a
-                    clear progression system. Each Classic Mode game tracks your
-                    highest achievements in Speed and Accuracy, ranking you from
-                    Initiating (Rank 1) to Quantum Speed (Rank 5). Whether
-                    you're a Digital Runner or aiming for Neural Master status,
-                    your typing prowess is now quantified and celebrated. Check
-                    out your highest achievements on the ScoreChart and push
-                    your limits!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - Pentagon Patch -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">10/10/24</span>
+                      <span class="news-category update">Update</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Pentagon Patch Released</h5>
+                      <p class="news-content">
+                        The Pentagon patch is out! Remember to keep your energy
+                        high and get hacking! Energy decreases quickly, accuracy
+                        is the key!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Codenames -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">15/01/25</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Codenames Are Live</h5>
-                  <p class="news-content">
-                    New feature: Codenames are now live! Every hacker needs a
-                    signature, right? We've added username support across all
-                    game modes. Create your digital identity, mark your
-                    territory in the scoreboard, and let everyone know who's
-                    dominating those typing charts. Your achievements deserve
-                    recognition - claim your cyber identity now, nerds!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - Pentagon Teaser -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">09/10/24</span>
+                      <span class="news-category announcement"
+                        >Announcement</span
+                      >
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Pentagon Hack Coming Soon</h5>
+                      <p class="news-content">
+                        Are you ready to hack the Pentagon? Exciting changes
+                        coming soon. Get your snacks ready nerds ;)
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Custom Wallpapers -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">14/01/25</span>
-                  <span class="news-category announcement">Announcement</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Custom Wallpapers Available</h5>
-                  <p class="news-content">
-                    Make your desktop match your typing skills with our custom
-                    <a
-                      href="https://github.com/merkksgit/nerd-type/tree/main/wallpapers"
-                      target="_blank"
-                      style="color: #7aa2f7; text-decoration: none"
-                      >wallpapers</a
-                    >! Available now in our GitHub repo. Deck out your desktop
-                    with some proper nerd aesthetics!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - Mobile Improvements -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">09/10/24</span>
+                      <span class="news-category update">Update</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Mobile Typing Improvements</h5>
+                      <p class="news-content">
+                        Mobile typing just got better! This update brings a
+                        whole new convenience for mobile users, so go ahead -
+                        grab your phone and start typing like a real nerd! Stay
+                        safe!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Real-time Character Feedback -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">11/01/25</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Real-time Character Feedback</h5>
-                  <p class="news-content">
-                    New feature: Real-time character feedback! Ever typed
-                    something and wished you could see exactly where you went
-                    wrong? Well, now you can! We've added character-by-character
-                    highlighting that shows you exactly which keys you're
-                    nailing and which ones need some love. Orange for perfect
-                    hits, red for those rebellious misclicks, and gray for the
-                    keys waiting their turn. It's like having a tiny typing
-                    coach right in your browser! Debug your typing and optimize
-                    your input, nerds!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - NerdType Alert Box -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">08/10/24</span>
+                      <span class="news-category update">Update</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Enhanced Alert Box</h5>
+                      <p class="news-content">
+                        Added a more "NerdTypelike" alert box when the game
+                        ends, with pretty colors and your result. You can also
+                        reset the game with the 'Enter' key while the result
+                        window is active. Stay awesome, nerds!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - Accuracy Tracking -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">09/01/25</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Accuracy Tracking Added</h5>
-                  <p class="news-content">
-                    New feature: Accuracy tracking! Ever wondered how precise
-                    your typing really is? Now you can find out! We've added
-                    accuracy tracking to both Classic and ZenMode, showing you
-                    exactly how many keystrokes hit their mark. Every character
-                    counts - no pressure though! Watch your accuracy percentage
-                    climb as you perfect those keystrokes. Keep it clean and
-                    precise, nerds!
-                  </p>
-                </div>
-              </article>
-            </div>
-            <h4
-              id="year-2024"
-              class="system-updates-title-alt"
-              style="padding-top: 2rem"
-            >
-              2024
-            </h4>
+                  <!-- News Card - Nightmare Mode Release -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">07/10/24</span>
+                      <span class="news-category feature">Feature</span>
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Nightmare Mode Released</h5>
+                      <p class="news-content">
+                        Nightmare mode released! Oh boy it's a tough one! Stay
+                        at it nerds!
+                      </p>
+                    </div>
+                  </article>
 
-            <div class="news-container mb-4">
-              <!-- News Card - Christmas Words -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">20/12/24</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Finnish Christmas Words Added</h5>
-                  <p class="news-content">
-                    We're dashing through the snow towards Christmas, and to get
-                    you into the festive spirit, we've just added a magical
-                    batch of Finnish Christmas-themed words to the "Suomi" game!
-                    From traditional "tonttu" (elves) to the sweet aroma of
-                    "pipari" (gingerbread) and the warmth of "glögi" (mulled
-                    wine), these new additions will bring the cozy Nordic
-                    Christmas feeling to your typing practice. Get ready to
-                    jingle all the way, nerds! Merry Xmas!
-                  </p>
-                </div>
-              </article>
+                  <!-- News Card - Nightmare Mode Development -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">06/10/24</span>
+                      <span class="news-category announcement"
+                        >Announcement</span
+                      >
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">Nightmare Mode in Development</h5>
+                      <p class="news-content">
+                        Currently working on a Nightmare mode with long
+                        difficult words and a punishing time limit! Stay tuned
+                        and keep typing nerds!
+                      </p>
+                    </div>
+                  </article>
 
-              <!-- News Card - ZenMode Launch -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">27/10/24</span>
-                  <span class="news-category feature">Feature</span>
+                  <!-- News Card - NerdType Launch -->
+                  <article class="news-card">
+                    <div class="news-card-header">
+                      <span class="news-date">05/10/24</span>
+                      <span class="news-category announcement"
+                        >Announcement</span
+                      >
+                    </div>
+                    <div class="news-card-body">
+                      <h5 class="news-title">NerdType Released</h5>
+                      <p class="news-content">
+                        NerdType released! All feedback is appreciated, contact
+                        me by email:
+                        <a
+                          href="mailto:nerdtype-contact@protonmail.com"
+                          id="email-link"
+                          >nerdtype-contact@protonmail.com</a
+                        >
+                      </p>
+                    </div>
+                  </article>
                 </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">ZenMode Launch</h5>
-                  <p class="news-content">
-                    New feature: ZenMode! For all you nerds who want to practice
-                    without the pressure, we've added a totally chill typing
-                    experience. No energy bar - just you and your keyboard in
-                    perfect harmony. Plus, we've upgraded the ScoreChart to
-                    track both Classic and ZenMode stats. Now you can see your
-                    progress in both intense hacking sessions and peaceful
-                    typing flows. Time to find your inner zen, nerds!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - Ctrl+Enter Reset -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">24/10/24</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Keyboard Game Reset</h5>
-                  <p class="news-content">
-                    New feature: Now you can press Ctrl + Enter to reset the
-                    game! Because reaching for the mouse is so 1999. Keep those
-                    fingers where they belong - on the keyboard!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - ScoreChart -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">18/10/24</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">ScoreChart Added</h5>
-                  <p class="news-content">
-                    New feature: The ScoreChart! The score chart displays your
-                    scores plotted over time, making it easy to see your
-                    improvements and milestones. With this update, we aim to
-                    enhance your gaming experience and motivate you to reach new
-                    heights in your typing journey. Check out the ScoreChart
-                    page and see how far you've come! Keep practicing, nerd!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - Scoreboard -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">17/10/24</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Scoreboard Added</h5>
-                  <p class="news-content">
-                    New feature: Scoreboard added! We're thrilled to announce
-                    the latest enhancement to our game: The Scoreboard! Now you
-                    can keep track of your performance and celebrate your
-                    victories as you hack through our typing challenges! Go
-                    claim your bragging rights, nerds!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - Halloween Update -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">15/10/24</span>
-                  <span class="news-category update">Update</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Halloween Update</h5>
-                  <p class="news-content">
-                    Halloween Update: We're creeping closer to Halloween, and to
-                    get you in the spirit, we've just added a spine-chilling
-                    batch of Halloween-themed words to the English words game!
-                    Also added small quality-of-life changes and the NerdType
-                    logo. Let the spooky fun begin, nerds!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - Progress Bar -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">11/10/24</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Progress Bar Added</h5>
-                  <p class="news-content">
-                    New feature: Progress bar added! Now you can visually track
-                    your hacking prowess in real-time! The new progress bar lets
-                    you follow your infiltration as it intensifies, showing just
-                    how close you are to cracking the system. Have you hacked
-                    the Pentagon yet?
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - Pentagon Patch -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">10/10/24</span>
-                  <span class="news-category update">Update</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Pentagon Patch Released</h5>
-                  <p class="news-content">
-                    The Pentagon patch is out! Remember to keep your energy high
-                    and get hacking! Energy decreases quickly, accuracy is the
-                    key!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - Pentagon Teaser -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">09/10/24</span>
-                  <span class="news-category announcement">Announcement</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Pentagon Hack Coming Soon</h5>
-                  <p class="news-content">
-                    Are you ready to hack the Pentagon? Exciting changes coming
-                    soon. Get your snacks ready nerds ;)
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - Mobile Improvements -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">09/10/24</span>
-                  <span class="news-category update">Update</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Mobile Typing Improvements</h5>
-                  <p class="news-content">
-                    Mobile typing just got better! This update brings a whole
-                    new convenience for mobile users, so go ahead - grab your
-                    phone and start typing like a real nerd! Stay safe!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - NerdType Alert Box -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">08/10/24</span>
-                  <span class="news-category update">Update</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Enhanced Alert Box</h5>
-                  <p class="news-content">
-                    Added a more "NerdTypelike" alert box when the game ends,
-                    with pretty colors and your result. You can also reset the
-                    game with the 'Enter' key while the result window is active.
-                    Stay awesome, nerds!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - Nightmare Mode Release -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">07/10/24</span>
-                  <span class="news-category feature">Feature</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Nightmare Mode Released</h5>
-                  <p class="news-content">
-                    Nightmare mode released! Oh boy it's a tough one! Stay at it
-                    nerds!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - Nightmare Mode Development -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">06/10/24</span>
-                  <span class="news-category announcement">Announcement</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">Nightmare Mode in Development</h5>
-                  <p class="news-content">
-                    Currently working on a Nightmare mode with long difficult
-                    words and a punishing time limit! Stay tuned and keep typing
-                    nerds!
-                  </p>
-                </div>
-              </article>
-
-              <!-- News Card - NerdType Launch -->
-              <article class="news-card">
-                <div class="news-card-header">
-                  <span class="news-date">05/10/24</span>
-                  <span class="news-category announcement">Announcement</span>
-                </div>
-                <div class="news-card-body">
-                  <h5 class="news-title">NerdType Released</h5>
-                  <p class="news-content">
-                    NerdType released! All feedback is appreciated, contact me
-                    by email:
-                    <a
-                      href="mailto:nerdtype-contact@protonmail.com"
-                      id="email-link"
-                      >nerdtype-contact@protonmail.com</a
-                    >
-                  </p>
-                </div>
-              </article>
+              </div>
             </div>
           </article>
         </div>
@@ -876,6 +890,7 @@
     <script src="../js/keyboard-nav.js"></script>
     <script src="../js/table-of-contents.js"></script>
     <script src="../js/cursor-selection.js"></script>
+    <script src="../js/tabs.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
