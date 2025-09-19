@@ -573,13 +573,13 @@ input#userInput {
   left: 50%;
   transform: translate(-50%, -50%);
   background: #24283b;
-  color: #bb9af7;
+  color: #7aa2f7;
   padding: 1rem 2rem;
   border-radius: 8px;
   font-size: 1.1em;
   font-weight: 500;
   font-family: var(--game-font, "jetbrains-mono");
-  border: 2px solid #bb9af7;
+  border: 2px solid #7aa2f7;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   z-index: 10;
   pointer-events: none;
