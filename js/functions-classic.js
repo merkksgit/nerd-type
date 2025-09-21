@@ -4091,7 +4091,7 @@ function saveClassicResult(
 
     if (shouldSendToDiscord) {
       fetch(
-        "https://n8n.n8nmerkks.uk/webhook/1b5eabef-f77c-47c3-af6a-49081aee54ea",
+        "https://n8n.n8nmerkks.uk/webhook/98cfa1d8-1df2-4cbe-a3fe-f37992044661",
         {
           method: "POST",
           mode: "no-cors",

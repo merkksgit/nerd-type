@@ -1025,15 +1025,18 @@ class AchievementSystem {
       timestamp: new Date().toISOString(),
     };
 
-    // Send to n8n webhook (separate endpoint for achievements)
-    fetch("https://n8n.n8nmerkks.uk/webhook/webhook/achievements-nerdtype", {
-      method: "POST",
-      mode: "no-cors",
-      headers: {
-        "Content-Type": "application/json",
+    // Send to n8n webhook (production endpoint for achievements)
+    fetch(
+      "https://n8n.n8nmerkks.uk/webhook/69ca988a-ac61-45c1-aad3-72293724d749",
+      {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(webhookData),
       },
-      body: JSON.stringify(webhookData),
-    })
+    )
       .then(() => {
         console.log("🎉 Achievement sent to Discord:", achievement.name);
       })
