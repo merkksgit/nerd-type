@@ -179,7 +179,7 @@
               </h1>
               <p class="lead page-subtitle mb-5">
                 NerdType Season 1: July 1 – September 30, 2025.<br />
-                Log in and enable “Share scores to global leaderboards” in the
+                Log in and enable "Share scores to global leaderboards" in the
                 settings panel to participate.
               </p>
             </div>
@@ -302,6 +302,140 @@
               </div>
             </div>
 
+            <!-- Wall of Fame -->
+            <div class="wall-of-fame-section mb-5">
+              <div class="text-center mb-4 wall-of-fame-header">
+                <h1 class="page-title mb-3">
+                  <i class="fa-solid fa-crown me-3"></i>WALL OF FAME
+                </h1>
+              </div>
+
+              <div class="text-center mb-4">
+                <h2 class="wall-of-fame-season-title">
+                  Season 1
+                </h2>
+              </div>
+
+              <div class="table-responsive">
+                <table
+                  class="table table-dark table-hover mb-0 wall-of-fame-table"
+                >
+                  <tbody>
+                    <!-- 1st Place -->
+                    <tr class="wall-of-fame-row wall-of-fame-first">
+                      <td class="text-center wall-of-fame-rank">
+                        <img
+                          src="../images/nt-rank1-medal-number.png"
+                          alt="1st Place"
+                          class="wall-of-fame-medal"
+                        />
+                      </td>
+                      <td class="wall-of-fame-player">
+                        <div
+                          class="wall-of-fame-username"
+                          id="wallOfFame1stUsername"
+                        >
+                          Loading...
+                        </div>
+                        <div class="wall-of-fame-title">SEASON 1 CHAMPION</div>
+                      </td>
+                      <td class="text-center">
+                        <span class="wall-of-fame-score" id="wallOfFame1stScore"
+                          >-</span
+                        >
+                      </td>
+                      <td
+                        class="text-center wall-of-fame-wpm"
+                        id="wallOfFame1stWpm"
+                      >
+                        - WPM
+                      </td>
+                      <td
+                        class="text-center wall-of-fame-accuracy"
+                        id="wallOfFame1stAccuracy"
+                      >
+                        - ACC
+                      </td>
+                    </tr>
+
+                    <!-- 2nd Place -->
+                    <tr class="wall-of-fame-row wall-of-fame-second">
+                      <td class="text-center wall-of-fame-rank">
+                        <img
+                          src="../images/nt-rank2-medal-number.png"
+                          alt="2nd Place"
+                          class="wall-of-fame-medal"
+                        />
+                      </td>
+                      <td class="wall-of-fame-player">
+                        <div
+                          class="wall-of-fame-username"
+                          id="wallOfFame2ndUsername"
+                        >
+                          Loading...
+                        </div>
+                        <div class="wall-of-fame-title">SECOND PLACE</div>
+                      </td>
+                      <td class="text-center">
+                        <span class="wall-of-fame-score" id="wallOfFame2ndScore"
+                          >-</span
+                        >
+                      </td>
+                      <td
+                        class="text-center wall-of-fame-wpm"
+                        id="wallOfFame2ndWpm"
+                      >
+                        - WPM
+                      </td>
+                      <td
+                        class="text-center wall-of-fame-accuracy"
+                        id="wallOfFame2ndAccuracy"
+                      >
+                        - ACC
+                      </td>
+                    </tr>
+
+                    <!-- 3rd Place -->
+                    <tr class="wall-of-fame-row wall-of-fame-third">
+                      <td class="text-center wall-of-fame-rank">
+                        <img
+                          src="../images/nt-rank3-medal-number.png"
+                          alt="3rd Place"
+                          class="wall-of-fame-medal"
+                        />
+                      </td>
+                      <td class="wall-of-fame-player">
+                        <div
+                          class="wall-of-fame-username"
+                          id="wallOfFame3rdUsername"
+                        >
+                          Loading...
+                        </div>
+                        <div class="wall-of-fame-title">THIRD PLACE</div>
+                      </td>
+                      <td class="text-center">
+                        <span class="wall-of-fame-score" id="wallOfFame3rdScore"
+                          >-</span
+                        >
+                      </td>
+                      <td
+                        class="text-center wall-of-fame-wpm"
+                        id="wallOfFame3rdWpm"
+                      >
+                        - WPM
+                      </td>
+                      <td
+                        class="text-center wall-of-fame-accuracy"
+                        id="wallOfFame3rdAccuracy"
+                      >
+                        - ACC
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             <!-- Info Section -->
             <div class="mt-4 p-4 info-section">
               <h5 class="info-title mb-3">
@@ -371,7 +505,7 @@
                 <i class="fa-brands fa-instagram"></i>
               </a>
               <a
-                href="https://discord.gg/uxMb4WJ9"
+                href="https://discord.gg/wXbYNzf4"
                 target="_blank"
                 class="text-decoration-none social-link"
                 data-bs-toggle="tooltip"
@@ -472,6 +606,7 @@
           console.log(`✅ Loaded ${scores.length} scores`);
 
           updateStats(scores);
+          updateWallOfFame(scores);
           filterScores();
         } catch (error) {
           console.error("❌ Error loading global scores:", error);
@@ -662,6 +797,46 @@
         }
         if (totalGamesElement) {
           totalGamesElement.textContent = totalGames;
+        }
+      }
+
+      function updateWallOfFame(scores) {
+        const top3 = scores.slice(0, 3);
+
+        // Update 1st place
+        if (top3[0]) {
+          document.getElementById("wallOfFame1stUsername").textContent =
+            top3[0].username || "Anonymous";
+          document.getElementById("wallOfFame1stScore").textContent =
+            top3[0].score || "0";
+          document.getElementById("wallOfFame1stWpm").textContent =
+            `${top3[0].wpm || 0} WPM`;
+          document.getElementById("wallOfFame1stAccuracy").textContent =
+            `${top3[0].accuracy || "N/A"} ACC`;
+        }
+
+        // Update 2nd place
+        if (top3[1]) {
+          document.getElementById("wallOfFame2ndUsername").textContent =
+            top3[1].username || "Anonymous";
+          document.getElementById("wallOfFame2ndScore").textContent =
+            top3[1].score || "0";
+          document.getElementById("wallOfFame2ndWpm").textContent =
+            `${top3[1].wpm || 0} WPM`;
+          document.getElementById("wallOfFame2ndAccuracy").textContent =
+            `${top3[1].accuracy || "N/A"} ACC`;
+        }
+
+        // Update 3rd place
+        if (top3[2]) {
+          document.getElementById("wallOfFame3rdUsername").textContent =
+            top3[2].username || "Anonymous";
+          document.getElementById("wallOfFame3rdScore").textContent =
+            top3[2].score || "0";
+          document.getElementById("wallOfFame3rdWpm").textContent =
+            `${top3[2].wpm || 0} WPM`;
+          document.getElementById("wallOfFame3rdAccuracy").textContent =
+            `${top3[2].accuracy || "N/A"} ACC`;
         }
       }
 
