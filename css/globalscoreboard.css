@@ -292,6 +292,7 @@ body {
   background-color: #24283b;
   border: 2px solid #3b4261;
   border-radius: 1px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .info-title {
@@ -432,4 +433,265 @@ body {
 /* Admin icon container background on row hover */
 .table-hover tbody tr:hover .admin-icon-container {
   background-color: #292e42;
+}
+
+/* Wall of Fame Styling */
+.wall-of-fame-section {
+  background-color: #24283b;
+  border: 2px solid #3b4261;
+  border-radius: 1px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.wall-of-fame-title {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 2em;
+  margin-bottom: 0.5rem;
+}
+
+.wall-of-fame-subtitle {
+  color: #bb9af7;
+  font-size: 1.1rem;
+  font-style: italic;
+  margin-bottom: 0;
+}
+
+.wall-of-fame-header {
+  border-bottom: 2px solid #3b4261 !important;
+  padding-bottom: 1rem;
+}
+
+.wall-of-fame-season-title {
+  color: #7aa2f7;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.wall-of-fame-table {
+  margin-top: 2rem;
+  border: none;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.wall-of-fame-row {
+  height: 80px;
+}
+
+.wall-of-fame-rank {
+  width: 80px;
+  vertical-align: middle;
+}
+
+.wall-of-fame-medal {
+  width: 50px;
+  height: 50px;
+  transition: transform 0.3s ease;
+  display: inline-block;
+  transform-origin: center;
+}
+
+.wall-of-fame-player {
+  vertical-align: middle;
+  padding-left: 1.5rem;
+}
+
+.wall-of-fame-username {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #c3e88d;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+
+.wall-of-fame-title {
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+}
+
+.wall-of-fame-first .wall-of-fame-title {
+  color: #ffd700;
+}
+
+.wall-of-fame-second .wall-of-fame-title {
+  color: #bb9af7;
+}
+
+.wall-of-fame-third .wall-of-fame-title {
+  color: #7aa2f7;
+}
+
+.wall-of-fame-score {
+  font-size: 2.2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #7aa2f7, #bb9af7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding: 8px 16px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.wall-of-fame-wpm {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #7dcfff;
+  vertical-align: middle;
+}
+
+.wall-of-fame-accuracy {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #c3e88d;
+  vertical-align: middle;
+}
+
+.wall-of-fame-row td {
+  border: none;
+  padding: 1.5rem 1rem;
+  vertical-align: middle;
+}
+
+.wall-of-fame-first {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.12),
+    rgba(255, 223, 0, 0.08)
+  );
+}
+
+.wall-of-fame-second {
+  background: linear-gradient(
+    90deg,
+    rgba(187, 154, 247, 0.12),
+    rgba(187, 154, 247, 0.08)
+  );
+}
+
+.wall-of-fame-third {
+  background: linear-gradient(
+    90deg,
+    rgba(122, 162, 247, 0.12),
+    rgba(122, 162, 247, 0.08)
+  );
+}
+
+.wall-of-fame-table {
+  --bs-table-hover-bg: #292e42 !important;
+}
+
+.wall-of-fame-table tbody tr:hover {
+  background-color: #292e42 !important;
+}
+
+.wall-of-fame-table tbody tr:hover td {
+  background-color: #292e42 !important;
+}
+
+.wall-of-fame-table tbody tr:hover .wall-of-fame-medal,
+.wall-of-fame-table tbody tr:hover .wall-of-fame-username,
+.wall-of-fame-table tbody tr:hover .wall-of-fame-title,
+.wall-of-fame-table tbody tr:hover .wall-of-fame-score,
+.wall-of-fame-table tbody tr:hover .wall-of-fame-wpm,
+.wall-of-fame-table tbody tr:hover .wall-of-fame-accuracy {
+  background-color: #292e42 !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .wall-of-fame-section {
+    padding: 1.5rem 1rem;
+    margin: 1rem 0;
+  }
+
+  .wall-of-fame-title {
+    font-size: 1.8rem;
+  }
+
+  .wall-of-fame-subtitle {
+    font-size: 1rem;
+  }
+
+  .wall-of-fame-row {
+    height: 70px;
+  }
+
+  .wall-of-fame-medal {
+    width: 40px;
+    height: 40px;
+  }
+
+  .wall-of-fame-username {
+    font-size: 1.4rem;
+  }
+
+  .wall-of-fame-title {
+    font-size: 0.8rem;
+  }
+
+  .wall-of-fame-score {
+    font-size: 1.8rem;
+  }
+
+  .wall-of-fame-wpm,
+  .wall-of-fame-accuracy {
+    font-size: 1.1rem;
+  }
+
+  .wall-of-fame-row td {
+    padding: 1rem 0.5rem;
+  }
+
+  .wall-of-fame-player {
+    padding-left: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .wall-of-fame-title {
+    font-size: 1.5rem;
+  }
+
+  .wall-of-fame-row {
+    height: 60px;
+  }
+
+  .wall-of-fame-medal {
+    width: 35px;
+    height: 35px;
+  }
+
+  .wall-of-fame-username {
+    font-size: 1.1rem;
+  }
+
+  .wall-of-fame-title {
+    font-size: 0.7rem;
+  }
+
+  .wall-of-fame-score {
+    font-size: 1.4rem;
+    padding: 4px 8px;
+  }
+
+  .wall-of-fame-wpm,
+  .wall-of-fame-accuracy {
+    font-size: 0.9rem;
+  }
+
+  .wall-of-fame-row td {
+    padding: 0.8rem 0.3rem;
+  }
+
+  .wall-of-fame-player {
+    padding-left: 0.5rem;
+  }
 }
