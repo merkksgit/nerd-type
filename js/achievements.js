@@ -479,6 +479,53 @@ class AchievementSystem {
         },
       },
 
+      season_2_veteran: {
+        id: "season_2_veteran",
+        name: "Back for More",
+        description: "Participated in Season 2 (October 1 - December 31, 2025)",
+        icon: "fa-solid fa-flag-checkered",
+        category: "seasonal",
+        secret: false,
+        check: function (stats, gameData) {
+          // Check if the player is logged in
+          const currentUser = window.getCurrentUser && window.getCurrentUser();
+          if (!currentUser) {
+            return false; // Achievement not available if user is not logged in
+          }
+
+          // Check if the player has data sharing enabled
+          const dataShareEnabled = storageManager.isDataCollectionEnabled();
+          if (!dataShareEnabled) {
+            return false; // Achievement not available if data sharing is disabled
+          }
+
+          // Define Season 2 date range
+          const season2Start = new Date("2025-10-01T00:00:00");
+          const season2End = new Date("2025-12-31T23:59:59");
+
+          // If we have gameData (current game), check if it's during Season 2
+          if (gameData && gameData.timeLeft > 0) {
+            // Only count completed games
+            const currentDate = new Date();
+
+            // Check if current date is within Season 2
+            if (currentDate >= season2Start && currentDate <= season2End) {
+              // Mark that the player played during Season 2
+              if (!stats.playedDuringSeason2) {
+                stats.playedDuringSeason2 = true;
+                stats.season2PlayDate = currentDate.toISOString();
+                // Save the data immediately
+                this.saveData();
+              }
+              return true;
+            }
+          }
+
+          // Check if player has already played during Season 2 (from saved stats)
+          return stats.playedDuringSeason2 === true;
+        },
+      },
+
       summer_sprint_champion: {
         id: "summer_sprint_champion",
         name: "Summer Sprint Champion",
@@ -532,6 +579,62 @@ class AchievementSystem {
 
           // Check if player has already reached the target
           return (stats.season1GamesCompleted || 0) >= 100;
+        },
+      },
+
+      frost_fingers: {
+        id: "frost_fingers",
+        name: "Frost Fingers",
+        description: "Complete 100 games during Season 2",
+        icon: "fa-solid fa-snowflake",
+        category: "seasonal",
+        secret: false,
+        progressTarget: 100,
+        getProgress: function (stats) {
+          return stats.season2GamesCompleted || 0;
+        },
+        check: function (stats, gameData) {
+          // Check if the player is logged in
+          const currentUser = window.getCurrentUser && window.getCurrentUser();
+          if (!currentUser) {
+            return false; // Achievement not available if user is not logged in
+          }
+
+          // Check if the player has data sharing enabled
+          const dataShareEnabled = storageManager.isDataCollectionEnabled();
+          if (!dataShareEnabled) {
+            return false; // Achievement not available if data sharing is disabled
+          }
+
+          // Define Season 2 date range
+          const season2Start = new Date("2025-10-01T00:00:00");
+          const season2End = new Date("2025-12-31T23:59:59");
+
+          // If we have gameData (current game), check if it's during Season 2
+          if (gameData && gameData.timeLeft > 0) {
+            // Only count completed games
+            const currentDate = new Date();
+
+            // Check if current date is within Season 2
+            if (currentDate >= season2Start && currentDate <= season2End) {
+              // Initialize counter if not exists
+              if (!stats.season2GamesCompleted) {
+                stats.season2GamesCompleted = 0;
+              }
+
+              // Increment counter
+              stats.season2GamesCompleted++;
+
+              // Save the data immediately
+              this.saveData();
+
+              // Check if target reached
+              return stats.season2GamesCompleted >= 100;
+            }
+          }
+
+          // Check if player has already reached the target
+          return (stats.season2GamesCompleted || 0) >= 100;
         },
       },
 
