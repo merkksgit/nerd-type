@@ -178,7 +178,7 @@
                 <i class="fa-solid fa-globe me-3"></i>GLOBAL LEADERBOARD
               </h1>
               <p class="lead page-subtitle mb-5">
-                NerdType Season 1: July 1 – September 30, 2025.<br />
+                NerdType Season 2: October 1, 2025 – December 31, 2025.<br />
                 Log in and enable "Share scores to global leaderboards" in the
                 settings panel to participate.
               </p>
@@ -229,7 +229,7 @@
                 <h3 class="card-title mb-3 mt-3">
                   <i class="fa-solid fa-trophy me-2"></i>
                   <span id="scoreboardTitle"
-                    >Season 1 - Top 20 Global Scores</span
+                    >Season 2 - Top 20 Global Scores</span
                   >
                 </h3>
               </div>
@@ -334,31 +334,15 @@
                         />
                       </td>
                       <td class="wall-of-fame-player">
-                        <div
-                          class="wall-of-fame-username"
-                          id="wallOfFame1stUsername"
-                        >
-                          Loading...
-                        </div>
-                        <!-- <div class="wall-of-fame-title">SEASON 1 CHAMPION</div> -->
-                        <div class="wall-of-fame-title">FIRST PLACE</div>
+                        <div class="wall-of-fame-username">hconly</div>
+                        <div class="wall-of-fame-title">SEASON 1 CHAMPION</div>
                       </td>
                       <td class="text-center">
-                        <span class="wall-of-fame-score" id="wallOfFame1stScore"
-                          >-</span
-                        >
+                        <span class="wall-of-fame-score">2222</span>
                       </td>
-                      <td
-                        class="text-center wall-of-fame-wpm"
-                        id="wallOfFame1stWpm"
-                      >
-                        - WPM
-                      </td>
-                      <td
-                        class="text-center wall-of-fame-accuracy"
-                        id="wallOfFame1stAccuracy"
-                      >
-                        - ACC
+                      <td class="text-center wall-of-fame-wpm">83 WPM</td>
+                      <td class="text-center wall-of-fame-accuracy">
+                        100.0% ACC
                       </td>
                     </tr>
 
@@ -372,30 +356,15 @@
                         />
                       </td>
                       <td class="wall-of-fame-player">
-                        <div
-                          class="wall-of-fame-username"
-                          id="wallOfFame2ndUsername"
-                        >
-                          Loading...
-                        </div>
+                        <div class="wall-of-fame-username">hconly</div>
                         <div class="wall-of-fame-title">SECOND PLACE</div>
                       </td>
                       <td class="text-center">
-                        <span class="wall-of-fame-score" id="wallOfFame2ndScore"
-                          >-</span
-                        >
+                        <span class="wall-of-fame-score">2211</span>
                       </td>
-                      <td
-                        class="text-center wall-of-fame-wpm"
-                        id="wallOfFame2ndWpm"
-                      >
-                        - WPM
-                      </td>
-                      <td
-                        class="text-center wall-of-fame-accuracy"
-                        id="wallOfFame2ndAccuracy"
-                      >
-                        - ACC
+                      <td class="text-center wall-of-fame-wpm">82 WPM</td>
+                      <td class="text-center wall-of-fame-accuracy">
+                        100.0% ACC
                       </td>
                     </tr>
 
@@ -409,30 +378,15 @@
                         />
                       </td>
                       <td class="wall-of-fame-player">
-                        <div
-                          class="wall-of-fame-username"
-                          id="wallOfFame3rdUsername"
-                        >
-                          Loading...
-                        </div>
+                        <div class="wall-of-fame-username">merkks</div>
                         <div class="wall-of-fame-title">THIRD PLACE</div>
                       </td>
                       <td class="text-center">
-                        <span class="wall-of-fame-score" id="wallOfFame3rdScore"
-                          >-</span
-                        >
+                        <span class="wall-of-fame-score">2159</span>
                       </td>
-                      <td
-                        class="text-center wall-of-fame-wpm"
-                        id="wallOfFame3rdWpm"
-                      >
-                        - WPM
-                      </td>
-                      <td
-                        class="text-center wall-of-fame-accuracy"
-                        id="wallOfFame3rdAccuracy"
-                      >
-                        - ACC
+                      <td class="text-center wall-of-fame-wpm">97 WPM</td>
+                      <td class="text-center wall-of-fame-accuracy">
+                        100.0% ACC
                       </td>
                     </tr>
                   </tbody>
@@ -610,7 +564,7 @@
           console.log(`✅ Loaded ${scores.length} scores`);
 
           updateStats(scores);
-          updateWallOfFame(scores);
+          // updateWallOfFame(scores); // Season 1 Wall of Fame is now hardcoded
           filterScores();
         } catch (error) {
           console.error("❌ Error loading global scores:", error);
@@ -696,7 +650,7 @@
         // Update title to always show all scores
         const titleElement = document.getElementById("scoreboardTitle");
         if (titleElement) {
-          titleElement.textContent = "Season 1 - Top 20 Global Scores";
+          titleElement.textContent = "Season 2 - Top 20 Global Scores";
         }
       }
 
@@ -739,13 +693,13 @@
           let rankIcon = "";
           if (rank === 1) {
             rankIcon =
-              ' <span class="rank-icon-container"><img src="../images/nt-rank1-medal-number.png" alt="1st Place" class="username-rank-icon" /><span class="rank-tooltip">Rank 1 of S01</span></span>';
+              ' <span class="rank-icon-container"><img src="../images/nt-rank1-medal-number.png" alt="1st Place" class="username-rank-icon" /><span class="rank-tooltip">Rank 1 of S02</span></span>';
           } else if (rank === 2) {
             rankIcon =
-              ' <span class="rank-icon-container"><img src="../images/nt-rank2-medal-number.png" alt="2nd Place" class="username-rank-icon" /><span class="rank-tooltip">Rank 2 of S01</span></span>';
+              ' <span class="rank-icon-container"><img src="../images/nt-rank2-medal-number.png" alt="2nd Place" class="username-rank-icon" /><span class="rank-tooltip">Rank 2 of S02</span></span>';
           } else if (rank === 3) {
             rankIcon =
-              ' <span class="rank-icon-container"><img src="../images/nt-rank3-medal-number.png" alt="3rd Place" class="username-rank-icon" /><span class="rank-tooltip">Rank 3 of S01</span></span>';
+              ' <span class="rank-icon-container"><img src="../images/nt-rank3-medal-number.png" alt="3rd Place" class="username-rank-icon" /><span class="rank-tooltip">Rank 3 of S02</span></span>';
           }
 
           // Check if it's the admin user
