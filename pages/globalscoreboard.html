@@ -623,7 +623,7 @@
         const topScoresQuery = query(
           scoresRef,
           orderByChild("score"),
-          limitToLast(50), // Get more than we need to filter out non-authenticated
+          limitToLast(20), // Fetch only top 20 scores
         );
         const topSnapshot = await get(topScoresQuery);
 
@@ -638,7 +638,7 @@
           });
 
           console.log(`🎯 Top authenticated scores: ${topScores.length}`);
-          return topScores.reverse().slice(0, 20); // Return top 20
+          return topScores.reverse(); // Return all fetched authenticated scores
         }
         return [];
       }
