@@ -4082,7 +4082,7 @@ function saveClassicResult(
         console.error("❌ Error saving authenticated score:", error);
       });
 
-    // Send to Discord via n8n webhook only if Discord webhook is enabled
+    // Send to webhooks only if Discord webhook is enabled
     const discordWebhookEnabled = localStorage.getItem(
       "discord_webhook_enabled",
     );
@@ -4090,29 +4090,36 @@ function saveClassicResult(
       discordWebhookEnabled === null || discordWebhookEnabled === "true";
 
     if (shouldSendToDiscord) {
-      fetch(
-        "https://n8n.n8nmerkks.uk/webhook/98cfa1d8-1df2-4cbe-a3fe-f37992044661",
-        {
+      const scoreData = {
+        username: firebaseGameData.username,
+        score: firebaseGameData.score,
+        mode: firebaseGameData.mode.replace(" Mode", ""),
+        wpm: firebaseGameData.wpm,
+        accuracy: firebaseGameData.accuracy,
+      };
+
+      Promise.all([
+        fetch(
+          "https://n8n.n8nmerkks.uk/webhook/98cfa1d8-1df2-4cbe-a3fe-f37992044661",
+          {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(scoreData),
+          },
+        ),
+        fetch("https://n8n.n8nmerkks.uk/webhook/typing-scores-feed", {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username: firebaseGameData.username,
-            score: firebaseGameData.score,
-            mode: firebaseGameData.mode.replace(" Mode", ""),
-            wpm: firebaseGameData.wpm,
-            accuracy: firebaseGameData.accuracy,
-          }),
-        },
-      )
-        .then((response) => {
-          return response.text();
-        })
-        .then((text) => {
-          // Discord webhook completed successfully
+          body: JSON.stringify(scoreData),
+        }),
+      ])
+        .then(() => {
+          console.log("Sent to both Discord and Dashboard");
         })
         .catch((err) => {
-          console.error("🔍 DEBUG: Discord webhook failed:", err);
+          console.error("Error sending score:", err);
         });
     }
   } else {

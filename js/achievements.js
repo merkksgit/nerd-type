@@ -1128,23 +1128,33 @@ class AchievementSystem {
       timestamp: new Date().toISOString(),
     };
 
-    // Send to n8n webhook (production endpoint for achievements)
-    fetch(
-      "https://n8n.n8nmerkks.uk/webhook/69ca988a-ac61-45c1-aad3-72293724d749",
-      {
+    // Send to webhooks (Discord and Dashboard)
+    Promise.all([
+      fetch(
+        "https://n8n.n8nmerkks.uk/webhook/69ca988a-ac61-45c1-aad3-72293724d749",
+        {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(webhookData),
+        },
+      ),
+      fetch("https://n8n.n8nmerkks.uk/webhook/typing-achievements-feed", {
         method: "POST",
         mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(webhookData),
-      },
-    )
+      }),
+    ])
       .then(() => {
-        console.log("🎉 Achievement sent to Discord:", achievement.name);
+        console.log("Achievement sent to Discord and Dashboard");
       })
       .catch((error) => {
-        console.error("❌ Failed to send achievement to Discord:", error);
+        console.error("Error sending achievement:", error);
       });
   }
 
