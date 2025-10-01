@@ -77,34 +77,40 @@ body {
   color: #7aa2f7;
 } /* Blue */
 
-.username-rank-icon {
-  width: 16px;
+.rank-icon {
+  width: 32px;
   transition: transform 0.3s ease;
   position: relative;
   display: inline-block;
   transform-origin: center;
+  background-color: transparent;
+}
+
+/* Match icon background to row hover */
+.table-hover tbody tr:hover .rank-icon {
+  background-color: #292e42;
 }
 
 /* Disable hover effects on touch devices */
 @media (hover: hover) and (pointer: fine) {
-  .username-rank-icon:hover {
-    transform: scale(4);
+  .rank-icon:hover {
+    transform: scale(2);
     z-index: 10;
     background: none !important;
   }
 
   /* Rank-specific hover shadows */
-  .username-rank-icon:hover[src*="rank1"] {
+  .rank-icon:hover[src*="rank1"] {
     filter: drop-shadow(0 0 8px #ffd700) drop-shadow(0 0 16px #ffd700)
       drop-shadow(0 0 24px #ffd700);
   }
 
-  .username-rank-icon:hover[src*="rank2"] {
+  .rank-icon:hover[src*="rank2"] {
     filter: drop-shadow(0 0 8px #bb9af7) drop-shadow(0 0 16px #bb9af7)
       drop-shadow(0 0 24px #bb9af7);
   }
 
-  .username-rank-icon:hover[src*="rank3"] {
+  .rank-icon:hover[src*="rank3"] {
     filter: drop-shadow(0 0 8px #7aa2f7) drop-shadow(0 0 16px #7aa2f7)
       drop-shadow(0 0 24px #7aa2f7);
   }
@@ -114,10 +120,6 @@ body {
 .rank-icon-container {
   position: relative;
   display: inline-block;
-  padding: 2px;
-  margin: -2px;
-  border-radius: 2px;
-  background-color: transparent;
 }
 
 .rank-icon-container .rank-tooltip {
@@ -145,16 +147,6 @@ body {
 .rank-icon-container:hover .rank-tooltip {
   opacity: 1;
   visibility: visible;
-}
-
-/* Change rank-icon-container background when row is hovered */
-.table-hover tbody tr:hover .rank-icon-container {
-  background-color: #292e42;
-}
-
-/* Ensure smooth transition when both row and icon are hovered */
-.table-hover tbody tr:hover .rank-icon-container:hover {
-  background-color: #292e42;
 }
 
 /* Username styling */

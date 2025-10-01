@@ -689,17 +689,17 @@
             score.date || score.timestamp || score.submittedAt,
           ).toLocaleDateString("en-GB");
 
-          // Add rank icons after username for top 3
-          let rankIcon = "";
+          // Add rank icons in rank column for top 3
+          let rankDisplay = rank;
           if (rank === 1) {
-            rankIcon =
-              ' <span class="rank-icon-container"><img src="../images/nt-rank1-medal-number.png" alt="1st Place" class="username-rank-icon" /><span class="rank-tooltip">Rank 1 of S02</span></span>';
+            rankDisplay =
+              '<span class="rank-icon-container"><img src="../images/nt-rank1-medal-number.png" alt="1st Place" class="rank-icon" /><span class="rank-tooltip">Rank 1 of S02</span></span>';
           } else if (rank === 2) {
-            rankIcon =
-              ' <span class="rank-icon-container"><img src="../images/nt-rank2-medal-number.png" alt="2nd Place" class="username-rank-icon" /><span class="rank-tooltip">Rank 2 of S02</span></span>';
+            rankDisplay =
+              '<span class="rank-icon-container"><img src="../images/nt-rank2-medal-number.png" alt="2nd Place" class="rank-icon" /><span class="rank-tooltip">Rank 2 of S02</span></span>';
           } else if (rank === 3) {
-            rankIcon =
-              ' <span class="rank-icon-container"><img src="../images/nt-rank3-medal-number.png" alt="3rd Place" class="username-rank-icon" /><span class="rank-tooltip">Rank 3 of S02</span></span>';
+            rankDisplay =
+              '<span class="rank-icon-container"><img src="../images/nt-rank3-medal-number.png" alt="3rd Place" class="rank-icon" /><span class="rank-tooltip">Rank 3 of S02</span></span>';
           }
 
           // Check if it's the admin user
@@ -708,13 +708,13 @@
           let usernameDisplay = score.username || "Anonymous";
 
           if (isAdmin) {
-            usernameDisplay = `<strong class="admin-username">${usernameDisplay}${rankIcon}<span class="admin-icon-container"><img src="../images/logo-no-keyboard-blue-bg-32x32.png" alt="Admin" class="admin-icon" /><span class="admin-tooltip">Admin</span></span></strong>`;
+            usernameDisplay = `<strong class="admin-username">${usernameDisplay}<span class="admin-icon-container"><img src="../images/logo-no-keyboard-blue-bg-32x32.png" alt="Admin" class="admin-icon" /><span class="admin-tooltip">Admin</span></span></strong>`;
           } else {
-            usernameDisplay = `<strong class="username-cell">${usernameDisplay}${rankIcon}</strong>`;
+            usernameDisplay = `<strong class="username-cell">${usernameDisplay}</strong>`;
           }
 
           row.innerHTML = `
-      <td class="text-center ${rankClass}"> ${rank}
+      <td class="text-center ${rankClass}">${rankDisplay}
       </td>
       <td>
         ${usernameDisplay}
