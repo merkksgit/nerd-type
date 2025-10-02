@@ -1,0 +1,7 @@
+# Firebase
+firebase-debug.log
+firebase-debug.*.log
+.firebase/
+
+# Node
+node_modules/
