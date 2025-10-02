@@ -32,24 +32,24 @@ function formatScoreboardText(scores, stats) {
   lines.push(
     ANSI.bold +
       ANSI.brightYellow +
-      "                        NERD TYPE GAME - Global Scoreboard                        " +
+      " NERDTYPE - Global Scoreboard" +
       ANSI.reset,
   );
   lines.push("");
 
   lines.push(
     ANSI.cyan +
-      "┌──────┬──────────────────────┬─────────┬───────┬──────────┬───────────────┬──────────┐" +
+      "┌──────┬──────────────────────┬─────────┬───────┬──────────┬───────────────┬──────────┬────────────┐" +
       ANSI.reset,
   );
   lines.push(
     ANSI.cyan +
-      "│ Rank │ Player               │  Score  │  WPM  │ Accuracy │     Mode      │   List   │" +
+      "│ Rank │ Player               │  Score  │  WPM  │ Accuracy │     Mode      │   List   │    Date    │" +
       ANSI.reset,
   );
   lines.push(
     ANSI.cyan +
-      "├──────┼──────────────────────┼─────────┼───────┼──────────┼───────────────┼──────────┤" +
+      "├──────┼──────────────────────┼─────────┼───────┼──────────┼───────────────┼──────────┼────────────┤" +
       ANSI.reset,
   );
 
@@ -67,6 +67,17 @@ function formatScoreboardText(scores, stats) {
     const wordListStr = (score.wordList || "Unknown")
       .substring(0, 8)
       .padEnd(8, " ");
+    let dateDisplay;
+    if (score.submittedAt) {
+      const date = new Date(score.submittedAt);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      dateDisplay = `${day}/${month}/${year}`;
+    } else {
+      dateDisplay = "Unknown   ";
+    }
+    dateDisplay = dateDisplay.padEnd(10, " ");
 
     let rankDisplay = rankStr;
     let playerDisplay = playerStr;
@@ -121,6 +132,10 @@ function formatScoreboardText(scores, stats) {
         ANSI.reset +
         wordListStr +
         ANSI.cyan +
+        " │ " +
+        ANSI.reset +
+        dateDisplay +
+        ANSI.cyan +
         " │" +
         ANSI.reset,
     );
@@ -128,7 +143,7 @@ function formatScoreboardText(scores, stats) {
 
   lines.push(
     ANSI.cyan +
-      "└──────┴──────────────────────┴─────────┴───────┴──────────┴───────────────┴──────────┘" +
+      "└──────┴──────────────────────┴─────────┴───────┴──────────┴───────────────┴──────────┴────────────┘" +
       ANSI.reset,
   );
   lines.push("");
