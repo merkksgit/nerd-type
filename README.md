@@ -28,7 +28,7 @@ A fast-paced, minimalistic typing game built with vanilla web technologies. Chal
 
 ## About This Project
 
-NerdType serves as both a fully-functional typing game and a personal playground for learning and experimenting with new web technologies, testing patterns, and development practices.
+NerdType serves as both a fully-functional typing game and a personal sandbox for learning and experimenting with new web technologies, testing patterns, and development practices.
 
 ## Development
 
