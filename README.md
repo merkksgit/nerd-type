@@ -26,6 +26,10 @@ A fast-paced, minimalistic typing game built with vanilla web technologies. Chal
 - **Minimalistic UI** - Clean, distraction-free interface with Bootstrap styling
 - **Audio Feedback** - Optional keypress sounds for enhanced typing experience
 
+## About This Project
+
+NerdType serves as both a fully-functional typing game and a personal playground for learning and experimenting with new web technologies, testing patterns, and development practices.
+
 ## Development
 
 This is a vanilla JavaScript project with no build system:
@@ -33,6 +37,10 @@ This is a vanilla JavaScript project with no build system:
 ```bash
 git clone https://github.com/merkksgit/nerd-type.git
 cd nerd-type
+
+# Run E2E tests
+npm install
+npm test
 ```
 
 ## Contact
