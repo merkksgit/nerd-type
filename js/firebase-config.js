@@ -713,22 +713,16 @@ window.registerUser = async function (email, password) {
       // Store username locally
       localStorage.setItem("nerdtype_username", username);
 
-      // Sync local achievements to cloud for new user
+      // Clear guest mode flag since we're now registered
+      localStorage.removeItem("nerdtype_guest_mode");
+
+      // Reset achievements for new user to start fresh
       if (
         window.achievementSystem &&
-        typeof window.achievementSystem.syncAchievementsToFirebase ===
-          "function"
+        typeof window.achievementSystem.resetAchievements === "function"
       ) {
-        setTimeout(() => {
-          window.achievementSystem
-            .syncAchievementsToFirebase()
-            .catch((error) => {
-              console.error(
-                "❌ Failed to sync achievements after registration:",
-                error,
-              );
-            });
-        }, 1000); // Small delay to ensure all systems are ready
+        window.achievementSystem.resetAchievements();
+        console.log("🆕 Reset achievements for new user registration");
       }
 
       // Switch to user scoreboard for new user (will be empty initially)
