@@ -27,10 +27,14 @@ class StatsCard {
     this.results = [];
     this.totalGameCount = 0;
 
+    // Wait for Firebase auth to be ready
+    await this.waitForAuth();
+
     // Check if user is logged in and can sync from Firebase
     if (this.isUserLoggedIn() && this.canAccessFirebase()) {
       try {
         const firebaseData = await this.loadFromFirebase();
+
         if (
           firebaseData &&
           firebaseData.scores &&
@@ -52,13 +56,30 @@ class StatsCard {
     // Fallback to localStorage (for guests or if Firebase fails)
     this.results = storageManager.getGameResults() || [];
 
-    // For guest users, always use the actual results length, not the cached totalGameCount
-    // which might contain stale Firebase data
+    // For guest users, use actual results length
     if (!this.isUserLoggedIn()) {
       this.totalGameCount = this.results.length;
     } else {
       this.totalGameCount =
         storageManager.getTotalGameCount() || this.results.length;
+    }
+  }
+
+  async waitForAuth() {
+    // Wait up to 3 seconds for user to be logged in
+    const maxWait = 3000;
+    const checkInterval = 100;
+    let waited = 0;
+
+    while (waited < maxWait) {
+      if (window.getCurrentUser !== undefined) {
+        const user = window.getCurrentUser();
+        if (user !== null && user !== undefined) {
+          return;
+        }
+      }
+      await new Promise((resolve) => setTimeout(resolve, checkInterval));
+      waited += checkInterval;
     }
   }
 

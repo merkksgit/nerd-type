@@ -4006,6 +4006,11 @@ function saveClassicResult(
   results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
 
+  // Invalidate chart cache after saving new result
+  if (typeof window.invalidateChartCache === "function") {
+    window.invalidateChartCache();
+  }
+
   // Update total game count
   const currentTotal = localStorage.getItem("totalGameCount");
   const newTotal = currentTotal ? parseInt(currentTotal) + 1 : results.length;
@@ -4174,6 +4179,11 @@ function saveZenResult(wpm, totalTime, accuracy) {
   // Save locally
   results.push(gameData);
   localStorage.setItem("gameResults", JSON.stringify(results));
+
+  // Invalidate chart cache after saving new result
+  if (typeof window.invalidateChartCache === "function") {
+    window.invalidateChartCache();
+  }
 
   // Update total game count
   const currentTotal = localStorage.getItem("totalGameCount");

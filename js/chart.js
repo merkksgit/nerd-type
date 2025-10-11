@@ -1,6 +1,58 @@
 import storageManager from "./storage-manager.js";
 import statsCard from "./stats-card.js";
 
+// Cache configuration
+const CHART_CACHE_KEY = "nerdtype_chartData_cache";
+const CHART_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+/**
+ * Retrieves cached chart data if available and not expired
+ * @returns {Object|null} Cached data or null if not available/expired
+ */
+function getCachedChartData() {
+  try {
+    const cached = localStorage.getItem(CHART_CACHE_KEY);
+    if (!cached) return null;
+
+    const { gameResults, timestamp } = JSON.parse(cached);
+    const age = Date.now() - timestamp;
+
+    if (age < CHART_CACHE_DURATION) {
+      return gameResults;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error reading chart cache:", error);
+    return null;
+  }
+}
+
+/**
+ * Saves chart data to cache
+ * @param {Array} gameResults - Array of game results to cache
+ */
+function setCachedChartData(gameResults) {
+  try {
+    const cache = {
+      gameResults: gameResults,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(CHART_CACHE_KEY, JSON.stringify(cache));
+  } catch (error) {
+    console.error("Error saving chart cache:", error);
+  }
+}
+
+/**
+ * Clears the chart data cache
+ */
+function invalidateChartCache() {
+  localStorage.removeItem(CHART_CACHE_KEY);
+}
+
+// Make cache invalidation available globally
+window.invalidateChartCache = invalidateChartCache;
+
 const plotlyConfig = {
   displayModeBar: true,
   modeBarButtonsToRemove: [
@@ -661,6 +713,25 @@ window.refreshChartsWithLatestData =
     }
 
     isRefreshing = true;
+
+    // Check cache first (optimistic loading)
+    const cachedData = getCachedChartData();
+    let displayedFromCache = false;
+
+    if (cachedData) {
+      storageManager.setGameResults(cachedData);
+      displayScoreGraph();
+      displayZenModeGraph();
+      displayedFromCache = true;
+
+      // Initialize stats card with cached data, load all data from Firebase in background
+      statsCard
+        .refresh()
+        .catch((err) => console.error("Stats card refresh error:", err));
+    }
+
+    let freshDataLoaded = false;
+
     try {
       if (
         window.canSyncScoreboardToFirebase &&
@@ -684,8 +755,10 @@ window.refreshChartsWithLatestData =
           }
 
           storageManager.setTotalGameCount(cloudData.totalCount);
-
           storageManager.setGameResults(cloudData.scores);
+
+          setCachedChartData(cloudData.scores);
+          freshDataLoaded = true;
         } else if (cloudData && cloudData.length > 0) {
           const existingData = storageManager.getGameResults() || [];
           const existingZenGames = existingData.filter(
@@ -697,11 +770,16 @@ window.refreshChartsWithLatestData =
 
           storageManager.setGameResults(cloudData);
           storageManager.setTotalGameCount(cloudData.length);
+
+          setCachedChartData(cloudData);
+          freshDataLoaded = true;
         } else {
         }
       } else {
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error loading chart data:", error);
+    }
 
     if (chartRefreshTimeout) {
       clearTimeout(chartRefreshTimeout);
@@ -710,9 +788,18 @@ window.refreshChartsWithLatestData =
     chartRefreshTimeout = setTimeout(async () => {
       await new Promise((resolve) => setTimeout(resolve, 200));
 
-      displayScoreGraph();
-      displayZenModeGraph();
-      await statsCard.refresh();
+      // Re-render if fresh data was loaded or no cache was available
+      if (freshDataLoaded || !displayedFromCache) {
+        displayScoreGraph();
+        displayZenModeGraph();
+        // Refresh stats card with all fresh data from Firebase
+        statsCard
+          .forceRefresh()
+          .catch((err) =>
+            console.error("Stats card force refresh error:", err),
+          );
+      }
+
       chartRefreshTimeout = null;
       isRefreshing = false;
     }, 100);
@@ -722,7 +809,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const scoreChartEl = document.getElementById("scoreChart");
   const zenChartEl = document.getElementById("zenChart");
 
-  setTimeout(() => {
+  // Check if we have cache, load immediately if yes
+  const cached = getCachedChartData();
+  if (cached) {
+    // Load cached data instantly without delay
     refreshChartsWithLatestData();
-  }, 500);
+  } else {
+    // No cache, wait for Firebase to be ready before first fetch
+    setTimeout(() => {
+      refreshChartsWithLatestData();
+    }, 500);
+  }
 });
