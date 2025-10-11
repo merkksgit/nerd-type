@@ -524,53 +524,165 @@
       let currentMode = "all";
       let allScores = [];
 
+      // Cache configuration
+      const CACHE_KEY = "nerdtype_globalScoreboard_cache";
+      const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+      // Cache management functions
+      function getCachedScoreboard() {
+        try {
+          const cached = localStorage.getItem(CACHE_KEY);
+          if (!cached) return null;
+
+          const { scores, stats, timestamp } = JSON.parse(cached);
+          const age = Date.now() - timestamp;
+
+          if (age < CACHE_DURATION) {
+            console.log(
+              `📦 Using cached scoreboard (${Math.floor(age / 1000)}s old)`,
+            );
+            return { scores, stats };
+          } else {
+            console.log("⏰ Cache expired, will fetch fresh data");
+            return null;
+          }
+        } catch (error) {
+          console.error("❌ Error reading cache:", error);
+          return null;
+        }
+      }
+
+      function setCachedScoreboard(scores, stats) {
+        try {
+          const cache = {
+            scores: scores,
+            stats: stats,
+            timestamp: Date.now(),
+          };
+          localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+          console.log("💾 Scoreboard cached successfully");
+        } catch (error) {
+          console.error("❌ Error saving cache:", error);
+        }
+      }
+
+      function invalidateScoreboardCache() {
+        localStorage.removeItem(CACHE_KEY);
+        console.log("🗑️ Scoreboard cache invalidated");
+      }
+
       // Wait for Firebase to be ready
       document.addEventListener("DOMContentLoaded", function () {
         // Set up event listeners
         setupEventListeners();
 
-        // Load scores when Firebase is ready - increased timeout
-        setTimeout(() => {
+        // Check if we have cache, load immediately
+        const cached = getCachedScoreboard();
+        if (cached) {
+          // Load cached data instantly without delay
           loadGlobalScores();
-        }, 2000);
+        } else {
+          // No cache, wait for Firebase to be ready before first fetch
+          setTimeout(() => {
+            loadGlobalScores();
+          }, 2000);
+        }
       });
 
       function setupEventListeners() {
-        // Refresh button
+        // Refresh button with cache invalidation
         const refreshBtn = document.getElementById("refreshScoresBtn");
         if (refreshBtn) {
-          refreshBtn.addEventListener("click", loadGlobalScores);
+          refreshBtn.addEventListener("click", function () {
+            invalidateScoreboardCache();
+            loadGlobalScores();
+          });
         }
       }
 
       async function loadGlobalScores() {
-        showLoading(true);
         hideError();
 
-        try {
-          console.log("🔄 Loading global scores...");
+        // Try to load from cache first (optimistic loading)
+        const cached = getCachedScoreboard();
+        if (cached) {
+          console.log("⚡ Loading from cache instantly...");
+          allScores = cached.scores;
+          displayScores(cached.scores);
+          updateStatsFromCache(cached.stats);
+        } else {
+          showLoading(true);
+        }
 
-          // Wait for Firebase modules to be available
-          if (!window.firebaseModules) {
-            console.log("⏳ Firebase modules not ready, waiting...");
-            setTimeout(loadGlobalScores, 1000);
-            return;
-          }
+        // Wait for Firebase to be ready before fetching fresh data
+        await waitForFirebase();
+
+        try {
+          console.log("🔄 Fetching fresh data from Firebase...");
 
           // Get all scores from Firebase using the modules directly
           const scores = await getAllScores();
           allScores = scores;
 
-          console.log(`✅ Loaded ${scores.length} scores`);
+          console.log(`✅ Loaded ${scores.length} fresh scores`);
 
+          // Prepare stats for caching
+          const stats = {
+            totalPlayers: window.allScoresForStats
+              ? new Set(window.allScoresForStats.map((score) => score.username))
+                  .size
+              : 0,
+            totalGames: window.totalGamesPlayed || scores.length,
+          };
+
+          // Cache the fresh data
+          setCachedScoreboard(scores, stats);
+
+          // Update display with fresh data
           updateStats(scores);
-          // updateWallOfFame(scores); // Season 1 Wall of Fame is now hardcoded
           filterScores();
         } catch (error) {
           console.error("❌ Error loading global scores:", error);
-          showError("Failed to load global scores. Please try again.");
+          // Only show error if we don't have cached data
+          if (!cached) {
+            showError("Failed to load global scores. Please try again.");
+          } else {
+            console.log("📦 Continuing with cached data after error");
+          }
         } finally {
           showLoading(false);
+        }
+      }
+
+      function waitForFirebase() {
+        return new Promise((resolve) => {
+          const checkFirebase = () => {
+            // Check if Firebase modules are available and app is initialized
+            if (
+              window.firebaseModules &&
+              typeof window.initializeFirebaseApp === "function"
+            ) {
+              // Give Firebase a moment to fully initialize
+              console.log("✅ Firebase modules ready");
+              setTimeout(resolve, 500);
+            } else {
+              console.log("⏳ Waiting for Firebase...");
+              setTimeout(checkFirebase, 500);
+            }
+          };
+          checkFirebase();
+        });
+      }
+
+      function updateStatsFromCache(stats) {
+        const totalPlayersElement = document.getElementById("totalPlayers");
+        const totalGamesElement = document.getElementById("totalGames");
+
+        if (totalPlayersElement) {
+          totalPlayersElement.textContent = stats.totalPlayers;
+        }
+        if (totalGamesElement) {
+          totalGamesElement.textContent = stats.totalGames;
         }
       }
 
