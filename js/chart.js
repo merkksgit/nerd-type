@@ -714,17 +714,13 @@ window.refreshChartsWithLatestData =
 
     isRefreshing = true;
 
-    // Check cache first (optimistic loading)
-    const cachedData = getCachedChartData();
-    let displayedFromCache = false;
-
-    if (cachedData) {
-      storageManager.setGameResults(cachedData);
+    // Always load from localStorage first (includes latest games)
+    const localData = storageManager.getGameResults() || [];
+    if (localData.length > 0) {
       displayScoreGraph();
       displayZenModeGraph();
-      displayedFromCache = true;
 
-      // Initialize stats card with cached data, load all data from Firebase in background
+      // Initialize stats card with local data
       statsCard
         .refresh()
         .catch((err) => console.error("Stats card refresh error:", err));
@@ -743,35 +739,50 @@ window.refreshChartsWithLatestData =
         );
 
         if (cloudData && cloudData.scores && cloudData.scores.length > 0) {
-          const existingData = storageManager.getGameResults() || [];
-          const existingZenGames = existingData.filter(
-            (result) => result.mode === "Zen Mode",
-          );
-          const newZenGames = cloudData.scores.filter(
-            (result) => result.mode === "Zen Mode",
-          );
+          const localData = storageManager.getGameResults() || [];
 
-          if (existingZenGames.length > 0 && newZenGames.length === 0) {
-          }
+          // Merge local and cloud data, prioritizing local games that haven't synced yet
+          const mergedData = [...localData];
+          const localTimestamps = new Set(localData.map((g) => g.timestamp));
+
+          // Add cloud games that aren't already in local storage
+          cloudData.scores.forEach((cloudGame) => {
+            if (!localTimestamps.has(cloudGame.timestamp)) {
+              mergedData.push(cloudGame);
+            }
+          });
+
+          // Sort by timestamp descending and take the latest 200 games
+          mergedData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+          const latest200 = mergedData.slice(0, 200);
 
           storageManager.setTotalGameCount(cloudData.totalCount);
-          storageManager.setGameResults(cloudData.scores);
+          storageManager.setGameResults(latest200);
 
-          setCachedChartData(cloudData.scores);
+          setCachedChartData(latest200);
           freshDataLoaded = true;
         } else if (cloudData && cloudData.length > 0) {
-          const existingData = storageManager.getGameResults() || [];
-          const existingZenGames = existingData.filter(
-            (result) => result.mode === "Zen Mode",
-          );
-          const newZenGames = cloudData.filter(
-            (result) => result.mode === "Zen Mode",
-          );
+          const localData = storageManager.getGameResults() || [];
 
-          storageManager.setGameResults(cloudData);
-          storageManager.setTotalGameCount(cloudData.length);
+          // Merge local and cloud data, prioritizing local games that haven't synced yet
+          const mergedData = [...localData];
+          const localTimestamps = new Set(localData.map((g) => g.timestamp));
 
-          setCachedChartData(cloudData);
+          // Add cloud games that aren't already in local storage
+          cloudData.forEach((cloudGame) => {
+            if (!localTimestamps.has(cloudGame.timestamp)) {
+              mergedData.push(cloudGame);
+            }
+          });
+
+          // Sort by timestamp descending and take the latest 200 games
+          mergedData.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+          const latest200 = mergedData.slice(0, 200);
+
+          storageManager.setGameResults(latest200);
+          storageManager.setTotalGameCount(latest200.length);
+
+          setCachedChartData(latest200);
           freshDataLoaded = true;
         } else {
         }
@@ -788,8 +799,8 @@ window.refreshChartsWithLatestData =
     chartRefreshTimeout = setTimeout(async () => {
       await new Promise((resolve) => setTimeout(resolve, 200));
 
-      // Re-render if fresh data was loaded or no cache was available
-      if (freshDataLoaded || !displayedFromCache) {
+      // Re-render if fresh Firebase data was loaded
+      if (freshDataLoaded) {
         displayScoreGraph();
         displayZenModeGraph();
         // Refresh stats card with all fresh data from Firebase
