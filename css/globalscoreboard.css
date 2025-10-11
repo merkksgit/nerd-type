@@ -125,7 +125,7 @@ body {
 .rank-icon-container .rank-tooltip {
   position: absolute;
   top: 50%;
-  left: 180%;
+  left: 175%;
   transform: translateY(-50%);
   background-color: #1f2335;
   color: #c0caf5;
