@@ -821,3 +821,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 500);
   }
 });
+
+// Listen for new game results and refresh charts immediately
+window.addEventListener("gameResultSaved", async (event) => {
+  // Invalidate cache to ensure fresh data is loaded
+  invalidateChartCache();
+
+  // Force refresh charts and stats with latest data
+  if (typeof window.refreshChartsWithLatestData === "function") {
+    await window.refreshChartsWithLatestData();
+  }
+});

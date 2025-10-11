@@ -4011,6 +4011,13 @@ function saveClassicResult(
     window.invalidateChartCache();
   }
 
+  // Dispatch event to notify chart page of new game result
+  window.dispatchEvent(
+    new CustomEvent("gameResultSaved", {
+      detail: { gameData },
+    }),
+  );
+
   // Update total game count
   const currentTotal = localStorage.getItem("totalGameCount");
   const newTotal = currentTotal ? parseInt(currentTotal) + 1 : results.length;
@@ -4184,6 +4191,13 @@ function saveZenResult(wpm, totalTime, accuracy) {
   if (typeof window.invalidateChartCache === "function") {
     window.invalidateChartCache();
   }
+
+  // Dispatch event to notify chart page of new game result
+  window.dispatchEvent(
+    new CustomEvent("gameResultSaved", {
+      detail: { gameData },
+    }),
+  );
 
   // Update total game count
   const currentTotal = localStorage.getItem("totalGameCount");
