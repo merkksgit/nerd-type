@@ -2773,15 +2773,15 @@ tr:hover .username-rank-icon {
 @media (max-width: 1366px) and (min-width: 769px) {
   #game {
     max-width: 1200px;
-    padding-top: 3em;
+    padding-top: 1.5em;
   }
 
   .game-page .col-md-12.pt-5 {
-    padding-top: 2rem !important;
+    padding-top: 1.5rem !important;
   }
 
   .game-page .row.pt-5 {
-    padding-top: 2rem !important;
+    padding-top: 1rem !important;
   }
 
   #wordToType {

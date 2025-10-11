@@ -1944,19 +1944,28 @@
             }
           };
 
-          // Primary handler: tap anywhere on the game area
-          if (gameElement) {
-            // Add both click and touch handlers for better mobile support
-            gameElement.onclick = handleGameInteraction;
-            gameElement.ontouchstart = handleGameInteraction;
+          // Only add tap handler to word area on mobile, not entire game area
+          const isMobileDevice =
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+              navigator.userAgent,
+            ) ||
+            ("ontouchstart" in window && window.innerWidth <= 768);
+
+          if (isMobileDevice) {
+            // Mobile: Only word display area is clickable
+            if (wordToTypeElement) {
+              wordToTypeElement.onclick = handleGameInteraction;
+              wordToTypeElement.ontouchstart = handleGameInteraction;
+            }
+          } else {
+            // Desktop: Entire game area is clickable
+            if (gameElement) {
+              gameElement.onclick = handleGameInteraction;
+              gameElement.ontouchstart = handleGameInteraction;
+            }
           }
 
-          // Secondary handler: word display area
-          if (wordToTypeElement && !wordToTypeElement.onclick) {
-            wordToTypeElement.onclick = handleGameInteraction;
-          }
-
-          // Tertiary handler: input field itself for easier mobile interaction
+          // Input field handler for easier interaction
           if (userInput) {
             userInput.onclick = function () {
               if (typeof window.activateGame === "function") {
