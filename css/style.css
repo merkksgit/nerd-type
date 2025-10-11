@@ -2755,7 +2755,7 @@ tr:hover .username-rank-icon {
 }
 
 /* Responsive scaling for smaller desktop screens - spacing only, not fonts */
-@media (max-width: 1500px) and (min-width: 769px) {
+@media (max-width: 1600px) and (min-width: 769px) {
   #game {
     max-width: 1400px;
     padding-top: 1.25em;
