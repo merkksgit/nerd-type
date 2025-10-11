@@ -2755,18 +2755,18 @@ tr:hover .username-rank-icon {
 }
 
 /* Responsive scaling for smaller desktop screens - spacing only, not fonts */
-@media (max-width: 1600px) and (min-width: 769px) {
+@media (max-width: 1500px) and (min-width: 769px) {
   #game {
     max-width: 1400px;
-    padding-top: 4em;
+    padding-top: 1.25em;
   }
 
   .game-page .col-md-12.pt-5 {
-    padding-top: 3rem !important;
+    padding-top: 1.25rem !important;
   }
 
   .game-page .row.pt-5 {
-    padding-top: 3rem !important;
+    padding-top: 1.25rem !important;
   }
 }
 

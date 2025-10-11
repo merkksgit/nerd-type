@@ -1920,10 +1920,11 @@
 
           // Helper function for game interaction logic
           const handleGameInteraction = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
             // Handle taps when game is inactive (activate game)
             if (gameElement.classList.contains("inactive")) {
-              e.preventDefault();
-              e.stopPropagation();
               if (typeof window.activateGame === "function") {
                 window.activateGame();
               } else {
@@ -1935,9 +1936,7 @@
               }
             }
             // Handle taps when game is active (restart game)
-            else if (window.hasStartedTyping && !window.gameEnded) {
-              e.preventDefault();
-              e.stopPropagation();
+            else if (!window.gameEnded) {
               if (typeof window.startGame === "function") {
                 window.startGame();
               }
