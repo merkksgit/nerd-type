@@ -2754,6 +2754,64 @@ tr:hover .username-rank-icon {
   }
 }
 
+/* Responsive scaling for smaller desktop screens - spacing only, not fonts */
+@media (max-width: 1600px) and (min-width: 769px) {
+  #game {
+    max-width: 1400px;
+    padding-top: 4em;
+  }
+
+  .game-page .col-md-12.pt-5 {
+    padding-top: 3rem !important;
+  }
+
+  .game-page .row.pt-5 {
+    padding-top: 3rem !important;
+  }
+}
+
+@media (max-width: 1366px) and (min-width: 769px) {
+  #game {
+    max-width: 1200px;
+    padding-top: 3em;
+  }
+
+  .game-page .col-md-12.pt-5 {
+    padding-top: 2rem !important;
+  }
+
+  .game-page .row.pt-5 {
+    padding-top: 2rem !important;
+  }
+
+  #wordToType {
+    margin: 1.5rem 0;
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  #game {
+    max-width: 900px;
+    padding-top: 2em;
+  }
+
+  .game-page .col-md-12.pt-5 {
+    padding-top: 1.5rem !important;
+  }
+
+  .game-page .row.pt-5 {
+    padding-top: 1.5rem !important;
+  }
+
+  #wordToType {
+    margin: 1rem 0;
+  }
+
+  #gameIndicator {
+    margin-bottom: 1rem;
+  }
+}
+
 /* Mobile-only responsive design with keyboard handling */
 @media (max-width: 768px) and (hover: none) and (pointer: coarse) {
   /* Reduce spacing between navbar and game area on mobile - game page only */
