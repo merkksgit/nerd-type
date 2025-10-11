@@ -2889,7 +2889,7 @@ tr:hover .username-rank-icon {
 
   #buttons {
     margin-top: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     gap: 16px;
     display: flex;
     justify-content: center;
@@ -3136,14 +3136,33 @@ tr:hover .username-rank-icon {
     padding: 0.75rem 1rem;
   }
 
+  /* Medium screens (tablets) */
+  @media (max-width: 991px) and (min-width: 769px) {
+    #gameOverModal .modal-dialog {
+      max-width: calc(100vw - 2rem);
+      margin: 1rem;
+    }
+
+    #gameOverModal .modal-body {
+      padding: 1rem;
+      font-size: 0.95rem;
+    }
+  }
+
   /* Hide sections on mobile for cleaner game over modal */
   @media (max-width: 768px) {
     #gameOverModal .modal-dialog {
       margin: 0.5rem;
+      max-width: calc(100vw - 1rem);
     }
 
     #gameOverModal .modal-body {
-      padding: 0.75rem;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    #gameOverModal .modal-footer {
+      padding: 0.5rem;
     }
 
     .game-stats-container.score-breakdown,
