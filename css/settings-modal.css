@@ -344,8 +344,8 @@
 }
 
 /* Settings Modal Styling */
-#settingsModal .col-md-6,
-#settingsModal .col-md-12 {
+#settingsModal .col-lg-6,
+#settingsModal .col-lg-12 {
   display: flex;
 }
 
@@ -527,10 +527,15 @@
 }
 
 /* Difficulty meter */
+.difficulty-indicator {
+  width: 100%;
+}
+
 .difficulty-indicator .progress {
   height: 8px;
   background-color: #1f2335 !important;
   border: 1px solid #3b4261 !important;
+  width: 100%;
 }
 
 .difficulty-indicator .progress .difficulty-progress-bar {
