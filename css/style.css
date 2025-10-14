@@ -3137,8 +3137,8 @@ tr:hover .username-rank-icon {
   }
 }
 
-/* Tablets and small laptops - Below 1500px */
-@media (max-width: 1499px) {
+/* Tablets and small laptops - Below 1600px */
+@media (max-width: 1599px) {
   #gameOverModal .modal-dialog {
     max-width: calc(100vw - 2rem);
     margin: 1rem auto;
@@ -3263,6 +3263,20 @@ tr:hover .username-rank-icon {
 
   .status-message {
     font-size: 0.95em !important;
+  }
+}
+
+/* Medium screens - narrower chart between 992px and 1599px */
+@media (min-width: 992px) and (max-width: 1599px) {
+  .wpm-chart-container {
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .chart-wrapper {
+    margin: 0;
+    width: 100%;
   }
 }
 
