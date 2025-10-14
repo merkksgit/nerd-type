@@ -68,6 +68,81 @@ const plotlyConfig = {
   responsive: true,
 };
 
+/**
+ * Creates a simple sparkline chart for mobile view
+ */
+function createMobileSparkline(containerId, data, color, label, value) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="mobile-metric-card">
+      <div class="metric-header">
+        <span class="metric-label" style="color: ${color};">${label}</span>
+        <span class="metric-value" style="color: ${color};">${value}</span>
+      </div>
+      <canvas class="sparkline-canvas"></canvas>
+    </div>
+  `;
+
+  const canvas = container.querySelector(".sparkline-canvas");
+  const ctx = canvas.getContext("2d");
+
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+
+  canvas.width = rect.width * dpr;
+  canvas.height = 60 * dpr;
+
+  ctx.scale(dpr, dpr);
+
+  const width = rect.width;
+  const height = 60;
+  const padding = 5;
+
+  if (!data || data.length === 0) {
+    ctx.fillStyle = "#565f89";
+    ctx.font = "12px jetbrains-mono";
+    ctx.textAlign = "center";
+    ctx.fillText("No data", width / 2, height / 2);
+    return;
+  }
+
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+
+  const stepX = (width - padding * 2) / (data.length - 1 || 1);
+  const stepY = (height - padding * 2) / range;
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  ctx.beginPath();
+  data.forEach((val, i) => {
+    const x = padding + i * stepX;
+    const y = height - padding - (val - min) * stepY;
+
+    if (i === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  });
+  ctx.stroke();
+
+  ctx.fillStyle = color;
+  data.forEach((val, i) => {
+    const x = padding + i * stepX;
+    const y = height - padding - (val - min) * stepY;
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
 const getBaseLayout = (title) => ({
   title: {
     text: title,
@@ -117,6 +192,13 @@ const getBaseLayout = (title) => ({
 });
 
 function displayScoreGraph() {
+  const isMobile = window.innerWidth <= 768;
+
+  if (isMobile) {
+    displayScoreGraphMobile();
+    return;
+  }
+
   let results = storageManager.getGameResults();
 
   const classicResults = results.filter(
@@ -400,7 +482,96 @@ function displayScoreGraph() {
   Plotly.newPlot("scoreChart", data, layout, plotlyConfig);
 }
 
+function displayScoreGraphMobile() {
+  let results = storageManager.getGameResults();
+
+  const classicResults = results.filter(
+    (result) =>
+      result.mode === "Classic Mode" ||
+      result.mode === "Custom Mode" ||
+      result.mode === "Speedrunner Mode" ||
+      result.mode === "Hard Mode" ||
+      result.mode === "Practice Mode" ||
+      result.mode === "Hardcore Mode" ||
+      !result.mode,
+  );
+
+  const sortedResults = classicResults.sort(
+    (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
+  );
+  const last15Results = sortedResults.slice(0, 15).reverse();
+
+  const scoreChart = document.getElementById("scoreChart");
+  if (!scoreChart) return;
+
+  if (last15Results.length === 0) {
+    scoreChart.innerHTML = `
+      <div class="mobile-charts-container">
+        <div class="mobile-chart-title">Last 15 Classic Mode Games</div>
+        <div class="no-data-message">No Classic Mode games found</div>
+      </div>
+    `;
+    return;
+  }
+
+  const scores = last15Results.map((result) => result.score || 0);
+  const wpmScores = last15Results.map((result) => parseFloat(result.wpm) || 0);
+  const accuracyScores = last15Results.map(
+    (result) => parseFloat(result.accuracy) || 0,
+  );
+
+  const avgScore = (
+    scores.reduce((sum, s) => sum + s, 0) / scores.length
+  ).toFixed(0);
+  const avgWpm = (
+    wpmScores.reduce((sum, w) => sum + w, 0) / wpmScores.length
+  ).toFixed(0);
+  const avgAccuracy = (
+    accuracyScores.reduce((sum, a) => sum + a, 0) / accuracyScores.length
+  ).toFixed(1);
+
+  scoreChart.innerHTML = `
+    <div class="mobile-charts-container">
+      <div class="mobile-chart-title">Last 15 Classic Mode Games</div>
+      <div id="mobile-score-metric"></div>
+      <div id="mobile-wpm-metric"></div>
+      <div id="mobile-accuracy-metric"></div>
+    </div>
+  `;
+
+  requestAnimationFrame(() => {
+    createMobileSparkline(
+      "mobile-score-metric",
+      scores,
+      "#7aa2f7",
+      "Score",
+      `${avgScore} avg`,
+    );
+    createMobileSparkline(
+      "mobile-wpm-metric",
+      wpmScores,
+      "#ff9e64",
+      "WPM",
+      `${avgWpm} avg`,
+    );
+    createMobileSparkline(
+      "mobile-accuracy-metric",
+      accuracyScores,
+      "#bb9af7",
+      "Accuracy",
+      `${avgAccuracy}% avg`,
+    );
+  });
+}
+
 function displayZenModeGraph() {
+  const isMobile = window.innerWidth <= 768;
+
+  if (isMobile) {
+    displayZenModeGraphMobile();
+    return;
+  }
+
   let results = storageManager.getGameResults();
 
   if (!results || !Array.isArray(results)) {
@@ -701,6 +872,102 @@ function displayZenModeGraph() {
   };
 
   Plotly.newPlot("zenChart", data, layout, plotlyConfig);
+}
+
+function displayZenModeGraphMobile() {
+  let results = storageManager.getGameResults();
+
+  if (!results || !Array.isArray(results)) {
+    results = [];
+  }
+
+  const zenResults = results.filter(
+    (result) =>
+      result &&
+      result.mode === "Zen Mode" &&
+      result.wpm !== undefined &&
+      result.accuracy !== undefined,
+  );
+
+  const sortedZenResults = zenResults.sort(
+    (a, b) => (b.timestamp || 0) - (a.timestamp || 0),
+  );
+  const last15ZenResults = sortedZenResults.slice(0, 15).reverse();
+
+  const zenChart = document.getElementById("zenChart");
+  if (!zenChart) return;
+
+  if (last15ZenResults.length === 0) {
+    zenChart.innerHTML = `
+      <div class="mobile-charts-container">
+        <div class="mobile-chart-title">Last 15 Zen Mode Games</div>
+        <div class="no-data-message">No Zen Mode games found</div>
+      </div>
+    `;
+    return;
+  }
+
+  const times = last15ZenResults.map((result) => {
+    if (!result.totalTime) return 0;
+    if (
+      typeof result.totalTime === "string" &&
+      result.totalTime.includes(":")
+    ) {
+      const [minutes, seconds] = result.totalTime.split(":").map(Number);
+      return minutes * 60 + seconds;
+    }
+    return parseFloat(result.totalTime) || 0;
+  });
+
+  const wpmScores = last15ZenResults.map(
+    (result) => parseFloat(result.wpm) || 0,
+  );
+  const accuracyScores = last15ZenResults.map(
+    (result) => parseFloat(result.accuracy) || 0,
+  );
+
+  const avgTime = (times.reduce((sum, t) => sum + t, 0) / times.length).toFixed(
+    0,
+  );
+  const avgWpm = (
+    wpmScores.reduce((sum, w) => sum + w, 0) / wpmScores.length
+  ).toFixed(0);
+  const avgAccuracy = (
+    accuracyScores.reduce((sum, a) => sum + a, 0) / accuracyScores.length
+  ).toFixed(1);
+
+  zenChart.innerHTML = `
+    <div class="mobile-charts-container">
+      <div class="mobile-chart-title">Last 15 Zen Mode Games</div>
+      <div id="mobile-zen-time-metric"></div>
+      <div id="mobile-zen-wpm-metric"></div>
+      <div id="mobile-zen-accuracy-metric"></div>
+    </div>
+  `;
+
+  requestAnimationFrame(() => {
+    createMobileSparkline(
+      "mobile-zen-time-metric",
+      times,
+      "#c3e88d",
+      "Time (sec)",
+      `${avgTime}s avg`,
+    );
+    createMobileSparkline(
+      "mobile-zen-wpm-metric",
+      wpmScores,
+      "#ff9e64",
+      "WPM",
+      `${avgWpm} avg`,
+    );
+    createMobileSparkline(
+      "mobile-zen-accuracy-metric",
+      accuracyScores,
+      "#bb9af7",
+      "Accuracy",
+      `${avgAccuracy}% avg`,
+    );
+  });
 }
 
 let chartRefreshTimeout;
