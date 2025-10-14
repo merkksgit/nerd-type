@@ -3135,70 +3135,187 @@ tr:hover .username-rank-icon {
   #gameOverModal .modal-footer {
     padding: 0.75rem 1rem;
   }
+}
 
-  /* Medium screens (tablets) */
-  @media (max-width: 991px) and (min-width: 769px) {
-    #gameOverModal .modal-dialog {
-      max-width: calc(100vw - 2rem);
-      margin: 1rem;
-    }
-
-    #gameOverModal .modal-body {
-      padding: 1rem;
-      font-size: 0.95rem;
-    }
+/* Tablets and small laptops - Below 1200px */
+@media (max-width: 1199px) {
+  #gameOverModal .modal-dialog {
+    max-width: calc(100vw - 2rem);
+    margin: 1rem auto;
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
   }
 
-  /* Hide sections on mobile for cleaner game over modal */
-  @media (max-width: 768px) {
-    #gameOverModal .modal-dialog {
-      margin: 0.5rem;
-      max-width: calc(100vw - 1rem);
-    }
+  #gameOverModal .modal-content {
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
 
-    #gameOverModal .modal-body {
-      padding: 0.5rem;
-      font-size: 0.9rem;
-    }
+  #gameOverModal .modal-body {
+    padding: 0.25rem 0.75rem 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    overflow-y: auto;
+  }
 
-    #gameOverModal .modal-footer {
-      padding: 0.5rem;
-    }
+  #gameOverModal .modal-footer {
+    padding: 0.5rem;
+  }
 
-    .game-stats-container.score-breakdown,
-    .game-settings-info {
-      display: none !important;
-    }
+  /* Reduce stat card sizes for better fit */
+  .game-stats-container {
+    gap: 15px;
+    margin: 4px auto 8px auto;
+    flex-wrap: wrap;
+  }
 
-    /* Make chart wider on mobile */
-    .wpm-chart-container {
-      margin: 15px -0.75rem 10px -0.75rem; /* Extend beyond modal body padding */
-      padding: 15px 0.75rem; /* Reduce horizontal padding to compensate */
-    }
+  .stat-card {
+    min-width: 140px;
+    padding: 12px 8px;
+    flex: 0 1 calc(33.333% - 15px);
+  }
 
-    .chart-wrapper {
-      margin: 0 -15px; /* Extend beyond chart container padding */
-      width: calc(100% + 30px); /* Compensate for chart container padding */
-    }
+  .stat-label {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
 
-    .chart-wrapper canvas {
-      width: 100% !important;
-    }
+  .stat-value {
+    font-size: 26px;
+  }
 
-    .mobile-return-text {
-      font-size: 1.2rem !important;
-      padding: 1rem 2rem !important;
-      background-color: #7aa2f7 !important;
-      color: #1a1b26 !important;
-      border-radius: 28px !important;
-      display: inline-block !important;
-      margin: 1rem 0 !important;
-      font-weight: bold !important;
-      min-height: 38px !important;
-      line-height: 1.5 !important;
-      text-align: center !important;
-      min-width: 120px !important;
-    }
+  /* Make score breakdown more compact */
+  .game-stats-container.score-breakdown {
+    gap: 12px;
+    margin: 10px auto 8px auto;
+  }
+
+  .game-stats-container.score-breakdown .stat-card {
+    min-width: 120px;
+    padding: 10px 6px;
+  }
+
+  .game-stats-container.score-breakdown .stat-label {
+    font-size: 11px;
+  }
+
+  .game-stats-container.score-breakdown .stat-value {
+    font-size: 20px;
+  }
+
+  /* Full-width chart like mobile */
+  .wpm-chart-container {
+    margin: 10px -0.75rem 8px -0.75rem;
+    padding: 12px 0.75rem;
+  }
+
+  .chart-header {
+    margin-bottom: 10px;
+  }
+
+  .chart-title {
+    font-size: 15px;
+  }
+
+  .chart-wrapper {
+    margin: 0 -12px;
+    width: calc(100% + 24px);
+    height: 200px;
+  }
+
+  .chart-wrapper canvas {
+    max-height: 200px !important;
+    width: 100% !important;
+  }
+
+  /* Compact settings info */
+  .game-settings-info {
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .settings-row {
+    margin-bottom: 6px;
+  }
+
+  .settings-row span {
+    display: inline-block;
+    margin: 0 10px;
+    margin-bottom: 8px;
+  }
+
+  /* Compact restart text */
+  .restart-text {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .restart-text .terminal-command {
+    font-size: 0.7em;
+    padding: 3px 6px;
+  }
+
+  /* Status message compact */
+  .status-message-section {
+    margin-bottom: 12px !important;
+  }
+
+  .status-message {
+    font-size: 0.95em !important;
+  }
+}
+
+/* Hide sections on mobile for cleaner game over modal */
+@media (max-width: 768px) {
+  #gameOverModal .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+  }
+
+  #gameOverModal .modal-body {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  #gameOverModal .modal-footer {
+    padding: 0.5rem;
+  }
+
+  .game-stats-container.score-breakdown,
+  .game-settings-info {
+    display: none !important;
+  }
+
+  /* Make chart wider on mobile */
+  .wpm-chart-container {
+    margin: 15px -0.5rem 10px -0.5rem;
+    padding: 15px 0.5rem;
+  }
+
+  .chart-wrapper {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .chart-wrapper canvas {
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+  .mobile-return-text {
+    font-size: 1.2rem !important;
+    padding: 1rem 2rem !important;
+    background-color: #7aa2f7 !important;
+    color: #1a1b26 !important;
+    border-radius: 28px !important;
+    display: inline-block !important;
+    margin: 1rem 0 !important;
+    font-weight: bold !important;
+    min-height: 38px !important;
+    line-height: 1.5 !important;
+    text-align: center !important;
+    min-width: 120px !important;
   }
 
   .restart-text {

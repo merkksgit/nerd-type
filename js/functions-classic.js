@@ -3349,6 +3349,7 @@ async function showGameOverModal(
       },
       gameSettings: {
         mode: "Zen",
+        wordSet: languageName,
         wordGoal: zenWordGoal,
       },
     });
@@ -3383,6 +3384,7 @@ async function showGameOverModal(
       },
       gameSettings: {
         mode: modeName,
+        wordSet: languageName,
         wordGoal: gameSettings.timeLimit,
         bonusEnergy: gameSettings.bonusTime,
         initialEnergy: gameSettings.initialTime,
@@ -3588,6 +3590,7 @@ async function displayModernGameOverContent(data) {
         <div class="game-settings-info">
           <div class="settings-row">
             <span>Mode: ${data.gameSettings.mode}</span>
+            <span>Word Set: ${data.gameSettings.wordSet}</span>
             <span>Words Goal: ${data.gameSettings.wordGoal}</span>
           </div>
         </div>
@@ -3600,6 +3603,7 @@ async function displayModernGameOverContent(data) {
           <div class="game-settings-info">
             <div class="settings-row">
               <span>Mode: ${data.gameSettings.mode}</span>
+              <span>Word Set: ${data.gameSettings.wordSet}</span>
               <span>Difficulty: ${data.gameSettings.difficultyMultiplier}</span>
               <span>Precision Multiplier: ${data.gameSettings.precisionMultiplier}</span>
             </div>
@@ -3614,10 +3618,11 @@ async function displayModernGameOverContent(data) {
           <div class="game-settings-info">
             <div class="settings-row">
               <span>Mode: ${data.gameSettings.mode}</span>
+              <span>Word Set: ${data.gameSettings.wordSet}</span>
               <span>Words Goal: ${data.gameSettings.wordGoal}</span>
-              <span>Energy Bonus: ${data.gameSettings.bonusEnergy}</span>
             </div>
             <div class="settings-row">
+              <span>Energy Bonus: ${data.gameSettings.bonusEnergy}</span>
               <span>Initial Energy: ${data.gameSettings.initialEnergy}</span>
               <span>Difficulty: ${data.gameSettings.difficultyMultiplier}</span>
               <span>Precision Multiplier: ${data.gameSettings.precisionMultiplier}</span>
