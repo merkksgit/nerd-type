@@ -3137,6 +3137,17 @@ tr:hover .username-rank-icon {
   }
 }
 
+/* Large screens - reduce top spacing */
+@media (min-width: 1200px) {
+  #gameOverModal .modal-body {
+    padding: 0.5rem 1rem 1rem 1rem;
+  }
+
+  .game-stats-container {
+    margin-top: 8px;
+  }
+}
+
 /* Tablets and small laptops - Below 1200px */
 @media (max-width: 1199px) {
   #gameOverModal .modal-dialog {
@@ -3164,15 +3175,15 @@ tr:hover .username-rank-icon {
 
   /* Reduce stat card sizes for better fit */
   .game-stats-container {
-    gap: 15px;
+    gap: 12px;
     margin: 4px auto 8px auto;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .stat-card {
-    min-width: 140px;
-    padding: 12px 8px;
-    flex: 0 1 calc(33.333% - 15px);
+    min-width: 120px;
+    padding: 12px 6px;
+    flex: 1 1 0;
   }
 
   .stat-label {
@@ -3343,15 +3354,17 @@ tr:hover .username-rank-icon {
 
   .game-stats-container {
     gap: 12px;
+    flex-wrap: wrap;
   }
 
   .stat-card {
     min-width: 100px;
-    padding: 12px;
+    padding: 14px;
+    flex: 0 1 calc(33.333% - 12px);
   }
 
   .stat-value {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   #previousResults {
