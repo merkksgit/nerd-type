@@ -3137,27 +3137,8 @@ tr:hover .username-rank-icon {
   }
 }
 
-/* Remove all top spacing for screens below 1500px */
+/* Tablets and small laptops - Below 1500px */
 @media (max-width: 1499px) {
-  #gameOverModal .modal-content {
-    margin-top: 0;
-  }
-
-  #gameOverModal .modal-body {
-    padding: 0 1rem 1rem 1rem;
-  }
-
-  .game-stats-container {
-    margin-top: 0;
-  }
-
-  .status-message-section {
-    margin-bottom: 8px !important;
-  }
-}
-
-/* Tablets and small laptops - Below 1200px */
-@media (max-width: 1199px) {
   #gameOverModal .modal-dialog {
     max-width: calc(100vw - 2rem);
     margin: 1rem auto;
@@ -3169,6 +3150,7 @@ tr:hover .username-rank-icon {
   #gameOverModal .modal-content {
     max-height: calc(100vh - 2rem);
     overflow-y: auto;
+    margin-top: 0;
   }
 
   #gameOverModal .modal-body {
@@ -3184,7 +3166,7 @@ tr:hover .username-rank-icon {
   /* Reduce stat card sizes for better fit */
   .game-stats-container {
     gap: 12px;
-    margin: 4px auto 8px auto;
+    margin: 0 auto 8px auto;
     flex-wrap: nowrap;
   }
 
@@ -3276,7 +3258,7 @@ tr:hover .username-rank-icon {
 
   /* Status message compact */
   .status-message-section {
-    margin-bottom: 12px !important;
+    margin-bottom: 8px !important;
   }
 
   .status-message {
