@@ -3137,14 +3137,22 @@ tr:hover .username-rank-icon {
   }
 }
 
-/* Large screens - reduce top spacing */
-@media (min-width: 1200px) {
+/* Remove all top spacing for screens below 1500px */
+@media (max-width: 1499px) {
+  #gameOverModal .modal-content {
+    margin-top: 0;
+  }
+
   #gameOverModal .modal-body {
-    padding: 0.5rem 1rem 1rem 1rem;
+    padding: 0 1rem 1rem 1rem;
   }
 
   .game-stats-container {
-    margin-top: 8px;
+    margin-top: 0;
+  }
+
+  .status-message-section {
+    margin-bottom: 8px !important;
   }
 }
 
@@ -3164,7 +3172,7 @@ tr:hover .username-rank-icon {
   }
 
   #gameOverModal .modal-body {
-    padding: 0.25rem 0.75rem 0.5rem 0.75rem;
+    padding: 0 0.75rem 0.5rem 0.75rem;
     font-size: 0.9rem;
     overflow-y: auto;
   }
@@ -3284,7 +3292,7 @@ tr:hover .username-rank-icon {
   }
 
   #gameOverModal .modal-body {
-    padding: 0.5rem;
+    padding: 0 0.5rem 0.5rem 0.5rem;
     font-size: 0.9rem;
   }
 
