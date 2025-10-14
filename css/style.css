@@ -1734,7 +1734,7 @@ div[class*="notifier"] {
 @media (max-width: 768px) {
   .chart-container {
     height: auto !important;
-    padding: 10px !important;
+    padding: 0 !important;
   }
 
   #scoreChart,
@@ -1746,7 +1746,7 @@ div[class*="notifier"] {
 .mobile-charts-container {
   width: 100%;
   max-width: 100%;
-  padding: 20px 15px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -1758,18 +1758,19 @@ div[class*="notifier"] {
   font-size: 16px;
   color: #7aa2f7;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   font-weight: bold;
 }
 
 .mobile-metric-card {
-  background-color: #1f2335;
+  background-color: #24283b;
   border-radius: 8px;
   padding: 15px;
-  border: 1px solid #3b4261;
+  border: 2px solid #3b4261;
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .metric-header {
