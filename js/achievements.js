@@ -29,6 +29,7 @@ class AchievementSystem {
           alice: 0,
         },
         bestHardcoreProgress: 0,
+        practiceWordsTyped: 0,
       },
       // Track pending notifications
       pendingNotifications: [],
@@ -659,6 +660,18 @@ class AchievementSystem {
           return (
             gameData.gameDurationSeconds && gameData.gameDurationSeconds > 120
           );
+        },
+      },
+
+      i_know_kung_fu: {
+        id: "i_know_kung_fu",
+        name: "I Know Kung Fu",
+        description: "Complete 30 words in practice mode",
+        icon: "fa-solid fa-user-ninja",
+        category: "gameplay",
+        secret: true,
+        check: function (stats, gameData) {
+          return stats.practiceWordsTyped >= 30;
         },
       },
 
@@ -1450,6 +1463,7 @@ class AchievementSystem {
         alice: 0,
       },
       bestHardcoreProgress: 0,
+      practiceWordsTyped: 0,
     };
   }
 

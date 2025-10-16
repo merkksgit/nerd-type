@@ -2761,6 +2761,23 @@ function handleWordCompletion(e, currentWord, showSpace) {
   // Update timer display for practice mode
   if (isPracticeMistakesMode) {
     updateTimerDisplay();
+
+    // Track practice words for achievement
+    if (window.achievementSystem) {
+      if (!window.achievementSystem.achievementsData.stats.practiceWordsTyped) {
+        window.achievementSystem.achievementsData.stats.practiceWordsTyped = 0;
+      }
+      window.achievementSystem.achievementsData.stats.practiceWordsTyped++;
+
+      // Check for Drill Sergeant achievement (30 words in practice mode)
+      if (
+        window.achievementSystem.achievementsData.stats.practiceWordsTyped ===
+        30
+      ) {
+        window.achievementSystem.checkAchievements();
+        window.achievementSystem.saveData();
+      }
+    }
   }
 
   checkGameCompletion();
