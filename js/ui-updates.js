@@ -140,15 +140,8 @@ async function handleLogout() {
     updateUsernameButtonDisplay();
     updateScoreboardDisplay();
 
-    // Show goodbye message if we have a username and siteModal is available
-    if (storedUsername && window.siteModal) {
-      window.siteModal.showLogoutSuccessModal(storedUsername);
-    }
-
-    // Reset auth processing flag after showing goodbye message
-    setTimeout(() => {
-      window.authProcessing = false;
-    }, 2000);
+    // Reset auth processing flag
+    window.authProcessing = false;
   } catch (error) {
     console.error("❌ Error in logout handler:", error);
     window.authProcessing = false;
@@ -349,11 +342,6 @@ window.logoutAndRedirect = async function () {
     // Update displays immediately
     updateUsernameButtonDisplay();
     updateScoreboardDisplay();
-
-    // Show goodbye message
-    if (window.siteModal) {
-      window.siteModal.showLogoutSuccessModal(storedUsername);
-    }
   } catch (error) {
     console.error("Logout error:", error);
 
