@@ -669,7 +669,7 @@ class AchievementSystem {
         description: "Complete 30 words in practice mode",
         icon: "fa-solid fa-user-ninja",
         category: "gameplay",
-        secret: true,
+        secret: false,
         check: function (stats, gameData) {
           return stats.practiceWordsTyped >= 30;
         },
