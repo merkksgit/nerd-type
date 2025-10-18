@@ -137,6 +137,24 @@ Available during gameplay with `/` prefix:
 - Focus on explaining complex logic, business rules, or non-obvious behavior
 - Use descriptive variable/function names to reduce need for comments
 
+### Commit Message Guidelines
+
+Use these prefixes for commit messages:
+
+- `feat`: A new feature
+- `balance`: For gameplay balance changes, tuning, or adjustments to game mechanics
+- `impr`: An improvement to an existing feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that do not affect the meaning of the code (white space, formatting, missing semi-colons, etc)
+- `refactor`: A code change that neither fixes a bug nor adds a feature, but makes the code easier to read, understand, or improve
+- `perf`: A code change that improves performance
+- `test`: Adding missing tests or correcting existing tests
+- `build`: Changes that affect the build system or external dependencies
+- `ci`: Changes to CI configuration files and scripts
+- `revert`: Reverts a previous commit
+- `chore`: Other changes that don't apply to any of the above
+
 ## File Naming Patterns
 
 - JavaScript files: kebab-case (e.g., `game-commands.js`)
@@ -158,4 +176,3 @@ Available during gameplay with `/` prefix:
 - **Accessibility**: Keyboard navigation support
 - **Internationalization**: Multi-language word lists and UI elements
 - **Analytics**: Google Analytics integration for usage tracking
-

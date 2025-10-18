@@ -2038,34 +2038,35 @@ score h3 {
 /* ====== 12. NEWS & CONTENT STYLING ====== */
 .news-card {
   background-color: #24283b;
-  border: 2px solid #3b4261;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  padding: 0;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-.news-card:hover {
-  background-color: #292e42 !important;
-  transition: background-color 0.2s ease;
-  transform: translateY(-2px);
-  border-color: #3b4261;
-  box-shadow: 0 4px 20px rgba(122, 162, 247, 0.15);
-}
-
-.news-card:last-child {
+  border: none;
+  border-radius: 0;
   margin-bottom: 0;
+  padding: 16px 0;
+  position: relative;
+  overflow: visible;
+}
+
+.news-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background-color: #3b4261;
+}
+
+.news-card:last-child::after {
+  display: none;
 }
 
 .news-card-header {
-  padding: 16px 20px 12px 20px;
-  border-bottom: 1px solid #3b4261;
+  padding: 0 20px 12px 20px;
+  border-bottom: none;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  gap: 8px;
   background-color: #24283b;
 }
 
@@ -2092,10 +2093,12 @@ score h3 {
 
 .news-category.feature {
   background-color: #ff9e64;
+  font-weight: 600;
 }
 
 .news-category.update {
   background-color: #c3e88d;
+  font-weight: 600;
 }
 
 .version-number {
@@ -2104,13 +2107,14 @@ score h3 {
   padding: 4px 8px;
   border-radius: 9999px;
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .news-category.announcement {
   background-color: #bb9af7;
+  font-weight: 600;
 }
 
 .news-category.issue {
