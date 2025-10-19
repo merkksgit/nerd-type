@@ -2948,7 +2948,7 @@ tr:hover .username-rank-icon {
 
   /* Mobile header adjustments */
   #header-logo-no-text {
-    margin-left: 0.75rem !important;
+    margin-left: 0 !important;
   }
 
   .navbar-nav .nav-item {
@@ -2957,13 +2957,13 @@ tr:hover .username-rank-icon {
 
   /* Simple, clean mobile padding */
   .navbar .container-fluid {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   article.col-md-8.col-lg-6.mx-auto {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   #game {
