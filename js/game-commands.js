@@ -75,6 +75,8 @@ class GameCommands {
       "/offscreen": this.openOffscreenWindow.bind(this),
       "/login": this.showLogin.bind(this),
       "/logout": this.logout.bind(this),
+      "/save": this.saveCustomSettings.bind(this),
+      "/load": this.loadCustomSettings.bind(this),
     };
 
     // Commands that need reload after execution
@@ -93,6 +95,7 @@ class GameCommands {
       "/reset",
       "/sound",
       "/data",
+      "/load",
     ];
   }
 
@@ -873,6 +876,8 @@ class GameCommands {
 <span style='color:#bb9af7'>/offscreen</span>      - Open popup with current word list
 <span style='color:#bb9af7'>/rm</span>             - Remove data from localStorage
                   <span style='color:#ff9e64'>[scoreboard.data, achievements.data]</span>
+<span style='color:#bb9af7'>/save</span>           - Save current custom settings
+<span style='color:#bb9af7'>/load</span>           - Load saved custom settings
 <span style='color:#bb9af7'>/login</span>          - Open login modal
 <span style='color:#bb9af7'>/logout</span>         - Logout current user
 <span style='color:#bb9af7'>/status</span>         - Show current game settings
@@ -1484,6 +1489,163 @@ font=<span style='color:#f7768e'>${currentFont}</span>
       window.logoutAndRedirect();
     } else {
       this.showNotification("Logout not available on this page", "error");
+    }
+  }
+
+  async saveCustomSettings() {
+    try {
+      const settingsToSave = {
+        timeLimit: this.gameSettings.timeLimit,
+        bonusTime: this.gameSettings.bonusTime,
+        initialTime: this.gameSettings.initialTime,
+        showSpacesAfterWords:
+          localStorage.getItem("showSpacesAfterWords") === "true",
+        punctuationEnabled:
+          localStorage.getItem("punctuation_enabled") === "true",
+        savedAt: new Date().toISOString(),
+      };
+
+      const currentUser = window.getCurrentUser
+        ? window.getCurrentUser()
+        : null;
+
+      if (currentUser) {
+        if (!window.firebaseModules || !window.database) {
+          this.showNotification(
+            "Firebase not available - settings saved locally only",
+            "info",
+          );
+          localStorage.setItem(
+            "nerdtype_custom_settings",
+            JSON.stringify(settingsToSave),
+          );
+          return;
+        }
+
+        const { ref, set } = window.firebaseModules;
+        const customSettingsRef = ref(
+          window.database,
+          `users/${currentUser.uid}/customSettings`,
+        );
+
+        await set(customSettingsRef, settingsToSave);
+        this.showNotification(
+          "Custom settings saved to cloud successfully",
+          "success",
+        );
+      } else {
+        localStorage.setItem(
+          "nerdtype_custom_settings",
+          JSON.stringify(settingsToSave),
+        );
+        this.showNotification(
+          "Custom settings saved locally (guest mode)",
+          "success",
+        );
+      }
+    } catch (error) {
+      console.error("Error saving custom settings:", error);
+      this.showNotification("Error saving custom settings", "error");
+    }
+  }
+
+  async loadCustomSettings() {
+    try {
+      const currentUser = window.getCurrentUser
+        ? window.getCurrentUser()
+        : null;
+      let savedSettings = null;
+
+      if (currentUser) {
+        if (!window.firebaseModules || !window.database) {
+          this.showNotification(
+            "Firebase not available - loading from local storage",
+            "info",
+          );
+          const localSettings = localStorage.getItem(
+            "nerdtype_custom_settings",
+          );
+          savedSettings = localSettings ? JSON.parse(localSettings) : null;
+        } else {
+          const { ref, get } = window.firebaseModules;
+          const customSettingsRef = ref(
+            window.database,
+            `users/${currentUser.uid}/customSettings`,
+          );
+
+          const snapshot = await get(customSettingsRef);
+          if (snapshot.exists()) {
+            savedSettings = snapshot.val();
+          }
+        }
+      } else {
+        const localSettings = localStorage.getItem("nerdtype_custom_settings");
+        savedSettings = localSettings ? JSON.parse(localSettings) : null;
+      }
+
+      if (!savedSettings) {
+        this.showNotification("No custom settings found to load", "info");
+        return;
+      }
+
+      this.gameSettings.timeLimit = savedSettings.timeLimit;
+      this.gameSettings.bonusTime = savedSettings.bonusTime;
+      this.gameSettings.initialTime = savedSettings.initialTime;
+
+      const currentMode = this.checkIfCustomMode();
+      this.gameSettings.currentMode = currentMode;
+
+      localStorage.setItem("gameSettings", JSON.stringify(this.gameSettings));
+
+      localStorage.setItem(
+        "showSpacesAfterWords",
+        savedSettings.showSpacesAfterWords.toString(),
+      );
+      localStorage.setItem(
+        "punctuation_enabled",
+        savedSettings.punctuationEnabled.toString(),
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: { setting: "currentMode", value: currentMode },
+        }),
+      );
+
+      Object.entries({
+        timeLimit: savedSettings.timeLimit,
+        bonusTime: savedSettings.bonusTime,
+        initialTime: savedSettings.initialTime,
+      }).forEach(([setting, value]) => {
+        window.dispatchEvent(
+          new CustomEvent("gameSettingsChanged", {
+            detail: { setting, value },
+          }),
+        );
+      });
+
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: {
+            setting: "showSpacesAfterWords",
+            value: savedSettings.showSpacesAfterWords,
+          },
+        }),
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("gameSettingsChanged", {
+          detail: {
+            setting: "punctuation_enabled",
+            value: savedSettings.punctuationEnabled,
+          },
+        }),
+      );
+
+      this.showNotification("Custom settings loaded successfully", "success");
+    } catch (error) {
+      console.error("Error loading custom settings:", error);
+      this.showNotification("Error loading custom settings", "error");
     }
   }
 
