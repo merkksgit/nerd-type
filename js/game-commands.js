@@ -73,6 +73,8 @@ class GameCommands {
       "/rm": this.removeData.bind(this),
       "/prac": this.startCustomPractice.bind(this),
       "/offscreen": this.openOffscreenWindow.bind(this),
+      "/login": this.showLogin.bind(this),
+      "/logout": this.logout.bind(this),
     };
 
     // Commands that need reload after execution
@@ -871,6 +873,8 @@ class GameCommands {
 <span style='color:#bb9af7'>/offscreen</span>      - Open popup with current word list
 <span style='color:#bb9af7'>/rm</span>             - Remove data from localStorage
                   <span style='color:#ff9e64'>[scoreboard.data, achievements.data]</span>
+<span style='color:#bb9af7'>/login</span>          - Open login modal
+<span style='color:#bb9af7'>/logout</span>         - Logout current user
 <span style='color:#bb9af7'>/status</span>         - Show current game settings
 <span style='color:#bb9af7'>/reset</span>          - Reset to default settings
 <span style='color:#bb9af7'>/help</span>           - Show this help message
@@ -1440,6 +1444,47 @@ font=<span style='color:#f7768e'>${currentFont}</span>
         }`,
     };
     return fontCSS[fontKey] || fontCSS["jetbrains-light"];
+  }
+
+  showLogin() {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+
+    if (currentUser) {
+      const emailUsername = currentUser.email
+        ? currentUser.email.split("@")[0]
+        : "unknown";
+      this.showNotification(`Already logged in as ${emailUsername}`, "info");
+      return;
+    }
+
+    if (typeof window.showLoginModal === "function") {
+      window.showLoginModal();
+      this.showNotification("Opening login modal...", "info");
+    } else {
+      this.showNotification("Login not available on this page", "error");
+    }
+  }
+
+  logout() {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+
+    if (!currentUser) {
+      const isGuestMode =
+        localStorage.getItem("nerdtype_guest_mode") === "true";
+      if (isGuestMode) {
+        this.showNotification("Already in guest mode", "info");
+      } else {
+        this.showNotification("Not currently logged in", "info");
+      }
+      return;
+    }
+
+    if (typeof window.logoutAndRedirect === "function") {
+      this.showNotification("Logging out...", "info");
+      window.logoutAndRedirect();
+    } else {
+      this.showNotification("Logout not available on this page", "error");
+    }
   }
 
   checkAndRestoreOffscreenPopup() {
