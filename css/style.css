@@ -81,13 +81,13 @@ header {
 
 #header-logo {
   width: 250px;
-  margin-left: 80px;
+  margin-left: 30px;
 }
 
 #header-logo-no-text {
   width: 45px;
   display: none;
-  margin-left: 12px;
+  margin-left: 30px;
 }
 
 #contact-logo {
@@ -156,6 +156,13 @@ div#content {
 /* ====== 4. NAVIGATION ====== */
 .navbar {
   margin-top: 1rem;
+}
+
+.navbar .container-fluid {
+  max-width: 1550px;
+  margin: 0 auto;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 #mainmenu {
@@ -2036,6 +2043,14 @@ score h3 {
 }
 
 /* ====== 12. NEWS & CONTENT STYLING ====== */
+article.col-md-8.col-lg-6.mx-auto {
+  max-width: 1550px !important;
+  width: 100%;
+  flex: 0 0 100%;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 .news-card {
   background-color: #24283b;
   border: none;
@@ -2845,6 +2860,14 @@ tr:hover .username-rank-icon {
     padding-top: 1.25em;
   }
 
+  .navbar .container-fluid {
+    max-width: 1400px;
+  }
+
+  article.col-md-8.col-lg-6.mx-auto {
+    max-width: 1400px !important;
+  }
+
   .game-page .col-md-12.pt-5 {
     padding-top: 1.25rem !important;
   }
@@ -2858,6 +2881,14 @@ tr:hover .username-rank-icon {
   #game {
     max-width: 1200px;
     padding-top: 1.5em;
+  }
+
+  .navbar .container-fluid {
+    max-width: 1200px;
+  }
+
+  article.col-md-8.col-lg-6.mx-auto {
+    max-width: 1200px !important;
   }
 
   .game-page .col-md-12.pt-5 {
@@ -2877,6 +2908,14 @@ tr:hover .username-rank-icon {
   #game {
     max-width: 900px;
     padding-top: 2em;
+  }
+
+  .navbar .container-fluid {
+    max-width: 900px;
+  }
+
+  article.col-md-8.col-lg-6.mx-auto {
+    max-width: 900px !important;
   }
 
   .game-page .col-md-12.pt-5 {
@@ -2905,6 +2944,18 @@ tr:hover .username-rank-icon {
 
   .game-page .row.pt-5 {
     padding-top: 1rem !important;
+  }
+
+  .navbar .container-fluid {
+    max-width: 100%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  article.col-md-8.col-lg-6.mx-auto {
+    max-width: 100% !important;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
 
   #game {
