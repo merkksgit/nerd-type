@@ -1588,6 +1588,19 @@ font=<span style='color:#f7768e'>${currentFont}</span>
         return;
       }
 
+      const isCurrentlyZenMode =
+        localStorage.getItem("nerdtype_zen_mode") === "true";
+
+      if (isCurrentlyZenMode) {
+        localStorage.setItem("nerdtype_zen_mode", "false");
+
+        window.dispatchEvent(
+          new CustomEvent("gameSettingsChanged", {
+            detail: { setting: "zenMode", value: false },
+          }),
+        );
+      }
+
       this.gameSettings.timeLimit = savedSettings.timeLimit;
       this.gameSettings.bonusTime = savedSettings.bonusTime;
       this.gameSettings.initialTime = savedSettings.initialTime;
