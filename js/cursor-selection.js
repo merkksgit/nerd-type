@@ -100,7 +100,7 @@ function applyCursorTheme(color) {
         body {
           cursor: url("${cursors.default}") 0 0, auto !important;
         }
-        
+
         /* Hand pointer cursor for all clickable elements */
         a, button, input[type="submit"], input[type="button"], .btn, .btn-primary,
         .btn-outline-primary, .btn-success, .btn-contact, .nav-link, .clickable,
@@ -120,7 +120,7 @@ function applyCursorTheme(color) {
         .form-check, .form-check-input, .zen-mode-element, .classic-mode-element, .news-card {
           cursor: url("${cursors.pointer}") 6 0, pointer !important;
         }
-        
+
         /* Text cursor for input fields */
         input[type="text"], input[type="email"], input[type="number"], textarea,
         #userInput, #customTime, #customAccuracy, #customWPM, .form-control,
@@ -129,6 +129,16 @@ function applyCursorTheme(color) {
         #settingsModal .form-control, #wordsGoal, #bonusEnergy, #initialEnergy,
         #zenWordGoal, #usernameInput {
           cursor: url("${cursors.text}") 0 0, text !important;
+        }
+
+        /* Default cursor for chart elements and their children */
+        .chart-container, .chart-container *,
+        #scoreChart, #scoreChart *,
+        #zenChart, #zenChart *,
+        .js-plotly-plot, .js-plotly-plot *,
+        .plotly, .plotly *,
+        svg.main-svg, svg.main-svg * {
+          cursor: url("${cursors.default}") 0 0, auto !important;
         }
       `;
     }
