@@ -2086,7 +2086,7 @@ article.col-md-8.col-lg-6.mx-auto {
 }
 
 .news-date {
-  background-color: #c3e88d;
+  background-color: #7aa2f7;
   color: #1a1b26;
   padding: 4px 12px;
   border-radius: 9999px;
@@ -2107,12 +2107,14 @@ article.col-md-8.col-lg-6.mx-auto {
 }
 
 .news-category.feature {
-  background-color: #ff9e64;
+  background-color: #565f89;
+  color: #c0caf5;
   font-weight: 600;
 }
 
 .news-category.update {
-  background-color: #c3e88d;
+  background-color: #737aa2;
+  color: #c0caf5;
   font-weight: 600;
 }
 
@@ -2128,7 +2130,8 @@ article.col-md-8.col-lg-6.mx-auto {
 }
 
 .news-category.announcement {
-  background-color: #bb9af7;
+  background-color: #394b70;
+  color: #c0caf5;
   font-weight: 600;
 }
 
@@ -2142,7 +2145,7 @@ article.col-md-8.col-lg-6.mx-auto {
 }
 
 .news-title {
-  color: #ff9e64;
+  color: #bb9af7;
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 12px;
