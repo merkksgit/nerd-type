@@ -662,7 +662,7 @@ body[data-ui-hidden="true"] #game.inactive::after {
   left: 50%;
   transform: translateX(-50%);
   background: #24283b;
-  border: 2px solid #3b4261;
+  border: 2px solid #7aa2f7;
   border-radius: 8px;
   padding: 0;
   min-width: 420px;
