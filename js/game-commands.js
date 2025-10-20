@@ -887,7 +887,7 @@ class GameCommands {
     this.showInfoModal("Game Commands Help", helpText);
   }
 
-  showStatus() {
+  async showStatus() {
     const settings = this.gameSettings;
 
     if (!settings) {
@@ -946,6 +946,50 @@ class GameCommands {
 
     const fontDisplayName = fontDisplayNames[currentFont] || currentFont;
 
+    // Get saved custom settings
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    let savedSettings = null;
+
+    if (currentUser) {
+      if (window.firebaseModules && window.database) {
+        try {
+          const { ref, get } = window.firebaseModules;
+          const customSettingsRef = ref(
+            window.database,
+            `users/${currentUser.uid}/customSettings`,
+          );
+          const snapshot = await get(customSettingsRef);
+          if (snapshot.exists()) {
+            savedSettings = snapshot.val();
+          }
+        } catch (error) {
+          console.error("Error loading custom settings from Firebase:", error);
+        }
+      }
+    }
+
+    if (!savedSettings) {
+      const localSettings = localStorage.getItem("nerdtype_custom_settings");
+      savedSettings = localSettings ? JSON.parse(localSettings) : null;
+    }
+
+    // Format saved settings if they exist
+    let savedSettingsText = "";
+    if (savedSettings) {
+      const savedDate = savedSettings.savedAt
+        ? new Date(savedSettings.savedAt).toLocaleString()
+        : "Unknown";
+      savedSettingsText = `
+<span style='color:#9ece6a'>## Saved Custom Settings (use /load to apply)</span>
+saved_at=<span style='color:#e0af68'>${savedDate}</span>
+words_needed=<span style='color:#c3e88d'>${savedSettings.timeLimit}</span>
+bonus_energy=<span style='color:#bb9af7'>${savedSettings.bonusTime}</span>
+initial_energy=<span style='color:#7dcfff'>${savedSettings.initialTime}</span>
+space_after_words=<span style='color:${savedSettings.showSpacesAfterWords ? "#c3e88d" : "#ff007c"}'>${savedSettings.showSpacesAfterWords ? "enabled" : "disabled"}</span>
+punctuation=<span style='color:${savedSettings.punctuationEnabled ? "#c3e88d" : "#ff007c"}'>${savedSettings.punctuationEnabled ? "enabled" : "disabled"}</span>
+`;
+    }
+
     let statusText;
 
     if (isZenMode) {
@@ -961,7 +1005,7 @@ keypress_sound=<span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007
 global_leaderboard=<span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "enabled" : "disabled"}</span>
 discord_webhook=<span style='color:${isDiscordWebhookEnabled ? "#c3e88d" : "#ff007c"}'>${isDiscordWebhookEnabled ? "enabled" : "disabled"}</span>
 font=<span style='color:#f7768e'>${currentFont}</span>
-`;
+${savedSettingsText}`;
     } else {
       // Classic Mode status with terminal-style output
       statusText = `<span style='color:#7dcfff'>[${playerUsername}@nerdtype_terminal:~/.config]$</span> cat settings.data
@@ -978,7 +1022,7 @@ keypress_sound=<span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007
 data_collection=<span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "enabled" : "disabled"}</span>
 discord_webhook=<span style='color:${isDiscordWebhookEnabled ? "#c3e88d" : "#ff007c"}'>${isDiscordWebhookEnabled ? "enabled" : "disabled"}</span>
 font=<span style='color:#f7768e'>${currentFont}</span>
-`;
+${savedSettingsText}`;
     }
 
     this.showInfoModal("Game Status", statusText);
