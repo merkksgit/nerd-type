@@ -1530,6 +1530,11 @@ ${savedSettingsText}`;
 
     if (typeof window.logoutAndRedirect === "function") {
       this.showNotification("Logging out...", "info");
+
+      if (typeof window.resetGameState === "function") {
+        window.resetGameState();
+      }
+
       window.logoutAndRedirect();
     } else {
       this.showNotification("Logout not available on this page", "error");
