@@ -2507,6 +2507,11 @@ function resetGameState() {
   // Update word display with fresh words
   updateWordDisplay();
 
+  // Update offscreen popups with new words
+  if (window.gameCommandsPopupUpdater && words.length > 0) {
+    window.gameCommandsPopupUpdater.updateAllPopups(getCurrentWords());
+  }
+
   // Reset progress bar
   updateProgressBar();
 
