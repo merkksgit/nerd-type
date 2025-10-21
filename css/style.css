@@ -1177,6 +1177,43 @@ div#wordToType {
   margin: 5px;
 }
 
+/* Mobile Reset Icon */
+.mobile-reset-icon {
+  display: none;
+  background-color: #ff9e64;
+  border: none;
+  color: #1f2335;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.1em;
+  min-width: auto;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.22);
+  margin-top: 3rem;
+}
+
+.mobile-reset-icon:hover {
+  color: #ff9e64;
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(122, 162, 247, 0.5);
+  transform: translateY(-2px);
+}
+
+.mobile-reset-icon:active {
+  transform: translateY(0);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.mobile-reset-icon i {
+  background-color: transparent;
+}
+
 /* ====== 9. MODAL STYLES ====== */
 /* Common Modal Styles */
 .modal-content {
@@ -3134,6 +3171,15 @@ tr:hover .username-rank-icon {
 
 /* Mobile-only responsive design with keyboard handling */
 @media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+  /* Hide desktop buttons and show mobile reset icon */
+  #buttons {
+    display: none !important;
+  }
+
+  .mobile-reset-icon {
+    display: block !important;
+  }
+
   /* Reduce spacing between navbar and game area on mobile - game page only */
   .game-page .col-md-12.pt-5 {
     padding-top: 1rem !important;

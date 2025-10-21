@@ -1152,6 +1152,14 @@ function initializeEventListeners() {
       });
     }
 
+    // Mobile reset button
+    const mobileResetBtn = document.getElementById("mobileResetBtn");
+    if (mobileResetBtn) {
+      mobileResetBtn.addEventListener("click", () => {
+        location.reload();
+      });
+    }
+
     // Start button - activate game and focus input field
     const startButton = domManager.get("startButton");
     if (startButton) {
