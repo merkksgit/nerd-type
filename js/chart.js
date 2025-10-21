@@ -3,7 +3,7 @@ import statsCard from "./stats-card.js";
 
 // Cache configuration
 const CHART_CACHE_KEY = "nerdtype_chartData_cache";
-const CHART_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+const CHART_CACHE_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
 
 /**
  * Retrieves cached chart data if available and not expired
