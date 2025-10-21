@@ -276,31 +276,6 @@
                 </div>
               </div>
             </div>
-            <!-- Stats Section -->
-            <div class="row mt-4 mb-5">
-              <div class="col-md-6">
-                <div class="card stats-card">
-                  <div class="card-body text-center">
-                    <h5 class="card-title info-title">
-                      <i class="fa-solid fa-users me-2"></i>Total Players
-                    </h5>
-                    <p class="display-6 stats-number mb-0" id="totalPlayers">
-                      -
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="card stats-card">
-                  <div class="card-body text-center">
-                    <h5 class="card-title info-title">
-                      <i class="fa-solid fa-gamepad me-2"></i>Total Games
-                    </h5>
-                    <p class="display-6 stats-number mb-0" id="totalGames">-</p>
-                  </div>
-                </div>
-              </div>
-            </div>
 
             <!-- Wall of Fame -->
             <div class="wall-of-fame-section mb-5">
@@ -605,16 +580,19 @@
       async function loadGlobalScores() {
         hideError();
 
-        // Try to load from cache first (optimistic loading)
+        // Try to load from cache first
         const cached = getCachedScoreboard();
         if (cached) {
-          console.log("⚡ Loading from cache instantly...");
+          console.log("✅ Using cached scoreboard data (skipping Firebase)");
           allScores = cached.scores;
           displayScores(cached.scores);
           updateStatsFromCache(cached.stats);
-        } else {
-          showLoading(true);
+          showLoading(false);
+          return; // Skip Firebase fetch when cache is valid
         }
+
+        // No valid cache - fetch from Firebase
+        showLoading(true);
 
         // Wait for Firebase to be ready before fetching fresh data
         await waitForFirebase();
@@ -628,29 +606,14 @@
 
           console.log(`✅ Loaded ${scores.length} fresh scores`);
 
-          // Prepare stats for caching
-          const stats = {
-            totalPlayers: window.allScoresForStats
-              ? new Set(window.allScoresForStats.map((score) => score.username))
-                  .size
-              : 0,
-            totalGames: window.totalGamesPlayed || scores.length,
-          };
-
           // Cache the fresh data
-          setCachedScoreboard(scores, stats);
+          setCachedScoreboard(scores, {});
 
           // Update display with fresh data
-          updateStats(scores);
           filterScores();
         } catch (error) {
           console.error("❌ Error loading global scores:", error);
-          // Only show error if we don't have cached data
-          if (!cached) {
-            showError("Failed to load global scores. Please try again.");
-          } else {
-            console.log("📦 Continuing with cached data after error");
-          }
+          showError("Failed to load global scores. Please try again.");
         } finally {
           showLoading(false);
         }
@@ -677,15 +640,7 @@
       }
 
       function updateStatsFromCache(stats) {
-        const totalPlayersElement = document.getElementById("totalPlayers");
-        const totalGamesElement = document.getElementById("totalGames");
-
-        if (totalPlayersElement) {
-          totalPlayersElement.textContent = stats.totalPlayers;
-        }
-        if (totalGamesElement) {
-          totalGamesElement.textContent = stats.totalGames;
-        }
+        // Stats cards removed - no longer needed
       }
 
       async function getAllScores() {
@@ -709,31 +664,8 @@
 
         const scoresRef = ref(database, "scores");
 
-        // First, get ALL scores to count total games
-        console.log("📊 Getting all scores for stats...");
-        const allScoresSnapshot = await get(scoresRef);
-        let totalGamesCount = 0;
-        let allScoresForStats = [];
-
-        if (allScoresSnapshot.exists()) {
-          allScoresSnapshot.forEach((childSnapshot) => {
-            const scoreData = childSnapshot.val();
-            // Only count authenticated scores for stats
-            if (scoreData.authenticatedScore === true) {
-              allScoresForStats.push(scoreData);
-            }
-          });
-          totalGamesCount = allScoresForStats.length;
-        }
-
-        // Store total count globally for stats
-        window.totalGamesPlayed = totalGamesCount;
-        window.allScoresForStats = allScoresForStats;
-
-        console.log(`📈 Total authenticated games: ${totalGamesCount}`);
-
-        // Then get top scores for display
-        console.log("🏆 Getting top scores...");
+        // Get top 20 scores directly from Firebase
+        console.log("🏆 Getting top 20 scores...");
         const topScoresQuery = query(
           scoresRef,
           orderByChild("score"),
@@ -752,7 +684,7 @@
           });
 
           console.log(`🎯 Top authenticated scores: ${topScores.length}`);
-          return topScores.reverse(); // Return all fetched authenticated scores
+          return topScores.reverse(); // Return high to low
         }
         return [];
       }
@@ -854,22 +786,7 @@
       }
 
       function updateStats(scores) {
-        // Use all scores for accurate stats, not just displayed ones
-        const allScores = window.allScoresForStats || scores;
-        const totalGames = window.totalGamesPlayed || scores.length;
-
-        const uniquePlayers = new Set(allScores.map((score) => score.username))
-          .size;
-
-        const totalPlayersElement = document.getElementById("totalPlayers");
-        const totalGamesElement = document.getElementById("totalGames");
-
-        if (totalPlayersElement) {
-          totalPlayersElement.textContent = uniquePlayers;
-        }
-        if (totalGamesElement) {
-          totalGamesElement.textContent = totalGames;
-        }
+        // Stats cards removed - no longer needed
       }
 
       function updateWallOfFame(scores) {
