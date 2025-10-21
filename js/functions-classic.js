@@ -1168,26 +1168,12 @@ function initializeEventListeners() {
       mobileResetBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-
-        // Check if any input is focused (keyboard open)
+        // Reset game state without reloading the page
+        resetGameState();
+        // Ensure input doesn't get focused after reset
         const userInput = document.getElementById("userInput");
-        if (document.activeElement.tagName === "INPUT") {
-          document.activeElement.blur();
-          // Wait for keyboard to close, then reset
-          setTimeout(() => {
-            resetGameState();
-            // Ensure input stays blurred after reset
-            if (userInput) {
-              userInput.blur();
-            }
-          }, 100);
-        } else {
-          // Keyboard already closed, reset immediately
-          resetGameState();
-          // Ensure input stays blurred after reset
-          if (userInput) {
-            userInput.blur();
-          }
+        if (userInput) {
+          userInput.blur();
         }
       });
     }
