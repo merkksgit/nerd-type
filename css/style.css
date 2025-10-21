@@ -35,6 +35,12 @@
 }
 
 /* ====== 2. GLOBAL STYLES ====== */
+html {
+  background-color: #24283b;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 * {
   font-family: "jetbrains-mono";
   background-color: #24283b;
