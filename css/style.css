@@ -1180,7 +1180,7 @@ div#wordToType {
 /* Mobile Reset Icon */
 .mobile-reset-icon {
   display: none;
-  background-color: #ff9e64;
+  background-color: #7aa2f7;
   border: none;
   color: #1f2335;
   padding: 12px 16px;
@@ -1197,7 +1197,7 @@ div#wordToType {
 }
 
 .mobile-reset-icon:hover {
-  color: #ff9e64;
+  color: #7aa2f7;
   box-shadow:
     0 6px 12px rgba(0, 0, 0, 0.3),
     0 0 8px rgba(122, 162, 247, 0.5);
@@ -1216,6 +1216,19 @@ div#wordToType {
 }
 
 /* ====== 9. MODAL STYLES ====== */
+/* Modal safe area handling for mobile devices */
+.modal {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+.modal-backdrop {
+  background-color: #24283b !important;
+  opacity: 0.9 !important;
+}
+
 /* Common Modal Styles */
 .modal-content {
   position: relative;

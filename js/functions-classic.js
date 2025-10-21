@@ -1056,7 +1056,9 @@ function initializeEventListeners() {
       }
     }
     if (event.key === "Enter" && event.ctrlKey) {
-      location.reload();
+      event.preventDefault();
+      // Reset game state without reloading the page
+      resetGameState();
     }
   });
 
@@ -1147,8 +1149,10 @@ function initializeEventListeners() {
     // Reset button
     const resetBtn = document.getElementById("resetBtn");
     if (resetBtn) {
-      resetBtn.addEventListener("click", () => {
-        location.reload();
+      resetBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        // Reset game state without reloading the page
+        resetGameState();
       });
     }
 
@@ -1157,15 +1161,8 @@ function initializeEventListeners() {
     if (mobileResetBtn) {
       mobileResetBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        // Blur the input field to close keyboard before reload
-        const userInput = document.getElementById("userInput");
-        if (userInput) {
-          userInput.blur();
-        }
-        // Small delay to ensure keyboard closes, then reload
-        setTimeout(() => {
-          location.reload();
-        }, 100);
+        // Reset game state without reloading the page
+        resetGameState();
       });
     }
 
@@ -1456,6 +1453,7 @@ function startGame() {
 window.startGame = startGame;
 window.updateWordDisplay = updateWordDisplay;
 window.activateGame = activateGame;
+window.resetGameState = resetGameState;
 window.clearPunctuationCache = clearPunctuationCache;
 window.startPracticeMistakesMode = startPracticeMistakesMode;
 
@@ -2444,6 +2442,97 @@ function startGameTimers() {
 }
 
 // Activate the game - remove inactive state and prepare for typing
+function resetGameState() {
+  // Clear all intervals
+  if (countDownInterval) clearInterval(countDownInterval);
+  if (totalTimeInterval) clearInterval(totalTimeInterval);
+
+  // Reset game state variables
+  gameEnded = false;
+  syncGameStateToWindow();
+  hasStartedTyping = false;
+  currentWordIndex = 0;
+  nextWordIndex = 1;
+  wordsTyped = [];
+  totalCharactersTyped = 0;
+  totalKeystrokes = 0;
+  correctKeystrokes = 0;
+  totalTimeSpent = 0;
+  gameStartTime = null;
+  sessionStartTime = null;
+
+  // Reset timing and tracking arrays
+  keystrokeTimestamps = [];
+  perSecondWpmData = [];
+  mistakeTimestamps = [];
+
+  // Reset precision system
+  precisionStreak = 0;
+  peakPrecisionStreak = 0;
+  currentWordHasMistakes = false;
+  resetPrecisionSystem();
+
+  // Reset mistake tracking (unless in practice mistakes mode)
+  if (!isPracticeMistakesMode) {
+    gameMistakes = {
+      words: [],
+      totalMistakes: 0,
+    };
+  }
+
+  // Reset time from settings
+  timeLeft = gameSettings.initialTime;
+  bonusTime = gameSettings.bonusTime;
+
+  // Clear user input field
+  const userInput = domManager.get("userInput");
+  if (userInput) {
+    userInput.value = "";
+    userInput.blur();
+  }
+
+  // Reshuffle words for variety (unless it's a sequential word list)
+  if (!availableWordLists[currentLanguage]?.sequential) {
+    fisherYatesShuffle(words);
+  }
+
+  // Update word display with fresh words
+  updateWordDisplay();
+
+  // Reset progress bar
+  updateProgressBar();
+
+  // Reset timer display
+  updateTimer();
+
+  // Reset zen mode timer display if in zen mode
+  if (isZenMode) {
+    const totalTimeValue = document.getElementById("totalTimeValue");
+    if (totalTimeValue) {
+      if (isPracticeMistakesMode) {
+        totalTimeValue.textContent = "0";
+        const totalTimeContainer = document.getElementById("totalTime");
+        if (totalTimeContainer) {
+          totalTimeContainer.innerHTML = `Words typed: <span id="totalTimeValue">0</span>`;
+        }
+      } else {
+        totalTimeValue.textContent = "0:00";
+      }
+    }
+  }
+
+  // Mark game as inactive
+  const gameElement = document.getElementById("game");
+  if (gameElement) {
+    gameElement.classList.add("inactive");
+  }
+
+  // Reinitialize smooth caret if available
+  if (window.smoothCaret) {
+    window.smoothCaret.init();
+  }
+}
+
 function activateGame() {
   const gameElement = document.getElementById("game");
   if (gameElement) {
