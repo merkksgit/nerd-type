@@ -1155,8 +1155,17 @@ function initializeEventListeners() {
     // Mobile reset button
     const mobileResetBtn = document.getElementById("mobileResetBtn");
     if (mobileResetBtn) {
-      mobileResetBtn.addEventListener("click", () => {
-        location.reload();
+      mobileResetBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        // Blur the input field to close keyboard before reload
+        const userInput = document.getElementById("userInput");
+        if (userInput) {
+          userInput.blur();
+        }
+        // Small delay to ensure keyboard closes, then reload
+        setTimeout(() => {
+          location.reload();
+        }, 100);
       });
     }
 
