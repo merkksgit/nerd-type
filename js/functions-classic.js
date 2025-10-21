@@ -1161,8 +1161,23 @@ function initializeEventListeners() {
     if (mobileResetBtn) {
       mobileResetBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        // Reset game state without reloading the page
-        resetGameState();
+
+        // Check if keyboard is open by checking if input is focused
+        const userInput = document.getElementById("userInput");
+        const isKeyboardOpen =
+          userInput && document.activeElement === userInput;
+
+        if (isKeyboardOpen) {
+          // First blur to close keyboard
+          userInput.blur();
+          // Small delay to ensure keyboard closes, then reset
+          setTimeout(() => {
+            resetGameState();
+          }, 50);
+        } else {
+          // Keyboard already closed, reset immediately
+          resetGameState();
+        }
       });
     }
 
