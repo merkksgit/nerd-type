@@ -1162,27 +1162,23 @@ function initializeEventListeners() {
       });
     }
 
-    // Mobile reset button
-    const mobileResetBtn = document.getElementById("mobileResetBtn");
-    if (mobileResetBtn) {
-      mobileResetBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        // Reset game state without reloading the page
-        resetGameState();
-        // Ensure input doesn't get focused after reset
-        const userInput = document.getElementById("userInput");
-        if (userInput) {
-          userInput.blur();
-        }
-      });
-    }
-
     // Start button - activate game and focus input field
     const startButton = domManager.get("startButton");
     if (startButton) {
       startButton.addEventListener("click", function () {
-        activateGame();
+        // Check if game is inactive (showing start message)
+        const gameElement = document.getElementById("game");
+        const isGameInactive =
+          gameElement && gameElement.classList.contains("inactive");
+
+        if (isGameInactive) {
+          // Just activate the game without changing words when showing start message
+          activateGame();
+        } else {
+          // Restart the game when button is pressed during active gameplay
+          startGame();
+          activateGame();
+        }
       });
     }
 
