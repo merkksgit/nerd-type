@@ -1162,20 +1162,11 @@ function initializeEventListeners() {
       mobileResetBtn.addEventListener("click", (e) => {
         e.preventDefault();
 
-        // Check if keyboard is open by checking if input is focused
-        const userInput = document.getElementById("userInput");
-        const isKeyboardOpen =
-          userInput && document.activeElement === userInput;
-
-        if (isKeyboardOpen) {
-          // First blur to close keyboard
-          userInput.blur();
-          // Small delay to ensure keyboard closes, then reset
-          setTimeout(() => {
-            resetGameState();
-          }, 50);
+        // Check if any input is focused (keyboard open)
+        if (document.activeElement.tagName === "INPUT") {
+          document.activeElement.blur();
+          setTimeout(() => resetGameState(), 100);
         } else {
-          // Keyboard already closed, reset immediately
           resetGameState();
         }
       });
