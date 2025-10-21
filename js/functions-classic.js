@@ -1165,9 +1165,9 @@ function initializeEventListeners() {
         // Check if any input is focused (keyboard open)
         if (document.activeElement.tagName === "INPUT") {
           document.activeElement.blur();
-          setTimeout(() => resetGameState(), 100);
+          setTimeout(() => location.reload(), 100);
         } else {
-          resetGameState();
+          location.reload();
         }
       });
     }
