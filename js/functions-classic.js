@@ -1167,13 +1167,27 @@ function initializeEventListeners() {
     if (mobileResetBtn) {
       mobileResetBtn.addEventListener("click", (e) => {
         e.preventDefault();
+        e.stopPropagation();
 
         // Check if any input is focused (keyboard open)
+        const userInput = document.getElementById("userInput");
         if (document.activeElement.tagName === "INPUT") {
           document.activeElement.blur();
-          setTimeout(() => location.reload(), 100);
+          // Wait for keyboard to close, then reset
+          setTimeout(() => {
+            resetGameState();
+            // Ensure input stays blurred after reset
+            if (userInput) {
+              userInput.blur();
+            }
+          }, 100);
         } else {
-          location.reload();
+          // Keyboard already closed, reset immediately
+          resetGameState();
+          // Ensure input stays blurred after reset
+          if (userInput) {
+            userInput.blur();
+          }
         }
       });
     }
