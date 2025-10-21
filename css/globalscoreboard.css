@@ -229,8 +229,22 @@ body {
   margin: 5px !important;
 }
 
+#refreshScoresBtn .fa-sync-alt {
+  background-color: transparent !important;
+}
+
 #refreshScoresBtn:hover .fa-sync-alt {
-  background-color: #2a3047;
+  animation: spin 0.3s linear;
+  background-color: transparent !important;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
 }
 
 /* Alert styling */

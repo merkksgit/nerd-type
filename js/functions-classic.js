@@ -4336,7 +4336,7 @@ window.getTopScores = async function () {
 };
 
 // Display previous results in scoreboard with pagination
-let currentDisplayCount = 15; // Track how many results are currently displayed
+let currentDisplayCount = 10; // Track how many results are currently displayed
 let allAvailableScores = []; // Cache for all available scores
 let totalScoreCount = 0; // Total count of scores available
 
@@ -4346,7 +4346,7 @@ async function displayPreviousResults(loadMore = false) {
 
   // If not loading more, reset the display count
   if (!loadMore) {
-    currentDisplayCount = 15;
+    currentDisplayCount = 10;
   }
 
   let displayResults = [];
@@ -4356,36 +4356,44 @@ async function displayPreviousResults(loadMore = false) {
   const currentUser = window.getCurrentUser && window.getCurrentUser();
 
   if (currentUser && window.loadScoreboardFromFirebasePaginated) {
-    // Logged-in user: Load from Firebase with pagination
+    // Logged-in user: Load from Firebase with pagination (limit to 100 games)
     try {
+      const maxGames = 100; // Limit to 100 most recent games
+
       if (!loadMore) {
         // Initial load: get first batch and set up cache
         const firebaseData = await window.loadScoreboardFromFirebasePaginated(
-          Math.max(currentDisplayCount, 50), // Load at least 50 to reduce future calls
+          Math.min(Math.max(currentDisplayCount, 50), maxGames), // Load at least 50, max 100
           0,
         );
 
         allAvailableScores = firebaseData.scores || [];
-        totalScoreCount = firebaseData.totalCount || 0;
-      } else if (allAvailableScores.length < currentDisplayCount) {
-        // Load more: we need more data than we have cached
-        const needToLoad = Math.max(
-          currentDisplayCount + 30,
-          allAvailableScores.length + 50,
-        ); // Load extra for future clicks
+        totalScoreCount = Math.min(firebaseData.totalCount || 0, maxGames);
+      } else if (
+        allAvailableScores.length < currentDisplayCount &&
+        allAvailableScores.length < maxGames
+      ) {
+        // Load more: we need more data than we have cached (up to 100 max)
+        const needToLoad = Math.min(
+          Math.max(currentDisplayCount + 30, allAvailableScores.length + 50),
+          maxGames,
+        );
         const firebaseData = await window.loadScoreboardFromFirebasePaginated(
           needToLoad,
           0,
         );
 
         allAvailableScores = firebaseData.scores || [];
-        totalScoreCount = firebaseData.totalCount || 0;
+        totalScoreCount = Math.min(firebaseData.totalCount || 0, maxGames);
       } else {
         // We have enough cached data, no need to call Firebase
         // Using cached data - no console log needed
       }
 
-      displayResults = allAvailableScores.slice(0, currentDisplayCount);
+      displayResults = allAvailableScores.slice(
+        0,
+        Math.min(currentDisplayCount, maxGames),
+      );
     } catch (error) {
       console.error(
         "❌ Failed to load scores from Firebase, falling back to localStorage:",
@@ -4558,7 +4566,7 @@ async function displayPreviousResults(loadMore = false) {
     const infoRow = document.createElement("tr");
     infoRow.innerHTML = `
       <td colspan="7" class="text-center py-3" style="color: #565f89; font-style: italic; border-top: 1px solid #3b4261;">
-        Showing last ${currentDisplayCount} of ${totalScoreCount} total games
+        Showing last ${currentDisplayCount} of ${totalScoreCount} last played games
       </td>
     `;
     tableBody.appendChild(infoRow);
@@ -4583,11 +4591,11 @@ async function displayPreviousResults(loadMore = false) {
     const loadMoreBtn = document.getElementById("loadMoreGamesBtn");
     if (loadMoreBtn) {
       loadMoreBtn.addEventListener("click", async function () {
-        currentDisplayCount += 15;
+        currentDisplayCount += 10;
         await displayPreviousResults(true);
       });
     }
-  } else if (totalScoreCount > 15) {
+  } else if (totalScoreCount > 10) {
     // Show info row without load more button when all results are displayed
     const infoRow = document.createElement("tr");
     infoRow.innerHTML = `
