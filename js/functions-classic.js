@@ -1151,8 +1151,14 @@ function initializeEventListeners() {
     if (resetBtn) {
       resetBtn.addEventListener("click", (e) => {
         e.preventDefault();
+        e.stopPropagation();
         // Reset game state without reloading the page
         resetGameState();
+        // Ensure input doesn't get focused after reset
+        const userInput = document.getElementById("userInput");
+        if (userInput) {
+          userInput.blur();
+        }
       });
     }
 
