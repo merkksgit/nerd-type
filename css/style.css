@@ -693,10 +693,12 @@ body[data-ui-hidden="true"] #game.inactive::after {
 .quick-commands-info > i {
   font-size: 1rem;
   filter: drop-shadow(0 0 4px rgba(122, 162, 247, 0.4));
+  transition: all 0.3s ease;
 }
 
 .quick-commands-info:hover > i {
   filter: drop-shadow(0 0 8px rgba(187, 154, 247, 0.6));
+  transform: scale(1.4);
 }
 
 .quick-commands-info .info-text {
@@ -711,7 +713,7 @@ body[data-ui-hidden="true"] #game.inactive::after {
   left: 50%;
   transform: translateX(-50%);
   background: #24283b;
-  border: 2px solid #7aa2f7;
+  border: 2px solid #3b4261;
   border-radius: 8px;
   padding: 0;
   min-width: 420px;
@@ -732,8 +734,8 @@ body[data-ui-hidden="true"] #game.inactive::after {
 }
 
 .tooltip-header {
-  background: #7aa2f7;
-  color: #24283b;
+  background: #3b4261;
+  color: #1f2335;
   padding: 10px 16px;
   font-weight: 600;
   font-size: 1rem;
@@ -748,7 +750,7 @@ body[data-ui-hidden="true"] #game.inactive::after {
   line-height: 1.5;
   text-align: left;
   background: #24283b;
-  font-family: "jetbrains-light", monospace;
+  font-family: "jetbrains-mono", monospace;
 }
 
 .tooltip-content p {
@@ -776,18 +778,16 @@ body[data-ui-hidden="true"] #game.inactive::after {
   color: #ff9e64;
   padding: 2px 6px;
   border-radius: 4px;
-  font-family: "jetbrains-light", monospace;
+  font-family: "jetbrains-mono", monospace;
   font-size: 0.85em;
   border: none;
 }
 
 .tooltip-footer {
   font-size: 0.75rem;
-  color: #565f89;
-  font-style: italic;
+  color: #565f89 !important;
   margin: 8px 0 0 0 !important;
   text-align: center;
-  font-family: "jetbrains-light", monospace;
 }
 
 /* Hide quick commands info when game is active */
