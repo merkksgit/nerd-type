@@ -612,13 +612,15 @@ input#userInput {
   position: relative;
 }
 
-/* Game inactive state - only blurs the word display area */
+/* Game inactive state - blurs the word display, timer, and progress */
 #game.inactive {
   position: relative;
 }
 
-#game.inactive #wordToType {
-  filter: blur(4px);
+#game.inactive #wordToType,
+#game.inactive #timer,
+#game.inactive #progressPercentage {
+  filter: blur(9px);
   transition: filter 0.3s ease;
 }
 
@@ -628,15 +630,14 @@ input#userInput {
   top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #24283b;
-  color: #ff9e64;
+  background: transparent;
+  color: #fff;
   padding: 1rem 2rem;
   border-radius: 8px;
   font-size: 1.1em;
   font-weight: 500;
   font-family: var(--game-font, "jetbrains-mono");
-  border: 2px solid #ff9e64;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  text-shadow: 6px 6px 6px rgba(0, 0, 0, 0.9);
   z-index: 10;
   pointer-events: none;
 }
