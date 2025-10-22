@@ -3222,7 +3222,7 @@ tr:hover .username-rank-icon {
   }
 
   #progressPercentage {
-    margin-top: 2.5rem !important;
+    margin-top: 2rem !important;
     margin-bottom: 0.3rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -3246,7 +3246,7 @@ tr:hover .username-rank-icon {
   }
 
   #buttons {
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;
     margin-bottom: 2rem;
     gap: 16px;
     display: flex;
@@ -3260,6 +3260,11 @@ tr:hover .username-rank-icon {
     padding: 12px 20px;
     font-size: 1rem;
     touch-action: manipulation;
+  }
+
+  #startButton,
+  #resetBtn {
+    margin-top: 0 !important;
   }
 
   #buttons button:active {
