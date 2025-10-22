@@ -337,6 +337,24 @@ div h2 {
   padding: 8px 15px;
 }
 
+/* Icon button styling for reset and start buttons */
+#resetBtn,
+#startButton {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px !important;
+  color: #7aa2f7;
+  transition: all 0.3s ease;
+  margin-top: 3em;
+}
+
+#resetBtn i,
+#startButton i {
+  font-size: 1.5em;
+  display: inline-block;
+}
+
 /* Common button hover effects */
 #returnToGameBtn:hover,
 #restartGameBtn:hover,
@@ -357,7 +375,13 @@ div h2 {
 
 /* Main action buttons with enhanced hover effects */
 #startButton:hover,
-#resetBtn:hover,
+#resetBtn:hover {
+  color: #ff9e64 !important;
+  transform: scale(1.2);
+  background: none !important;
+  box-shadow: none !important;
+}
+
 #scoreboardCloseBtn:hover,
 #game-command-modal-close:hover,
 #buttons #downloadDataBtn:hover,
@@ -368,6 +392,13 @@ div h2 {
     0 0 8px rgba(122, 162, 247, 0.5);
   transform: translateY(-2px);
   background-color: #2a3047;
+}
+
+#startButton:active,
+#resetBtn:active {
+  transform: scale(1.1);
+  background: none !important;
+  box-shadow: none !important;
 }
 
 #toggleGraph:active,
