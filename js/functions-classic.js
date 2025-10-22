@@ -2480,13 +2480,20 @@ function resetGameState() {
   currentWordHasMistakes = false;
   resetPrecisionSystem();
 
-  // Reset mistake tracking (unless in practice mistakes mode)
-  if (!isPracticeMistakesMode) {
-    gameMistakes = {
-      words: [],
-      totalMistakes: 0,
-    };
+  // Exit practice mode if active and reload page
+  if (isPracticeMistakesMode) {
+    isPracticeMistakesMode = false;
+    practiceMistakesWords = [];
+    localStorage.removeItem("customPracticeWords");
+    location.reload();
+    return;
   }
+
+  // Reset mistake tracking
+  gameMistakes = {
+    words: [],
+    totalMistakes: 0,
+  };
 
   // Reset time from settings
   timeLeft = gameSettings.initialTime;

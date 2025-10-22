@@ -582,6 +582,10 @@ class GameCommands {
     const notification = document.createElement("div");
     notification.className = `game-command-notification ${type}`;
     notification.innerHTML = message;
+
+    // Ensure background color is set for consistency
+    notification.style.backgroundColor = "#1f2335";
+
     notificationContainer.appendChild(notification);
 
     // Remove after animation completes
@@ -1110,7 +1114,7 @@ ${savedSettingsText}`;
   startCustomPractice(args) {
     if (args.length === 0) {
       this.showNotification(
-        "Usage: /prac <word1> <word2> ... - Start practice session with specified words",
+        "Usage: /prac &lt;word1&gt; &lt;word2&gt; ... - Start practice session with specified words",
         "info",
       );
       return;
