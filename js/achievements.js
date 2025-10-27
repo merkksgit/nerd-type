@@ -341,6 +341,17 @@ class AchievementSystem {
         icon: "fa-solid fa-language",
         category: "mastery",
         secret: false,
+        progressTarget: 3,
+        getProgress: function (stats) {
+          if (!stats.languageWPM) return 0;
+
+          let completedLanguages = 0;
+          if (stats.languageWPM.english >= 50) completedLanguages++;
+          if (stats.languageWPM.finnish >= 50) completedLanguages++;
+          if (stats.languageWPM.swedish >= 50) completedLanguages++;
+
+          return completedLanguages;
+        },
         check: function (stats, gameData) {
           // Log language WPM stats for debugging
           console.log(
@@ -1838,24 +1849,80 @@ class AchievementSystem {
             progressText.style.marginBottom = "8px";
             progressText.style.color = "#c0caf5";
 
-            // Progress bar container
-            const progressBarContainer = document.createElement("div");
-            progressBarContainer.style.width = "100%";
-            progressBarContainer.style.height = "8px";
-            progressBarContainer.style.backgroundColor = "#3b4261";
-            progressBarContainer.style.borderRadius = "4px";
-            progressBarContainer.style.overflow = "hidden";
+            // Special handling for polyglot programmer achievement
+            if (achievement.id === "polyglot_programmer") {
+              const stats = this.achievementsData.stats;
+              const languages = [
+                {
+                  name: "English",
+                  wpm: stats.languageWPM?.english || 0,
+                  completed: (stats.languageWPM?.english || 0) >= 50,
+                },
+                {
+                  name: "Finnish",
+                  wpm: stats.languageWPM?.finnish || 0,
+                  completed: (stats.languageWPM?.finnish || 0) >= 50,
+                },
+                {
+                  name: "Swedish",
+                  wpm: stats.languageWPM?.swedish || 0,
+                  completed: (stats.languageWPM?.swedish || 0) >= 50,
+                },
+              ];
 
-            // Progress bar fill
-            const progressBarFill = document.createElement("div");
-            progressBarFill.style.width = `${progressPercent}%`;
-            progressBarFill.style.height = "100%";
-            progressBarFill.style.backgroundColor = "#bb9af7";
-            progressBarFill.style.transition = "width 0.3s ease";
+              // Create language progress list
+              const languageList = document.createElement("div");
+              languageList.style.fontSize = "0.75rem";
+              languageList.style.marginTop = "8px";
+              languageList.style.display = "flex";
+              languageList.style.flexDirection = "row";
+              languageList.style.justifyContent = "space-around";
+              languageList.style.gap = "8px";
+              languageList.style.color = "#c0caf5";
 
-            progressBarContainer.appendChild(progressBarFill);
-            progressContainer.appendChild(progressText);
-            progressContainer.appendChild(progressBarContainer);
+              languages.forEach((lang) => {
+                const langItem = document.createElement("div");
+                langItem.style.display = "flex";
+                langItem.style.alignItems = "center";
+                langItem.style.justifyContent = "center";
+
+                const icon = document.createElement("i");
+                icon.className = lang.completed
+                  ? "fa-solid fa-circle-check"
+                  : "fa-regular fa-circle";
+                icon.style.marginRight = "6px";
+                icon.style.color = lang.completed ? "#9ece6a" : "#565f89";
+
+                const text = document.createTextNode(lang.name);
+
+                langItem.appendChild(icon);
+                langItem.appendChild(text);
+                languageList.appendChild(langItem);
+              });
+
+              progressContainer.appendChild(progressText);
+              progressContainer.appendChild(languageList);
+            } else {
+              // Progress bar container
+              const progressBarContainer = document.createElement("div");
+              progressBarContainer.style.width = "100%";
+              progressBarContainer.style.height = "8px";
+              progressBarContainer.style.backgroundColor = "#3b4261";
+              progressBarContainer.style.borderRadius = "4px";
+              progressBarContainer.style.overflow = "hidden";
+
+              // Progress bar fill
+              const progressBarFill = document.createElement("div");
+              progressBarFill.style.width = `${progressPercent}%`;
+              progressBarFill.style.height = "100%";
+              progressBarFill.style.backgroundColor = "#bb9af7";
+              progressBarFill.style.transition = "width 0.3s ease";
+
+              progressBarContainer.appendChild(progressBarFill);
+              progressContainer.appendChild(progressText);
+              progressContainer.appendChild(progressBarContainer);
+            }
+
             body.appendChild(progressContainer);
           } else {
             lockedText.textContent = "Locked";
