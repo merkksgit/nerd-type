@@ -1749,7 +1749,7 @@ class AchievementSystem {
     // Add each achievement
     achievements.forEach((achievement) => {
       const col = document.createElement("div");
-      col.className = "col-12 col-md-4 pt-3";
+      col.className = "col-12 col-md-6 col-lg-4 pt-3";
 
       const card = document.createElement("div");
       card.className = `card custom-achievement-card ${achievement.unlocked ? "" : "achievement-locked"}`;
@@ -1876,8 +1876,9 @@ class AchievementSystem {
               languageList.style.marginTop = "8px";
               languageList.style.display = "flex";
               languageList.style.flexDirection = "row";
-              languageList.style.justifyContent = "space-around";
-              languageList.style.gap = "8px";
+              languageList.style.flexWrap = "wrap";
+              languageList.style.justifyContent = "center";
+              languageList.style.gap = "12px";
               languageList.style.color = "#c0caf5";
 
               languages.forEach((lang) => {
