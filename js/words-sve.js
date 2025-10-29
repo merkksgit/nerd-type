@@ -102,7 +102,6 @@ export const words = [
   "spade",
   "hjälm",
   "uttag",
-  "trofé",
   "bris",
   "skylt",
   "motor",
