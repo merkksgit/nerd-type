@@ -172,6 +172,7 @@ let hasStartedTyping = false;
 let totalKeystrokes = 0;
 let correctKeystrokes = 0;
 let gameStartTime = null;
+let gameEndTime = null;
 let gameEnded = false;
 
 // Helper function to sync game state with window object
@@ -619,6 +620,9 @@ window.updateKeypressSoundSetting = updateKeypressSoundSetting;
 // Create debug display instance
 const debugDisplay = new DebugDisplay();
 
+// Expose debug display globally for popup access
+window.debugDisplay = debugDisplay;
+
 // Load saved settings or use defaults for Classic Mode
 let gameSettings = storageManager.getGameSettings();
 
@@ -894,8 +898,15 @@ function updateDebugInfo() {
       : "0.0";
   const wrongKeystrokes = totalKeystrokes - correctKeystrokes;
 
-  // Calculate time properly
-  let effectiveTime = gameStartTime ? Date.now() - gameStartTime : 0;
+  // Calculate time properly - freeze when game ends
+  let effectiveTime;
+  if (gameEnded && gameEndTime) {
+    effectiveTime = gameEndTime - gameStartTime;
+  } else if (gameStartTime) {
+    effectiveTime = Date.now() - gameStartTime;
+  } else {
+    effectiveTime = 0;
+  }
 
   const debugCurrentWord = hasStartedTyping
     ? addPunctuationToWord(words[currentWordIndex], currentWordIndex)
@@ -2101,6 +2112,9 @@ function countDown() {
     timeLeft--;
     updateTimer();
   } else if (timeLeft <= 0) {
+    gameEnded = true;
+    gameEndTime = Date.now();
+    syncGameStateToWindow();
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal("", false);
@@ -2172,6 +2186,9 @@ function totalTimeCount() {
     JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
   const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
   if (totalTimeSpent >= goalTime) {
+    gameEnded = true;
+    gameEndTime = Date.now();
+    syncGameStateToWindow();
     clearInterval(countDownInterval);
     clearInterval(totalTimeInterval);
     showGameOverModal(getRandomSuccessMessage(), true);
@@ -2275,6 +2292,7 @@ function updateZenTimer() {
     wordsTyped.length >= zenWordGoal
   ) {
     gameEnded = true;
+    gameEndTime = Date.now();
     syncGameStateToWindow();
     clearInterval(totalTimeInterval);
     showGameOverModal(getRandomSuccessMessage(), true);
@@ -2467,6 +2485,7 @@ function resetGameState() {
   correctKeystrokes = 0;
   totalTimeSpent = 0;
   gameStartTime = null;
+  gameEndTime = null;
   sessionStartTime = null;
 
   // Reset timing and tracking arrays
@@ -2745,6 +2764,7 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
 
       if (isHardcoreMode && !gameEnded) {
         gameEnded = true;
+        gameEndTime = Date.now();
         syncGameStateToWindow();
         if (!isZenMode) {
           clearInterval(countDownInterval);
@@ -2998,6 +3018,7 @@ function checkGameCompletion() {
 
   if (isZenMode && wordsTyped.length >= zenWordGoal) {
     gameEnded = true;
+    gameEndTime = Date.now();
     syncGameStateToWindow();
     clearInterval(totalTimeInterval);
     showGameOverModal(getRandomSuccessMessage(), true);
@@ -3011,6 +3032,7 @@ function checkGameCompletion() {
 
     if (wordsTyped.length >= wordsGoal) {
       gameEnded = true;
+      gameEndTime = Date.now();
       syncGameStateToWindow();
       clearInterval(countDownInterval);
       clearInterval(totalTimeInterval);

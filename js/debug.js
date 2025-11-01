@@ -10,6 +10,8 @@ export class DebugDisplay {
     this.initialY = 0;
     this.xOffset = 0;
     this.yOffset = 0;
+    this.popupMode = localStorage.getItem("debugPopupMode") === "true";
+    this.latestGameData = null;
 
     // Check localStorage for visibility state
     const isVisible = localStorage.getItem("debugWindowVisible") === "true";
@@ -282,6 +284,9 @@ export class DebugDisplay {
   }
 
   updateInfo(gameData) {
+    // Store the latest game data for popup access
+    this.latestGameData = gameData;
+
     const {
       currentWord,
       wordLength,
@@ -416,5 +421,131 @@ export class DebugDisplay {
       Date: ${currentDate}<br>
       Last Game Date: ${achievementData.stats.lastGameDate || "None"}
     `;
+  }
+
+  getDebugData(gameData) {
+    const {
+      currentWord,
+      wordLength,
+      totalCharactersTyped,
+      gameStartTime,
+      wordsTyped,
+      hasStartedTyping,
+      accuracy,
+      correctKeystrokes,
+      wrongKeystrokes,
+      totalKeystrokes,
+      effectiveTime,
+      timeLeft,
+    } = gameData;
+
+    const settings = JSON.parse(localStorage.getItem("gameSettings")) || {
+      timeLimit: 30,
+      bonusTime: 3,
+      initialTime: 10,
+      goalPercentage: 100,
+      currentMode: "classic",
+    };
+
+    const achievementData = JSON.parse(
+      localStorage.getItem("nerdtype_achievements"),
+    ) || {
+      stats: { gamesPlayedToday: 0, lastGameDate: null },
+    };
+
+    const difficultyMultiplier = this.calculateDifficultyMultiplier(settings);
+
+    let currentTime;
+    if (effectiveTime !== undefined) {
+      currentTime = effectiveTime / 1000;
+    } else {
+      currentTime = gameStartTime ? (Date.now() - gameStartTime) / 1000 : 0;
+    }
+
+    const timeInMinutes = currentTime / 60;
+    const currentWPM =
+      gameStartTime && timeInMinutes > 0
+        ? Math.round(totalCharactersTyped / 5 / timeInMinutes)
+        : 0;
+
+    const refTimeLimit = 30;
+    const refBonusTime = 3;
+    const refInitialTime = 10;
+
+    const timeLimitFactor = Math.min(
+      3,
+      Math.max(1, settings.timeLimit) / refTimeLimit,
+    );
+    const bonusTimeFactor = Math.min(
+      3,
+      refBonusTime / Math.max(0.5, settings.bonusTime),
+    );
+    const initialTimeFactor = Math.min(
+      3,
+      refInitialTime / Math.max(0.5, settings.initialTime),
+    );
+
+    const accuracyValue = parseFloat(accuracy) / 100;
+    const safeWPM = Math.max(1, currentWPM);
+
+    const baseScore = Math.round(
+      safeWPM * 10 * (accuracyValue * accuracyValue) * difficultyMultiplier,
+    );
+
+    const energyBonus =
+      timeLeft !== undefined
+        ? Math.round(Math.min(timeLeft * 5, baseScore * 0.2))
+        : 0;
+
+    const finalScore = Math.round(baseScore + energyBonus);
+    const currentDate = new Date().toLocaleDateString();
+
+    return {
+      currentWord,
+      wordLength,
+      totalCharactersTyped,
+      currentTime,
+      currentWPM,
+      wordsTyped: wordsTyped.length,
+      accuracy,
+      correctKeystrokes,
+      wrongKeystrokes,
+      totalKeystrokes,
+      gameStartTime: gameStartTime ? "Yes" : "No",
+      hasStartedTyping: hasStartedTyping ? "Yes" : "No",
+      timeLeft: timeLeft !== undefined ? timeLeft : "N/A",
+      settings,
+      difficultyMultiplier,
+      timeLimitFactor,
+      bonusTimeFactor,
+      initialTimeFactor,
+      baseScore,
+      energyBonus,
+      finalScore,
+      achievementData,
+      currentDate,
+    };
+  }
+
+  getAchievementsList() {
+    if (typeof window.achievementSystem === "undefined") {
+      return null;
+    }
+
+    const achievements = [];
+    Object.entries(window.achievementSystem.achievements).forEach(
+      ([id, achievement]) => {
+        achievements.push({
+          id,
+          name: achievement.name,
+          unlocked:
+            !!window.achievementSystem.achievementsData.unlockedAchievements[
+              id
+            ],
+        });
+      },
+    );
+
+    return achievements;
   }
 }

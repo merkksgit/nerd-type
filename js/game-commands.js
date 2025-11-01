@@ -6,12 +6,9 @@ import {
   loadWordList,
   availableWordLists,
 } from "./word-list-manager.js";
-import { DebugDisplay } from "./debug.js";
 
 class GameCommands {
   constructor() {
-    // Initialize debug instances
-    this.debugDisplay = new DebugDisplay();
     // Load saved settings from localStorage or use defaults
     this.gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
       timeLimit: 30,
@@ -70,6 +67,7 @@ class GameCommands {
       "/data": this.toggleDataCollection.bind(this),
       "/discord": this.toggleDiscordWebhook.bind(this),
       "/debug": this.toggleDebug.bind(this),
+      "/debug-achievements": this.toggleAchievementsDebug.bind(this),
       "/rm": this.removeData.bind(this),
       "/prac": this.startCustomPractice.bind(this),
       "/offscreen": this.openOffscreenWindow.bind(this),
@@ -1103,12 +1101,39 @@ ${savedSettingsText}`;
 
   // Toggle debug display
   toggleDebug() {
-    this.showNotification("Toggling debug display...", "info");
-    this.debugDisplay.toggle();
-    // Note: Debug command typically reloads the page
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
+    const isPopupActive = localStorage.getItem("debug_popup_active") === "true";
+
+    if (
+      isPopupActive &&
+      window.debugPopupWindow &&
+      !window.debugPopupWindow.closed
+    ) {
+      window.debugPopupWindow.close();
+      localStorage.setItem("debug_popup_active", "false");
+      this.showNotification("Debug popup closed", "info");
+    } else {
+      this.createDebugPopup();
+      this.showNotification("Debug popup opened", "info");
+    }
+  }
+
+  // Toggle achievements debug display
+  toggleAchievementsDebug() {
+    const isPopupActive =
+      localStorage.getItem("achievements_debug_popup_active") === "true";
+
+    if (
+      isPopupActive &&
+      window.achievementsDebugPopupWindow &&
+      !window.achievementsDebugPopupWindow.closed
+    ) {
+      window.achievementsDebugPopupWindow.close();
+      localStorage.setItem("achievements_debug_popup_active", "false");
+      this.showNotification("Achievements debug popup closed", "info");
+    } else {
+      this.createAchievementsDebugPopup();
+      this.showNotification("Achievements debug popup opened", "info");
+    }
   }
 
   startCustomPractice(args) {
@@ -1221,6 +1246,408 @@ ${savedSettingsText}`;
     } catch (error) {
       this.showNotification("Error opening offscreen window", "error");
     }
+  }
+
+  createDebugPopup() {
+    if (window.debugPopupWindow && !window.debugPopupWindow.closed) {
+      window.debugPopupWindow.close();
+    }
+
+    localStorage.setItem("debug_popup_active", "true");
+
+    const popup = window.open(
+      "",
+      "debugWindow",
+      "width=600,height=800,resizable=yes,scrollbars=yes,menubar=no,toolbar=no,location=no,status=no",
+    );
+
+    if (!popup) {
+      this.showNotification(
+        "Popup blocked! Please allow popups for this site.",
+        "error",
+      );
+      return;
+    }
+
+    window.debugPopupWindow = popup;
+
+    popup.document.write(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NerdType - Debug Window</title>
+        <style>
+          body {
+            background-color: #24283b;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 14px;
+          }
+
+          h2 {
+            color: #ff9e64;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 16px;
+          }
+
+          #debugInfo {
+            background-color: #24283b;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+          }
+
+          .meter-bar {
+            width: 100%;
+            background-color: #333;
+            height: 6px;
+            margin: 4px 0;
+          }
+
+          .meter-fill {
+            height: 6px;
+          }
+
+          .close-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #f7768e;
+            color: #24283b;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+          }
+
+          .close-btn:hover {
+            background-color: #ff7a93;
+          }
+        </style>
+      </head>
+      <body>
+        <button class="close-btn" onclick="closeDebugWindow()">Close</button>
+
+        <h2>Game Stats</h2>
+        <div id="debugInfo">Loading...</div>
+
+        <script>
+          function closeDebugWindow() {
+            if (window.opener && !window.opener.closed) {
+              if (window.opener.localStorage) {
+                window.opener.localStorage.setItem('debug_popup_active', 'false');
+              }
+            }
+            window.close();
+          }
+
+          function createMeterBar(value, max, color) {
+            const percentage = Math.min(100, Math.max(0, (value / max) * 100));
+            return \`
+              <div class="meter-bar">
+                <div class="meter-fill" style="width: \${percentage}%; background-color: \${color};"></div>
+              </div>
+            \`;
+          }
+
+          function updateDebugInfo(data) {
+            const debugDiv = document.getElementById('debugInfo');
+            debugDiv.innerHTML = \`
+              Current Word: \${data.currentWord} (\${data.wordLength} chars)<br>
+              Total Characters: \${data.totalCharactersTyped}<br>
+              Standard Words (chars/5): \${(data.totalCharactersTyped / 5).toFixed(2)}<br>
+              Time Elapsed: \${data.currentTime.toFixed(2)}s<br>
+              Current WPM: \${data.currentWPM}<br>
+              Words Typed: \${data.wordsTyped}<br>
+              Accuracy: \${data.accuracy}%<br>
+              Correct Keys: \${data.correctKeystrokes}<br>
+              Wrong Keys: \${data.wrongKeystrokes}<br>
+              Total Keys: \${data.totalKeystrokes}<br>
+              Timer Started: \${data.gameStartTime}<br>
+              Typing Started: \${data.hasStartedTyping}<br>
+              Energy Left: \${data.timeLeft}<br>
+              <br>
+              <span style="color: #ff9e64;">Mode: \${data.settings.currentMode} (Multiplier: \${data.difficultyMultiplier.toFixed(2)}x)</span><br>
+              Goal Words Factor: \${data.timeLimitFactor.toFixed(2)}x<br>
+              \${createMeterBar(data.timeLimitFactor, 3, '#ff9e64')}
+              Bonus Energy Factor: \${data.bonusTimeFactor.toFixed(2)}x<br>
+              \${createMeterBar(data.bonusTimeFactor, 3, '#7aa2f7')}
+              Initial Energy Factor: \${data.initialTimeFactor.toFixed(2)}x<br>
+              \${createMeterBar(data.initialTimeFactor, 3, '#bb9af7')}
+              Combined Difficulty:<br>
+              \${createMeterBar(data.difficultyMultiplier - 0.75, 1, '#c3e88d')}
+              <br>
+              <span style="color: #ff9e64;">Score Breakdown:</span><br>
+              Base Score: \${data.baseScore}<br>
+              Energy Bonus: \${data.energyBonus}<br>
+              Final Score: \${data.finalScore}<br>
+              <br>
+              <span style="color: #ff9e64;">Achievement Data:</span><br>
+              Games Played Today: \${data.achievementData.stats.gamesPlayedToday}<br>
+              Date: \${data.currentDate}<br>
+              Last Game Date: \${data.achievementData.stats.lastGameDate || 'None'}
+            \`;
+          }
+
+          function requestUpdate() {
+            if (window.opener && !window.opener.closed) {
+              try {
+                if (window.opener.debugDisplay) {
+                  const gameData = window.opener.debugDisplay.latestGameData;
+                  if (gameData) {
+                    const debugData = window.opener.debugDisplay.getDebugData(gameData);
+                    updateDebugInfo(debugData);
+                  }
+                }
+              } catch (error) {
+                console.error('Error updating debug info:', error);
+              }
+            }
+          }
+
+          window.addEventListener('message', function(event) {
+            if (event.origin === window.location.origin && event.data.type === 'updateDebug') {
+              updateDebugInfo(event.data.debugData);
+            }
+          });
+
+          window.addEventListener('beforeunload', function() {
+            if (window.opener && !window.opener.closed) {
+              if (window.opener.localStorage) {
+                window.opener.localStorage.setItem('debug_popup_active', 'false');
+              }
+            }
+          });
+
+          setInterval(requestUpdate, 100);
+
+          requestUpdate();
+        </script>
+      </body>
+      </html>
+    `);
+
+    popup.document.close();
+  }
+
+  createAchievementsDebugPopup() {
+    if (
+      window.achievementsDebugPopupWindow &&
+      !window.achievementsDebugPopupWindow.closed
+    ) {
+      window.achievementsDebugPopupWindow.close();
+    }
+
+    localStorage.setItem("achievements_debug_popup_active", "true");
+
+    const popup = window.open(
+      "",
+      "achievementsDebugWindow",
+      "width=500,height=700,resizable=yes,scrollbars=yes,menubar=no,toolbar=no,location=no,status=no",
+    );
+
+    if (!popup) {
+      this.showNotification(
+        "Popup blocked! Please allow popups for this site.",
+        "error",
+      );
+      return;
+    }
+
+    window.achievementsDebugPopupWindow = popup;
+
+    popup.document.write(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>NerdType - Achievements Debugger</title>
+        <style>
+          body {
+            background-color: #24283b;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 14px;
+          }
+
+          h2 {
+            color: #ff9e64;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 18px;
+          }
+
+          #achievementCheckboxes {
+            background-color: #24283b;
+            padding: 15px;
+            border-radius: 5px;
+          }
+
+          #achievementList {
+            overflow-y: auto;
+            max-height: calc(100vh - 150px);
+          }
+
+          .achievement-item {
+            margin-bottom: 8px;
+            cursor: pointer;
+          }
+
+          .achievement-item input {
+            margin-right: 8px;
+            cursor: pointer;
+          }
+
+          .achievement-item label {
+            cursor: pointer;
+            color: #00ff00;
+          }
+
+          .reset-btn {
+            background: rgba(255, 68, 68, 0.8);
+            color: #00ff00;
+            border: none;
+            padding: 8px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: monospace;
+            border-radius: 4px;
+          }
+
+          .reset-btn:hover {
+            background: rgba(255, 68, 68, 1);
+          }
+
+          .close-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #f7768e;
+            color: #24283b;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+          }
+
+          .close-btn:hover {
+            background-color: #ff7a93;
+          }
+        </style>
+      </head>
+      <body>
+        <button class="close-btn" onclick="closeAchievementsDebugWindow()">Close</button>
+
+        <h2>Achievement Debugger</h2>
+        <div id="achievementCheckboxes">
+          <button class="reset-btn" onclick="resetAllAchievements()">Reset All Achievements</button>
+          <div id="achievementList"></div>
+        </div>
+
+        <script>
+          function closeAchievementsDebugWindow() {
+            if (window.opener && !window.opener.closed) {
+              if (window.opener.localStorage) {
+                window.opener.localStorage.setItem('achievements_debug_popup_active', 'false');
+              }
+            }
+            window.close();
+          }
+
+          function updateAchievements(achievements) {
+            if (!achievements) return;
+
+            const listDiv = document.getElementById('achievementList');
+            listDiv.innerHTML = achievements.map(ach => \`
+              <div class="achievement-item">
+                <input
+                  type="checkbox"
+                  id="ach-\${ach.id}"
+                  \${ach.unlocked ? 'checked' : ''}
+                  onchange="toggleAchievement('\${ach.id}', this.checked)"
+                >
+                <label for="ach-\${ach.id}">\${ach.name}</label>
+              </div>
+            \`).join('');
+          }
+
+          function toggleAchievement(id, checked) {
+            if (window.opener && !window.opener.closed && window.opener.achievementSystem) {
+              if (checked) {
+                window.opener.achievementSystem.achievementsData.unlockedAchievements[id] = {
+                  unlockedAt: new Date().toISOString()
+                };
+                window.opener.achievementSystem.saveData();
+                const achievement = window.opener.achievementSystem.achievements[id];
+                if (achievement) {
+                  window.opener.achievementSystem.showNotification(achievement);
+                }
+              } else {
+                delete window.opener.achievementSystem.achievementsData.unlockedAchievements[id];
+                window.opener.achievementSystem.saveData();
+              }
+            }
+          }
+
+          function resetAllAchievements() {
+            if (window.opener && !window.opener.closed && window.opener.achievementSystem) {
+              window.opener.achievementSystem.resetAchievements();
+              requestUpdate();
+            }
+          }
+
+          function requestUpdate() {
+            if (window.opener && !window.opener.closed) {
+              try {
+                if (window.opener.debugDisplay) {
+                  const achievements = window.opener.debugDisplay.getAchievementsList();
+                  updateAchievements(achievements);
+                }
+              } catch (error) {
+                console.error('Error updating achievements:', error);
+              }
+            }
+          }
+
+          window.addEventListener('message', function(event) {
+            if (event.origin === window.location.origin && event.data.type === 'updateAchievements') {
+              updateAchievements(event.data.achievements);
+            }
+          });
+
+          window.addEventListener('beforeunload', function() {
+            if (window.opener && !window.opener.closed) {
+              if (window.opener.localStorage) {
+                window.opener.localStorage.setItem('achievements_debug_popup_active', 'false');
+              }
+            }
+          });
+
+          setInterval(requestUpdate, 1000);
+
+          requestUpdate();
+        </script>
+      </body>
+      </html>
+    `);
+
+    popup.document.close();
   }
 
   createOffscreenPopup(wordList, showNotification = true) {
@@ -1732,15 +2159,47 @@ ${savedSettingsText}`;
       }, 100); // Wait 100ms for game to initialize
     }
   }
+
+  checkAndRestoreDebugPopup() {
+    const wasDebugActive =
+      localStorage.getItem("debug_popup_active") === "true";
+
+    if (wasDebugActive) {
+      setTimeout(() => {
+        this.createDebugPopup();
+      }, 100);
+    }
+  }
+
+  checkAndRestoreAchievementsDebugPopup() {
+    const wasAchievementsDebugActive =
+      localStorage.getItem("achievements_debug_popup_active") === "true";
+
+    if (wasAchievementsDebugActive) {
+      setTimeout(() => {
+        this.createAchievementsDebugPopup();
+      }, 100);
+    }
+  }
 }
 
 // Create and initialize game commands
 const gameCommands = new GameCommands();
+
+// Expose gameCommands globally for popup access
+window.gameCommands = gameCommands;
+
 document.addEventListener("DOMContentLoaded", () => {
   gameCommands.init();
 
   // Check if we should restore offscreen popup after page reload
   gameCommands.checkAndRestoreOffscreenPopup();
+
+  // Check if we should restore debug popup after page reload
+  gameCommands.checkAndRestoreDebugPopup();
+
+  // Check if we should restore achievements debug popup after page reload
+  gameCommands.checkAndRestoreAchievementsDebugPopup();
 });
 
 export default gameCommands;
