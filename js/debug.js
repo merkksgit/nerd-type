@@ -375,13 +375,29 @@ export class DebugDisplay {
       safeWPM * 10 * (accuracyValue * accuracyValue) * difficultyMultiplier,
     );
 
+    // Calculate precision multiplier (matches game logic)
+    const isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
+    let precisionMultiplier = 1.0;
+    const peakStreak = gameData.peakPrecisionStreak || 0;
+    if (!isZenMode && peakStreak >= 5) {
+      const perfectWordsAboveFive = Math.max(0, peakStreak - 5);
+      const bonusPercentage = perfectWordsAboveFive * 0.02;
+      precisionMultiplier = 1.0 + bonusPercentage;
+    }
+
+    const precisionBonusScore = Math.round(
+      baseScore * (precisionMultiplier - 1.0),
+    );
+
     // Simulate energy bonus
     const energyBonus =
       timeLeft !== undefined
         ? Math.round(Math.min(timeLeft * 5, baseScore * 0.2))
         : 0;
 
-    const finalScore = Math.round(baseScore + energyBonus);
+    const finalScore = Math.round(
+      baseScore + precisionBonusScore + energyBonus,
+    );
 
     // Get the current date for display
     const currentDate = new Date().toLocaleDateString();
@@ -413,6 +429,7 @@ export class DebugDisplay {
       <br>
       <span style="color: #ff9e64;">Score Breakdown:</span><br>
       Base Score: ${baseScore}<br>
+      Precision Bonus: ${precisionBonusScore} (Streak: ${peakStreak}, x${precisionMultiplier.toFixed(2)})<br>
       Energy Bonus: ${energyBonus}<br>
       Final Score: ${finalScore}
       <br>
@@ -437,6 +454,7 @@ export class DebugDisplay {
       totalKeystrokes,
       effectiveTime,
       timeLeft,
+      peakPrecisionStreak,
     } = gameData;
 
     const settings = JSON.parse(localStorage.getItem("gameSettings")) || {
@@ -492,12 +510,27 @@ export class DebugDisplay {
       safeWPM * 10 * (accuracyValue * accuracyValue) * difficultyMultiplier,
     );
 
+    // Calculate precision multiplier (matches game logic)
+    const isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
+    let precisionMultiplier = 1.0;
+    if (!isZenMode && peakPrecisionStreak >= 5) {
+      const perfectWordsAboveFive = Math.max(0, peakPrecisionStreak - 5);
+      const bonusPercentage = perfectWordsAboveFive * 0.02;
+      precisionMultiplier = 1.0 + bonusPercentage;
+    }
+
+    const precisionBonusScore = Math.round(
+      baseScore * (precisionMultiplier - 1.0),
+    );
+
     const energyBonus =
       timeLeft !== undefined
         ? Math.round(Math.min(timeLeft * 5, baseScore * 0.2))
         : 0;
 
-    const finalScore = Math.round(baseScore + energyBonus);
+    const finalScore = Math.round(
+      baseScore + precisionBonusScore + energyBonus,
+    );
     const currentDate = new Date().toLocaleDateString();
 
     return {
@@ -520,6 +553,9 @@ export class DebugDisplay {
       bonusTimeFactor,
       initialTimeFactor,
       baseScore,
+      precisionBonusScore,
+      precisionMultiplier,
+      peakPrecisionStreak: peakPrecisionStreak || 0,
       energyBonus,
       finalScore,
       achievementData,

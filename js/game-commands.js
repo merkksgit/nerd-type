@@ -1388,6 +1388,7 @@ ${savedSettingsText}`;
               <br>
               <span style="color: #ff9e64;">Score Breakdown:</span><br>
               Base Score: \${data.baseScore}<br>
+              Precision Bonus: \${data.precisionBonusScore} (Streak: \${data.peakPrecisionStreak}, x\${data.precisionMultiplier.toFixed(2)})<br>
               Energy Bonus: \${data.energyBonus}<br>
               Final Score: \${data.finalScore}<br>
               <br>

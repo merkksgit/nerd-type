@@ -924,6 +924,7 @@ function updateDebugInfo() {
     totalKeystrokes,
     effectiveTime,
     timeLeft,
+    peakPrecisionStreak,
   });
 }
 
