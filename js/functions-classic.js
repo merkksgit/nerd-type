@@ -3919,7 +3919,7 @@ async function displayModernGameOverContent(data) {
     }
   }
 
-  // Handle Enter key to restart, Ctrl+M for practice mistakes, and Ctrl+Enter to reset
+  // Handle Enter key to restart, Ctrl+M for practice mistakes, and Ctrl+Enter for quick restart
   const handleKeyPress = (e) => {
     if (e.ctrlKey && e.key === "Enter") {
       e.preventDefault();
@@ -3933,13 +3933,8 @@ async function displayModernGameOverContent(data) {
         gameOverModal.hide();
       }
 
-      // Reset the game to default settings
-      if (
-        window.gameCommands &&
-        typeof window.gameCommands.resetGame === "function"
-      ) {
-        window.gameCommands.resetGame();
-      }
+      // Quick restart without changing settings
+      resetGameState();
     } else if (e.key === "Enter") {
       // Close the game over modal
       const gameOverModal = bootstrap.Modal.getInstance(
