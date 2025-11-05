@@ -677,7 +677,7 @@ class AchievementSystem {
       i_know_kung_fu: {
         id: "i_know_kung_fu",
         name: "I Know Kung Fu",
-        description: "Complete 30 words in practice mode",
+        description: "Complete 30 words in a /prac session",
         icon: "fa-solid fa-user-ninja",
         category: "gameplay",
         secret: false,
