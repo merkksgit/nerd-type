@@ -355,6 +355,21 @@ div h2 {
   display: inline-block;
 }
 
+/* Buttons container layout */
+#buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Increase button spacing on mobile devices */
+@media (max-width: 768px) {
+  #buttons {
+    gap: 4rem !important;
+  }
+}
+
 /* Common button hover effects */
 #returnToGameBtn:hover,
 #restartGameBtn:hover,
