@@ -16,8 +16,6 @@
 10. [Voice & Tone](#voice--tone)
 11. [Usage Guidelines](#usage-guidelines)
 
----
-
 ## Brand Overview
 
 ### Mission Statement
@@ -40,8 +38,6 @@ NerdType is a fast-paced, minimalistic typing game designed to help users improv
 - Students looking to improve typing speed
 - Anyone seeking a minimalist typing practice tool
 
----
-
 ## Brand Identity
 
 ### Brand Values
@@ -55,8 +51,6 @@ NerdType is a fast-paced, minimalistic typing game designed to help users improv
 ### Design Philosophy
 
 NerdType's design is rooted in terminal aesthetics and developer tools, creating a familiar environment for its target audience. The interface prioritizes functionality over decoration, with every element serving a clear purpose in the typing experience.
-
----
 
 ## Color Palette
 
@@ -139,8 +133,6 @@ All color combinations meet **WCAG 2.1 AA standards** for contrast:
 - White text (#c0caf5) on dark backgrounds: 12:1 ratio
 - Blue accent (#7aa2f7) on dark background: 7.5:1 ratio
 - Orange accent (#ff9e64) on dark background: 8:1 ratio
-
----
 
 ## Typography
 
@@ -230,8 +222,6 @@ letter-spacing: -0.1em;
 4. **Alignment**: Left-align text for readability; center-align for titles
 5. **Line Height**: Use 1.5-1.6 for optimal readability
 
----
-
 ## Logo & Assets
 
 ### Primary Logo
@@ -309,8 +299,6 @@ Rank Medals:
 - nt-rank2-medal-number.png
 - nt-rank3-medal-number.png
 ```
-
----
 
 ## UI Components
 
@@ -549,8 +537,6 @@ input[type="range"]::-webkit-slider-thumb {
 }
 ```
 
----
-
 ## Iconography
 
 ### Icon System
@@ -648,8 +634,6 @@ body.cursor-orange button {
 4. **Spacing**: Maintain 8px margin between icon and text
 5. **Hover**: Scale to 1.3x on hover for social icons
 
----
-
 ## Spacing & Layout
 
 ### Spacing Scale
@@ -722,8 +706,6 @@ NerdType uses a consistent 8px spacing system:
 3. **Grid**: Use Bootstrap 12-column grid system
 4. **Alignment**: Center-align game elements, left-align content
 5. **Safe Areas**: Account for mobile safe areas with `env()` values
-
----
 
 ## Interactive Elements
 
@@ -850,8 +832,6 @@ button:focus {
 }
 ```
 
----
-
 ## Voice & Tone
 
 ### Writing Style
@@ -941,8 +921,6 @@ made mistakes on.
 - "Utilize" (use "use")
 - "Endeavor" (use "try")
 - Overly technical jargon
-
----
 
 ## Usage Guidelines
 
@@ -1063,8 +1041,6 @@ NerdType adheres to **WCAG 2.1 Level AA** standards:
 4. **Minification**: Minify CSS and JS for production
 5. **Lazy Loading**: Load images and heavy resources as needed
 
----
-
 ## Implementation Checklist
 
 When creating new pages or features, ensure:
@@ -1082,8 +1058,6 @@ When creating new pages or features, ensure:
 - [ ] Keyboard navigation functional
 - [ ] Touch targets minimum 44x44px on mobile
 
----
-
 ## Brand Evolution
 
 This brand guide is a living document. As NerdType evolves, these guidelines may be updated to reflect new features, design improvements, or user feedback.
@@ -1092,8 +1066,6 @@ This brand guide is a living document. As NerdType evolves, these guidelines may
 
 - **v1.0** (November 2025): Initial brand guidelines document
 
----
-
 ## Contact & Questions
 
 For questions about brand usage or design decisions:
@@ -1101,7 +1073,5 @@ For questions about brand usage or design decisions:
 - **GitHub**: [github.com/merkksgit/nerd-type](https://github.com/merkksgit/nerd-type)
 - **Discord**: [NerdType Community](https://discord.gg/wXbYNzf4)
 - **Contact Page**: [nerdtypegame.com/pages/contact.html](https://www.nerdtypegame.com/pages/contact.html)
-
----
 
 **© 2025 NerdType** | Fast-Paced Minimalistic Typing Game
