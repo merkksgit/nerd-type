@@ -389,8 +389,52 @@ class StatsCard {
       usernameElement.textContent = savedUsername;
     }
 
+    // Display level for logged-in users
+    await this.loadAndDisplayLevel();
+
     // Display account creation date if user is logged in
     await this.loadAndDisplayAccountCreation();
+  }
+
+  async loadAndDisplayLevel() {
+    const levelSectionElement = document.getElementById("statsLevelSection");
+    const levelElement = document.getElementById("statsLevel");
+    const levelProgressElement = document.getElementById("statsLevelProgress");
+
+    if (!levelSectionElement || !levelElement) return;
+
+    // Only show level for logged-in users
+    const currentUser = window.getCurrentUser && window.getCurrentUser();
+    if (!currentUser || !window.levelSystem) {
+      if (levelSectionElement) levelSectionElement.style.display = "none";
+      return;
+    }
+
+    // Get level info
+    const levelInfo = window.levelSystem.getLevelInfo();
+
+    // Update level badge
+    if (levelElement) {
+      levelElement.textContent = `Level ${levelInfo.level}`;
+    }
+
+    // Update progress bar
+    if (levelProgressElement) {
+      const progressPercentage = levelInfo.progress;
+      levelProgressElement.innerHTML = `
+        <div class="chart-level-progress-label">
+          ${levelInfo.currentXP} / ${levelInfo.xpForNextLevel} XP
+        </div>
+        <div class="chart-level-progress-bar">
+          <div class="chart-level-progress-fill" style="width: ${progressPercentage}%"></div>
+        </div>
+      `;
+    }
+
+    // Show the entire level section
+    if (levelSectionElement) {
+      levelSectionElement.style.display = "flex";
+    }
   }
 
   async loadAndDisplayAccountCreation() {

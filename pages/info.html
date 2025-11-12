@@ -536,7 +536,66 @@
                 primarily rewarded for typing skill (speed and accuracy), with
                 appropriate adjustments for the challenge level chosen.
               </p>
-              <h4>8. Quick Commands</h4>
+              <h4 id="xp-system">8. Experience Points (XP) and Leveling</h4>
+              <hr
+                class="mb-3"
+                style="
+                  border-color: #ff9e64;
+                  opacity: 1;
+                  border-width: 1px;
+                  margin-top: -10px;
+                "
+              />
+              <p>
+                NerdType features a progression system where logged-in users
+                earn Experience Points (XP) and level up based on their
+                performance.
+              </p>
+              <h5>8.1 XP Eligibility</h5>
+              <ul>
+                <li>
+                  <strong>Only for logged-in users:</strong> Guest users do not
+                  earn XP or gain levels
+                </li>
+                <li>
+                  <strong>Victory required:</strong> XP is only awarded for
+                  completed games
+                </li>
+                <li>
+                  <strong>No XP for losses:</strong> Partial games or losses do
+                  not grant experience points
+                </li>
+              </ul>
+              <h5>8.2 XP Calculation</h5>
+              <p>The amount of XP earned depends on your game mode:</p>
+              <ul>
+                <li>
+                  <strong>Score-based modes:</strong> XP = Score × Difficulty
+                  Multiplier (higher difficulty settings increase the
+                  multiplier)
+                </li>
+                <li>
+                  <strong>Zen Mode:</strong> XP = (WPM × Accuracy × Words Typed)
+                  / 10
+                </li>
+              </ul>
+              <h5>8.3 Level Progression</h5>
+              <p>
+                Levels require progressively more XP using the formula: Base XP
+                × Level<sup>1.5</sup>
+              </p>
+              <ul>
+                <li>Base XP = 1,000 points</li>
+                <li>Level 1 → 2: 1,000 XP required</li>
+                <li>Level 2 → 3: 2,828 XP required</li>
+                <li>Level 3 → 4: 5,196 XP required</li>
+                <li>Level 10 → 11: 31,623 XP required</li>
+                <li>
+                  <strong>No level cap:</strong> You can continue progressing
+                  indefinitely
+                </li>
+              </ul>
+              <h4>9. Quick Commands</h4>
               <hr
                 class="mb-3"
                 style="
@@ -555,7 +614,7 @@
                 command, and most commands will reload the game to apply
                 changes.
               </p>
-              <h5>8.1 Available Commands</h5>
+              <h5>9.1 Available Commands</h5>
               <p>Game Mode Management:</p>
               <p>
                 <span class="terminal-command">/zen</span> - Toggle Zen Mode
@@ -632,7 +691,7 @@
                 <span class="terminal-command">/logout</span> - Logout current
                 user and return to guest mode<br />
               </p>
-              <h4>9. Achievements</h4>
+              <h4>10. Achievements</h4>
               <hr
                 class="mb-3"
                 style="
@@ -651,7 +710,7 @@
                 >
                 to discover the tiers and challenges that await you.
               </p>
-              <h4>10. Discord Webhooks</h4>
+              <h4>11. Discord Webhooks</h4>
               <hr
                 class="mb-3"
                 style="
@@ -667,7 +726,7 @@
                 <span class="terminal-command">/discord</span> to turn this
                 feature on or off. (Available only for registered users.)
               </p>
-              <h4>11. Streamlit Dashboard</h4>
+              <h4>12. Streamlit Dashboard</h4>
               <hr
                 class="mb-3"
                 style="
@@ -725,7 +784,7 @@
               <!--   accuracy, game mode, word list, and submission date in a -->
               <!--   formatted table. -->
               <!-- </p> -->
-              <h4>12. Known Issues</h4>
+              <h4>13. Known Issues</h4>
               <hr
                 id="knownissues"
                 class="mb-3"
@@ -741,7 +800,7 @@
                 (moderate impact), Low (minor impact).
               </p>
               <p>No known issues at this time.</p>
-              <h4>13. Terms of Use</h4>
+              <h4>14. Terms of Use</h4>
               <hr
                 class="mb-3"
                 style="
@@ -756,7 +815,7 @@
                   >Terms of Use for NerdType</a
                 >
               </p>
-              <h4>14. Contact</h4>
+              <h4>15. Contact</h4>
               <hr
                 class="mb-3"
                 style="

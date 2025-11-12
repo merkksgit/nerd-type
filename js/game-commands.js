@@ -1332,15 +1332,55 @@ ${savedSettingsText}`;
           .close-btn:hover {
             background-color: #ff7a93;
           }
+
+          .reset-xp-btn {
+            position: fixed;
+            top: 10px;
+            right: 95px;
+            background-color: #7aa2f7;
+            color: #24283b;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1000;
+          }
+
+          .reset-xp-btn:hover {
+            background-color: #89b4fa;
+          }
         </style>
       </head>
       <body>
         <button class="close-btn" onclick="closeDebugWindow()">Close</button>
+        <button class="reset-xp-btn" onclick="resetXP()">Reset XP</button>
 
         <h2>Game Stats</h2>
         <div id="debugInfo">Loading...</div>
 
         <script>
+          function resetXP() {
+            if (window.opener && !window.opener.closed) {
+              try {
+                if (window.opener.levelSystem && window.opener.levelSystem.resetLevelData) {
+                  window.opener.levelSystem.resetLevelData();
+
+                  // Update level display in navbar
+                  if (typeof window.opener.updateLevelDisplay === 'function') {
+                    window.opener.updateLevelDisplay();
+                  }
+                } else {
+                  alert('Level system not available');
+                }
+              } catch (error) {
+                console.error('Error resetting XP:', error);
+                alert('Error resetting XP: ' + error.message);
+              }
+            }
+          }
+
           function closeDebugWindow() {
             if (window.opener && !window.opener.closed) {
               if (window.opener.localStorage) {
@@ -1391,6 +1431,13 @@ ${savedSettingsText}`;
               Precision Bonus: \${data.precisionBonusScore} (Streak: \${data.peakPrecisionStreak}, x\${data.precisionMultiplier.toFixed(2)})<br>
               Energy Bonus: \${data.energyBonus}<br>
               Final Score: \${data.finalScore}<br>
+              <br>
+              <span style="color: #ff9e64;">Level & XP:</span><br>
+              Current Level: \${data.levelData.level}<br>
+              Current XP: \${data.levelData.currentXP}<br>
+              XP to Next Level: \${data.levelData.xpForNextLevel}<br>
+              Total XP: \${data.levelData.totalXP || 'N/A'}<br>
+              Progress: \${data.levelData.progress || 'N/A'}%<br>
               <br>
               <span style="color: #ff9e64;">Achievement Data:</span><br>
               Games Played Today: \${data.achievementData.stats.gamesPlayedToday}<br>

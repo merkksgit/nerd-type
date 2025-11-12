@@ -1,6 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
   updateUsernameButtonDisplay();
 
+  // Listen for when level system is ready
+  window.addEventListener("levelSystemReady", () => {
+    console.log("Level system ready, updating display");
+    if (typeof window.updateLevelDisplay === "function") {
+      window.updateLevelDisplay();
+    }
+  });
+
   // Authentication state change handler with proper timing
   if (window.firebaseModules) {
     const { onAuthStateChanged } = window.firebaseModules;
@@ -19,6 +27,13 @@ document.addEventListener("DOMContentLoaded", function () {
           isInitialLoad = false;
           updateUsernameButtonDisplay();
           updateScoreboardDisplay();
+
+          // Update level display on initial load for logged-in users
+          if (user && typeof window.updateLevelDisplay === "function") {
+            setTimeout(() => {
+              window.updateLevelDisplay();
+            }, 1500);
+          }
           return;
         }
 
@@ -64,6 +79,13 @@ async function handleLoginWithDelayedReload(user) {
 
     // Quick UI update
     updateUsernameButtonDisplay();
+
+    // Update level display for logged-in user
+    if (typeof window.updateLevelDisplay === "function") {
+      setTimeout(() => {
+        window.updateLevelDisplay();
+      }, 500);
+    }
 
     // Show success message WITHOUT OK button
     if (window.siteModal) {
@@ -179,6 +201,7 @@ function updateUsernameButtonDisplay() {
     changeUsernameBtn.innerHTML = `
       <i class="fa-solid fa-user"></i>
       <span id="usernameDisplay">${storedUsername}</span>
+      <span id="levelDisplay" class="level-badge" style="display: none;">Lv. 1</span>
     `;
 
     // Add click handler for direct logout using custom modal
@@ -214,6 +237,7 @@ function updateUsernameButtonDisplay() {
     changeUsernameBtn.innerHTML = `
       <i class="fa-solid fa-sign-in-alt"></i>
       <span id="usernameDisplay">runner</span>
+      <span id="levelDisplay" class="level-badge" style="display: none;">Lv. 1</span>
     `;
 
     // Add click handler to show login
@@ -237,6 +261,7 @@ function updateUsernameButtonDisplay() {
     changeUsernameBtn.innerHTML = `
       <i class="fa-solid fa-sign-in-alt"></i>
       <span id="usernameDisplay">LOGIN</span>
+      <span id="levelDisplay" class="level-badge" style="display: none;">Lv. 1</span>
     `;
 
     // Add click handler to show login
@@ -268,6 +293,13 @@ function updateUsernameButtonDisplay() {
       changeUsernameBtn,
     );
   }
+
+  // Update level display after updating username button
+  setTimeout(() => {
+    if (typeof window.updateLevelDisplay === "function") {
+      window.updateLevelDisplay();
+    }
+  }, 100);
 }
 
 function updateScoreboardDisplay() {
@@ -494,6 +526,50 @@ const uiToggle = new UIToggle();
 
 // Make it globally accessible if needed
 window.uiToggle = uiToggle;
+
+// Level display update function
+window.updateLevelDisplay = function () {
+  const levelDisplay = document.getElementById("levelDisplay");
+  if (!levelDisplay) {
+    console.log("⚠️ Level display element not found");
+    return;
+  }
+
+  // Only show level for logged-in users (not guest users)
+  const currentUser = window.getCurrentUser && window.getCurrentUser();
+  const isGuest = localStorage.getItem("nerdtype_guest_mode") === "true";
+
+  if (!currentUser || isGuest) {
+    console.log("⚠️ No current user or guest mode - hiding level display");
+    levelDisplay.style.display = "none";
+    return;
+  }
+
+  if (!window.levelSystem) {
+    console.log("⚠️ Level system not loaded yet");
+    levelDisplay.style.display = "none";
+    return;
+  }
+
+  // Get level info
+  const levelInfo = window.levelSystem.getLevelInfo();
+  console.log("✅ Updating level display:", levelInfo);
+
+  // Update display
+  levelDisplay.textContent = `${levelInfo.level}`;
+  levelDisplay.style.display = "inline-block";
+};
+
+// Call updateLevelDisplay when username button updates
+const originalUpdateUsernameButtonDisplay = updateUsernameButtonDisplay;
+window.updateUsernameButtonDisplayWithLevel = function () {
+  originalUpdateUsernameButtonDisplay();
+  if (typeof window.updateLevelDisplay === "function") {
+    setTimeout(() => {
+      window.updateLevelDisplay();
+    }, 100);
+  }
+};
 
 // Check if we're on the game page
 function isGamePage() {

@@ -6,6 +6,7 @@ import {
 } from "./word-list-manager.js";
 import { DebugDisplay } from "./debug.js";
 import achievementSystem from "./achievements.js";
+import levelSystem from "./level-system.js";
 import "./game-commands.js";
 import {
   GAME_DEFAULTS,
@@ -3502,6 +3503,30 @@ async function showGameOverModal(
     // Zen Mode specific game over
     const totalTime = calculateTotalTime();
 
+    // Award XP BEFORE displaying modal (Zen mode)
+    let xpResult = null;
+    if (!isPracticeMistakesMode) {
+      const zenGameData = {
+        mode: "Zen Mode",
+        wpm: stats.wpm,
+        accuracy: stats.accuracy,
+        wordsTyped: wordsTyped.length,
+        wordGoal: zenWordGoal,
+      };
+      xpResult = levelSystem.awardXP(zenGameData);
+      if (xpResult && xpResult.xpGained > 0) {
+        console.log(
+          `✨ Awarded ${xpResult.xpGained} XP (Level ${xpResult.newLevel})`,
+        );
+        window.lastXPResult = xpResult;
+
+        // Update level display in navbar immediately
+        if (typeof window.updateLevelDisplay === "function") {
+          window.updateLevelDisplay();
+        }
+      }
+    }
+
     await displayModernGameOverContent({
       mode: "zen",
       username: playerUsername,
@@ -3518,6 +3543,7 @@ async function showGameOverModal(
         wordSet: languageName,
         wordGoal: zenWordGoal,
       },
+      xpResult: xpResult,
     });
     saveZenResult(stats.wpm, totalTime, stats.accuracy);
   } else {
@@ -3528,6 +3554,29 @@ async function showGameOverModal(
     const modeName =
       gameSettings.currentMode.charAt(0).toUpperCase() +
       gameSettings.currentMode.slice(1);
+
+    // Award XP BEFORE displaying modal (Classic mode)
+    let xpResult = null;
+    if (!isPracticeMistakesMode && isSuccess) {
+      const classicGameData = {
+        mode: modeName,
+        timeLeft: timeLeft,
+        score: scoreBreakdown.totalScore,
+        difficultyMultiplier: scoreBreakdown.difficultyMultiplier,
+      };
+      xpResult = levelSystem.awardXP(classicGameData);
+      if (xpResult && xpResult.xpGained > 0) {
+        console.log(
+          `✨ Awarded ${xpResult.xpGained} XP (Level ${xpResult.newLevel})`,
+        );
+        window.lastXPResult = xpResult;
+
+        // Update level display in navbar immediately
+        if (typeof window.updateLevelDisplay === "function") {
+          window.updateLevelDisplay();
+        }
+      }
+    }
 
     await displayModernGameOverContent({
       mode: "classic",
@@ -3559,6 +3608,7 @@ async function showGameOverModal(
         precisionMultiplier:
           scoreBreakdown.precisionMultiplier.toFixed(2) + "x",
       },
+      xpResult: xpResult,
     });
     saveClassicResult(
       isSuccess ? timeLeft : 0,
@@ -3687,6 +3737,23 @@ async function displayModernGameOverContent(data) {
         <div class="stat-value">${data.stats.wordGoal}</div>
       </div>
     `;
+
+    // Add XP stat for Zen mode (if logged in)
+    const currentUser = window.getCurrentUser && window.getCurrentUser();
+    if (currentUser) {
+      let xpValue = "0";
+
+      if (data.xpResult && data.xpResult.xpGained > 0) {
+        xpValue = `+${data.xpResult.xpGained}`;
+      }
+
+      content += `
+        <div class="stat-card">
+          <div class="stat-label">XP</div>
+          <div class="stat-value">${xpValue}</div>
+        </div>
+      `;
+    }
   } else {
     // Determine CSS class for score
     const scoreClass = personalRecords.newScore
@@ -3709,6 +3776,23 @@ async function displayModernGameOverContent(data) {
         <div class="stat-value precision">${data.stats.precisionStreak}</div>
       </div>
     `;
+
+    // Add XP stat for Classic mode (if logged in and victory)
+    const currentUser = window.getCurrentUser && window.getCurrentUser();
+    if (currentUser && data.isSuccess) {
+      let xpValue = "0";
+
+      if (data.xpResult && data.xpResult.xpGained > 0) {
+        xpValue = `+${data.xpResult.xpGained}`;
+      }
+
+      content += `
+        <div class="stat-card">
+          <div class="stat-label">XP</div>
+          <div class="stat-value">${xpValue}</div>
+        </div>
+      `;
+    }
   }
 
   content += `</div>`;
@@ -4341,6 +4425,7 @@ function saveClassicResult(
   // Check for achievements (skip if in practice mistakes mode)
   if (!isPracticeMistakesMode) {
     achievementSystem.handleGameCompletion(gameData);
+    // Note: XP is now awarded before the modal is displayed
   }
 }
 
@@ -4419,6 +4504,7 @@ function saveZenResult(wpm, totalTime, accuracy) {
   // Update achievements system (skip if in practice mistakes mode)
   if (!isPracticeMistakesMode) {
     achievementSystem.handleGameCompletion(gameData);
+    // Note: XP is now awarded before the modal is displayed
   }
 }
 

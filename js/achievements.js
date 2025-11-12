@@ -686,6 +686,49 @@ class AchievementSystem {
         },
       },
 
+      // Level milestone achievements
+      level_10: {
+        id: "level_10",
+        name: "Young Padawan",
+        description: "Reach level 10",
+        icon: "fa-solid fa-star-half-stroke",
+        category: "progression",
+        secret: false,
+        check: function () {
+          if (!window.levelSystem) return false;
+          const levelInfo = window.levelSystem.getLevelInfo();
+          return levelInfo.level >= 10;
+        },
+      },
+
+      level_25: {
+        id: "level_25",
+        name: "Unplugged",
+        description: "Reach level 25",
+        icon: "fa-solid fa-certificate",
+        category: "progression",
+        secret: false,
+        check: function () {
+          if (!window.levelSystem) return false;
+          const levelInfo = window.levelSystem.getLevelInfo();
+          return levelInfo.level >= 25;
+        },
+      },
+
+      level_50: {
+        id: "level_50",
+        name: "There is No Spoon",
+        description: "Reach level 50",
+        icon: "fa-solid fa-gem",
+        category: "progression",
+        secret: false,
+        check: function () {
+          if (!window.levelSystem) return false;
+          const levelInfo = window.levelSystem.getLevelInfo();
+          return levelInfo.level >= 50;
+        },
+      },
+
       completionist: {
         id: "completionist",
         name: "Completionist",

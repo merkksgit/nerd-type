@@ -533,6 +533,19 @@ export class DebugDisplay {
     );
     const currentDate = new Date().toLocaleDateString();
 
+    // Get level data if available
+    let levelData = { level: "N/A", currentXP: "N/A", xpForNextLevel: "N/A" };
+    if (window.levelSystem) {
+      const levelInfo = window.levelSystem.getLevelInfo();
+      levelData = {
+        level: levelInfo.level,
+        currentXP: levelInfo.currentXP,
+        xpForNextLevel: levelInfo.xpForNextLevel,
+        totalXP: levelInfo.totalXP,
+        progress: levelInfo.progress,
+      };
+    }
+
     return {
       currentWord,
       wordLength,
@@ -560,6 +573,7 @@ export class DebugDisplay {
       finalScore,
       achievementData,
       currentDate,
+      levelData,
     };
   }
 

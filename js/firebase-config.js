@@ -638,6 +638,27 @@ window.loginUser = async function (email, password) {
       }, 500); // Smaller delay since settings are already loaded
     }
 
+    // Load user's level data from cloud
+    if (
+      window.levelSystem &&
+      typeof window.levelSystem.loadUserLevelDataFromCloud === "function"
+    ) {
+      setTimeout(() => {
+        window.levelSystem
+          .loadUserLevelDataFromCloud()
+          .then(() => {
+            console.log("✅ Level data loaded from cloud");
+            // Update level display in navbar if available
+            if (typeof window.updateLevelDisplay === "function") {
+              window.updateLevelDisplay();
+            }
+          })
+          .catch((error) => {
+            console.error("❌ Failed to load level data after login:", error);
+          });
+      }, 500);
+    }
+
     // Switch to user-specific scoreboard
     if (window.switchToUserScoreboard) {
       setTimeout(() => {
