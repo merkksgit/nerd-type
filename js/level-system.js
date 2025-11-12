@@ -162,9 +162,7 @@ class LevelSystem {
       levelsGained++;
       xpForNextLevel = this.getXPForLevel(this.levelData.currentLevel);
 
-      console.log(
-        `🎉 Level Up! Now level ${this.levelData.currentLevel}`,
-      );
+      console.log(`🎉 Level Up! Now level ${this.levelData.currentLevel}`);
     }
 
     // Save to localStorage
@@ -179,7 +177,14 @@ class LevelSystem {
 
     // Show level-up toast notification
     if (levelsGained > 0) {
-      this.showLevelUpToast(this.levelData.currentLevel, levelsGained);
+      const milestones = [10, 25, 50];
+      const isMilestone = milestones.includes(this.levelData.currentLevel);
+
+      this.showLevelUpToast(
+        this.levelData.currentLevel,
+        levelsGained,
+        isMilestone,
+      );
 
       // Check for level milestone achievements
       if (window.achievementSystem) {
@@ -214,15 +219,21 @@ class LevelSystem {
    * Shows a toast notification for level up
    * @param {number} newLevel - The new level reached
    * @param {number} levelsGained - Number of levels gained
+   * @param {boolean} isMilestone - Whether this level is a milestone (10, 25, 50)
    */
-  showLevelUpToast(newLevel, levelsGained) {
+  showLevelUpToast(newLevel, levelsGained, isMilestone = false) {
     // Use achievement system's notification system if available
-    if (window.achievementSystem && window.achievementSystem.notificationContainer) {
+    if (
+      window.achievementSystem &&
+      window.achievementSystem.notificationContainer
+    ) {
       const notification = document.createElement("div");
       notification.className = "achievement-notification";
 
       const levelText =
-        levelsGained > 1 ? `Levels ${newLevel - levelsGained + 1}-${newLevel}` : `Level ${newLevel}`;
+        levelsGained > 1
+          ? `Levels ${newLevel - levelsGained + 1}-${newLevel}`
+          : `Level ${newLevel}`;
 
       notification.innerHTML = `
         <div class="icon">
@@ -236,13 +247,15 @@ class LevelSystem {
 
       window.achievementSystem.notificationContainer.appendChild(notification);
 
-      // Play achievement sound if enabled
-      const achievementSoundEnabled =
-        localStorage.getItem("achievement_sound_enabled");
+      // Play level-up sound if enabled, but skip if this is a milestone level
+      // to give priority to achievement sound
+      const achievementSoundEnabled = localStorage.getItem(
+        "achievement_sound_enabled",
+      );
       const shouldPlaySound =
         achievementSoundEnabled === null || achievementSoundEnabled === "true";
 
-      if (shouldPlaySound) {
+      if (shouldPlaySound && !isMilestone) {
         this.playLevelUpSound();
       }
 
