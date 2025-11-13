@@ -811,6 +811,7 @@ window.logoutUser = async function () {
     // Clear local storage first
     localStorage.removeItem("nerdtype_username");
     localStorage.removeItem("nerdtype_guest_mode");
+    localStorage.removeItem("nerdtype_level_data");
 
     // Save current user's achievements to cloud before logout (if logged in)
     if (
