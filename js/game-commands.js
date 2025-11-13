@@ -75,6 +75,7 @@ class GameCommands {
       "/logout": this.logout.bind(this),
       "/save": this.saveCustomSettings.bind(this),
       "/load": this.loadCustomSettings.bind(this),
+      "/xp": this.showXP.bind(this),
     };
 
     // Commands that need reload after execution
@@ -882,6 +883,7 @@ class GameCommands {
 <span style='color:#bb9af7'>/load</span>           - Load saved custom settings
 <span style='color:#bb9af7'>/login</span>          - Open login modal
 <span style='color:#bb9af7'>/logout</span>         - Logout current user
+<span style='color:#bb9af7'>/xp</span>             - Show level and XP progress
 <span style='color:#bb9af7'>/status</span>         - Show current game settings
 <span style='color:#bb9af7'>/reset</span>          - Reset to default settings
 <span style='color:#bb9af7'>/help</span>           - Show this help message
@@ -2188,6 +2190,133 @@ ${savedSettingsText}`;
       console.error("Error loading custom settings:", error);
       this.showNotification("Error loading custom settings", "error");
     }
+  }
+
+  showXP() {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+
+    if (!currentUser) {
+      this.showNotification("Login required to track XP and levels", "info");
+      return;
+    }
+
+    if (!window.levelSystem) {
+      this.showNotification("Level system not available", "error");
+      return;
+    }
+
+    const levelInfo = window.levelSystem.getLevelInfo();
+    const playerUsername =
+      localStorage.getItem("nerdtype_username") || "runner";
+
+    const xpModalContent = `
+<div style="text-align: center; padding: 2rem 0;">
+  <div style="margin-bottom: 2rem;">
+    <div style="font-size: 1.2rem; color: #7aa2f7; margin-bottom: 0.5rem;">
+      <i class="fa-solid fa-user"></i> ${playerUsername}
+    </div>
+    <div style="font-size: 3rem; font-weight: bold; color: #ffd700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);">
+      Level ${levelInfo.level}
+    </div>
+  </div>
+
+  <div style="margin: 2rem auto; max-width: 500px;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #c0caf5;">
+      <span style="color: #bb9af7;">XP Progress</span>
+      <span style="color: #7dcfff;">${levelInfo.currentXP} / ${levelInfo.xpForNextLevel}</span>
+    </div>
+    <div class="xp-progress-bar-container" style="width: 100%; height: 30px; background-color: #414868; border-radius: 15px; overflow: hidden; position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);">
+      <div class="xp-progress-bar-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%); border-radius: 15px; transition: width 1.5s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);">
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 2rem; padding: 1rem;">
+    <div style="color: #7aa2f7; font-size: 0.9rem; margin-bottom: 0.5rem;">
+      <i class="fa-solid fa-chart-line"></i> Total XP Earned
+    </div>
+    <div style="color: #c0caf5; font-size: 1.5rem; font-weight: bold;">
+      ${levelInfo.totalXP.toLocaleString()}
+    </div>
+  </div>
+</div>
+    `;
+
+    this.showXPModal("Level & XP Progress", xpModalContent, levelInfo.progress);
+  }
+
+  showXPModal(title, content, targetProgress) {
+    let modalContainer = document.getElementById("xp-modal");
+
+    if (!modalContainer) {
+      modalContainer = document.createElement("div");
+      modalContainer.id = "xp-modal";
+      modalContainer.className = "modal fade";
+      modalContainer.tabIndex = "-1";
+      modalContainer.role = "dialog";
+
+      modalContainer.innerHTML = `
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" style="background-color: #24283b; border: none; box-shadow: none;">
+        <div class="modal-header border-bottom-0" style="background-color: #24283b;">
+          <h5 class="modal-title w-100 text-center" style="color: #7aa2f7; font-size: 1.5rem;">
+            ${title}
+          </h5>
+        </div>
+        <div class="modal-body border-top-0 border-bottom-0" style="background-color: #24283b;">
+          <div id="xp-modal-content"></div>
+        </div>
+        <div class="modal-footer border-top-0 d-flex justify-content-center" style="background-color: #24283b;">
+          <button id="xp-modal-close" type="button" class="btn btn-primary">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+      `;
+
+      document.body.appendChild(modalContainer);
+
+      const closeModal = () => {
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById("xp-modal"),
+        );
+        if (modal) {
+          modal.hide();
+        }
+      };
+
+      document
+        .getElementById("xp-modal-close")
+        .addEventListener("click", closeModal);
+
+      modalContainer.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          closeModal();
+        }
+      });
+
+      modalContainer.addEventListener("hidden.bs.modal", () => {
+        const userInput = document.getElementById("userInput");
+        if (userInput) {
+          userInput.focus();
+        }
+      });
+    }
+
+    document.getElementById("xp-modal-content").innerHTML = content;
+
+    const modal = new bootstrap.Modal(document.getElementById("xp-modal"));
+    modal.show();
+
+    setTimeout(() => {
+      const progressBar = document.querySelector(".xp-progress-bar-fill");
+
+      if (progressBar) {
+        progressBar.style.width = `${targetProgress}%`;
+      }
+    }, 100);
   }
 
   checkAndRestoreOffscreenPopup() {

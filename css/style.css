@@ -387,6 +387,7 @@ div h2 {
 #clrResults,
 #confirmUsername,
 #game-command-modal-close,
+#xp-modal-close,
 #back-to-game .btn,
 #submitCustomScore,
 #resetBtn,
@@ -428,6 +429,7 @@ div h2 {
 #clrResults,
 #confirmUsername,
 #game-command-modal-close,
+#xp-modal-close,
 #back-to-game .btn,
 #submitCustomScore,
 #resetBtn {
@@ -485,6 +487,7 @@ div h2 {
 #clrResults:hover,
 #openTerminalBtn:hover,
 #game-command-modal-close:hover,
+#xp-modal-close:hover,
 #confirmUsername:hover,
 #back-to-game .btn:hover,
 #submitCustomScore:hover,
@@ -508,6 +511,7 @@ div h2 {
 
 #scoreboardCloseBtn:hover,
 #game-command-modal-close:hover,
+#xp-modal-close:hover,
 #buttons #downloadDataBtn:hover,
 #buttons #openDashboardBtn:hover {
   color: #ff9e64;
@@ -530,6 +534,7 @@ div h2 {
 #viewScoreboardChartBtn:active,
 #scoreboardCloseBtn:active,
 #game-command-modal-close:active,
+#xp-modal-close:active,
 #buttons #downloadDataBtn:active,
 #buttons #openDashboardBtn:active {
   box-shadow:
