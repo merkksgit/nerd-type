@@ -8,6 +8,7 @@ class SmoothCaret {
     this.isAnimating = false;
     this.lastFrameTime = performance.now();
     this.lastUpdateTime = 0;
+    this.containerRect = null;
 
     // Animation settings
     this.easeAmount = 0.65;
@@ -47,14 +48,16 @@ class SmoothCaret {
 
     this.showCaretElement();
 
-    const wordContainer = document.getElementById("wordToType");
-    if (!wordContainer) return;
+    if (!this.containerRect) {
+      const wordContainer = document.getElementById("wordToType");
+      if (!wordContainer) return;
+      this.containerRect = wordContainer.getBoundingClientRect();
+    }
 
     const letterRect = currentLetter.getBoundingClientRect();
-    const containerRect = wordContainer.getBoundingClientRect();
 
-    const newTargetX = letterRect.left - containerRect.left - 2;
-    const newTargetY = letterRect.top - containerRect.top;
+    const newTargetX = letterRect.left - this.containerRect.left - 2;
+    const newTargetY = letterRect.top - this.containerRect.top;
 
     this.targetPosition.x = newTargetX;
     this.targetPosition.y = newTargetY;
@@ -140,6 +143,7 @@ class SmoothCaret {
     this.currentPosition = { x: 0, y: 0 };
     this.targetPosition = { x: 0, y: 0 };
     this.lastUpdateTime = 0;
+    this.containerRect = null;
   }
 
   setAnimationSpeed(speed) {

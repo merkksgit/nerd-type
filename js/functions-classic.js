@@ -1799,9 +1799,9 @@ function reinitializeSmoothCaret() {
       window.smoothCaret.destroy();
       window.smoothCaret.init();
     }
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       window.smoothCaret.updateCaretPosition(false);
-    }, 0);
+    });
   }
 }
 
@@ -1929,9 +1929,9 @@ function scrollWordsDisplay() {
 
   // Update smooth caret position after scrolling
   if (window.smoothCaret && window.smoothCaret.isInitialized) {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       window.smoothCaret.updateCaretPosition();
-    }, 0);
+    });
   }
 }
 
@@ -2063,7 +2063,9 @@ function updateLetterStates(userInput) {
 
   // Update smooth caret position if available
   if (window.smoothCaret && window.smoothCaret.isInitialized) {
-    window.smoothCaret.updateCaretPosition();
+    requestAnimationFrame(() => {
+      window.smoothCaret.updateCaretPosition();
+    });
   }
 }
 
@@ -3001,9 +3003,9 @@ function updateWordDisplayAfterCompletion() {
 
   // Update smooth caret position after word completion
   if (window.smoothCaret && window.smoothCaret.isInitialized) {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       window.smoothCaret.updateCaretPosition();
-    }, 0);
+    });
   }
 }
 
