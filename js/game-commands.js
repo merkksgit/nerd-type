@@ -2222,11 +2222,11 @@ ${savedSettingsText}`;
 
   <div style="margin: 2rem auto; max-width: 500px;">
     <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #c0caf5;">
-      <span style="color: #bb9af7;">XP Progress</span>
-      <span style="color: #7dcfff;">${levelInfo.currentXP} / ${levelInfo.xpForNextLevel}</span>
+      <span style="color: #bb9af7;">${levelInfo.progress}%</span>
+      <span style="color: #bb9af7;">${levelInfo.currentXP} / ${levelInfo.xpForNextLevel}</span>
     </div>
-    <div class="xp-progress-bar-container" style="width: 100%; height: 30px; background-color: #414868; border-radius: 15px; overflow: hidden; position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);">
-      <div class="xp-progress-bar-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%); border-radius: 15px; transition: width 1.5s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);">
+    <div class="xp-progress-bar-container" style="width: 100%; height: 20px; background-color: #414868; border-radius: 10px; overflow: hidden; position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);">
+      <div class="xp-progress-bar-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%); border-radius: 10px; transition: width 1.5s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);">
       </div>
     </div>
   </div>
@@ -2236,7 +2236,7 @@ ${savedSettingsText}`;
       <i class="fa-solid fa-chart-line"></i> Total XP Earned
     </div>
     <div style="color: #c0caf5; font-size: 1.5rem; font-weight: bold;">
-      ${levelInfo.totalXP.toLocaleString()}
+      ${levelInfo.totalXP.toLocaleString("en-US")}
     </div>
   </div>
 </div>
