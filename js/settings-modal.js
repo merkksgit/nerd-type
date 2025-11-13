@@ -224,17 +224,6 @@ function loadSettings() {
     punctuationToggle.checked = punctuationEnabled === "true";
   }
 
-  // Set hide precision multiplier toggle
-  const hidePrecisionMultiplierToggle = document.getElementById(
-    "hidePrecisionMultiplierToggle",
-  );
-  if (hidePrecisionMultiplierToggle) {
-    const hidePrecisionUI = localStorage.getItem(
-      "hide_precision_multiplier_ui",
-    );
-    hidePrecisionMultiplierToggle.checked = hidePrecisionUI === "true";
-  }
-
   // Get saved settings or use defaults
   const gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
     timeLimit: 30,
@@ -339,23 +328,13 @@ function loadSettings() {
     // Set mode radio for current mode
   }
 
-  // Load achievement sound setting
-  const achievementSoundEnabled = localStorage.getItem(
-    "achievement_sound_enabled",
-  );
-  const soundToggle = document.getElementById("achievementSoundToggle");
+  // Load master sound toggle (controls all sounds)
+  const masterSoundEnabled = localStorage.getItem("master_sound_enabled");
+  const masterSoundToggle = document.getElementById("masterSoundToggle");
 
-  // If setting exists, use it (default is disabled if not set)
-  if (soundToggle) {
-    soundToggle.checked = achievementSoundEnabled === "true";
-  }
-
-  const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
-  const keypressSoundToggle = document.getElementById("keypressSoundToggle");
-
-  // If setting exists, use it (default is disabled if not set)
-  if (keypressSoundToggle) {
-    keypressSoundToggle.checked = keypressSoundEnabled === "true";
+  // Default to enabled if not set
+  if (masterSoundToggle) {
+    masterSoundToggle.checked = masterSoundEnabled !== "false";
   }
 
   // Load keypress volume setting
@@ -403,13 +382,13 @@ function loadSettings() {
 
   function updateVolumeSliderVisibility() {
     if (keypressVolumeContainer && keypressSoundSelectionContainer) {
-      const isKeypressSoundEnabled = keypressSoundToggle
-        ? keypressSoundToggle.checked
-        : false;
-      keypressVolumeContainer.style.display = isKeypressSoundEnabled
+      const isMasterSoundEnabled = masterSoundToggle
+        ? masterSoundToggle.checked
+        : true;
+      keypressVolumeContainer.style.display = isMasterSoundEnabled
         ? "block"
         : "none";
-      keypressSoundSelectionContainer.style.display = isKeypressSoundEnabled
+      keypressSoundSelectionContainer.style.display = isMasterSoundEnabled
         ? "block"
         : "none";
     }
@@ -419,11 +398,8 @@ function loadSettings() {
   updateVolumeSliderVisibility();
 
   // Update visibility when toggle changes
-  if (keypressSoundToggle) {
-    keypressSoundToggle.addEventListener(
-      "change",
-      updateVolumeSliderVisibility,
-    );
+  if (masterSoundToggle) {
+    masterSoundToggle.addEventListener("change", updateVolumeSliderVisibility);
   }
 
   // font selection
@@ -785,25 +761,10 @@ function resetSettings() {
     punctuationToggle.checked = false;
   }
 
-  // Reset hide precision multiplier to default (off - show multiplier)
-  const hidePrecisionMultiplierToggle = document.getElementById(
-    "hidePrecisionMultiplierToggle",
-  );
-  if (hidePrecisionMultiplierToggle) {
-    hidePrecisionMultiplierToggle.checked = false;
-  }
-
-  // Reset sound settings to default (off)
-  const achievementSoundToggle = document.getElementById(
-    "achievementSoundToggle",
-  );
-  if (achievementSoundToggle) {
-    achievementSoundToggle.checked = false;
-  }
-
-  const keypressSoundToggle = document.getElementById("keypressSoundToggle");
-  if (keypressSoundToggle) {
-    keypressSoundToggle.checked = false;
+  // Reset sound settings to default (enabled)
+  const masterSoundToggle = document.getElementById("masterSoundToggle");
+  if (masterSoundToggle) {
+    masterSoundToggle.checked = true;
   }
 
   // Reset minimal UI toggle to default (off)
@@ -837,9 +798,15 @@ async function applySettings() {
   clearAllValidationStates();
 
   // Get the selected mode
-  const selectedMode = document.querySelector(
+  const selectedModeElement = document.querySelector(
     'input[name="gameMode"]:checked',
-  ).value;
+  );
+  if (!selectedModeElement) {
+    console.error("No game mode selected");
+    showSettingsNotification("Please select a game mode", "error");
+    return;
+  }
+  const selectedMode = selectedModeElement.value;
 
   // Get selected language
   const selectedLanguage =
@@ -931,16 +898,21 @@ async function applySettings() {
     "jetbrains-light";
   saveFontSetting(selectedFont);
 
-  // Get sound settings
-  const achievementSoundEnabled = document.getElementById(
-    "achievementSoundToggle",
-  ).checked;
-  const keypressSoundEnabled = document.getElementById(
-    "keypressSoundToggle",
-  ).checked;
+  // Get master sound setting
+  const masterSoundToggle = document.getElementById("masterSoundToggle");
+  const masterSoundEnabled = masterSoundToggle
+    ? masterSoundToggle.checked
+    : true;
 
-  localStorage.setItem("achievement_sound_enabled", achievementSoundEnabled);
-  localStorage.setItem("keypress_sound_enabled", keypressSoundEnabled);
+  // Save master sound setting
+  localStorage.setItem("master_sound_enabled", masterSoundEnabled);
+
+  // Sync to old keys for backward compatibility
+  localStorage.setItem(
+    "achievement_sound_enabled",
+    masterSoundEnabled.toString(),
+  );
+  localStorage.setItem("keypress_sound_enabled", masterSoundEnabled.toString());
 
   // Save keypress volume setting
   const keypressVolumeSlider = document.getElementById("keypressVolumeSlider");
@@ -974,15 +946,6 @@ async function applySettings() {
   const punctuationEnabled =
     document.getElementById("punctuationToggle").checked;
   localStorage.setItem("punctuation_enabled", punctuationEnabled);
-
-  // Get hide precision multiplier toggle state
-  const hidePrecisionMultiplierEnabled = document.getElementById(
-    "hidePrecisionMultiplierToggle",
-  ).checked;
-  localStorage.setItem(
-    "hide_precision_multiplier_ui",
-    hidePrecisionMultiplierEnabled,
-  );
 
   // Dispatch events to update game settings in the correct order
   // First update zen mode if needed
@@ -1024,18 +987,18 @@ async function applySettings() {
     }),
   );
 
-  // Dispatch event for achievement sound setting
+  // Dispatch event for achievement sound setting (using master toggle)
   window.dispatchEvent(
     new CustomEvent("achievementSoundChanged", {
-      detail: { enabled: achievementSoundEnabled },
+      detail: { enabled: masterSoundEnabled },
     }),
   );
 
-  // Dispatch event for keypress sound setting
+  // Dispatch event for keypress sound setting (using master toggle)
   window.dispatchEvent(
     new CustomEvent("keypressSoundChanged", {
       detail: {
-        enabled: keypressSoundEnabled,
+        enabled: masterSoundEnabled,
         soundFile: selectedKeypressSound,
       },
     }),

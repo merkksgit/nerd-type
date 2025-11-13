@@ -246,9 +246,9 @@ class GameCommands {
   }
 
   toggleKeypressSound(args) {
-    // Get current state
+    // Get current state from master sound toggle
     const currentState =
-      localStorage.getItem("keypress_sound_enabled") === "true"; // Default is false
+      localStorage.getItem("master_sound_enabled") !== "false"; // Default is true
 
     // Determine new state
     let newState;
@@ -266,7 +266,9 @@ class GameCommands {
         arg === "enabled";
     }
 
-    // Update localStorage
+    // Update master sound toggle and sync to old keys
+    localStorage.setItem("master_sound_enabled", newState.toString());
+    localStorage.setItem("achievement_sound_enabled", newState.toString());
     localStorage.setItem("keypress_sound_enabled", newState.toString());
 
     // Update the keypress sound if it exists
@@ -283,7 +285,7 @@ class GameCommands {
 
     // Show notification
     this.showNotification(
-      `Keypress sound ${newState ? "enabled" : "disabled"}`,
+      `Sound effects ${newState ? "enabled" : "disabled"}`,
       "success",
     );
   }
@@ -871,7 +873,7 @@ class GameCommands {
                   <span style='color:#ff9e64'>[finnish, english, swedish, programming, nightmare]</span>
 <span style='color:#bb9af7'>/space</span>          - Toggle space after words
 <span style='color:#bb9af7'>/punc</span>           - Toggle punctuation marks
-<span style='color:#bb9af7'>/sound</span>          - Toggle keypress sound
+<span style='color:#bb9af7'>/sound</span>          - Toggle all sound effects (keypress, achievements, level-ups)
 <span style='color:#bb9af7'>/data</span>           - Toggle data collection
 <span style='color:#bb9af7'>/discord</span>        - Toggle Discord webhook
 <span style='color:#bb9af7'>/prac</span>           - Practice specific words
@@ -906,17 +908,10 @@ class GameCommands {
     // Get the current Zen Mode state from localStorage
     const isZenMode = localStorage.getItem("nerdtype_zen_mode") === "true";
 
-    // Get achievement sound setting (null or undefined = true by default)
-    const achievementSoundEnabled = localStorage.getItem(
-      "achievement_sound_enabled",
-    );
-    const isSoundEnabled =
-      achievementSoundEnabled === null || achievementSoundEnabled === "true";
-
-    // Get keypress sound setting (null or undefined = true by default)
-    const keypressSoundEnabled = localStorage.getItem("keypress_sound_enabled");
-    const isKeypressSoundEnabled =
-      keypressSoundEnabled === null || keypressSoundEnabled === "true";
+    // Get master sound setting (null or undefined = true by default)
+    const masterSoundEnabled = localStorage.getItem("master_sound_enabled");
+    const isSoundEffectsEnabled =
+      masterSoundEnabled === null || masterSoundEnabled !== "false";
 
     // Get space after words setting (null or undefined = false by default)
     const showSpacesEnabled =
@@ -1004,8 +999,7 @@ zen_mode=<span style='color:#c3e88d'>enabled</span>
 zen_word_goal=<span style='color:#c3e88d'>${settings.zenWordGoal || 30}</span>
 language=<span style='color:#bb9af7'>${currentLanguage.toLowerCase()}</span>
 space_after_words=<span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "enabled" : "disabled"}</span>
-achievement_sound=<span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "enabled" : "disabled"}</span>
-keypress_sound=<span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "enabled" : "disabled"}</span>
+sound_effects=<span style='color:${isSoundEffectsEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEffectsEnabled ? "enabled" : "disabled"}</span>
 global_leaderboard=<span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "enabled" : "disabled"}</span>
 discord_webhook=<span style='color:${isDiscordWebhookEnabled ? "#c3e88d" : "#ff007c"}'>${isDiscordWebhookEnabled ? "enabled" : "disabled"}</span>
 font=<span style='color:#f7768e'>${currentFont}</span>
@@ -1021,8 +1015,7 @@ bonus_energy=<span style='color:#bb9af7'>${settings.bonusTime || 3}</span>
 initial_energy=<span style='color:#7dcfff'>${settings.initialTime || 10}</span>
 language=<span style='color:#bb9af7'>${currentLanguage.toLowerCase()}</span>
 space_after_words=<span style='color:${showSpacesEnabled ? "#c3e88d" : "#ff007c"}'>${showSpacesEnabled ? "enabled" : "disabled"}</span>
-achievement_sound=<span style='color:${isSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEnabled ? "enabled" : "disabled"}</span>
-keypress_sound=<span style='color:${isKeypressSoundEnabled ? "#c3e88d" : "#ff007c"}'>${isKeypressSoundEnabled ? "enabled" : "disabled"}</span>
+sound_effects=<span style='color:${isSoundEffectsEnabled ? "#c3e88d" : "#ff007c"}'>${isSoundEffectsEnabled ? "enabled" : "disabled"}</span>
 data_collection=<span style='color:${isDataCollectionEnabled ? "#c3e88d" : "#ff007c"}'>${isDataCollectionEnabled ? "enabled" : "disabled"}</span>
 discord_webhook=<span style='color:${isDiscordWebhookEnabled ? "#c3e88d" : "#ff007c"}'>${isDiscordWebhookEnabled ? "enabled" : "disabled"}</span>
 font=<span style='color:#f7768e'>${currentFont}</span>

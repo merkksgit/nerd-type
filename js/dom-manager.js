@@ -27,7 +27,6 @@ class DOMManager {
       "gameResetButton",
       "previousResults",
       "debugInfo",
-      "precisionMultiplier",
       "zenProgress",
       "zenTimer",
       "usernameModal",

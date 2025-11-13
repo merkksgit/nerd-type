@@ -537,12 +537,6 @@
                       ></div>
                     </div>
                   </div>
-                  <span
-                    id="precisionMultiplier"
-                    class="precision-multiplier-simple"
-                    style="visibility: hidden"
-                    >5x</span
-                  >
                 </div>
                 <div id="buttons">
                   <button id="resetBtn">
@@ -1164,39 +1158,19 @@
                       <i class="fa-solid fa-volume-high me-2"></i>Sound Settings
                     </h5>
                     <div class="settings-card-body">
-                      <div class="form-check form-switch">
+                      <div class="form-check form-switch mb-3">
                         <input
                           class="form-check-input"
                           type="checkbox"
                           role="switch"
-                          id="achievementSoundToggle"
+                          id="masterSoundToggle"
                           checked
                         />
-                        <label
-                          class="form-check-label"
-                          for="achievementSoundToggle"
-                        >
-                          Achievement & Level-Up Sounds
+                        <label class="form-check-label" for="masterSoundToggle">
+                          Sound Effects
                           <small class="d-block text-muted"
-                            >Play sounds for achievements and leveling up</small
-                          >
-                        </label>
-                      </div>
-                      <div class="form-check form-switch">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          role="switch"
-                          id="keypressSoundToggle"
-                          checked
-                        />
-                        <label
-                          class="form-check-label"
-                          for="keypressSoundToggle"
-                        >
-                          Keypress Sound
-                          <small class="d-block text-muted"
-                            >Play sound when typing during gameplay</small
+                            >Enable all game sounds (keypress, achievements,
+                            level-ups)</small
                           >
                         </label>
                       </div>
@@ -1812,25 +1786,6 @@
                           <small class="d-block text-muted"
                             >Hide most UI elements for distraction-free typing
                             (Ctrl+Z)</small
-                          >
-                        </label>
-                      </div>
-
-                      <div class="form-check form-switch mb-3">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          role="switch"
-                          id="hidePrecisionMultiplierToggle"
-                        />
-                        <label
-                          class="form-check-label"
-                          for="hidePrecisionMultiplierToggle"
-                        >
-                          Hide Precision Multiplier
-                          <small class="d-block text-muted"
-                            >Hide streak counter during gameplay (scoring still
-                            applies)</small
                           >
                         </label>
                       </div>

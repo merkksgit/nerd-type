@@ -184,11 +184,14 @@ function syncGameStateToWindow() {
 
 // Helper function to get current words for offscreen display
 function getCurrentWords() {
-  const gameSettings = JSON.parse(localStorage.getItem("gameSettings")) || {
-    timeLimit: 30,
-    currentMode: "classic",
-    zenWordGoal: 30,
-  };
+  const settingsJson = storageManager.getItem("gameSettings", null);
+  const gameSettings = settingsJson
+    ? JSON.parse(settingsJson)
+    : {
+        timeLimit: 30,
+        currentMode: "classic",
+        zenWordGoal: 30,
+      };
 
   // Determine word limit based on whether zen mode is active
   let wordLimit;
@@ -229,6 +232,8 @@ let peakPrecisionStreak = 0;
 let currentWordHasMistakes = false;
 
 // Per-second WPM tracking variables
+const MAX_KEYSTROKE_HISTORY = 30000; // Supports ~100 WPM for 60 minutes
+const MAX_MISTAKE_HISTORY = 10000; // Supports extensive mistake tracking
 let keystrokeTimestamps = [];
 let perSecondWpmData = [];
 let mistakeTimestamps = []; // Array of {timestamp, word, position} objects
@@ -269,7 +274,6 @@ function applyFont(fontFamily) {
     #currentGameMode,
     #timer,
     #progressPercentage,
-    #precisionMultiplier,
     .game-interface,
     .typing-area
   `);
@@ -384,11 +388,11 @@ function validateUsernameClassic(username) {
 window.getAchievementSound = function getAchievementSound() {
   if (!window.achievementSound) {
     window.achievementSound = new Audio("../sounds/achievement.mp3");
-    const achievementSoundEnabled = storageManager.getItem(
-      "achievement_sound_enabled",
+    const masterSoundEnabled = storageManager.getItem(
+      "master_sound_enabled",
       "true",
     );
-    if (achievementSoundEnabled === "false") {
+    if (masterSoundEnabled === "false") {
       window.achievementSound.muted = true;
     }
 
@@ -418,9 +422,9 @@ function playMistakeSound() {
   const hasOffscreenWindow =
     window.offscreenWindow && !window.offscreenWindow.closed;
 
-  // Check if keypress sounds are enabled
+  // Check if keypress sounds are enabled (via master sound toggle)
   const keypressSoundsEnabled =
-    storageManager.getItem("keypress_sound_enabled", "false") === "true";
+    storageManager.getItem("master_sound_enabled", "true") === "true";
 
   if (hasOffscreenWindow && keypressSoundsEnabled) {
     try {
@@ -517,12 +521,12 @@ document.addEventListener("touchstart", ensureAudioContextReady, {
   once: false,
 });
 
-// Check the keypress sound setting on initialization
-const keypressSoundEnabled = storageManager.getItem(
-  "keypress_sound_enabled",
-  "false",
+// Check the master sound setting on initialization
+const masterSoundEnabled = storageManager.getItem(
+  "master_sound_enabled",
+  "true",
 );
-keypressSoundMuted = keypressSoundEnabled !== "true";
+keypressSoundMuted = masterSoundEnabled !== "true";
 
 // Keep reference for backward compatibility
 window.keypressSound = { muted: keypressSoundMuted };
@@ -537,12 +541,12 @@ setTimeout(() => {
 }, 100);
 
 function playKeypressSound() {
-  const keypressSoundEnabled = storageManager.getItem(
-    "keypress_sound_enabled",
-    "false",
+  const masterSoundEnabled = storageManager.getItem(
+    "master_sound_enabled",
+    "true",
   );
 
-  if (keypressSoundEnabled !== "true" || keypressSoundMuted) {
+  if (masterSoundEnabled !== "true" || keypressSoundMuted) {
     return;
   }
 
@@ -732,10 +736,6 @@ function updateUIForGameMode() {
   const zenModeSettings = document.getElementById("zenModeSettings");
   if (zenModeSettings && zenModeToggle) {
     DisplayUtils.setElementDisplay(zenModeSettings, zenModeToggle.checked);
-  }
-
-  if (isZenMode) {
-    hidePrecisionMultiplier();
   }
 }
 
@@ -1942,7 +1942,8 @@ function addNewWordsToDisplay() {
     return;
   }
 
-  const showSpace = localStorage.getItem("showSpacesAfterWords") !== "false";
+  const showSpace =
+    storageManager.getItem("showSpacesAfterWords", "true") !== "false";
 
   // Use dynamic word count calculation
   const optimalWordCount = calculateOptimalWordCount();
@@ -2006,7 +2007,8 @@ function updateLetterStates(userInput) {
   )
     .map((letter) => letter.textContent)
     .join("");
-  const showSpace = localStorage.getItem("showSpacesAfterWords") !== "false";
+  const showSpace =
+    storageManager.getItem("showSpacesAfterWords", "true") !== "false";
 
   letters.forEach((letter, index) => {
     // Remove all state classes (but keep animation classes)
@@ -2130,10 +2132,10 @@ function updateTimer() {
 
 // Universal timer display function that handles different modes
 function updateTimerDisplay() {
-  const timerElement = document.getElementById("timeLeft");
-  const timerContainer = document.getElementById("timer");
-  const totalTimeElement = document.getElementById("totalTimeValue");
-  const totalTimeContainer = document.getElementById("totalTime");
+  const timerElement = domManager.get("timeLeft");
+  const timerContainer = domManager.get("timer");
+  const totalTimeElement = domManager.get("totalTimeValue");
+  const totalTimeContainer = domManager.get("totalTime");
 
   if (!timerElement || !timerContainer) return;
 
@@ -2184,8 +2186,8 @@ function totalTimeCount() {
   // Check time-based achievements during gameplay
   checkTimeBasedAchievements();
 
-  const settings =
-    JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
+  const settingsJson = storageManager.getItem("gameSettings", null);
+  const settings = settingsJson ? JSON.parse(settingsJson) : gameSettings;
   const goalTime = (settings.timeLimit * settings.goalPercentage) / 100;
   if (totalTimeSpent >= goalTime) {
     gameEnded = true;
@@ -2316,22 +2318,17 @@ function updateProgressBar() {
   const progressText = document.getElementById("progressPercentage");
 
   if (isPracticeMistakesMode) {
-    // In practice mistakes mode, hide the progress bar and precision multiplier entirely
+    // In practice mistakes mode, hide the progress bar entirely
     if (progressBar && progressBar.parentElement) {
       progressBar.parentElement.style.display = "none";
     }
     if (progressText) {
       progressText.style.display = "none";
     }
-    const precisionMultiplier = document.getElementById("precisionMultiplier");
-    if (precisionMultiplier) {
-      precisionMultiplier.style.visibility = "hidden";
-      precisionMultiplier.classList.remove("visible", "appear", "increment");
-    }
     return;
   }
 
-  // Show progress bar for normal modes (precision multiplier handles its own visibility)
+  // Show progress bar for normal modes
   if (progressBar && progressBar.parentElement) {
     progressBar.parentElement.style.display = "";
   }
@@ -2372,8 +2369,8 @@ function updateProgressBar() {
     progressPercentage = (baseProgress / zenWordGoal) * 100;
   } else {
     // In Classic mode, progress is based on words completed + partial progress of current word
-    const settings =
-      JSON.parse(localStorage.getItem("gameSettings")) || gameSettings;
+    const settingsJson = storageManager.getItem("gameSettings", null);
+    const settings = settingsJson ? JSON.parse(settingsJson) : gameSettings;
     const wordsGoal = parseInt(settings.timeLimit || "30");
 
     let baseProgress = wordsTyped.length;
@@ -2581,11 +2578,11 @@ function activateGame() {
   }
 
   // Initialize keypress audio when game activates
-  const keypressSoundEnabled = storageManager.getItem(
-    "keypress_sound_enabled",
-    "false",
+  const masterSoundEnabled = storageManager.getItem(
+    "master_sound_enabled",
+    "true",
   );
-  if (keypressSoundEnabled === "true" && !audioContext && !fallbackAudio) {
+  if (masterSoundEnabled === "true" && !audioContext && !fallbackAudio) {
     initializeKeypressAudio();
   }
 
@@ -2734,6 +2731,11 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
           expected: expectedChar, // What was expected
         });
 
+        // Cap array size to prevent unbounded memory growth
+        if (mistakeTimestamps.length > MAX_MISTAKE_HISTORY) {
+          mistakeTimestamps.shift();
+        }
+
         // Track words with mistakes for practice mode (skip if already in practice mistakes mode)
         if (!isPracticeMistakesMode) {
           // Get the base word without punctuation for practice
@@ -2820,7 +2822,6 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
 
       if (!isZenMode) {
         precisionStreak = 0;
-        hidePrecisionMultiplier();
       }
 
       // Return that this was a mistake in offscreen mode
@@ -2938,11 +2939,6 @@ function updatePrecisionStreak() {
 
     if (precisionStreak > peakPrecisionStreak) {
       peakPrecisionStreak = precisionStreak;
-    }
-
-    if (precisionStreak >= 5) {
-      showPrecisionMultiplier();
-      animatePrecisionIncrement();
     }
   }
   currentWordHasMistakes = false;
@@ -3136,6 +3132,11 @@ function recordKeystroke() {
   }
 
   keystrokeTimestamps.push(timestamp);
+
+  // Cap array size to prevent unbounded memory growth
+  if (keystrokeTimestamps.length > MAX_KEYSTROKE_HISTORY) {
+    keystrokeTimestamps.shift();
+  }
 }
 
 // Generate WPM graph from keystroke timestamps (Monkeytype style)
@@ -3353,92 +3354,6 @@ function getAccuracyRank(accuracy) {
 
 // Precision Multiplier System Functions
 
-function showPrecisionMultiplier() {
-  // Don't show precision multiplier in zen mode
-  if (isZenMode) {
-    return;
-  }
-
-  // Check if precision multiplier UI is hidden by user setting
-  const hidePrecisionUI =
-    localStorage.getItem("hide_precision_multiplier_ui") === "true";
-  if (hidePrecisionUI) {
-    return;
-  }
-
-  // Check if minimal UI mode is enabled
-  const minimalUIEnabled = localStorage.getItem("nerdtype_hide_ui") === "true";
-  if (minimalUIEnabled) {
-    return;
-  }
-
-  const multiplierElement = document.getElementById("precisionMultiplier");
-
-  if (multiplierElement) {
-    const isHardcoreMode = gameSettings.currentMode === "hardcore";
-    if (isHardcoreMode) {
-      try {
-        const bestHardcoreProgress =
-          achievementSystem.getBestHardcoreProgress();
-        multiplierElement.textContent = `Best: ${bestHardcoreProgress}`;
-      } catch (error) {
-        multiplierElement.textContent = `Best: ${peakPrecisionStreak}`;
-      }
-    } else {
-      multiplierElement.textContent = `${precisionStreak}x`;
-    }
-    multiplierElement.style.visibility = "visible";
-
-    // Add appear animation for first show
-    multiplierElement.classList.add("appear");
-    setTimeout(() => {
-      multiplierElement.classList.remove("appear");
-      multiplierElement.classList.add("visible");
-    }, 400);
-  }
-}
-
-function hidePrecisionMultiplier() {
-  const multiplierElement = document.getElementById("precisionMultiplier");
-  if (multiplierElement) {
-    // Don't start new animation if already fading out
-    if (multiplierElement.classList.contains("fade-out")) {
-      return;
-    }
-
-    // Add fade-out animation
-    multiplierElement.classList.add("fade-out");
-
-    // Remove other animation classes that might interfere
-    multiplierElement.classList.remove("appear", "increment", "visible");
-
-    // Hide after animation completes
-    setTimeout(() => {
-      multiplierElement.style.visibility = "hidden";
-      multiplierElement.classList.remove("fade-out");
-    }, 300);
-  }
-}
-
-function animatePrecisionIncrement() {
-  const multiplierElement = document.getElementById("precisionMultiplier");
-  if (multiplierElement) {
-    // Update the text
-    multiplierElement.textContent = `${precisionStreak}x`;
-
-    // Add increment animation
-    multiplierElement.classList.remove("increment");
-    // Force reflow to reset animation
-    multiplierElement.offsetHeight;
-    multiplierElement.classList.add("increment");
-
-    // Remove animation class after completion
-    setTimeout(() => {
-      multiplierElement.classList.remove("increment");
-    }, 400);
-  }
-}
-
 function calculatePrecisionMultiplier() {
   // No precision bonus in zen mode
   if (isZenMode) {
@@ -3479,7 +3394,6 @@ function resetPrecisionSystem() {
   precisionStreak = 0;
   peakPrecisionStreak = 0;
   currentWordHasMistakes = false;
-  hidePrecisionMultiplier();
 }
 
 // Game Over Modal for both modes

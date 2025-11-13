@@ -249,11 +249,9 @@ class LevelSystem {
 
       // Play level-up sound if enabled, but skip if this is a milestone level
       // to give priority to achievement sound
-      const achievementSoundEnabled = localStorage.getItem(
-        "achievement_sound_enabled",
-      );
+      const masterSoundEnabled = localStorage.getItem("master_sound_enabled");
       const shouldPlaySound =
-        achievementSoundEnabled === null || achievementSoundEnabled === "true";
+        masterSoundEnabled === null || masterSoundEnabled !== "false";
 
       if (shouldPlaySound && !isMilestone) {
         this.playLevelUpSound();
@@ -311,7 +309,7 @@ class LevelSystem {
       currentXP: this.levelData.currentXP,
       xpForNextLevel,
       totalXP: this.levelData.totalXP,
-      progress: Math.round(progress),
+      progress: parseFloat(progress.toFixed(1)),
     };
   }
 

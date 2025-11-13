@@ -1299,16 +1299,12 @@ window.syncSettingsToFirebase = async function () {
         localStorage.getItem("data_collection_enabled") !== "false",
       discordWebhookEnabled:
         localStorage.getItem("discord_webhook_enabled") !== "false",
-      achievementSoundEnabled:
-        localStorage.getItem("achievement_sound_enabled") === "true",
-      keypressSoundEnabled:
-        localStorage.getItem("keypress_sound_enabled") === "true",
+      masterSoundEnabled:
+        localStorage.getItem("master_sound_enabled") !== "false",
       keypressSoundVolume:
         localStorage.getItem("keypress_sound_volume") || "50",
       keypressSoundFile:
         localStorage.getItem("keypress_sound_file") || "typewriter.wav",
-      hidePrecisionMultiplierUI:
-        localStorage.getItem("hide_precision_multiplier_ui") === "true",
 
       // Metadata
       syncedAt: new Date().toISOString(),
@@ -1426,18 +1422,38 @@ window.applyCloudSettingsToLocal = function (cloudSettings) {
       );
     }
 
-    if (typeof cloudSettings.achievementSoundEnabled === "boolean") {
+    // Handle master sound setting (new unified toggle)
+    if (typeof cloudSettings.masterSoundEnabled === "boolean") {
+      localStorage.setItem(
+        "master_sound_enabled",
+        cloudSettings.masterSoundEnabled.toString(),
+      );
+      // Sync to old keys for backward compatibility
       localStorage.setItem(
         "achievement_sound_enabled",
-        cloudSettings.achievementSoundEnabled.toString(),
+        cloudSettings.masterSoundEnabled.toString(),
       );
-    }
-
-    if (typeof cloudSettings.keypressSoundEnabled === "boolean") {
       localStorage.setItem(
         "keypress_sound_enabled",
-        cloudSettings.keypressSoundEnabled.toString(),
+        cloudSettings.masterSoundEnabled.toString(),
       );
+    }
+    // Fallback: handle old separate settings for users with old cloud data
+    else if (
+      typeof cloudSettings.achievementSoundEnabled === "boolean" ||
+      typeof cloudSettings.keypressSoundEnabled === "boolean"
+    ) {
+      // Use achievement sound as master if both exist
+      const masterEnabled =
+        cloudSettings.achievementSoundEnabled ??
+        cloudSettings.keypressSoundEnabled ??
+        true;
+      localStorage.setItem("master_sound_enabled", masterEnabled.toString());
+      localStorage.setItem(
+        "achievement_sound_enabled",
+        masterEnabled.toString(),
+      );
+      localStorage.setItem("keypress_sound_enabled", masterEnabled.toString());
     }
 
     if (typeof cloudSettings.keypressSoundVolume === "string") {
@@ -1451,13 +1467,6 @@ window.applyCloudSettingsToLocal = function (cloudSettings) {
       localStorage.setItem(
         "keypress_sound_file",
         cloudSettings.keypressSoundFile,
-      );
-    }
-
-    if (typeof cloudSettings.hidePrecisionMultiplierUI === "boolean") {
-      localStorage.setItem(
-        "hide_precision_multiplier_ui",
-        cloudSettings.hidePrecisionMultiplierUI.toString(),
       );
     }
 
