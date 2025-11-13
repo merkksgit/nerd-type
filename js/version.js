@@ -1,5 +1,5 @@
 // Set the application version and season info
-const APP_VERSION = "v2.5.0";
+const APP_VERSION = "v2.5.1";
 
 // When the document is loaded, update all version elements
 document.addEventListener("DOMContentLoaded", function () {

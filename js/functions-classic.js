@@ -3741,16 +3741,16 @@ async function displayModernGameOverContent(data) {
     // Add XP stat for Zen mode (if logged in)
     const currentUser = window.getCurrentUser && window.getCurrentUser();
     if (currentUser) {
-      let xpValue = "0";
+      let xpGained = 0;
 
       if (data.xpResult && data.xpResult.xpGained > 0) {
-        xpValue = `+${data.xpResult.xpGained}`;
+        xpGained = data.xpResult.xpGained;
       }
 
       content += `
         <div class="stat-card">
           <div class="stat-label">XP</div>
-          <div class="stat-value">${xpValue}</div>
+          <div class="stat-value xp-counter" data-xp="${xpGained}">+0</div>
         </div>
       `;
     }
@@ -3780,16 +3780,16 @@ async function displayModernGameOverContent(data) {
     // Add XP stat for Classic mode (if logged in and victory)
     const currentUser = window.getCurrentUser && window.getCurrentUser();
     if (currentUser && data.isSuccess) {
-      let xpValue = "0";
+      let xpGained = 0;
 
       if (data.xpResult && data.xpResult.xpGained > 0) {
-        xpValue = `+${data.xpResult.xpGained}`;
+        xpGained = data.xpResult.xpGained;
       }
 
       content += `
         <div class="stat-card">
           <div class="stat-label">XP</div>
-          <div class="stat-value">${xpValue}</div>
+          <div class="stat-value xp-counter" data-xp="${xpGained}">+0</div>
         </div>
       `;
     }
@@ -4044,6 +4044,7 @@ async function displayModernGameOverContent(data) {
     .getElementById("gameOverModal")
     .addEventListener("shown.bs.modal", () => {
       document.addEventListener("keydown", handleKeyPress);
+      setTimeout(() => animateXPCounter(), 300);
     });
 
   document
@@ -4057,6 +4058,46 @@ async function displayModernGameOverContent(data) {
         practiceNotice.remove();
       }
     });
+}
+
+/**
+ * Animates the XP counter from 0 to the gained value with a glow effect
+ */
+function animateXPCounter() {
+  const xpCounters = document.querySelectorAll(".xp-counter");
+
+  xpCounters.forEach((counter) => {
+    const targetXP = parseInt(counter.getAttribute("data-xp")) || 0;
+
+    if (targetXP === 0) {
+      return;
+    }
+
+    const duration = 1000;
+    const startTime = performance.now();
+    const startValue = 0;
+
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const easeOutQuad = 1 - Math.pow(1 - progress, 2);
+      const currentValue = Math.floor(
+        startValue + (targetXP - startValue) * easeOutQuad,
+      );
+
+      counter.textContent = `+${currentValue}`;
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        counter.textContent = `+${targetXP}`;
+        counter.classList.add("xp-gained");
+      }
+    };
+
+    requestAnimationFrame(animate);
+  });
 }
 
 // Function to start practice mistakes mode

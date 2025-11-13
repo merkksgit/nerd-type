@@ -1556,6 +1556,37 @@ div#wordToType {
   }
 }
 
+/* XP gain animation with glow effect */
+.stat-value.xp-gained {
+  color: #ffd700 !important;
+  animation: xpGainGlow 1.2s ease-out both;
+}
+
+@keyframes xpGainGlow {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    transform: scale(1);
+  }
+  25% {
+    text-shadow:
+      0 0 30px rgba(255, 215, 0, 1),
+      0 0 40px rgba(255, 215, 0, 0.8),
+      0 0 50px rgba(255, 215, 0, 0.6);
+    transform: scale(1.1);
+  }
+  50% {
+    text-shadow:
+      0 0 35px rgba(255, 215, 0, 1),
+      0 0 45px rgba(255, 215, 0, 0.9),
+      0 0 55px rgba(255, 215, 0, 0.7);
+    transform: scale(1.05);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    transform: scale(1);
+  }
+}
+
 /* Defeat styling */
 .game-stats-container.defeat .stat-value {
   color: #f7768e;
