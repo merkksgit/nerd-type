@@ -98,7 +98,7 @@ class SmoothCaret {
     }
 
     // Use LERP for smoother frame-rate independent movement
-    const speed = 21; // Higher = snappier, use values between 10–25
+    const speed = 18; // Higher = snappier, use values between 10–25
     const t = 1 - Math.exp(-speed * deltaTime); // Exponential smoothing
 
     this.currentPosition.x += deltaX * t;
