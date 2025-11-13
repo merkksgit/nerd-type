@@ -4194,3 +4194,10 @@ tr:hover .username-rank-icon {
 .screenshot-mode #saveResultImageBtn {
   display: none !important;
 }
+
+/* Mobile adjustments for chart page */
+@media (max-width: 768px) {
+  #nerdtypistSince {
+    margin-bottom: 0 !important;
+  }
+}
