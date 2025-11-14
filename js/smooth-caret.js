@@ -22,7 +22,25 @@ class SmoothCaret {
   init() {
     if (this.isInitialized) return;
     this.createCaretElement();
+    this.setupMobileViewportHandler();
     this.isInitialized = true;
+  }
+
+  setupMobileViewportHandler() {
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", () => {
+        this.containerRect = null;
+        this.updateCaretPosition(false);
+      });
+      window.visualViewport.addEventListener("scroll", () => {
+        this.containerRect = null;
+        this.updateCaretPosition(false);
+      });
+    }
+
+    window.addEventListener("resize", () => {
+      this.containerRect = null;
+    });
   }
 
   createCaretElement() {
