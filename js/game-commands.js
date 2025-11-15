@@ -76,6 +76,7 @@ class GameCommands {
       "/save": this.saveCustomSettings.bind(this),
       "/load": this.loadCustomSettings.bind(this),
       "/xp": this.showXP.bind(this),
+      "/keys": this.showKeystrokes.bind(this),
     };
 
     // Commands that need reload after execution
@@ -886,6 +887,7 @@ class GameCommands {
 <span style='color:#bb9af7'>/login</span>          - Open login modal
 <span style='color:#bb9af7'>/logout</span>         - Logout current user
 <span style='color:#bb9af7'>/xp</span>             - Show level and XP progress
+<span style='color:#bb9af7'>/keys</span>           - Show keystroke history from last game
 <span style='color:#bb9af7'>/status</span>         - Show current game settings
 <span style='color:#bb9af7'>/reset</span>          - Reset to default settings
 <span style='color:#bb9af7'>/help</span>           - Show this help message
@@ -2310,6 +2312,73 @@ ${savedSettingsText}`;
         progressBar.style.width = `${targetProgress}%`;
       }
     }, 100);
+  }
+
+  showKeystrokes() {
+    const keystrokeData = localStorage.getItem("lastGameKeystrokes");
+
+    if (!keystrokeData) {
+      this.showNotification(
+        "No keystroke data found. Complete a game first.",
+        "info",
+      );
+      return;
+    }
+
+    try {
+      const keystrokes = JSON.parse(keystrokeData);
+
+      if (!keystrokes || keystrokes.length === 0) {
+        this.showNotification(
+          "No keystrokes recorded in the last game.",
+          "info",
+        );
+        return;
+      }
+
+      const playerUsername =
+        localStorage.getItem("nerdtype_username") || "runner";
+
+      // Format the keystrokes into a readable display
+      // Group into lines of approximately 80 characters for better readability
+      const maxLineLength = 80;
+      const lines = [];
+      let currentLine = "";
+
+      keystrokes.forEach((key) => {
+        // Escape HTML special characters for display
+        const keyDisplay = key === "<" ? "&lt;" : key;
+
+        if (currentLine.length + keyDisplay.length + 1 > maxLineLength) {
+          lines.push(currentLine);
+          currentLine = keyDisplay;
+        } else {
+          currentLine += (currentLine.length > 0 ? "" : "") + keyDisplay;
+        }
+      });
+
+      if (currentLine.length > 0) {
+        lines.push(currentLine);
+      }
+
+      const formattedKeystrokes = lines
+        .map((line) => `<span style='color:#c0caf5'>${line}</span>`)
+        .join("<br>");
+
+      const keystrokesModalContent = `<span style='color:#7dcfff'>[${playerUsername}@nerdtype_terminal:~/.cache]$</span> cat last_game_keystrokes.log
+
+<span style='color:#9ece6a'>## Keystroke History - Last Game</span>
+<span style='color:#565f89'>Total keystrokes: ${keystrokes.length}</span>
+<span style='color:#565f89'>Legend: _ = space, &lt; = backspace</span>
+
+${formattedKeystrokes}
+`;
+
+      this.showInfoModal("Keystroke History", keystrokesModalContent);
+    } catch (error) {
+      console.error("Error loading keystroke data:", error);
+      this.showNotification("Error loading keystroke data", "error");
+    }
   }
 
   checkAndRestoreOffscreenPopup() {

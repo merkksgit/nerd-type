@@ -237,6 +237,7 @@ const MAX_MISTAKE_HISTORY = 10000; // Supports extensive mistake tracking
 let keystrokeTimestamps = [];
 let perSecondWpmData = [];
 let mistakeTimestamps = []; // Array of {timestamp, word, position} objects
+let keystrokeHistory = []; // Array of actual keystrokes for replay/visualization
 
 // Practice mistakes tracking
 let gameMistakes = {
@@ -1200,6 +1201,26 @@ function initializeEventListeners() {
     if (userInput) {
       userInput.addEventListener("input", function (e) {
         checkInput(e);
+      });
+
+      // Track keystrokes for replay/visualization
+      userInput.addEventListener("keydown", function (e) {
+        // Only track if game hasn't ended
+        if (gameEnded) return;
+
+        // Skip if this is a command (starts with /)
+        if (userInput.value.startsWith("/")) return;
+
+        // Track backspace
+        if (e.key === "Backspace") {
+          keystrokeHistory.push("<");
+        }
+        // Track regular characters (letters, numbers, space, punctuation)
+        else if (e.key.length === 1) {
+          // Replace space with underscore for visibility
+          const displayKey = e.key === " " ? "_" : e.key;
+          keystrokeHistory.push(displayKey);
+        }
       });
     }
   }
@@ -2493,6 +2514,7 @@ function resetGameState() {
   keystrokeTimestamps = [];
   perSecondWpmData = [];
   mistakeTimestamps = [];
+  keystrokeHistory = [];
 
   // Reset precision system
   precisionStreak = 0;
@@ -2603,6 +2625,7 @@ function startGameOnFirstInput() {
   gameStartTime = Date.now();
   keystrokeTimestamps = [];
   mistakeTimestamps = [];
+  // Don't reset keystrokeHistory here - keep the first keystroke that was already recorded
 
   // Reset mistake tracking for new game (unless in practice mistakes mode)
   if (!isPracticeMistakesMode) {
@@ -3405,6 +3428,15 @@ async function showGameOverModal(
   mistakeDetails = null,
 ) {
   stopWpmTracking();
+
+  // Save keystroke history for /keys command (regardless of success/failure)
+  if (!isPracticeMistakesMode) {
+    localStorage.setItem(
+      "lastGameKeystrokes",
+      JSON.stringify(keystrokeHistory),
+    );
+  }
+
   const stats = calculateWPM();
   const languageName =
     currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
