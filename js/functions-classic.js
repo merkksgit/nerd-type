@@ -1222,8 +1222,8 @@ function initializeEventListeners() {
         // Only track if game hasn't ended
         if (gameEnded) return;
 
-        // Skip if this is a command (starts with /)
-        if (userInput.value.startsWith("/")) return;
+        // Skip if this is a command (starts with / or user is typing /)
+        if (userInput.value.startsWith("/") || e.key === "/") return;
 
         // Track backspace
         if (e.key === "Backspace") {
@@ -1495,6 +1495,12 @@ function startGame() {
   totalKeystrokes = 0;
   correctKeystrokes = 0;
   totalTimeSpent = 0;
+
+  // Reset tracking arrays
+  keystrokeHistory = [];
+  keystrokeTimestamps = [];
+  perSecondWpmData = [];
+  mistakeTimestamps = [];
 
   // Reset progress bar
   updateProgressBar();
