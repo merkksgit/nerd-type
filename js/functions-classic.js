@@ -1065,12 +1065,26 @@ function initializeEventListeners() {
         activateGame();
       } else {
         // Always restart the game when Enter is pressed during active gameplay
+        // Save keystroke history before restarting
+        if (!isPracticeMistakesMode && keystrokeHistory.length > 0) {
+          localStorage.setItem(
+            "lastGameKeystrokes",
+            JSON.stringify(keystrokeHistory),
+          );
+        }
         startGame();
         activateGame();
       }
     }
     if (event.key === "Enter" && event.ctrlKey) {
       event.preventDefault();
+      // Save keystroke history before resetting
+      if (!isPracticeMistakesMode && keystrokeHistory.length > 0) {
+        localStorage.setItem(
+          "lastGameKeystrokes",
+          JSON.stringify(keystrokeHistory),
+        );
+      }
       // Reset game state without reloading the page
       resetGameState();
     }
