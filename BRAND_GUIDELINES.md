@@ -1071,7 +1071,7 @@ This brand guide is a living document. As NerdType evolves, these guidelines may
 For questions about brand usage or design decisions:
 
 - **GitHub**: [github.com/merkksgit/nerd-type](https://github.com/merkksgit/nerd-type)
-- **Discord**: [NerdType Community](https://discord.gg/wXbYNzf4)
+- **Discord**: [NerdType Community](https://discord.gg/eJkNaPN8rg)
 - **Contact Page**: [nerdtypegame.com/pages/contact.html](https://www.nerdtypegame.com/pages/contact.html)
 
 **© 2025 NerdType** | Fast-Paced Minimalistic Typing Game
