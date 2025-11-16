@@ -771,8 +771,9 @@ input#userInput {
   pointer-events: none;
 }
 
+/* minimal mode  ui positioning*/
 body[data-ui-hidden="true"] #game.inactive::after {
-  top: 49%;
+  top: 50.3%;
 }
 
 /* Mobile-specific instruction text */
