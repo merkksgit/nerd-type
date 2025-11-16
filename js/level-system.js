@@ -127,8 +127,11 @@ class LevelSystem {
       const accuracy = parseFloat(gameData.accuracy) || 100;
       const wordsTyped = gameData.wordsTyped || 30;
 
-      // XP formula for Zen Mode: (WPM * accuracy * words typed) / 10
-      xpGained = Math.floor((wpm * (accuracy / 100) * wordsTyped) / 10);
+      // XP formula for Zen Mode: (WPM * accuracy² * words typed) / 3
+      // Squared accuracy rewards precision, division by 3 balances with other modes
+      xpGained = Math.floor(
+        (wpm * Math.pow(accuracy / 100, 2) * wordsTyped) / 3,
+      );
     } else {
       // For Classic/Hard/etc modes: score * difficultyMultiplier
       const baseXP = gameData.score || 0;
