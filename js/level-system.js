@@ -86,6 +86,24 @@ class LevelSystem {
   }
 
   /**
+   * Checks if current time is within the Double XP Weekend event
+   * Event runs: Friday Nov 21, 2025 00:00 CET to Sunday Nov 23, 2025 23:59:59 CET
+   * @returns {boolean} True if double XP is active
+   */
+  isDoubleXPActive() {
+    const now = new Date();
+
+    // CET is UTC+1, so we subtract 1 hour to get CET times in UTC
+    // Start: Friday, November 21, 2025, 00:00:00 CET (Nov 20, 23:00:00 UTC)
+    const eventStart = new Date("2025-11-20T23:00:00Z");
+
+    // End: Sunday, November 23, 2025, 23:59:59 CET (Nov 23, 22:59:59 UTC)
+    const eventEnd = new Date("2025-11-23T22:59:59Z");
+
+    return now >= eventStart && now <= eventEnd;
+  }
+
+  /**
    * Awards XP to the player based on game performance
    * Only called for victories (timeLeft > 0) or completed Zen Mode games
    * @param {Object} gameData - Game result data
@@ -135,6 +153,18 @@ class LevelSystem {
       const baseXP = gameData.score || 0;
       const multiplier = gameData.difficultyMultiplier || 1.0;
       xpGained = Math.floor(baseXP * multiplier);
+    }
+
+    // Apply Double XP Weekend multiplier
+    const doubleXPActive = this.isDoubleXPActive();
+    if (doubleXPActive) {
+      xpGained *= 2;
+      console.log(
+        "🎉 DOUBLE XP ACTIVE! XP doubled from",
+        xpGained / 2,
+        "to",
+        xpGained,
+      );
     }
 
     if (xpGained <= 0) {
