@@ -926,6 +926,28 @@ body[data-ui-hidden="true"] #game.inactive::after {
   display: none;
 }
 
+/* Hide header, footer and other UI elements when game is active */
+#game:not(.inactive) ~ .navbar,
+body:has(#game:not(.inactive)) .navbar,
+body:has(#game:not(.inactive)) .footer,
+body:has(#game:not(.inactive)) #currentGameMode,
+body:has(#game:not(.inactive)) #versionInfo {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Keep UI visible when game is inactive */
+#game.inactive ~ .navbar,
+body:has(#game.inactive) .navbar,
+body:has(#game.inactive) .footer,
+body:has(#game.inactive) #currentGameMode,
+body:has(#game.inactive) #versionInfo {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
 /* Hide quick commands info in minimal UI mode */
 body[data-ui-hidden="true"] .quick-commands-info {
   display: none !important;
