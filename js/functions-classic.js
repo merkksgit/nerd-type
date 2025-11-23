@@ -172,6 +172,8 @@ let totalCharactersTyped = 0;
 let hasStartedTyping = false;
 let totalKeystrokes = 0;
 let correctKeystrokes = 0;
+let maxPositionReached = 0; // Track furthest position for accuracy calculation
+let currentKeystrokeCounted = false; // Track if current keystroke counts for accuracy
 let gameStartTime = null;
 let gameEndTime = null;
 let gameEnded = false;
@@ -1065,11 +1067,20 @@ function initializeEventListeners() {
         activateGame();
       } else {
         // Always restart the game when Enter is pressed during active gameplay
-        // Save keystroke history before restarting
+        // Save keystroke history and accuracy stats before restarting
         if (!isPracticeMistakesMode && keystrokeHistory.length > 0) {
+          const stats = calculateWPM();
+          const wrongKeystrokes = totalKeystrokes - correctKeystrokes;
+          const keystrokeData = {
+            keystrokes: keystrokeHistory,
+            accuracy: stats.accuracy,
+            correctKeys: correctKeystrokes,
+            wrongKeys: wrongKeystrokes,
+            totalKeys: totalKeystrokes,
+          };
           localStorage.setItem(
             "lastGameKeystrokes",
-            JSON.stringify(keystrokeHistory),
+            JSON.stringify(keystrokeData),
           );
         }
         startGame();
@@ -1078,11 +1089,20 @@ function initializeEventListeners() {
     }
     if (event.key === "Enter" && event.ctrlKey) {
       event.preventDefault();
-      // Save keystroke history before resetting
+      // Save keystroke history and accuracy stats before resetting
       if (!isPracticeMistakesMode && keystrokeHistory.length > 0) {
+        const stats = calculateWPM();
+        const wrongKeystrokes = totalKeystrokes - correctKeystrokes;
+        const keystrokeData = {
+          keystrokes: keystrokeHistory,
+          accuracy: stats.accuracy,
+          correctKeys: correctKeystrokes,
+          wrongKeys: wrongKeystrokes,
+          totalKeys: totalKeystrokes,
+        };
         localStorage.setItem(
           "lastGameKeystrokes",
-          JSON.stringify(keystrokeHistory),
+          JSON.stringify(keystrokeData),
         );
       }
       // Reset game state without reloading the page
@@ -1494,6 +1514,7 @@ function startGame() {
   totalCharactersTyped = 0;
   totalKeystrokes = 0;
   correctKeystrokes = 0;
+  maxPositionReached = 0;
   totalTimeSpent = 0;
 
   // Reset tracking arrays
@@ -2525,6 +2546,7 @@ function resetGameState() {
   totalCharactersTyped = 0;
   totalKeystrokes = 0;
   correctKeystrokes = 0;
+  maxPositionReached = 0;
   totalTimeSpent = 0;
   gameStartTime = null;
   gameEndTime = null;
@@ -2721,7 +2743,13 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
   const hasOffscreenWindow =
     window.offscreenWindow && !window.offscreenWindow.closed;
   if (e.inputType === "insertText" && e.data) {
-    totalKeystrokes++;
+    // Only count toward accuracy if we're at or beyond our previous max position
+    const currentPosition = userInput.length - 1;
+    currentKeystrokeCounted = currentPosition >= maxPositionReached;
+    if (currentKeystrokeCounted) {
+      totalKeystrokes++;
+      maxPositionReached = currentPosition + 1;
+    }
 
     // Check if user pressed space at the end of the word with incorrect letters present
     if (
@@ -2884,14 +2912,21 @@ function processCharacterInput(e, userInput, currentWord, showSpace) {
 
 // Helper function to validate character input
 function validateCharacterInput(userInput, currentWord, showSpace) {
+  // Use the flag set by processCharacterInput
+  const shouldCount = currentKeystrokeCounted;
+
   if (showSpace && userInput.length > currentWord.length) {
     if (userInput[userInput.length - 1] === " ") {
-      correctKeystrokes++;
+      if (shouldCount) {
+        correctKeystrokes++;
+      }
       return true;
     }
   } else if (userInput.length <= currentWord.length) {
     if (userInput[userInput.length - 1] === currentWord[userInput.length - 1]) {
-      correctKeystrokes++;
+      if (shouldCount) {
+        correctKeystrokes++;
+      }
       return true;
     }
   }
@@ -3010,6 +3045,7 @@ function moveToNextWord() {
 
   currentWordIndex++;
   nextWordIndex = currentWordIndex + 1;
+  maxPositionReached = 0; // Reset for new word
 
   if (currentWordIndex >= words.length) {
     // In practice mistakes mode, restart the practice session instead of regenerating
@@ -3449,15 +3485,20 @@ async function showGameOverModal(
 ) {
   stopWpmTracking();
 
-  // Save keystroke history for /keys command (regardless of success/failure)
-  if (!isPracticeMistakesMode) {
-    localStorage.setItem(
-      "lastGameKeystrokes",
-      JSON.stringify(keystrokeHistory),
-    );
-  }
-
   const stats = calculateWPM();
+
+  // Save keystroke history and accuracy stats for /keys command (regardless of success/failure)
+  if (!isPracticeMistakesMode) {
+    const wrongKeystrokes = totalKeystrokes - correctKeystrokes;
+    const keystrokeData = {
+      keystrokes: keystrokeHistory,
+      accuracy: stats.accuracy,
+      correctKeys: correctKeystrokes,
+      wrongKeys: wrongKeystrokes,
+      totalKeys: totalKeystrokes,
+    };
+    localStorage.setItem("lastGameKeystrokes", JSON.stringify(keystrokeData));
+  }
   const languageName =
     currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1);
 

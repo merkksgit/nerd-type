@@ -391,26 +391,30 @@
                 "
               />
               <p>
-                In NerdType, your typing accuracy is measured as a percentage of
-                correct keystrokes. Here's how the accuracy is calculated:
+                NerdType uses <strong>first-pass accuracy</strong> to measure
+                your typing precision. This means only your first attempt at
+                each character position counts — corrections don't affect your
+                accuracy score.
               </p>
               <ol>
                 <li>
-                  The game tracks every character you type (excluding backspace
-                  and special keys) from your first keystroke until the game
-                  ends.
+                  The game tracks the first character you type at each position
+                  in every word (excluding backspace and special keys).
                 </li>
                 <li>
-                  When you type a character, it's counted as correct only if it
-                  matches the corresponding character in the target word at that
-                  exact position.
+                  When you type a character for the first time at a position,
+                  it's counted as correct only if it matches the corresponding
+                  character in the target word at that exact position.
                 </li>
                 <li>
                   The game maintains two counts:
                   <ul>
-                    <li>Total keystrokes: Every character you type</li>
                     <li>
-                      Correct keystrokes: Characters that match the target word
+                      Total keystrokes: First-pass characters at each position
+                    </li>
+                    <li>
+                      Correct keystrokes: First-pass characters that match the
+                      target
                     </li>
                   </ul>
                 </li>
@@ -420,14 +424,14 @@
                 </li>
               </ol>
               <p>
-                For example, if you typed 20 characters and 16 of them were
+                For example, if you made 20 first-pass attempts and 16 were
                 correct, your accuracy would be:
               </p>
               <p>
                 (16 correct keystrokes / 20 total keystrokes) × 100 = 80%
                 accuracy
               </p>
-              <p>Here's how accuracy works in practice:</p>
+              <p>Here's how first-pass accuracy works in practice:</p>
               <ul>
                 <li>
                   If the target word is "code" and you type "cade", you will
@@ -436,14 +440,21 @@
                 </li>
                 <li>
                   If you type "coxde" and then backspace to fix it to "code",
-                  you will have 5 total keystrokes (c, o, x, d, e), 4 correct
-                  keystrokes (c, o, d, e), resulting in 80% accuracy.
+                  you still have 5 first-pass keystrokes (c, o, x, d, e), with 4
+                  correct (c, o, d, e), resulting in 80% accuracy. The retyped
+                  characters after backspacing don't count.
+                </li>
+                <li>
+                  This means using Ctrl+Backspace (delete word) or regular
+                  backspace produces the same accuracy—only your initial typing
+                  precision matters.
                 </li>
               </ul>
               <p>
-                The accuracy calculation includes all characters typed, even if
-                you later correct them with backspace. This encourages precise
-                typing rather than rapid typing-and-correcting.
+                First-pass accuracy measures your true typing skill by focusing
+                on how often you hit the right key on your first attempt. This
+                encourages both speed and precision, while allowing you to use
+                efficient correction methods without penalty.
               </p>
               <h4 id="how-score-is-calculated">7. How Score is Calculated</h4>
               <hr

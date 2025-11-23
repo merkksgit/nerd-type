@@ -883,6 +883,38 @@
                   <div class="news-container">
                     <article class="news-card">
                       <div class="news-card-header">
+                        <span class="news-date">23/11/25</span>
+                        <span class="version-number">v2.5.4</span>
+                      </div>
+                      <div class="news-card-body">
+                        <ul class="news-content" style="padding-left: 20px">
+                          <li>
+                            FIX: Accuracy calculation now uses first-pass
+                            tracking - only your initial attempt at each
+                            character position counts toward accuracy,
+                            corrections don't affect your score
+                          </li>
+                          <li>
+                            IMPROVED: Ctrl+Backspace and regular backspace now
+                            produce identical accuracy results, removing the
+                            exploit where deleting and retyping inflated
+                            accuracy scores
+                          </li>
+                          <li>
+                            IMPROVED: /keys command now displays accuracy stats
+                            (correct/wrong/total keystrokes) instead of legend,
+                            with accurate backspace counting
+                          </li>
+                          <li>
+                            DOCS: Updated "How Accuracy is Calculated" section
+                            to explain first-pass accuracy system
+                          </li>
+                        </ul>
+                      </div>
+                    </article>
+
+                    <article class="news-card">
+                      <div class="news-card-header">
                         <span class="news-date">19/11/25</span>
                         <span class="version-number">v2.5.32</span>
                       </div>

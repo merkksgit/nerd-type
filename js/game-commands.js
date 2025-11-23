@@ -2326,7 +2326,26 @@ ${savedSettingsText}`;
     }
 
     try {
-      const keystrokes = JSON.parse(keystrokeData);
+      const data = JSON.parse(keystrokeData);
+
+      // Handle both old format (array) and new format (object with stats)
+      let keystrokes, accuracy, correctKeys, wrongKeys, totalKeys;
+
+      if (Array.isArray(data)) {
+        // Old format: just an array of keystrokes
+        keystrokes = data;
+        accuracy = null;
+        correctKeys = null;
+        wrongKeys = null;
+        totalKeys = null;
+      } else {
+        // New format: object with keystrokes and stats
+        keystrokes = data.keystrokes || [];
+        accuracy = data.accuracy || null;
+        correctKeys = data.correctKeys || null;
+        wrongKeys = data.wrongKeys || null;
+        totalKeys = data.totalKeys || null;
+      }
 
       if (!keystrokes || keystrokes.length === 0) {
         this.showNotification(
@@ -2365,11 +2384,22 @@ ${savedSettingsText}`;
         .map((line) => `<span style='color:#c0caf5'>${line}</span>`)
         .join("<br>");
 
-      const keystrokesModalContent = `<span style='color:#7dcfff'>[${playerUsername}@nerdtype_terminal:~/.cache]$</span> cat last_game_keystrokes.log
+      // Build accuracy stats section
+      let statsSection = "";
+      if (accuracy !== null && correctKeys !== null) {
+        // Count actual backspaces by counting '<' characters in keystroke history
+        const backspaceCount = keystrokes.filter((key) => key === "<").length;
+        statsSection = `<span style='color:#565f89'>Accuracy: <span style='color:#${accuracy === "100.0%" ? "c3e88d" : "bb9af7"}'>${accuracy}</span></span>
+<span style='color:#565f89'>Correct: <span style='color:#c3e88d'>${correctKeys}</span> | Wrong: <span style='color:#f7768e'>${wrongKeys}</span> | Total: <span style='color:#7dcfff'>${totalKeys}</span> | Backspaces: <span style='color:#9d7cd8'>${backspaceCount}</span></span>`;
+      } else {
+        // Fallback to old legend if stats not available
+        statsSection = `<span style='color:#565f89'>Legend: _ = space, &lt; = backspace</span>`;
+      }
+
+      const keystrokesModalContent = `<span style='color:#7dcffd'>[${playerUsername}@nerdtype_terminal:~/.cache]$</span> cat last_game_keystrokes.log
 
 <span style='color:#9ece6a'>## Keystroke History - Last Game</span>
-<span style='color:#565f89'>Total keystrokes: ${keystrokes.length}</span>
-<span style='color:#565f89'>Legend: _ = space, &lt; = backspace</span>
+${statsSection}
 
 ${formattedKeystrokes}
 `;
