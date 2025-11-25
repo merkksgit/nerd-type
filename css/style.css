@@ -2557,6 +2557,11 @@ article.col-md-8.col-lg-6.mx-auto {
   font-weight: 600;
 }
 
+.news-category.announcement.important {
+  background-color: #ff007c;
+  color: #ffffff;
+}
+
 .news-category.issue {
   background-color: #ff007c;
 }
