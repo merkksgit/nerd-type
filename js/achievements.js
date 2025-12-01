@@ -307,7 +307,7 @@ class AchievementSystem {
       spray_and_pray: {
         id: "spray_and_pray",
         name: "Spray and Pray",
-        description: "Win a game with less than 60% accuracy",
+        description: "Win a game with less than 90% accuracy",
         icon: "fa-solid fa-fire",
         category: "gameplay",
         secret: false,
@@ -317,7 +317,7 @@ class AchievementSystem {
           const isVictory = gameData.timeLeft > 0;
           const accuracy = parseFloat(gameData.accuracy);
 
-          return !isNaN(accuracy) && accuracy < 60 && isVictory;
+          return !isNaN(accuracy) && accuracy < 90 && isVictory;
         },
       },
       night_owl: {
