@@ -7,9 +7,7 @@
   const REDIRECT_DELAY = 5000;
 
   const currentPath =
-    window.location.pathname +
-    window.location.search +
-    window.location.hash;
+    window.location.pathname + window.location.search + window.location.hash;
   const newUrl = NEW_DOMAIN + currentPath;
 
   const style = document.createElement("style");
@@ -25,7 +23,7 @@
       text-align: center;
       font-family: monospace;
       z-index: 10000;
-      border-bottom: 2px solid #7aa2f7;
+      border-bottom: 1px solid #7aa2f7;
     }
     .redirect-banner a {
       color: #7aa2f7;
